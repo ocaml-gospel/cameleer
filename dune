@@ -1,5 +1,0 @@
-(executable
-  (libraries gospel why3 ocaml-compiler-libs.common)
-  (name why3ho)
-  (modes plugin)
-  (embed_in_plugin_libraries gospel))
