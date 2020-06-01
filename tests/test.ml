@@ -1,4 +1,9 @@
-let f (x: int) : int = x
+let f (x: int) : int =
+  let g y = y
+  (*@ r = g y
+        ensures r = y *)
+  in
+  g x
 (*@ r = f x
       requires x >= 0
       ensures  r >= 0 *)
@@ -10,14 +15,20 @@ type 'a t = E | N of 'a t * 'a * 'a t
       | E -> 0
       | N l _ r -> 1 + size_logic l + size_logic r |}]
 
+[@@@gospel {|axiom size_logic_ge0: forall t: 'a t. size_logic t >= 0 |}]
+
+(* FIXME: make a lemma *)
+
 let rec size (t: 'a t) : int =
   match t with
   | E -> 0
   | N (l, _, r) -> 1 + size l + size r
 (*@ r = size t
-      variant t *)
+      requires in_bounds (size_logic t)
+      variant  t
+      ensures  r = size_logic t *)
 
-let head (t: 'a t) =
+let [@logic] head (t: 'a t) =
   match t with
   | E -> assert false
   | N (_, x, _) -> x
@@ -26,21 +37,22 @@ let head (t: 'a t) =
 
 type a = {
   mutable b: int;
-  c: bool
+  c: bool;
+  (* @ ghost d: int *)
 } (*@ invariant c -> b > 0 *)
 
 let rec dup_size t : int =
   match t with
   | E -> 0
   | N (l, _, r) -> 1 + dup_size l + dup_size r
-(*@ r = size t
+(*@ r = dup_size t
       variant t
       ensures r = size_logic t *)
 
 let ff () : int = 42
 
 let mk_a (b: int) : a =
-  { b = b; c = true }
+  { b = b; c = true; (* @ d = 0 *) }
 (*@ r = mk_a b
       requires b > 0 *)
 
@@ -61,7 +73,7 @@ let rec fact_2 (x: int) (acc: int) : int =
 (*@ r = fact_2 x
       requires x >= 0
       variant  x
-      ensures  r >= acc * fact_logic x *)
+      ensures  r = acc * fact_logic x *)
 
 type nat = { v: int }
 (*@ invariant v >= 0 *)
@@ -108,8 +120,8 @@ type tree = Empty | Node of tree * elt * tree
 type enum = Done | Next of elt * tree * enum
 
 [@@@gospel {| function enum_elements (e : enum) : elt list = match e with
-              | Done -> Nil
-              | Next x r e -> Cons x (elements r ++ enum_elements e) |}]
+                | Done -> Nil
+                | Next x r e -> Cons x (elements r @ enum_elements e) |}]
 
 let rec enum (t: tree) (e: enum) =
   match t with
@@ -117,7 +129,7 @@ let rec enum (t: tree) (e: enum) =
   | Node (l, x, r) -> enum l (Next (x, r, e))
 (*@ r = enum t e
       variant t
-      ensures enum_elements r = elements t ++ enum_elements e *)
+      ensures enum_elements r = elements t @ enum_elements e *)
 
 let rec eq_enum (e1: enum) (e2: enum) =
   match e1, e2 with

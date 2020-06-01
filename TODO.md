@@ -6,8 +6,8 @@ Things to Think About
    For now, I should think about writing OCaml code in A-normal form.
 
 2. Equality.
-   We have polymorphic equality in OCaml, but it is well-known that we have no
-   such thing in WhyML! One solution would be to right my OCaml code as a
+   We have polymorphic equality in OCaml, but we have no
+   such thing in WhyML! One solution would be to write my OCaml code as a
    functor with equality on objects as an argument. Example: same fringe.
 
 3. Records extended with ghost fields. An example:

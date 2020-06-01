@@ -27,10 +27,11 @@ module Convert = struct
 
   (** Visibility of type declarations. An alias type cannot be private, so we
       check whether or not the GOSPEL type manifest is [None]. *)
-  let td_private private_ tkind = match private_, tkind with
-    | _, Ptype_abstract    -> Ptree.Private
-    | Oasttypes.Private, _ -> Ptree.Private
-    | Oasttypes.Public, _  -> Ptree.Public
+  let td_private manifest private_ tkind = match manifest, private_, tkind with
+    | Some _ , _, _           -> Ptree.Public
+    | _, _, Ptype_abstract    -> Ptree.Private
+    | _, Oasttypes.Private, _ -> Ptree.Private
+    | _, Oasttypes.Public, _  -> Ptree.Public
 
   let param_of_cty cty =
     let loc = T.location cty.ptyp_loc in
@@ -79,7 +80,7 @@ module Convert = struct
       td_loc    = T.location td.tloc;
       td_ident  = T.(mk_id tname.txt ~id_loc:(location tname.loc));
       td_params = List.map td_params td.tparams;
-      td_vis    = td_private td.tprivate tkind;
+      td_vis    = td_private tmanifest td.tprivate tkind;
       td_mut    = tspec.ty_ephemeral;
       td_inv    = List.map Uterm.term tspec.ty_invariant;
       td_wit    = [];
@@ -87,9 +88,13 @@ module Convert = struct
     }
 
   let logic_attr = "logic"
+  let lemma_attr = "lemma"
 
   let is_logic attributes =
     List.exists (fun {attr_name; _} -> attr_name.txt = logic_attr) attributes
+
+  let is_lemma attributes =
+    List.exists (fun {attr_name; _} -> attr_name.txt = lemma_attr) attributes
 
   let val_decl vd g =
     let rec flat_ptyp_arrow ct = match ct.ptyp_desc with
@@ -196,20 +201,21 @@ module Convert = struct
       | [svb] -> E.s_value_binding svb
       | _ -> assert false (* TODO *) in
     let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
+    let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
+    let rs_kind svb_list = if List.exists is_logic_svb svb_list then Expr.RKfunc
+      else if List.exists is_lemma_svb svb_list then Expr.RKlemma
+      else Expr.RKnone in
     match str_item_desc with
     | Uast.Str_value (Nonrecursive, svb_list) ->
         let id, expr = id_expr_of_svb_list svb_list in
-        let rs_kind = if List.exists is_logic_svb svb_list then Expr.RKfunc
-          else Expr.RKnone in
-        Odecl (Dlet (id, false, rs_kind, expr))
+        Odecl (Dlet (id, false, rs_kind svb_list, expr))
     | Uast.Str_value (Recursive, svb_list) ->
         let id, fun_expr = id_expr_of_svb_list svb_list in
         let args, ret, spec, expr = match fun_expr.expr_desc with
           | Efun (args, _, ret, _, spec, expr) -> args, ret, spec, expr
           | _ -> assert false (* TODO *) in
         let mask_visible = Ity.MaskVisible in
-        let rs_kind = if List.exists is_logic_svb svb_list then Expr.RKfunc
-          else Expr.RKnone in
+        let rs_kind = rs_kind svb_list in
         let fun_def =
           id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
         Odecl (Drec [fun_def])

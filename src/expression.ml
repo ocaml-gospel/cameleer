@@ -52,6 +52,16 @@ let rec core_type O.{ptyp_desc; ptyp_loc; _} = match ptyp_desc with
   | O.Ptyp_constr ({txt; loc}, cty_list) ->
       let args = List.map core_type cty_list in
       PTtyapp (longident ~id_loc:(T.location loc) txt, args)
+  | O.Ptyp_arrow (Nolabel, cty1, cty2) ->
+      PTarrow (core_type cty1, core_type cty2)
+  | O.Ptyp_arrow (Labelled _, cty1, cty2) ->
+      ignore (cty1);
+      ignore (cty2);
+      assert false (* TODO *)
+  | O.Ptyp_arrow (Optional _, cty1, cty2) ->
+      ignore (cty1);
+      ignore (cty2);
+      assert false (* TODO *)
   | _ -> assert false (* TODO *)
 
 let binder_of_pattern O.{ppat_desc; ppat_loc; _} = match ppat_desc with
@@ -133,6 +143,8 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         Etrue
     | Uast.Sexp_construct ({txt = Lident "false"; _}, None) ->
         Efalse
+    | Uast.Sexp_construct ({txt = Lident "()"; _}, None) ->
+        Etuple []
     | Uast.Sexp_construct (id, None) ->
         Eidapp (longident id.txt, [])
     | Uast.Sexp_construct (id, Some {spexp_desc = Sexp_tuple expr_list; _}) ->

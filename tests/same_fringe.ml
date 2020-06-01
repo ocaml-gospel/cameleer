@@ -17,7 +17,7 @@ module Make (Eq: sig
 
   [@@@gospel {| function enum_elements (e : enum) : elt list = match e with
                 | Done -> Nil
-                | Next x r e -> Cons x (elements r ++ enum_elements e) |}]
+                | Next x r e -> Cons x (elements r @ enum_elements e) |}]
 
   let rec enum (t: tree) (e: enum) =
     match t with
@@ -25,7 +25,7 @@ module Make (Eq: sig
     | Node (l, x, r) -> enum l (Next (x, r, e))
   (*@ r = enum t e
         variant t
-        ensures enum_elements r = elements t ++ enum_elements e *)
+        ensures enum_elements r = elements t @ enum_elements e *)
 
   let rec eq_enum (e1: enum) (e2: enum) =
     match e1, e2 with
