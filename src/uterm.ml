@@ -29,9 +29,9 @@ let ident_of_lsymbol Tterm.{ls_name = name; _} =
 
 let constant = function
   | Pconst_integer (s, _) ->
-    Constant.ConstInt (Number.int_literal ILitDec ~neg:false s)
+      Constant.ConstInt (Number.int_literal ILitDec ~neg:false s)
   | Pconst_string (s, _) ->
-    Constant.ConstStr s
+      Constant.ConstStr s
   | Pconst_float _ -> assert false (* TODO *)
   | _ -> assert false
 
@@ -52,21 +52,21 @@ let rec pty = function
 
 let rec ty Ty.{ty_node} = match ty_node with
   | Ty.Tyvar {tv_name} ->
-    PTtyvar (mk_id tv_name.id_str ~id_loc:(location tv_name.id_loc))
+      PTtyvar (mk_id tv_name.id_str ~id_loc:(location tv_name.id_loc))
   | Ty.Tyapp (ts, tyl) when Ty.is_ts_tuple ts ->
-    PTtuple (List.map ty tyl)
+      PTtuple (List.map ty tyl)
   | Ty.Tyapp (ts, tyl) when Ty.is_ts_arrow ts ->
-    let rec arrow_of_pty_list = function
-      | [] -> assert false
-      | [pty] -> pty
-      | arg :: ptyl -> PTarrow (arg, arrow_of_pty_list ptyl) in
-    arrow_of_pty_list (List.map ty tyl)
+      let rec arrow_of_pty_list = function
+        | [] -> assert false
+        | [pty] -> pty
+        | arg :: ptyl -> PTarrow (arg, arrow_of_pty_list ptyl) in
+      arrow_of_pty_list (List.map ty tyl)
   | Ty.Tyapp ({ts_ident; _}, tyl) -> let id_loc = location ts_ident.id_loc in
-    let id_str = match query_syntax ts_ident.id_str with
-      | None   -> ts_ident.id_str
-      | Some s -> s in
-    let qualid = mk_id id_str ~id_loc in
-    PTtyapp (Qident qualid, List.map ty tyl)
+      let id_str = match query_syntax ts_ident.id_str with
+        | None   -> ts_ident.id_str
+        | Some s -> s in
+      let qualid = mk_id id_str ~id_loc in
+      PTtyapp (Qident qualid, List.map ty tyl)
 
 let quant = function
   | Uast.Tforall -> D.DTforall
@@ -124,9 +124,9 @@ let rec term Uast.{term_desc = t_desc; term_loc} =
     | Uast.Tscope (q, t)       -> Tscope  (qualid q, term t)
     | Uast.Told t              -> Tat     (term t, mk_id "old")
     | Uast.Tupdate (t, q_t_list) ->
-      Tupdate (term t, List.map qualid_term q_t_list)
+        Tupdate (term t, List.map qualid_term q_t_list)
     | Uast.Tquant (q, bl, tt_list, t) ->
-      let mk_term_list t_list = List.map term t_list in
-      let tt_list = List.map mk_term_list tt_list in
-      Tquant (quant q, List.map binder bl, tt_list, term t) in
+        let mk_term_list t_list = List.map term t_list in
+        let tt_list = List.map mk_term_list tt_list in
+        Tquant (quant q, List.map binder bl, tt_list, term t) in
   mk_term (term_desc t_desc)
