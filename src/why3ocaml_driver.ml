@@ -30,7 +30,7 @@ let () = List.iter (fun (x, y) -> Hstr.add driver x y)
       "mixfix {:_:}", "singleton";
       "[]", "Nil";
       "infix ::", "Cons";
-      "::", "Cons"; (* FIXME: understand why this happen in program symbols *)
+      "::", "Cons"; (* FIXME: understand why this happens in program symbols *)
       "infix @", "infix ++";
     ]
 

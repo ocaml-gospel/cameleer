@@ -118,6 +118,9 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let is_or = function
     | Uast.Sexp_ident {txt = Lident "||"; _} -> true
     | _ -> false in
+  let is_not = function
+    | Uast.Sexp_ident {txt = Lident "not"; _} -> true
+    | _ -> false in
   let pexp_desc = function
     | Uast.Sexp_ident {txt;loc} ->
         Eident (longident ~id_loc:(T.location loc) txt)
@@ -133,6 +136,8 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         Eand (arg_expr arg1, arg_expr arg2)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
         Eor (arg_expr arg1, arg_expr arg2)
+    | Uast.Sexp_apply (s, [arg]) when is_not s.spexp_desc ->
+        Enot (arg_expr arg)
     | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
         Eidapp (longident s.txt, List.map arg_expr arg_expr_list)
     | Uast.Sexp_match (expr, case_list) ->
