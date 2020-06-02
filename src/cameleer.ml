@@ -197,28 +197,27 @@ module Convert = struct
     s_structure_item_desc sstr_desc
 
   and s_structure_item_desc str_item_desc =
-    let id_expr_of_svb_list = function
-      | [svb] -> E.s_value_binding svb
-      | _ -> assert false (* TODO *) in
     let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
     let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
     let rs_kind svb_list = if List.exists is_logic_svb svb_list then Expr.RKfunc
       else if List.exists is_lemma_svb svb_list then Expr.RKlemma
       else Expr.RKnone in
+    let id_expr_rs_kind_of_svb_list svb_list =
+      rs_kind svb_list, List.map (fun svb -> E.s_value_binding svb) svb_list in
     match str_item_desc with
     | Uast.Str_value (Nonrecursive, svb_list) ->
-        let id, expr = id_expr_of_svb_list svb_list in
-        Odecl (Dlet (id, false, rs_kind svb_list, expr))
+        begin match id_expr_rs_kind_of_svb_list svb_list with
+        | rs_kind, [id, expr] -> Odecl (Dlet (id, false, rs_kind, expr))
+        | _ -> assert false (* no multiple bindings in nonrecursive values *)end
     | Uast.Str_value (Recursive, svb_list) ->
-        let id, fun_expr = id_expr_of_svb_list svb_list in
-        let args, ret, spec, expr = match fun_expr.expr_desc with
-          | Efun (args, _, ret, _, spec, expr) -> args, ret, spec, expr
-          | _ -> assert false (* TODO *) in
-        let mask_visible = Ity.MaskVisible in
-        let rs_kind = rs_kind svb_list in
-        let fun_def =
+        let mk_fun_def rs_kind (id, fun_expr) =
+          let args, ret, spec, expr = begin match fun_expr.expr_desc with
+            | Efun (args, _, ret, _, spec, expr) -> args, ret, spec, expr
+            | _ -> assert false (* TODO *) end in
+          let mask_visible = Ity.MaskVisible in
           id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
-        Odecl (Drec [fun_def])
+        let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
+        Odecl (Drec (List.map (mk_fun_def rs_kind) id_fun_expr_list))
     | Uast.Str_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
         let td_list = List.map type_decl type_decl_list in
@@ -290,13 +289,18 @@ let use_std_lib =
   let length = Qdot (Qident (mk_id "list"), mk_id "List") in
   let list = Qdot (Qident (mk_id "list"), mk_id "Length") in
   let append = Qdot (Qident (mk_id "list"), mk_id "Append") in
+  let ocaml_exn = Qdot (Qident (mk_id "ocaml"), mk_id "Exceptions") in
+  let option = Qdot (Qident (mk_id "option"), mk_id "Option") in
   let use_int = Duseimport (Loc.dummy_position, false, [int, None]) in
   let use_int63 = Duseimport (Loc.dummy_position, false, [int63, None]) in
   let use_list = Duseimport (Loc.dummy_position, false, [list, None]) in
   let use_length = Duseimport (Loc.dummy_position, false, [length, None]) in
   let use_append = Duseimport (Loc.dummy_position, false, [append, None]) in
+  let use_ocaml_exn =
+    Duseimport (Loc.dummy_position, false, [ocaml_exn, None]) in
+  let use_option = Duseimport (Loc.dummy_position, false, [option, None]) in
   [Odecl use_int; Odecl use_int63; Odecl use_list; Odecl use_length;
-   Odecl use_append]
+   Odecl use_append; Odecl use_ocaml_exn; Odecl use_option]
 
 let read_file file c =
   let lb = Lexing.from_channel c in

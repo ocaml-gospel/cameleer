@@ -95,6 +95,10 @@ let rec pattern O.{ppat_desc = p_desc; ppat_loc; _} =
         Papp (longident id.txt, [])
     | O.Ppat_construct (id, Some ({ppat_desc = Ppat_tuple pat_list; _})) ->
         Papp (longident id.txt, List.map pattern pat_list)
+    | O.Ppat_construct (id, Some p) ->
+        Papp (longident id.txt, [pattern p])
+    | O.Ppat_or (pat1, pat2) ->
+        Por (pattern pat1, pattern pat2)
     | O.Ppat_constant _ ->
         Loc.errorm "Constants in case expressions are not supported."
     | _ -> assert false (* TODO *) in
@@ -131,8 +135,10 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         Eor (arg_expr arg1, arg_expr arg2)
     | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
         Eidapp (longident s.txt, List.map arg_expr arg_expr_list)
-    | Uast.Sexp_match (e, case_list) ->
-        Ematch (expression e, List.map case case_list, [])
+    | Uast.Sexp_match (expr, case_list) ->
+        Ematch (expression expr, List.map case case_list, [])
+    | Uast.Sexp_try (expr, case_list) ->
+        Ematch (expression expr, [], List.map case_exn case_list)
     | Uast.Sexp_tuple exp_list ->
         Etuple (List.map expression exp_list)
     | Uast.Sexp_sequence (e1, e2) ->
@@ -172,6 +178,20 @@ and case Uast.{spc_lhs; spc_guard; spc_rhs} =
     | None   -> () in
   check_guard spc_guard;
   pattern spc_lhs, expression spc_rhs
+
+and case_exn Uast.{spc_lhs; spc_guard; spc_rhs} =
+  let check_guard = function
+    | Some _ -> Loc.errorm "Guarded expressions are not supported."
+    | None   -> () in
+  check_guard spc_guard;
+  let q, pat = match spc_lhs.O.ppat_desc with
+    | Ppat_any -> Qident (T.mk_id "_"), None
+    | Ppat_var s -> let id_loc = T.location s.loc in
+        Qident (T.mk_id s.txt ~id_loc), None
+    | Ppat_construct (id, pat) -> let id_loc = T.location id.loc in
+        longident id.txt ~id_loc, Opt.map pattern pat
+  | _ -> assert false in
+  q, pat, expression spc_rhs
 
 and s_value_binding svb =
   let pexp = svb.Uast.spvb_expr in
