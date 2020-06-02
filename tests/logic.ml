@@ -5,11 +5,11 @@ type literal =
   | FConst of bool
 
 type formula =
-  | L      of literal
-  | FAnd   of formula * formula
-  | FOr    of formula * formula
-  | FImpl  of formula * formula
-  | FNeg   of formula
+  | L     of literal
+  | FAnd  of formula * formula
+  | FOr   of formula * formula
+  | FImpl of formula * formula
+  | FNeg  of formula
 
 type formula_wi =
   | L_wi    of literal
@@ -36,7 +36,7 @@ type valuation = ident -> bool
 
 let[@logic] eval_literal (v: valuation) (f: literal) : bool
   = match f with
-  | FVar x -> v x
+  | FVar x   -> v x
   | FConst b -> b
 
 let[@logic] rec eval (v: valuation) (f: formula) : bool
@@ -102,7 +102,7 @@ let[@logic] rec eval_cnf (v: valuation) (f: formula_cnf) : bool
 
 let[@lemma] rec size_nonneg (phi: formula_wi)
   = match phi with
-  | L_wi _ -> ()
+  | L_wi _      -> ()
   | FNeg_wi phi -> size_nonneg phi
   | FAnd_wi (phi1, phi2) | FOr_wi (phi1, phi2) ->
       size_nonneg phi1; size_nonneg phi2
@@ -121,7 +121,7 @@ let[@lemma] rec size_nonneg_disj (phi: disj)
 let[@lemma] rec size_nonneg_cnf (phi: formula_cnf)
   = match phi with
   | FAnd_cnf (phi1, phi2) -> size_nonneg_cnf phi1; size_nonneg_cnf phi2
-  | D phi1 -> size_nonneg_disj phi1
+  | D phi1                -> size_nonneg_disj phi1
 (*@ size_nonneg_cnf phi
       variant phi
       ensures size_cnf phi >= 0 *)
@@ -132,22 +132,27 @@ let[@logic] rec impl_free (phi: formula) : formula_wi
   | FOr   (phi1, phi2) -> FOr_wi (impl_free phi1, impl_free phi2)
   | FAnd  (phi1, phi2) -> FAnd_wi (impl_free phi1, impl_free phi2)
   | FImpl (phi1, phi2) -> FOr_wi (FNeg_wi (impl_free phi1), impl_free phi2)
-  | L  phi -> L_wi phi
+  | L  phi             -> L_wi phi
 (*@ r = impl_free phi
       variant phi
       ensures forall v. eval v phi = eval_wi v r *)
 
 let[@logic] rec nnfc (phi: formula_wi)
   = match phi with
-  | FNeg_wi (FNeg_wi phi1) -> nnfc phi1
+  | FNeg_wi (FNeg_wi phi1) ->
+      nnfc phi1
   | FNeg_wi (FAnd_wi (phi1, phi2)) ->
       FOr_nnf (nnfc (FNeg_wi phi1), nnfc (FNeg_wi phi2))
   | FNeg_wi (FOr_wi (phi1, phi2)) ->
       FAnd_nnf (nnfc (FNeg_wi phi1), nnfc (FNeg_wi phi2))
-  | FNeg_wi (L_wi phi1) -> FNeg_nnf (phi1)
-  | FOr_wi (phi1, phi2) -> FOr_nnf (nnfc phi1, nnfc phi2)
-  | FAnd_wi (phi1, phi2) -> FAnd_nnf (nnfc phi1, nnfc phi2)
-  | L_wi phi1 -> L_nnf phi1
+  | FNeg_wi (L_wi phi1) ->
+      FNeg_nnf (phi1)
+  | FOr_wi (phi1, phi2) ->
+      FOr_nnf (nnfc phi1, nnfc phi2)
+  | FAnd_wi (phi1, phi2) ->
+      FAnd_nnf (nnfc phi1, nnfc phi2)
+  | L_wi phi1 ->
+      L_nnf phi1
 (*@ r = nnfc phi
       variant size phi
       ensures forall v. eval_wi v phi = eval_nnf v r *)
@@ -158,7 +163,8 @@ let[@logic] rec distr (phi1: formula_cnf) (phi2: formula_cnf)
       FAnd_cnf (distr phi11 phi2, distr phi12 phi2)
   | phi1, FAnd_cnf (phi21, phi22) ->
       FAnd_cnf (distr phi1 phi21, distr phi1 phi22)
-  | D phi1, D phi2 -> D (FOr_cnf (phi1, phi2))
+  | D phi1, D phi2 ->
+      D (FOr_cnf (phi1, phi2))
 (*@ r = distr phi1 phi2
       variant size_cnf phi1 + size_cnf phi2
       ensures forall v. (eval_cnf v phi1 || eval_cnf v phi2) = eval_cnf v r *)

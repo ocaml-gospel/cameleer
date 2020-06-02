@@ -16,6 +16,36 @@
  <goal name="eval_nnf&#39;vc" expl="VC for eval_nnf" proved="true">
  <proof prover="1"><result status="valid" time="0.13"/></proof>
  </goal>
+ <goal name="eval_disj&#39;vc" expl="VC for eval_disj" proved="true">
+ <proof prover="1"><result status="valid" time="0.12"/></proof>
+ </goal>
+ <goal name="eval_cnf&#39;vc" expl="VC for eval_cnf" proved="true">
+ <proof prover="1"><result status="valid" time="0.13"/></proof>
+ </goal>
+ <goal name="size_nonneg&#39;vc" expl="VC for size_nonneg" proved="true">
+ <proof prover="1"><result status="valid" time="0.66"/></proof>
+ </goal>
+ <goal name="size_nonneg_disj&#39;vc" expl="VC for size_nonneg_disj" proved="true">
+ <proof prover="1"><result status="valid" time="0.16"/></proof>
+ </goal>
+ <goal name="size_nonneg_cnf&#39;vc" expl="VC for size_nonneg_cnf" proved="true">
+ <proof prover="1"><result status="valid" time="0.14"/></proof>
+ </goal>
+ <goal name="impl_free&#39;vc" expl="VC for impl_free" proved="true">
+ <proof prover="0"><result status="valid" time="0.21" steps="1136"/></proof>
+ </goal>
+ <goal name="nnfc&#39;vc" expl="VC for nnfc" proved="true">
+ <proof prover="0"><result status="valid" time="0.15" steps="978"/></proof>
+ </goal>
+ <goal name="distr&#39;vc" expl="VC for distr" proved="true">
+ <proof prover="0"><result status="valid" time="0.10" steps="610"/></proof>
+ </goal>
+ <goal name="cnfc&#39;vc" expl="VC for cnfc" proved="true">
+ <proof prover="1"><result status="valid" time="0.52"/></proof>
+ </goal>
+ <goal name="t&#39;vc" expl="VC for t" proved="true">
+ <proof prover="1"><result status="valid" time="0.13"/></proof>
+ </goal>
 </theory>
 </file>
 </why3session>
