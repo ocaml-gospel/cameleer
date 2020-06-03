@@ -9,15 +9,15 @@ module Make (Eq: sig
 
   type tree = Empty | Node of tree * Eq.elt * tree
 
-  [@@@gospel {| function elements (t: tree) : elt list = match t with
-                | Empty -> []
-                | Node l x r -> (elements l) @ (x :: elements r) |}]
+  (*@ function elements (t: tree) : elt list = match t with
+        | Empty -> []
+        | Node l x r -> (elements l) @ (x :: elements r) *)
 
   type enum = Done | Next of Eq.elt * tree * enum
 
-  [@@@gospel {| function enum_elements (e : enum) : elt list = match e with
-                | Done -> Nil
-                | Next x r e -> Cons x (elements r @ enum_elements e) |}]
+  (*@ function enum_elements (e : enum) : elt list = match e with
+        | Done -> Nil
+        | Next x r e -> Cons x (elements r @ enum_elements e) *)
 
   let rec enum (t: tree) (e: enum) =
     match t with

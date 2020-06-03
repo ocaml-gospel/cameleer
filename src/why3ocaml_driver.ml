@@ -25,6 +25,7 @@ let () = List.iter (fun (x, y) -> Hstr.add driver x y)
       "mod", "infix %";
       "<=", "infix <=";
       "<", "infix <";
+      ">", "infix >";
       "=", "infix ="; (* FIXME: this is only true for integers *)
       "mixfix {}", "empty";
       "mixfix {:_:}", "singleton";

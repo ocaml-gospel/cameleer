@@ -9,41 +9,35 @@
 <path name=".."/><path name="program_proofs.ml"/>
 <theory name="Program_proofs">
  <goal name="Mult.mult&#39;vc" expl="VC for mult">
- <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
- <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
- <proof prover="2" obsolete="true"><result status="unknown" time="0.13"/></proof>
  </goal>
  <goal name="Mult.mult_commutative&#39;vc" expl="VC for mult_commutative">
- <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
- <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
- <proof prover="2" obsolete="true"><result status="unknown" time="0.19"/></proof>
  </goal>
- <goal name="Mirror.mirror_involutive&#39;vc" expl="VC for mirror_involutive">
- <proof prover="2" obsolete="true"><result status="valid" time="0.09"/></proof>
+ <goal name="Mirror.mirror_involutive&#39;vc" expl="VC for mirror_involutive" proved="true">
+ <proof prover="2"><result status="valid" time="0.09"/></proof>
  </goal>
- <goal name="Mirror.mirror_size&#39;vc" expl="VC for mirror_size">
- <proof prover="2" obsolete="true"><result status="valid" time="0.09"/></proof>
+ <goal name="Mirror.mirror_size&#39;vc" expl="VC for mirror_size" proved="true">
+ <proof prover="2"><result status="valid" time="0.09"/></proof>
  </goal>
- <goal name="AST.eval&#39;vc" expl="VC for eval">
- <proof prover="2" obsolete="true"><result status="valid" time="0.07"/></proof>
+ <goal name="AST.eval&#39;vc" expl="VC for eval" proved="true">
+ <proof prover="2"><result status="valid" time="0.07"/></proof>
  </goal>
  <goal name="AST.eval_list&#39;vc" expl="VC for eval_list">
  <transf name="split_vc" >
-  <goal name="eval_list&#39;vc.0" expl="variant decrease">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.08"/></proof>
+  <goal name="eval_list&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.08"/></proof>
   </goal>
-  <goal name="eval_list&#39;vc.1" expl="variant decrease">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.07"/></proof>
+  <goal name="eval_list&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.07"/></proof>
   </goal>
   <goal name="eval_list&#39;vc.2" expl="integer overflow">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="2" obsolete="true"><result status="unknown" time="0.14"/></proof>
+  <proof prover="0"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1"><result status="timeout" time="1.00"/></proof>
+  <proof prover="2"><result status="unknown" time="0.14"/></proof>
   </goal>
   <goal name="eval_list&#39;vc.3" expl="integer overflow">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="2" obsolete="true"><result status="unknown" time="0.14"/></proof>
+  <proof prover="0"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1"><result status="timeout" time="1.00"/></proof>
+  <proof prover="2"><result status="unknown" time="0.14"/></proof>
   </goal>
  </transf>
  </goal>
@@ -323,6 +317,54 @@
   </transf>
   </goal>
  </transf>
+ </goal>
+ <goal name="PeanoNumbers.to_int&#39;vc" expl="VC for to_int">
+ <transf name="split_vc" >
+  <goal name="to_int&#39;vc.0" expl="integer overflow">
+  <proof prover="0"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1"><result status="timeout" time="1.00"/></proof>
+  <proof prover="2"><result status="timeout" time="1.00"/></proof>
+  </goal>
+  <goal name="to_int&#39;vc.1" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="to_int&#39;vc.1.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="to_int&#39;vc.1.0.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.05"/></proof>
+    </goal>
+    <goal name="to_int&#39;vc.1.0.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.05"/></proof>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="to_int&#39;vc.1.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="to_int&#39;vc.1.1.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.06"/></proof>
+    </goal>
+    <goal name="to_int&#39;vc.1.1.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.06"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="PeanoNumbers.of_int&#39;vc" expl="VC for of_int" proved="true">
+ <proof prover="1" timelimit="5"><result status="valid" time="0.02" steps="138"/></proof>
+ </goal>
+ <goal name="PeanoNumbers.to_int_of_int&#39;vc" expl="VC for to_int_of_int" proved="true">
+ <proof prover="1"><result status="valid" time="0.02" steps="129"/></proof>
+ </goal>
+ <goal name="PeanoNumbers.of_int_to_int&#39;vc" expl="VC for of_int_to_int" proved="true">
+ <proof prover="2"><result status="valid" time="0.15"/></proof>
+ </goal>
+ <goal name="PeanoNumbers.less_transitive&#39;vc" expl="VC for less_transitive" proved="true">
+ <proof prover="2"><result status="valid" time="0.16"/></proof>
+ </goal>
+ <goal name="PeanoNumbers.add&#39;vc" expl="VC for add" proved="true">
+ <proof prover="2"><result status="valid" time="0.08"/></proof>
  </goal>
 </theory>
 </file>

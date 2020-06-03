@@ -39,10 +39,10 @@ module Mirror = struct
         variant t
         ensures mirror (mirror t) = t *)
 
-  [@@@gospel {|function size (t: 'a tree) : integer =
+  (*@ function size (t: 'a tree) : integer =
         match t with
         | Empty -> 0
-        | Node l _ r -> 1 + size l + size r |} ]
+        | Node l _ r -> 1 + size l + size r *)
 
   let[@lemma] rec mirror_size (t: 'a tree) =
     match t with
@@ -117,5 +117,63 @@ module AST = struct
         variant args
         ensures forall op env. u = unit op ->
                 eval (Node op r) env = eval (Node op args) env *)
+
+end
+
+module PeanoNumbers = struct
+
+  type unary = Zero | Succ of unary
+
+  (*@ function to_int_logic (u: unary) : integer =
+        match u with Zero -> 0 | Succ u' -> 1 + to_int_logic u' *)
+
+  let[@logic] rec to_int (u: unary) : int =
+    match u with Zero -> 0 | Succ u' -> 1 + to_int u'
+  (*@ r = to_int u
+        ensures r >= 0 && r = to_int_logic u *)
+
+  (*@ function of_int_logic (n: integer) : unary *)
+  (*@ axiom of_int_0: of_int_logic 0 = Zero *)
+  (*@ axiom of_int_S: forall n. n > 0 ->
+        of_int_logic n = Succ (of_int_logic (n - 1)) *)
+
+  let[@logic] rec of_int (n: int) : unary =
+    if n = 0 then Zero else Succ (of_int (n - 1))
+  (*@ r = of_int n
+        requires n >= 0
+        variant  n
+        ensures  r = of_int_logic n *)
+
+  let[@lemma] rec to_int_of_int (n: int) =
+    if n > 0 then to_int_of_int (n - 1)
+  (*@ to_int_of_int n
+        requires n >= 0
+        variant  n
+        ensures  to_int_logic (of_int_logic n) = n *)
+
+  let[@lemma] rec of_int_to_int (u: unary) =
+    match u with Zero -> () | Succ u' -> of_int_to_int u'
+  (*@ of_int_to_int u
+        ensures of_int_logic (to_int_logic u) = u *)
+
+  let[@logic] rec less (x: unary) (y: unary) =
+    match x, y with
+    | Zero   , Succ _  -> true
+    | _      , Zero    -> false
+    | Succ x', Succ y' -> less x' y'
+
+  let[@lemma] rec less_transitive x y =
+    match x, y with
+    | Succ x', Succ y' -> less_transitive x' y'
+    | _ -> ()
+  (*@ less_transitive x y
+        ensures less x y <-> to_int_logic x < to_int_logic y *)
+
+  let[@logic] rec add x y =
+    match y with
+    | Zero    -> x
+    | Succ y' -> Succ (add x y')
+  (*@ r = add x y
+        ensures to_int_logic r = to_int_logic x + to_int_logic y *)
 
 end
