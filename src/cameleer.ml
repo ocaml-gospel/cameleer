@@ -191,7 +191,7 @@ module Convert = struct
     | _ -> assert false (* TODO *)
 
   let rec s_structure s_str =
-    List.map s_structure_item s_str
+    List.flatten (List.map s_structure_item s_str)
 
   and s_structure_item Uast.{sstr_desc; _} =
     s_structure_item_desc sstr_desc
@@ -207,7 +207,7 @@ module Convert = struct
     match str_item_desc with
     | Uast.Str_value (Nonrecursive, svb_list) ->
         begin match id_expr_rs_kind_of_svb_list svb_list with
-        | rs_kind, [id, expr] -> Odecl (Dlet (id, false, rs_kind, expr))
+        | rs_kind, [id, expr] -> [Odecl (Dlet (id, false, rs_kind, expr))]
         | _ -> assert false (* no multiple bindings in nonrecursive values *)end
     | Uast.Str_value (Recursive, svb_list) ->
         let mk_fun_def rs_kind (id, fun_expr) =
@@ -217,11 +217,11 @@ module Convert = struct
           let mask_visible = Ity.MaskVisible in
           id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
         let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
-        Odecl (Drec (List.map (mk_fun_def rs_kind) id_fun_expr_list))
+        [Odecl (Drec (List.map (mk_fun_def rs_kind) id_fun_expr_list))]
     | Uast.Str_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
         let td_list = List.map type_decl type_decl_list in
-        Odecl (Dtype td_list)
+        [Odecl (Dtype td_list)]
     | Uast.Str_function f ->
         let ld_loc = T.location f.fun_loc in
         let ld_ident = T.preid f.fun_name in
@@ -229,14 +229,30 @@ module Convert = struct
         let ld_type = Opt.map T.pty f.fun_type in
         let ld_def = Opt.map T.term f.fun_def in
         let logic_decl = { ld_loc; ld_ident; ld_params; ld_type; ld_def } in
-        Odecl (Dlogic [logic_decl])
+        [Odecl (Dlogic [logic_decl])]
     | Uast.Str_axiom a ->
-        Odecl (Dprop (Decl.Paxiom, T.preid a.ax_name, T.term a.ax_term))
+        [Odecl (Dprop (Decl.Paxiom, T.preid a.ax_name, T.term a.ax_term))]
     | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
         let scope_loc = T.location spmb_loc in
         let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
-        Omodule (scope_loc, scope_id, s_module_expr spmb_expr)
-    | _ -> assert false
+        [Omodule (scope_loc, scope_id, s_module_expr spmb_expr)]
+    | Uast.Str_exception _ ->
+        assert false (* TODO *)
+    | Uast.Str_open _ -> assert false (* TODO *)
+    | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
+        let loc = T.location popen_loc in
+        let id_loc = T.location popen_lid.loc in
+        let fname = E.longident popen_lid.txt ~id_loc in
+        [Odecl (Duseimport (loc, true, [fname, None]))]
+    | Str_ghost_type (rec_flag, type_decl_list) ->
+        ignore (rec_flag); (* TODO *)
+        let td_list = List.map type_decl type_decl_list in
+        [Odecl (Dtype td_list)]
+    | Str_ghost_val _ ->
+        assert false (* TODO *)
+    | Str_attribute _ ->
+        []
+    | _ -> assert false (* TODO *)
 
   and s_module_expr {spmod_desc; spmod_loc; _} =
     let decl_loc = T.location spmod_loc in
