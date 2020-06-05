@@ -51,7 +51,10 @@ module Convert = struct
       follow the manifest-kind logic defined in the OCaml [Parsetree]. *)
   let td_def td_spec td_manifest td_kind =
     let field Uast.{f_preid; f_pty; f_mutable; _} =
-      let id  = T.(mk_id ~id_loc:(location f_preid.pid_loc) f_preid.pid_str) in
+      let id_loc = T.location f_preid.pid_loc in
+      let f, c1, c2, c3 = Loc.get id_loc in
+      Format.eprintf "loc:%s, %d, %d, %d@." f c1 c2 c3;
+      let id  = T.(mk_id ~id_loc f_preid.pid_str) in
       let pty = T.pty f_pty in
       mk_field id.id_loc id pty ~mut:f_mutable ~ghost:true in
     let field_of_label_decl lbl_decl =
@@ -174,6 +177,17 @@ module Convert = struct
       params, Some (E.core_type last), pat, mask in
     mk_vals params ret pat mask
 
+  let function_ f =
+    let ld_loc = T.location f.Uast.fun_loc in
+    let ld_ident = T.preid f.fun_name in
+    let ld_params = List.map param f.fun_params in
+    let ld_type = Opt.map T.pty f.fun_type in
+    let ld_def = Opt.map T.term f.fun_def in
+    { ld_loc; ld_ident; ld_params; ld_type; ld_def }
+
+  let axiom a =
+    T.preid a.Uast.ax_name, T.term a.ax_term
+
   let rec s_signature s_sig =
     List.map s_signature_item s_sig
 
@@ -188,6 +202,11 @@ module Convert = struct
         ignore (rec_flag); (* TODO *)
         let td_list = List.map type_decl type_decl_list in
         Odecl (Dtype td_list)
+    | Sig_function f ->
+        Odecl (Dlogic [function_ f])
+    | Sig_axiom a ->
+        let ax_name, ax_term = axiom a in
+        Odecl (Dprop (Decl.Paxiom, ax_name, ax_term))
     | _ -> assert false (* TODO *)
 
   let rec s_structure s_str =
@@ -204,6 +223,18 @@ module Convert = struct
       else Expr.RKnone in
     let id_expr_rs_kind_of_svb_list svb_list =
       rs_kind svb_list, List.map (fun svb -> E.s_value_binding svb) svb_list in
+    let type_exception {ptyexn_constructor = exn_construct; _} =
+      let txt_exn = exn_construct.pext_name.txt in
+      let loc_exn = exn_construct.pext_name.loc in
+      let id_exn = T.mk_id txt_exn ~id_loc:(T.location loc_exn) in
+      let pty = match exn_construct.pext_kind with
+        | Pext_decl (Pcstr_tuple cty_list, None) ->
+            PTtuple (List.map E.core_type cty_list)
+        | Pext_decl (Pcstr_record _, _) ->
+            Loc.errorm
+              "Record expressions in exceptions declaration is not supported."
+        | _ -> assert false (* TODO? *) in
+      id_exn, pty, Ity.MaskVisible in
     match str_item_desc with
     | Uast.Str_value (Nonrecursive, svb_list) ->
         begin match id_expr_rs_kind_of_svb_list svb_list with
@@ -223,27 +254,29 @@ module Convert = struct
         let td_list = List.map type_decl type_decl_list in
         [Odecl (Dtype td_list)]
     | Uast.Str_function f ->
-        let ld_loc = T.location f.fun_loc in
-        let ld_ident = T.preid f.fun_name in
-        let ld_params = List.map param f.fun_params in
-        let ld_type = Opt.map T.pty f.fun_type in
-        let ld_def = Opt.map T.term f.fun_def in
-        let logic_decl = { ld_loc; ld_ident; ld_params; ld_type; ld_def } in
-        [Odecl (Dlogic [logic_decl])]
+        [Odecl (Dlogic [function_ f])]
     | Uast.Str_axiom a ->
         [Odecl (Dprop (Decl.Paxiom, T.preid a.ax_name, T.term a.ax_term))]
     | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
         let scope_loc = T.location spmb_loc in
         let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
         [Omodule (scope_loc, scope_id, s_module_expr spmb_expr)]
-    | Uast.Str_exception _ ->
-        assert false (* TODO *)
+    | Uast.Str_exception ty_exn ->
+        let id, pty, mask = type_exception ty_exn in
+        [Odecl (Dexn (id, pty, mask))]
     | Uast.Str_open _ -> assert false (* TODO *)
     | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
         let loc = T.location popen_loc in
         let id_loc = T.location popen_lid.loc in
-        let fname = E.longident popen_lid.txt ~id_loc in
-        [Odecl (Duseimport (loc, true, [fname, None]))]
+        let open_txt = popen_lid.txt in
+        let mname_txt = match open_txt with
+          | Longident.Lident s -> s
+          | Ldot (_, s) -> s
+          | _ -> assert false in
+        let mname = T.mk_id mname_txt ~id_loc in
+        let id_fname = T.mk_id (String.uncapitalize_ascii mname_txt) ~id_loc in
+        let fname = Qident id_fname in
+        [Odecl (Duseimport (loc, true, [Qdot (fname, mname), Some mname]))]
     | Str_ghost_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
         let td_list = List.map type_decl type_decl_list in
@@ -318,18 +351,18 @@ let use_std_lib =
   [Odecl use_int; Odecl use_int63; Odecl use_list; Odecl use_length;
    Odecl use_append; Odecl use_ocaml_exn; Odecl use_option]
 
-let read_file file c =
+let read_file file nm c =
   let lb = Lexing.from_channel c in
   Location.init lb file;
   let ocaml_structure = parse_ocaml_structure_lb lb in
-  parse_structure_gospel ocaml_structure
+  parse_structure_gospel ocaml_structure nm
 
 let read_channel env path file c =
   if !debug then Format.eprintf "reading file '%s'@." file;
   let mod_name =
     let f = Filename.basename file in
     String.capitalize_ascii (Filename.chop_extension f) in
-  let f = read_file file c in
+  let f = read_file file mod_name c in
   open_file env path; (* This is the beginning of the Why3 file construction *)
   let id = T.mk_id mod_name in
   open_module id; (* This is the beginning of the top module construction *)
