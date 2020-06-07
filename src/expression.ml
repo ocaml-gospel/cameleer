@@ -131,7 +131,12 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         let expr = expression expr in
         Elet (id, false, Expr.RKnone, binder_expr, expr)
     | Uast.Sexp_let _ -> assert false (* TODO *)
-    | Uast.Sexp_fun _ -> assert false (* TODO *)
+    | Uast.Sexp_fun (Nolabel, None, pat, expr_body, spec) ->
+        let ret  = T.mk_pattern Pwild in
+        let expr_body = expression expr_body in
+        let spec = match spec with None -> empty_spec | Some s -> S.vspec s in
+        let mask = Ity.MaskVisible in
+        Efun ([binder_of_pattern pat], None, ret, mask, spec, expr_body)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
         Eand (arg_expr arg1, arg_expr arg2)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
@@ -203,12 +208,14 @@ and s_value_binding svb =
   let expr_loc = T.location svb.Uast.spvb_expr.spexp_loc in
   let spec = function None -> empty_spec | Some s -> S.vspec s in
   let rec loop acc expr = match expr.Uast.spexp_desc with
-    | Sexp_fun (Nolabel, None, pat, e) ->
+    | Sexp_fun (Nolabel, None, pat, e, _) ->
+        (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
         let arg = binder_of_pattern pat in
         loop (arg :: acc) e
     | _ -> List.rev acc, expr in (* TODO *)
   let mk_binder expr = match expr.Uast.spexp_desc with
-    | Sexp_fun (_, _, pat, e) ->
+    | Sexp_fun (_, _, pat, e, _) ->
+        (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
         let args, expr = loop [] e in
         let args = binder_of_pattern pat :: args in
         let expr = expression expr in
