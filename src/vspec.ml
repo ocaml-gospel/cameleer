@@ -29,6 +29,11 @@ let sp_post sp_hd_ret sp_post =
     | pl  -> T.mk_pattern (Ptuple pl) ~pat_loc:term_loc in
   term_loc, [pat, T.term sp_post]
 
+let sp_post_no_ret sp_post =
+  let term_loc = T.location sp_post.Uast.term_loc in
+  let id_result = T.mk_id "result" in
+  term_loc, [T.mk_pattern (Pvar id_result), T.term sp_post]
+
 (** Converts a GOSPEL exception postcondition into a Why3's Ptree [xpost]. The
     two data types have the same structure, hence this is a morphism. *)
 let sp_xpost (loc, q_pat_t_option_list) =
@@ -47,5 +52,18 @@ let vspec spec = {
   sp_variant = List.map (fun t -> T.term t, None) spec.sp_variant;
   sp_checkrw = false;
   sp_diverge = spec.sp_diverge;
+  sp_partial = false;
+}
+
+let fun_spec spec = {
+  sp_pre     = List.map T.term spec.Uast.fun_req;
+  sp_post    = List.map sp_post_no_ret spec.fun_ens;
+  sp_xpost   = [] (* TODO: cannot be done with [fun_spec] argument *);
+  sp_reads   = [];
+  sp_writes  = [];
+  sp_alias   = [];
+  sp_variant = List.map (fun t -> T.term t, None) spec.fun_variant;
+  sp_checkrw = false;
+  sp_diverge = false;
   sp_partial = false;
 }

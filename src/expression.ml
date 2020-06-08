@@ -132,9 +132,9 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         Elet (id, false, Expr.RKnone, binder_expr, expr)
     | Uast.Sexp_let _ -> assert false (* TODO *)
     | Uast.Sexp_fun (Nolabel, None, pat, expr_body, spec) ->
-        let ret  = T.mk_pattern Pwild in
+        let ret = T.mk_pattern Pwild in
         let expr_body = expression expr_body in
-        let spec = match spec with None -> empty_spec | Some s -> S.vspec s in
+        let spec = match spec with Some s -> S.fun_spec s | _ -> empty_spec in
         let mask = Ity.MaskVisible in
         Efun ([binder_of_pattern pat], None, ret, mask, spec, expr_body)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
