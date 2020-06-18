@@ -63,6 +63,10 @@ let rec core_type O.{ptyp_desc; ptyp_loc; _} = match ptyp_desc with
   | _ -> assert false (* TODO *)
 
 let binder_of_pattern O.{ppat_desc; ppat_loc; _} = match ppat_desc with
+  | Ppat_any ->
+      let id  = T.(mk_id "us" ~id_loc:(location ppat_loc)) in
+      let loc = T.location ppat_loc in
+      (loc, Some id, false, None)
   | Ppat_var x ->
       let id  = T.(mk_id x.txt ~id_loc:(location x.loc)) in
       let loc = T.location ppat_loc in
