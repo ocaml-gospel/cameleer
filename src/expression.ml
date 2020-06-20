@@ -133,6 +133,7 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         let expr = expression expr in
         Elet (id, false, Expr.RKnone, binder_expr, expr)
     | Uast.Sexp_let (Recursive, _, _) -> assert false (* TODO *)
+    | Uast.Sexp_function _ -> assert false (* TODO *)
     | Uast.Sexp_fun (Nolabel, None, pat, expr_body, spec) ->
         let ret = T.mk_pattern Pwild in
         let expr_body = expression expr_body in
