@@ -357,12 +357,19 @@ let read_file file nm c =
   let ocaml_structure = parse_ocaml_structure_lb lb in
   parse_structure_gospel ocaml_structure nm
 
+let type_check name nm structs =
+  let md = Gospel.Tmodule.init_muc name in
+  let penv = Gospel.Typing.penv [] (Gospel.Utils.Sstr.singleton nm) in
+  let md = List.fold_left (Gospel.Typing.type_str_item penv) md structs in
+  Gospel.Tmodule.wrap_up_muc md
+
 let read_channel env path file c =
   if !debug then Format.eprintf "reading file '%s'@." file;
   let mod_name =
     let f = Filename.basename file in
     String.capitalize_ascii (Filename.chop_extension f) in
   let f = read_file file mod_name c in
+  (* let f = type_check file mod_name f in *)
   open_file env path; (* This is the beginning of the Why3 file construction *)
   let id = T.mk_id mod_name in
   open_module id; (* This is the beginning of the top module construction *)
