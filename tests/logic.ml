@@ -82,23 +82,22 @@ let[@logic] rec eval_cnf (v: valuation) (f: formula_cnf) : bool
 (*@ r = eval_cnf
       variant f *)
 
-[@@@gospel {| function size (phi: formula_wi) : integer
-               = match phi with
-                 | L_wi _ -> 1
-                 | FNeg_wi phi -> 1 + size phi
-                 | FAnd_wi phi1 phi2 | FOr_wi phi1 phi2 ->
-                     1 + size phi1 + size phi2 |} ]
+(*@ function size (phi: formula_wi) : integer
+    = match phi with
+      | L_wi _ -> 1
+      | FNeg_wi phi -> 1 + size phi
+      | FAnd_wi phi1 phi2 | FOr_wi phi1 phi2 -> 1 + size phi1 + size phi2 *)
 
-[@@@gospel {| function size_disj (phi: disj) : integer
-               = match phi with
-                 | FOr_cnf phi1 phi2 -> 1 + size_disj phi1 + size_disj phi2
-                 | FNeg_cnf _ -> 2
-                 | L_cnf _ -> 1 |} ]
+(*@ function size_disj (phi: disj) : integer
+    = match phi with
+      | FOr_cnf phi1 phi2 -> 1 + size_disj phi1 + size_disj phi2
+      | FNeg_cnf _ -> 2
+      | L_cnf _ -> 1 *)
 
-[@@@gospel {| function size_cnf (phi: formula_cnf) : integer
-               = match phi with
-                 | FAnd_cnf phi1 phi2 -> 1 + size_cnf phi1 + size_cnf phi2
-                 | D phi1 -> size_disj phi1 |} ]
+(*@ function size_cnf (phi: formula_cnf) : integer
+    = match phi with
+      | FAnd_cnf phi1 phi2 -> 1 + size_cnf phi1 + size_cnf phi2
+      | D phi1 -> size_disj phi1 *)
 
 let[@lemma] rec size_nonneg (phi: formula_wi)
   = match phi with
