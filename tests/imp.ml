@@ -30,8 +30,8 @@ module Imp (Eq: sig
   type state = Eq.t -> int
 
   let[@logic] rec eval_arith a s = match a with
-    | AConst  n       -> n
-    | AVar    x       -> s x
+    | AConst n       -> n
+    | AVar   x       -> s x
     | APlus  (a1, a2) -> eval_arith a1 s + eval_arith a2 s
     | ATimes (a1, a2) -> eval_arith a1 s * eval_arith a2 s
     | AMinus (a1, a2) -> eval_arith a1 s - eval_arith a2 s
