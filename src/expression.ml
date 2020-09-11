@@ -106,6 +106,10 @@ let rec pattern O.{ppat_desc = p_desc; ppat_loc; _} =
     | _ -> assert false (* TODO *) in
   mk_pat (pat_desc p_desc)
 
+let check_guard = function
+  | Some _ -> Loc.errorm "Guarded expressions are not supported."
+  | None   -> ()
+
 let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let expr_loc = T.location spexp_loc in
   let mk_expr e = mk_expr ~expr_loc e in
@@ -186,16 +190,10 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
   mk_expr (pexp_desc p_desc)
 
 and case Uast.{spc_lhs; spc_guard; spc_rhs} =
-  let check_guard = function
-    | Some _ -> Loc.errorm "Guarded expressions are not supported."
-    | None   -> () in
   check_guard spc_guard;
   pattern spc_lhs, expression spc_rhs
 
 and case_exn Uast.{spc_lhs; spc_guard; spc_rhs} =
-  let check_guard = function
-    | Some _ -> Loc.errorm "Guarded expressions are not supported."
-    | None   -> () in
   check_guard spc_guard;
   let q, pat = match spc_lhs.O.ppat_desc with
     | Ppat_any -> Qident (T.mk_id "_"), None
@@ -203,7 +201,7 @@ and case_exn Uast.{spc_lhs; spc_guard; spc_rhs} =
         Qident (T.mk_id s.txt ~id_loc), None
     | Ppat_construct (id, pat) -> let id_loc = T.location id.loc in
         longident id.txt ~id_loc, Opt.map pattern pat
-  | _ -> assert false in
+    | _ -> assert false (* TODO *) in
   q, pat, expression spc_rhs
 
 and s_value_binding svb =
@@ -215,6 +213,8 @@ and s_value_binding svb =
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
         let arg = binder_of_pattern pat in
         loop (arg :: acc) e
+    | Sexp_function _ ->
+        assert false (* TODO *)
     | _ -> List.rev acc, expr in (* TODO *)
   let mk_binder expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, _, pat, e, _) ->
@@ -226,6 +226,8 @@ and s_value_binding svb =
         let spec = spec svb.Uast.spvb_vspec in
         let efun = (Efun (args, None, ret, Ity.MaskVisible, spec, expr)) in
         mk_expr efun ~expr_loc
+    | Sexp_function _ ->
+        assert false (* TODO *)
     | _ -> expression expr in
   let id = id_of_pat svb.spvb_pat in
   id, mk_binder pexp
