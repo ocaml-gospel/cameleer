@@ -188,6 +188,19 @@ module Convert = struct
   let axiom a =
     T.preid a.Uast.ax_name, T.term a.ax_term
 
+  let type_exception {ptyexn_constructor = exn_construct; _} =
+    let txt_exn = exn_construct.pext_name.txt in
+    let loc_exn = exn_construct.pext_name.loc in
+    let id_exn = T.mk_id txt_exn ~id_loc:(T.location loc_exn) in
+    let pty = match exn_construct.pext_kind with
+      | Pext_decl (Pcstr_tuple cty_list, None) ->
+          PTtuple (List.map E.core_type cty_list)
+      | Pext_decl (Pcstr_record _, _) ->
+          Loc.errorm
+            "Record expressions in exceptions declaration is not supported."
+      | _ -> assert false (* TODO? *) in
+    id_exn, pty, Ity.MaskVisible
+
   let rec s_signature s_sig =
     List.map s_signature_item s_sig
 
@@ -197,17 +210,33 @@ module Convert = struct
   and s_signature_item_desc sig_item_desc =
     match sig_item_desc with
     | Sig_val s_val ->
-        Odecl (val_decl s_val false)
+        [Odecl (val_decl s_val false)]
     | Sig_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
         let td_list = List.map type_decl type_decl_list in
-        Odecl (Dtype td_list)
+        [Odecl (Dtype td_list)]
     | Sig_function f ->
-        Odecl (Dlogic [function_ f])
+        [Odecl (Dlogic [function_ f])]
     | Sig_axiom a ->
         let ax_name, ax_term = axiom a in
-        Odecl (Dprop (Decl.Paxiom, ax_name, ax_term))
-    | _ -> assert false (* TODO *)
+        [Odecl (Dprop (Decl.Paxiom, ax_name, ax_term))]
+    | Sig_typext _ -> assert false (* TODO *)
+    | Sig_module _ -> assert false (* TODO *)
+    | Sig_recmodule _ -> assert false (* TODO *)
+    | Sig_modtype _ -> assert false (* TODO *)
+    | Sig_exception ty_exn ->
+        let id, pty, mask = type_exception ty_exn in
+        [Odecl (Dexn (id, pty, mask))]
+    | Sig_open _ -> assert false (* TODO *)
+    | Sig_include _ -> assert false (* TODO *)
+    | Sig_class _ -> assert false (* TODO *)
+    | Sig_class_type _ -> assert false (* TODO *)
+    | Sig_attribute _ ->
+        []
+    | Sig_extension _ -> assert false (* TODO *)
+    | Sig_ghost_type _ -> assert false (* TODO *)
+    | Sig_ghost_val  _ -> assert false (* TODO *)
+    | Sig_ghost_open  _ -> assert false (* TODO *)
 
   let rec s_structure s_str =
     List.flatten (List.map s_structure_item s_str)
