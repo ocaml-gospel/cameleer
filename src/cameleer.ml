@@ -252,18 +252,6 @@ module Convert = struct
       else Expr.RKnone in
     let id_expr_rs_kind_of_svb_list svb_list =
       rs_kind svb_list, List.map (fun svb -> E.s_value_binding svb) svb_list in
-    let type_exception {ptyexn_constructor = exn_construct; _} =
-      let txt_exn = exn_construct.pext_name.txt in
-      let loc_exn = exn_construct.pext_name.loc in
-      let id_exn = T.mk_id txt_exn ~id_loc:(T.location loc_exn) in
-      let pty = match exn_construct.pext_kind with
-        | Pext_decl (Pcstr_tuple cty_list, None) ->
-            PTtuple (List.map E.core_type cty_list)
-        | Pext_decl (Pcstr_record _, _) ->
-            Loc.errorm
-              "Record expressions in exceptions declaration is not supported."
-        | _ -> assert false (* TODO? *) in
-      id_exn, pty, Ity.MaskVisible in
     match str_item_desc with
     | Uast.Str_value (Nonrecursive, svb_list) ->
         begin match id_expr_rs_kind_of_svb_list svb_list with
@@ -290,6 +278,11 @@ module Convert = struct
         let scope_loc = T.location spmb_loc in
         let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
         [Omodule (scope_loc, scope_id, s_module_expr spmb_expr)]
+    | Uast.Str_modtype {mtdname = {txt; loc}; mtdtype; mtdloc; _} ->
+        let scope_loc = T.location mtdloc in
+        let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
+        (* FIXME: do not use that [Opt.get] *)
+        [Omodule (scope_loc, scope_id, s_module_type (Opt.get mtdtype))]
     | Uast.Str_exception ty_exn ->
         let id, pty, mask = type_exception ty_exn in
         [Odecl (Dexn (id, pty, mask))]
@@ -306,13 +299,13 @@ module Convert = struct
         let id_fname = T.mk_id (String.uncapitalize_ascii mname_txt) ~id_loc in
         let fname = Qident id_fname in
         [Odecl (Duseimport (loc, true, [Qdot (fname, mname), Some mname]))]
-    | Str_ghost_type (rec_flag, type_decl_list) ->
+    | Uast.Str_ghost_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
         let td_list = List.map type_decl type_decl_list in
         [Odecl (Dtype td_list)]
-    | Str_ghost_val _ ->
+    | Uast.Str_ghost_val _ ->
         assert false (* TODO *)
-    | Str_attribute _ ->
+    | Uast.Str_attribute _ ->
         []
     | _ -> assert false (* TODO *)
 
@@ -328,14 +321,17 @@ module Convert = struct
         let id = T.mk_id ~id_loc arg_name.txt in
         let body = s_module_expr body in
         Omodule (decl_loc, id, s_module_type (Opt.get arg)) :: body
-    | _ -> assert false (* TODO *)
+    | Smod_apply _ -> assert false (* TODO *)
+    | Smod_constraint _ -> assert false (* TODO *)
+    | Smod_unpack _ -> assert false (* TODO *)
+    | Smod_extension _ -> assert false (* TODO *)
 
   and s_module_type {mdesc; mloc; _} =
     let _decl_loc = T.location mloc in
     match mdesc with
     | Mod_ident _ -> assert false (* TODO *)
     | Mod_signature s_sig ->
-        s_signature s_sig
+        List.flatten (s_signature s_sig)
     | Mod_functor _
       (* of string loc * s_module_type option * s_module_type *) ->
         assert false (* TODO *)
