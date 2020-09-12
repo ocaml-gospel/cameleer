@@ -76,10 +76,12 @@ let binder_of_pattern O.{ppat_desc; ppat_loc; _} = match ppat_desc with
       let loc = T.location ppat_loc in
       let pty = core_type cty in
       (loc, Some id, false, Some pty)
+  | Ppat_tuple _ -> assert false (* TODO *)
   | Ppat_construct ({txt = Lident "()"; loc}, None) ->
       let id = T.(mk_id "_" ~id_loc:(location loc)) in
       let loc = T.location ppat_loc in
       (loc, Some id, false, Some unit_pty)
+  | Ppat_alias _ -> assert false (* TODO *)
   | _ -> assert false (* TODO *)
 
 let id_of_pat O.{ppat_desc; _} = match ppat_desc with
@@ -226,8 +228,11 @@ and s_value_binding svb =
         let spec = spec svb.Uast.spvb_vspec in
         let efun = (Efun (args, None, ret, Ity.MaskVisible, spec, expr)) in
         mk_expr efun ~expr_loc
-    | Sexp_function _ ->
-        assert false (* TODO *)
+    | Sexp_function case_list ->
+        let param_id = T.mk_id "param" in
+        let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
+        let ematch = Ematch (param, List.map case case_list, []) in
+        mk_expr ematch ~expr_loc
     | _ -> expression expr in
   let id = id_of_pat svb.spvb_pat in
   id, mk_binder pexp
