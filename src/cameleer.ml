@@ -39,17 +39,18 @@ module Convert = struct
 
   (** Translate a list of OCaml constructors declaration list into the
       corresponding Why3's Ptree algebraic constructors list. *)
-  let constructor_declaration {pcd_loc; pcd_name; pcd_args; _} =
-    ignore (pcd_loc); ignore (pcd_name);
+  let constructor_declaration info {pcd_loc; pcd_name; pcd_args; _} =
     match pcd_args with
     | Pcstr_tuple cty_list -> let id_loc = T.location pcd_name.loc in
         let id = T.mk_id ~id_loc pcd_name.txt in
+        let construct_arith = List.length cty_list in
+        Hashtbl.add info.E.info_arith_construct pcd_name.txt (construct_arith);
         (T.location pcd_loc, id, List.map param_of_cty cty_list)
     | Pcstr_record _ -> assert false
 
   (** Convert a [Uast] type definition into a Why3's Ptree [type_def]. We
       follow the manifest-kind logic defined in the OCaml [Parsetree]. *)
-  let td_def td_spec td_manifest td_kind =
+  let td_def info td_spec td_manifest td_kind =
     let field Uast.{f_preid; f_pty; f_mutable; _} =
       let id_loc = T.location f_preid.pid_loc in
       let f, c1, c2, c3 = Loc.get id_loc in
@@ -72,23 +73,23 @@ module Convert = struct
     | Some cty, Ptype_abstract ->
         TDalias (E.core_type cty)
     | None, Ptype_variant constr_decl_list ->
-        TDalgebraic (List.map constructor_declaration constr_decl_list)
+        TDalgebraic (List.map (constructor_declaration info) constr_decl_list)
     | None, Ptype_record lbl_list ->
         let ghost_fields = List.map field td_spec.Uast.ty_field in
         let all_fields = List.fold_right add_reg_field lbl_list ghost_fields in
         TDrecord all_fields
     | _ -> assert false (* TODO *)
 
-  let type_decl Uast.({tname; tspec; tmanifest; tkind; _} as td) = {
-      td_loc    = T.location td.tloc;
-      td_ident  = T.(mk_id tname.txt ~id_loc:(location tname.loc));
-      td_params = List.map td_params td.tparams;
-      td_vis    = td_private tmanifest td.tprivate tkind;
-      td_mut    = tspec.ty_ephemeral;
-      td_inv    = List.map Uterm.term tspec.ty_invariant;
-      td_wit    = [];
-      td_def    = td_def tspec tmanifest tkind
-    }
+  let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) = {
+    td_loc    = T.location td.tloc;
+    td_ident  = T.(mk_id tname.txt ~id_loc:(location tname.loc));
+    td_params = List.map td_params td.tparams;
+    td_vis    = td_private tmanifest td.tprivate tkind;
+    td_mut    = tspec.ty_ephemeral;
+    td_inv    = List.map Uterm.term tspec.ty_invariant;
+    td_wit    = [];
+    td_def    = td_def info tspec tmanifest tkind
+  }
 
   let logic_attr = "logic"
   let lemma_attr = "lemma"
@@ -201,19 +202,19 @@ module Convert = struct
       | _ -> assert false (* TODO? *) in
     id_exn, pty, Ity.MaskVisible
 
-  let rec s_signature s_sig =
-    List.map s_signature_item s_sig
+  let rec s_signature info s_sig =
+    List.map (s_signature_item info) s_sig
 
-  and s_signature_item Uast.{sdesc; _} =
-    s_signature_item_desc sdesc
+  and s_signature_item info Uast.{sdesc; _} =
+    s_signature_item_desc info sdesc
 
-  and s_signature_item_desc sig_item_desc =
+  and s_signature_item_desc info sig_item_desc =
     match sig_item_desc with
     | Sig_val s_val ->
         [Odecl (val_decl s_val false)]
     | Sig_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
-        let td_list = List.map type_decl type_decl_list in
+        let td_list = List.map (type_decl info) type_decl_list in
         [Odecl (Dtype td_list)]
     | Sig_function f ->
         [Odecl (Dlogic [function_ f])]
@@ -239,13 +240,12 @@ module Convert = struct
     | Sig_ghost_open  _ -> assert false (* TODO *)
 
   let s_structure =
-    let mod_type_table : (Longident.t, odecl list) Hashtbl.t =
-      Hashtbl.create 16 in
+    let mod_type_table : (string, odecl list) Hashtbl.t = Hashtbl.create 16 in
 
-    let rec s_structure_item Uast.{sstr_desc; _} =
-      s_structure_item_desc sstr_desc
+    let rec s_structure_item info Uast.{sstr_desc; _} =
+      s_structure_item_desc info sstr_desc
 
-    and s_structure_item_desc str_item_desc =
+    and s_structure_item_desc info str_item_desc =
       let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
       let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
       let rs_kind svb_list =
@@ -253,7 +253,7 @@ module Convert = struct
         else if List.exists is_lemma_svb svb_list then Expr.RKlemma
         else Expr.RKnone in
       let id_expr_rs_kind_of_svb svb_list =
-        let s_value svb = E.s_value_binding svb in
+        let s_value svb = E.s_value_binding info svb in
         rs_kind svb_list, List.map s_value svb_list in
       match str_item_desc with
       | Uast.Str_value (Nonrecursive, svb_list) ->
@@ -274,7 +274,7 @@ module Convert = struct
           [Odecl (Drec (List.map (mk_fun_def rs_kind) id_fun_expr_list))]
       | Uast.Str_type (rec_flag, type_decl_list) ->
           ignore (rec_flag); (* TODO *)
-          let td_list = List.map type_decl type_decl_list in
+          let td_list = List.map (type_decl info) type_decl_list in
           [Odecl (Dtype td_list)]
       | Uast.Str_function f ->
           [Odecl (Dlogic [function_ f])]
@@ -310,7 +310,7 @@ module Convert = struct
           [Odecl (Duseimport (loc, true, [Qdot (fname, mname), Some mname]))]
       | Uast.Str_ghost_type (rec_flag, type_decl_list) ->
           ignore (rec_flag); (* TODO *)
-          let td_list = List.map type_decl type_decl_list in
+          let td_list = List.map (type_decl info) type_decl_list in
           [Odecl (Dtype td_list)]
       | Uast.Str_ghost_val _ ->
           assert false (* TODO *)
@@ -358,8 +358,8 @@ module Convert = struct
       | Mod_alias _ (* of Longident.t loc *) ->
           assert false (* TODO *)
 
-    and s_structure s_str =
-      List.flatten (List.map s_structure_item s_str) in
+    and s_structure info s_str =
+      List.flatten (List.map (s_structure_item info) s_str) in
     s_structure
 
 end
@@ -377,22 +377,33 @@ let print_modules = Debug.lookup_flag "print_modules"
 
 let use_std_lib =
   let int = Qdot (Qident (mk_id "int"), mk_id "Int") in
-  let int63 = Qdot (Qdot (Qident (mk_id "mach"), mk_id "int"), mk_id "Int63") in
+  let minmax = Qdot (Qident (mk_id "int"), mk_id "MinMax") in
+  (* let int63 = Qdot (Qdot (Qident (mk_id "mach"), mk_id "int"), mk_id "Int63") in *)
   let length = Qdot (Qident (mk_id "list"), mk_id "List") in
   let list = Qdot (Qident (mk_id "list"), mk_id "Length") in
   let append = Qdot (Qident (mk_id "list"), mk_id "Append") in
   let ocaml_exn = Qdot (Qident (mk_id "ocaml"), mk_id "Exceptions") in
   let option = Qdot (Qident (mk_id "option"), mk_id "Option") in
+  let ocaml_ref = Qdot (Qident (mk_id "ref"), mk_id "Ref") in
   let use_int = Duseimport (Loc.dummy_position, false, [int, None]) in
-  let use_int63 = Duseimport (Loc.dummy_position, false, [int63, None]) in
+  let use_minmax = Duseimport (Loc.dummy_position, false, [minmax, None]) in
+  (* let use_int63 = Duseimport (Loc.dummy_position, false, [int63, None]) in *)
   let use_list = Duseimport (Loc.dummy_position, false, [list, None]) in
   let use_length = Duseimport (Loc.dummy_position, false, [length, None]) in
   let use_append = Duseimport (Loc.dummy_position, false, [append, None]) in
   let use_ocaml_exn =
     Duseimport (Loc.dummy_position, false, [ocaml_exn, None]) in
   let use_option = Duseimport (Loc.dummy_position, false, [option, None]) in
-  [Odecl use_int; Odecl use_int63; Odecl use_list; Odecl use_length;
-   Odecl use_append; Odecl use_ocaml_exn; Odecl use_option]
+  let use_ref = Duseimport (Loc.dummy_position, false, [ocaml_ref, None]) in
+  [Odecl use_int; Odecl use_minmax; (* Odecl use_int63; *) Odecl use_list;
+   Odecl use_length; Odecl use_append; Odecl use_ocaml_exn; Odecl use_ref;
+   Odecl use_option]
+
+let mk_info () =
+  let info = E.{ info_arith_construct = Hashtbl.create 32 } in
+  Hashtbl.add info.info_arith_construct "Some" 1;
+  Hashtbl.add info.info_arith_construct "::" 2;
+  info
 
 let read_file file nm c =
   let lb = Lexing.from_channel c in
@@ -416,7 +427,8 @@ let read_channel env path file c =
   open_file env path; (* This is the beginning of the Why3 file construction *)
   let id = T.mk_id mod_name in
   open_module id; (* This is the beginning of the top module construction *)
-  let f = s_structure f in
+  let info = mk_info () in
+  let f = s_structure info f in
   let f = use_std_lib @ f in
   let rec pp_list pp fmt l = match l with
     | [] -> ()
