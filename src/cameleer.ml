@@ -283,12 +283,14 @@ module Convert = struct
       | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
           let scope_loc = T.location spmb_loc in
           let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
-          [Omodule (scope_loc, scope_id, s_module_expr spmb_expr)]
+          [Omodule (scope_loc, scope_id, s_module_expr info spmb_expr)]
       | Uast.Str_modtype {mtdname = {txt; loc}; mtdtype; mtdloc; _} ->
           let scope_loc = T.location mtdloc in
           let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
           (* FIXME: do not use that [Opt.get] *)
-          [Omodule (scope_loc, scope_id, s_module_type (Opt.get mtdtype))]
+          let scope_decls = s_module_type info (Opt.get mtdtype) in
+          Hashtbl.add mod_type_table txt scope_decls;
+          [Omodule (scope_loc, scope_id, scope_decls)]
       | Uast.Str_exception ty_exn ->
           let id, pty, mask = type_exception ty_exn in
           [Odecl (Dexn (id, pty, mask))]
@@ -316,35 +318,37 @@ module Convert = struct
           []
       | _ -> assert false (* TODO *)
 
-    and s_module_expr {spmod_desc; spmod_loc; _} =
+    and s_module_expr info {spmod_desc; spmod_loc; _} =
       let decl_loc = T.location spmod_loc in
       match spmod_desc with
       | Uast.Smod_ident _ ->
           Loc.errorm "Module aliasing is not supported."
       | Uast.Smod_structure str ->
-          s_structure str
+          s_structure info str
       | Uast.Smod_functor (arg_name, arg, body) ->
           let id_loc = T.location arg_name.loc in
           let id = T.mk_id ~id_loc arg_name.txt in
-          let body = s_module_expr body in
-          Omodule (decl_loc, id, s_module_type (Opt.get arg)) :: body
+          let body = s_module_expr info body in
+          Omodule (decl_loc, id, s_module_type info (Opt.get arg)) :: body
       | Smod_apply _ -> assert false (* TODO *)
       | Smod_constraint _ -> assert false (* TODO *)
       | Smod_unpack _ -> assert false (* TODO *)
       | Smod_extension _ -> assert false (* TODO *)
 
-    and s_module_type {mdesc; mloc; _} =
+    and s_module_type info {mdesc; mloc; _} =
       let _decl_loc = T.location mloc in
       match mdesc with
-      | Mod_ident s ->
-          Hashtbl.find mod_type_table s.txt
+      | Mod_ident id ->
+          let s = E.string_of_longident id.txt in
+          begin try Hashtbl.find mod_type_table s with
+          Not_found -> assert false end
       | Mod_signature s_sig ->
-          List.flatten (s_signature s_sig)
+          List.flatten (s_signature info s_sig)
       | Mod_functor (arg_name, arg, body) ->
           let id_loc = T.location arg_name.loc in
           let id = T.mk_id arg_name.txt ~id_loc in
-          let body = s_module_type body in
-          Omodule (id_loc, id, s_module_type (Opt.get arg)) :: body
+          let body = s_module_type info body in
+          Omodule (id_loc, id, s_module_type info (Opt.get arg)) :: body
       | Mod_with _ (* of s_module_type * s_with_constraint list *) ->
           assert false (* TODO *)
       | Mod_typeof _ (* of module_expr *) ->
