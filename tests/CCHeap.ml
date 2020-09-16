@@ -267,6 +267,11 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
   let find_min = function
     | E -> None
     | N (_, x, _, _) -> Some x
+  (*@ r = find_min param
+        requires leftist_heap param
+        ensures  match r with
+                 | None -> param = E
+                 | Some x -> is_minimum x param *)
 
   let take = function
     | E -> None
