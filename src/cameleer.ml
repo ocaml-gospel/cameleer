@@ -238,111 +238,125 @@ module Convert = struct
     | Sig_ghost_val  _ -> assert false (* TODO *)
     | Sig_ghost_open  _ -> assert false (* TODO *)
 
-  let rec s_structure s_str =
-    List.flatten (List.map s_structure_item s_str)
+  let s_structure =
+    let mod_type_table : (Longident.t, odecl list) Hashtbl.t =
+      Hashtbl.create 16 in
 
-  and s_structure_item Uast.{sstr_desc; _} =
-    s_structure_item_desc sstr_desc
+    let rec s_structure_item Uast.{sstr_desc; _} =
+      s_structure_item_desc sstr_desc
 
-  and s_structure_item_desc str_item_desc =
-    let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
-    let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
-    let rs_kind svb_list = if List.exists is_logic_svb svb_list then Expr.RKfunc
-      else if List.exists is_lemma_svb svb_list then Expr.RKlemma
-      else Expr.RKnone in
-    let id_expr_rs_kind_of_svb_list svb_list =
-      rs_kind svb_list, List.map (fun svb -> E.s_value_binding svb) svb_list in
-    match str_item_desc with
-    | Uast.Str_value (Nonrecursive, svb_list) ->
-        begin match id_expr_rs_kind_of_svb_list svb_list with
-        | rs_kind, [id, expr] -> [Odecl (Dlet (id, false, rs_kind, expr))]
-        | _ -> assert false (* no multiple bindings in nonrecursive values *)end
-    | Uast.Str_value (Recursive, svb_list) ->
-        let mk_fun_def rs_kind (id, fun_expr) =
-          let args, ret, spec, expr = begin match fun_expr.expr_desc with
-            | Efun (args, _, ret, _, spec, expr) -> args, ret, spec, expr
-            | _ -> assert false (* TODO *) end in
-          let mask_visible = Ity.MaskVisible in
-          id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
-        let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
-        [Odecl (Drec (List.map (mk_fun_def rs_kind) id_fun_expr_list))]
-    | Uast.Str_type (rec_flag, type_decl_list) ->
-        ignore (rec_flag); (* TODO *)
-        let td_list = List.map type_decl type_decl_list in
-        [Odecl (Dtype td_list)]
-    | Uast.Str_function f ->
-        [Odecl (Dlogic [function_ f])]
-    | Uast.Str_axiom a ->
-        [Odecl (Dprop (Decl.Paxiom, T.preid a.ax_name, T.term a.ax_term))]
-    | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
-        let scope_loc = T.location spmb_loc in
-        let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
-        [Omodule (scope_loc, scope_id, s_module_expr spmb_expr)]
-    | Uast.Str_modtype {mtdname = {txt; loc}; mtdtype; mtdloc; _} ->
-        let scope_loc = T.location mtdloc in
-        let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
-        (* FIXME: do not use that [Opt.get] *)
-        [Omodule (scope_loc, scope_id, s_module_type (Opt.get mtdtype))]
-    | Uast.Str_exception ty_exn ->
-        let id, pty, mask = type_exception ty_exn in
-        [Odecl (Dexn (id, pty, mask))]
-    | Uast.Str_open _ -> assert false (* TODO *)
-    | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
-        let loc = T.location popen_loc in
-        let id_loc = T.location popen_lid.loc in
-        let open_txt = popen_lid.txt in
-        let mname_txt = match open_txt with
-          | Longident.Lident s -> s
-          | Ldot (_, s) -> s
-          | _ -> assert false in
-        let mname = T.mk_id mname_txt ~id_loc in
-        let id_fname = T.mk_id (String.uncapitalize_ascii mname_txt) ~id_loc in
-        let fname = Qident id_fname in
-        [Odecl (Duseimport (loc, true, [Qdot (fname, mname), Some mname]))]
-    | Uast.Str_ghost_type (rec_flag, type_decl_list) ->
-        ignore (rec_flag); (* TODO *)
-        let td_list = List.map type_decl type_decl_list in
-        [Odecl (Dtype td_list)]
-    | Uast.Str_ghost_val _ ->
-        assert false (* TODO *)
-    | Uast.Str_attribute _ ->
-        []
-    | _ -> assert false (* TODO *)
+    and s_structure_item_desc str_item_desc =
+      let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
+      let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
+      let rs_kind svb_list =
+        if List.exists is_logic_svb svb_list then Expr.RKfunc
+        else if List.exists is_lemma_svb svb_list then Expr.RKlemma
+        else Expr.RKnone in
+      let id_expr_rs_kind_of_svb svb_list =
+        let s_value svb = E.s_value_binding svb in
+        rs_kind svb_list, List.map s_value svb_list in
+      match str_item_desc with
+      | Uast.Str_value (Nonrecursive, svb_list) ->
+          begin match id_expr_rs_kind_of_svb svb_list with
+            | rs_kind, [id, expr] -> [Odecl (Dlet (id, false, rs_kind, expr))]
+            | _ -> assert false
+            (* no multiple bindings in nonrecursive values *) end
+      | Uast.Str_value (Recursive, svb_list) ->
+          let mk_fun_def rs_kind (id, fun_expr) =
+            let args, ret, spec, expr = begin match fun_expr.expr_desc with
+              | Efun (args, _, ret, _, spec, expr) -> args, ret, spec, expr
+              | Erec _ -> assert false (* TODO *)
+              | Ematch _ -> assert false (* TODO *)
+              | _ -> assert false (* TODO *) end in
+            let mask_visible = Ity.MaskVisible in
+            id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
+          let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb svb_list in
+          [Odecl (Drec (List.map (mk_fun_def rs_kind) id_fun_expr_list))]
+      | Uast.Str_type (rec_flag, type_decl_list) ->
+          ignore (rec_flag); (* TODO *)
+          let td_list = List.map type_decl type_decl_list in
+          [Odecl (Dtype td_list)]
+      | Uast.Str_function f ->
+          [Odecl (Dlogic [function_ f])]
+      | Uast.Str_axiom a ->
+          [Odecl (Dprop (Decl.Paxiom, T.preid a.ax_name, T.term a.ax_term))]
+      | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
+          let scope_loc = T.location spmb_loc in
+          let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
+          [Omodule (scope_loc, scope_id, s_module_expr spmb_expr)]
+      | Uast.Str_modtype {mtdname = {txt; loc}; mtdtype; mtdloc; _} ->
+          let scope_loc = T.location mtdloc in
+          let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
+          (* FIXME: do not use that [Opt.get] *)
+          [Omodule (scope_loc, scope_id, s_module_type (Opt.get mtdtype))]
+      | Uast.Str_exception ty_exn ->
+          let id, pty, mask = type_exception ty_exn in
+          [Odecl (Dexn (id, pty, mask))]
+      | Uast.Str_open _ -> assert false (* TODO *)
+      | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
+          let loc = T.location popen_loc in
+          let id_loc = T.location popen_lid.loc in
+          let open_txt = popen_lid.txt in
+          let mname_txt = match open_txt with
+            | Longident.Lident s -> s
+            | Ldot (_, s) -> s
+            | _ -> assert false in
+          let mname = T.mk_id mname_txt ~id_loc in
+          let str = String.uncapitalize_ascii mname_txt in
+          let id_fname = T.mk_id str ~id_loc in
+          let fname = Qident id_fname in
+          [Odecl (Duseimport (loc, true, [Qdot (fname, mname), Some mname]))]
+      | Uast.Str_ghost_type (rec_flag, type_decl_list) ->
+          ignore (rec_flag); (* TODO *)
+          let td_list = List.map type_decl type_decl_list in
+          [Odecl (Dtype td_list)]
+      | Uast.Str_ghost_val _ ->
+          assert false (* TODO *)
+      | Uast.Str_attribute _ ->
+          []
+      | _ -> assert false (* TODO *)
 
-  and s_module_expr {spmod_desc; spmod_loc; _} =
-    let decl_loc = T.location spmod_loc in
-    match spmod_desc with
-    | Uast.Smod_ident _ ->
-        Loc.errorm "Module aliasing is not supported."
-    | Uast.Smod_structure str ->
-        s_structure str
-    | Uast.Smod_functor (arg_name, arg, body) ->
-        let id_loc = T.location arg_name.loc in
-        let id = T.mk_id ~id_loc arg_name.txt in
-        let body = s_module_expr body in
-        Omodule (decl_loc, id, s_module_type (Opt.get arg)) :: body
-    | Smod_apply _ -> assert false (* TODO *)
-    | Smod_constraint _ -> assert false (* TODO *)
-    | Smod_unpack _ -> assert false (* TODO *)
-    | Smod_extension _ -> assert false (* TODO *)
+    and s_module_expr {spmod_desc; spmod_loc; _} =
+      let decl_loc = T.location spmod_loc in
+      match spmod_desc with
+      | Uast.Smod_ident _ ->
+          Loc.errorm "Module aliasing is not supported."
+      | Uast.Smod_structure str ->
+          s_structure str
+      | Uast.Smod_functor (arg_name, arg, body) ->
+          let id_loc = T.location arg_name.loc in
+          let id = T.mk_id ~id_loc arg_name.txt in
+          let body = s_module_expr body in
+          Omodule (decl_loc, id, s_module_type (Opt.get arg)) :: body
+      | Smod_apply _ -> assert false (* TODO *)
+      | Smod_constraint _ -> assert false (* TODO *)
+      | Smod_unpack _ -> assert false (* TODO *)
+      | Smod_extension _ -> assert false (* TODO *)
 
-  and s_module_type {mdesc; mloc; _} =
-    let _decl_loc = T.location mloc in
-    match mdesc with
-    | Mod_ident _ -> assert false (* TODO *)
-    | Mod_signature s_sig ->
-        List.flatten (s_signature s_sig)
-    | Mod_functor _
-      (* of string loc * s_module_type option * s_module_type *) ->
-        assert false (* TODO *)
-    | Mod_with _ (* of s_module_type * s_with_constraint list *) ->
-        assert false (* TODO *)
-    | Mod_typeof _ (* of module_expr *) ->
-        assert false (* TODO *)
-    | Mod_extension _ (* of extension *) ->
-        assert false
-    | Mod_alias _ (* of Longident.t loc *) ->
-        assert false (* TODO *)
+    and s_module_type {mdesc; mloc; _} =
+      let _decl_loc = T.location mloc in
+      match mdesc with
+      | Mod_ident s ->
+          Hashtbl.find mod_type_table s.txt
+      | Mod_signature s_sig ->
+          List.flatten (s_signature s_sig)
+      | Mod_functor (arg_name, arg, body) ->
+          let id_loc = T.location arg_name.loc in
+          let id = T.mk_id arg_name.txt ~id_loc in
+          let body = s_module_type body in
+          Omodule (id_loc, id, s_module_type (Opt.get arg)) :: body
+      | Mod_with _ (* of s_module_type * s_with_constraint list *) ->
+          assert false (* TODO *)
+      | Mod_typeof _ (* of module_expr *) ->
+          assert false (* TODO *)
+      | Mod_extension _ (* of extension *) ->
+          assert false
+      | Mod_alias _ (* of Longident.t loc *) ->
+          assert false (* TODO *)
+
+    and s_structure s_str =
+      List.flatten (List.map s_structure_item s_str) in
+    s_structure
 
 end
 

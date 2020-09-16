@@ -86,7 +86,23 @@ let binder_of_pattern O.{ppat_desc; ppat_loc; _} = match ppat_desc with
 
 let id_of_pat O.{ppat_desc; _} = match ppat_desc with
   | Ppat_var {txt; loc} -> T.(mk_id ~id_loc:(location loc) txt)
-  | _ -> assert false
+  | Ppat_any -> assert false (* TODO *)
+  | Ppat_alias _ -> assert false (* TODO *)
+  | Ppat_constant _ -> assert false (* TODO *)
+  | Ppat_interval _ -> assert false (* TODO *)
+  | Ppat_tuple _ -> assert false (* TODO *)
+  | Ppat_construct _ -> assert false (* TODO *)
+  | Ppat_variant _ -> assert false (* TODO *)
+  | Ppat_record _ -> assert false (* TODO *)
+  | Ppat_array _ -> assert false (* TODO *)
+  | Ppat_or _ -> assert false (* TODO *)
+  | Ppat_constraint _ -> assert false (* TODO *)
+  | Ppat_type _ -> assert false (* TODO *)
+  | Ppat_lazy _ -> assert false (* TODO *)
+  | Ppat_unpack _ -> assert false (* TODO *)
+  | Ppat_exception _ -> assert false (* TODO *)
+  | Ppat_extension _ -> assert false (* TODO *)
+  | Ppat_open _ -> assert false (* TODO *)
 
 let rec pattern O.{ppat_desc = p_desc; ppat_loc; _} =
   let pat_loc = T.location ppat_loc in
@@ -105,18 +121,44 @@ let rec pattern O.{ppat_desc = p_desc; ppat_loc; _} =
         Por (pattern pat1, pattern pat2)
     | O.Ppat_constant _ ->
         Loc.errorm "Constants in case expressions are not supported."
-    | _ -> assert false (* TODO *) in
+    | Ppat_alias (pat, id) ->
+        Pas (pattern pat, T.(mk_id ~id_loc:(location id.loc)) id.txt, false)
+    | Ppat_interval _ -> assert false (* TODO *)
+    | Ppat_variant _ -> assert false (* TODO *)
+    | Ppat_record _ -> assert false (* TODO *)
+    | Ppat_array _ -> assert false (* TODO *)
+    | Ppat_constraint _ -> assert false (* TODO *)
+    | Ppat_type _ -> assert false (* TODO *)
+    | Ppat_lazy _ -> assert false (* TODO *)
+    | Ppat_unpack _ -> assert false (* TODO *)
+    | Ppat_exception _ -> assert false (* TODO *)
+    | Ppat_extension _ -> assert false (* TODO *)
+    | Ppat_open _ -> assert false (* TODO *) in
   mk_pat (pat_desc p_desc)
 
 let check_guard = function
-  | Some _ -> Loc.errorm "Guarded expressions are not supported."
+  | Some e -> Loc.errorm ~loc:(T.location e.Uast.spexp_loc)
+                "Guarded expressions are not supported."
   | None   -> ()
 
 let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let expr_loc = T.location spexp_loc in
   let mk_expr e = mk_expr ~expr_loc e in
   let arg_expr (_, expr) = expression expr in
+  let logic_attr = "logic" in
+  let lemma_attr = "lemma" in
+  let is_logic =
+    List.exists (fun O.{attr_name; _} -> attr_name.txt = logic_attr) in
+  let is_lemma =
+    List.exists (fun O.{attr_name; _} -> attr_name.txt = lemma_attr) in
+  let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
+  let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
   let field_expr ({txt; _}, e) = (longident txt, expression e) in
+  let rs_kind svb_list = if List.exists is_logic_svb svb_list then Expr.RKfunc
+    else if List.exists is_lemma_svb svb_list then Expr.RKlemma
+    else Expr.RKnone in
+  let id_expr_rs_kind_of_svb_list svb_list =
+    rs_kind svb_list, List.map (fun svb -> s_value_binding svb) svb_list in
   let is_false = function
     | Uast.Sexp_construct ({txt = Lident "false"; _}, None) -> true
     | _ -> false in
@@ -138,7 +180,15 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         let id, binder_expr = s_value_binding svb in
         let expr = expression expr in
         Elet (id, false, Expr.RKnone, binder_expr, expr)
-    | Uast.Sexp_let (Recursive, _, _) -> assert false (* TODO *)
+    | Uast.Sexp_let (Recursive, svb_list, expr) ->
+        let mk_fun_def rs_kind (id, fun_expr) =
+          let args, ret, spec, expr = begin match fun_expr.expr_desc with
+            | Efun (args, _, ret, _, spec, expr) -> args, ret, spec, expr
+            | _ -> assert false (* TODO *) end in
+          let mask_visible = Ity.MaskVisible in
+          id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
+        let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
+        Erec (List.map (mk_fun_def rs_kind) id_fun_expr_list, expression expr)
     | Uast.Sexp_function _ -> assert false (* TODO *)
     | Uast.Sexp_fun (Nolabel, None, pat, expr_body, spec) ->
         let ret = T.mk_pattern Pwild in
@@ -188,7 +238,30 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         Eif (expression e1, expression e2, unit_expr)
     | Uast.Sexp_assert {spexp_desc; _} when is_false spexp_desc ->
         Eabsurd
-    | _ -> assert false (* TODO *) in
+    | Sexp_let _ -> assert false (* TODO *)
+    | Sexp_fun _ -> assert false (* TODO *)
+    | Sexp_apply _ -> assert false (* TODO *)
+    | Sexp_variant _ -> assert false (* TODO *)
+    | Sexp_setfield _ -> assert false (* TODO *)
+    | Sexp_array _ -> assert false (* TODO *)
+    | Sexp_while _ -> assert false (* TODO *)
+    | Sexp_for _ -> assert false (* TODO *)
+    | Sexp_coerce _ -> assert false (* TODO *)
+    | Sexp_send _ -> assert false (* TODO *)
+    | Sexp_new _ -> assert false (* TODO *)
+    | Sexp_setinstvar _ -> assert false (* TODO *)
+    | Sexp_override _ -> assert false (* TODO *)
+    | Sexp_letmodule _ -> assert false (* TODO *)
+    | Sexp_letexception _ -> assert false (* TODO *)
+    | Sexp_assert _ -> assert false (* TODO *)
+    | Sexp_lazy _ -> assert false (* TODO *)
+    | Sexp_poly _ -> assert false (* TODO *)
+    | Sexp_object _ -> assert false (* TODO *)
+    | Sexp_newtype _ -> assert false (* TODO *)
+    | Sexp_pack _ -> assert false (* TODO *)
+    | Sexp_open _ -> assert false (* TODO *)
+    | Sexp_extension _ -> assert false (* TODO *)
+    | Sexp_unreachable -> assert false (* TODO *) in
   mk_expr (pexp_desc p_desc)
 
 and case Uast.{spc_lhs; spc_guard; spc_rhs} =
@@ -211,28 +284,38 @@ and s_value_binding svb =
   let expr_loc = T.location svb.Uast.spvb_expr.spexp_loc in
   let spec = function None -> empty_spec | Some s -> S.vspec s in
   let rec loop acc expr = match expr.Uast.spexp_desc with
-    | Sexp_fun (Nolabel, None, pat, e, _) ->
+    | Sexp_fun (_, None, pat, e, _) ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
         let arg = binder_of_pattern pat in
         loop (arg :: acc) e
-    | Sexp_function _ ->
-        assert false (* TODO *)
-    | _ -> List.rev acc, expr in (* TODO *)
+    | Sexp_function case_list ->
+        let param_id = T.mk_id "param" in
+        let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
+        let arg = T.dummy_loc, Some (T.mk_id "param"), false, None in
+        let ematch = Ematch (param, List.map case case_list, []) in
+        let expr_loc = T.location expr.spexp_loc in
+        List.rev (arg :: acc), mk_expr ematch ~expr_loc
+    | _ -> List.rev acc, expression expr in (* TODO *)
   let mk_binder expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, _, pat, e, _) ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
         let args, expr = loop [] e in
         let args = binder_of_pattern pat :: args in
-        let expr = expression expr in
         let ret  = T.mk_pattern Pwild in
         let spec = spec svb.Uast.spvb_vspec in
         let efun = (Efun (args, None, ret, Ity.MaskVisible, spec, expr)) in
         mk_expr efun ~expr_loc
     | Sexp_function case_list ->
+        let ret = T.mk_pattern Pwild in
         let param_id = T.mk_id "param" in
+        let arg = T.dummy_loc, Some param_id, false, None in
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
-        let ematch = Ematch (param, List.map case case_list, []) in
-        mk_expr ematch ~expr_loc
+        let match_desc = Ematch (param, List.map case case_list, []) in
+        let match_expr = mk_expr match_desc ~expr_loc in
+        let spec = empty_spec (* TODO *) in
+        let mask = Ity.MaskVisible in
+        let efun = (Efun ([arg], None, ret, mask, spec, match_expr)) in
+        mk_expr efun ~expr_loc
     | _ -> expression expr in
   let id = id_of_pat svb.spvb_pat in
   id, mk_binder pexp

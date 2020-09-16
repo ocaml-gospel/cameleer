@@ -86,87 +86,87 @@ end
   )
 *)
 
-module type S = sig
-  type elt
-  type t
-
-  val empty : t
-  (** Empty heap. *)
-
-  val is_empty : t -> bool
-  (** Is the heap empty? *)
-
-  exception Empty
-
-  val merge : t -> t -> t
-  (** Merge two heaps. *)
-
-  val insert : elt -> t -> t
-  (** Insert a value in the heap. *)
-
-  val add : t -> elt -> t
-  (** Synonym to {!insert}. *)
-
-  val filter :  (elt -> bool) -> t -> t
-  (** Filter values, only retaining the ones that satisfy the predicate.
-      Linear time at least. *)
-
-  val find_min : t -> elt option
-  (** Find minimal element. *)
-
-  val find_min_exn : t -> elt
-  (** Like {!find_min} but can fail.
-      @raise Empty if the heap is empty. *)
-
-  val take : t -> (t * elt) option
-  (** Extract and return the minimum element, and the new heap (without
-      this element), or [None] if the heap is empty. *)
-
-  val take_exn : t -> t * elt
-  (** Like {!take}, but can fail.
-      @raise Empty if the heap is empty. *)
-
-  val delete_one : (elt -> elt -> bool) -> elt -> t -> t
-  (** Delete one occurrence of a value if it exist in the heap.
-      [delete_one eq x h], use [eq] to find one [x] in [h] and delete it.
-      If [h] do not contain [x] then it return [h].
-      @since 2.0 *)
-
-  val delete_all : (elt -> elt -> bool) -> elt -> t -> t
-  (** Delete all occurrences of a value in the heap.
-      [delete_all eq x h], use [eq] to find all [x] in [h] and delete them.
-      If [h] do not contain [x] then it return [h].
-      The difference with {!filter} is that [delete_all] stops as soon as
-      it enters a subtree whose root is bigger than the element.
-      @since 2.0 *)
-
-  val iter : (elt -> unit) -> t -> unit
-  (** Iterate on elements. *)
-
-  val fold : ('a -> elt -> 'a) -> 'a -> t -> 'a
-  (** Fold on all values. *)
-
-  val size : t -> int
-  (** Number of elements (linear complexity). *)
-
-  (** {2 Conversions} *)
-
-  val to_list : t -> elt list
-  (** Return the elements of the heap, in no particular order. *)
-
-  val to_list_sorted : t -> elt list
-  (** Return the elements in increasing order.
-      @since 1.1 *)
-
-  val add_list : t -> elt list -> t
-  (** Add the elements of the list to the heap. An element occurring several
-      times will be added that many times to the heap.
-      @since 0.16 *)
-
-  val of_list : elt list -> t
-  (** [of_list l] is [add_list empty l]. Complexity: [O(n log n)]. *)
-
-end
+(* module type S = sig
+ *   type elt
+ *   type t
+ *
+ *   val empty : t
+ *   (\** Empty heap. *\)
+ *
+ *   val is_empty : t -> bool
+ *   (\** Is the heap empty? *\)
+ *
+ *   exception Empty
+ *
+ *   val merge : t -> t -> t
+ *   (\** Merge two heaps. *\)
+ *
+ *   val insert : elt -> t -> t
+ *   (\** Insert a value in the heap. *\)
+ *
+ *   val add : t -> elt -> t
+ *   (\** Synonym to {!insert}. *\)
+ *
+ *   (\* val filter :  (elt -> bool) -> t -> t
+ *    * (\\** Filter values, only retaining the ones that satisfy the predicate.
+ *    *     Linear time at least. *\\) *\)
+ *
+ *   val find_min : t -> elt option
+ *   (\** Find minimal element. *\)
+ *
+ *   val find_min_exn : t -> elt
+ *   (\** Like {!find_min} but can fail.
+ *       @raise Empty if the heap is empty. *\)
+ *
+ *   val take : t -> (t * elt) option
+ *   (\** Extract and return the minimum element, and the new heap (without
+ *       this element), or [None] if the heap is empty. *\)
+ *
+ *   val take_exn : t -> t * elt
+ *   (\** Like {!take}, but can fail.
+ *       @raise Empty if the heap is empty. *\)
+ *
+ *   val delete_one : (elt -> elt -> bool) -> elt -> t -> t
+ *   (\** Delete one occurrence of a value if it exist in the heap.
+ *       [delete_one eq x h], use [eq] to find one [x] in [h] and delete it.
+ *       If [h] do not contain [x] then it return [h].
+ *       @since 2.0 *\)
+ *
+ *   val delete_all : (elt -> elt -> bool) -> elt -> t -> t
+ *   (\** Delete all occurrences of a value in the heap.
+ *       [delete_all eq x h], use [eq] to find all [x] in [h] and delete them.
+ *       If [h] do not contain [x] then it return [h].
+ *       The difference with {!filter} is that [delete_all] stops as soon as
+ *       it enters a subtree whose root is bigger than the element.
+ *       @since 2.0 *\)
+ *
+ *   val iter : (elt -> unit) -> t -> unit
+ *   (\** Iterate on elements. *\)
+ *
+ *   val fold : ('a -> elt -> 'a) -> 'a -> t -> 'a
+ *   (\** Fold on all values. *\)
+ *
+ *   val size : t -> int
+ *   (\** Number of elements (linear complexity). *\)
+ *
+ *   (\** {2 Conversions} *\)
+ *
+ *   val to_list : t -> elt list
+ *   (\** Return the elements of the heap, in no particular order. *\)
+ *
+ *   val to_list_sorted : t -> elt list
+ *   (\** Return the elements in increasing order.
+ *       @since 1.1 *\)
+ *
+ *   val add_list : t -> elt list -> t
+ *   (\** Add the elements of the list to the heap. An element occurring several
+ *       times will be added that many times to the heap.
+ *       @since 0.16 *\)
+ *
+ *   val of_list : elt list -> t
+ *   (\** [of_list l] is [add_list empty l]. Complexity: [O(n log n)]. *\)
+ *
+ * end *)
 
 module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
   type elt = E.t
@@ -211,11 +211,12 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
 
   let add h x = insert x h
 
-  let rec filter p h = match h with
-    | E -> E
-    | N(_, x, l, r) when p x -> _make_node x (filter p l) (filter p r)
-    | N(_, _, l, r) ->
-      merge (filter p l) (filter p r)
+  (* TODO: support guarded expressions *)
+  (* let rec filter p h = match h with
+   *   | E -> E
+   *   | N(_, x, l, r) when p x -> _make_node x (filter p l) (filter p r)
+   *   | N(_, _, l, r) ->
+   *     merge (filter p l) (filter p r) *)
 
   let find_min_exn = function
     | E -> raise Empty
@@ -233,24 +234,24 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
     | E -> raise Empty
     | N (_, x, l, r) -> merge l r, x
 
-  let delete_one eq x h =
-    let rec aux = function
-      | E -> false, E
-      | N(_, y, l, r) as h ->
-        if eq x y then true, merge l r
-        else (
-          if E.leq y x
-          then (
-            let found_left, l1 = aux l in
-            let found, r1 = if found_left then true, r else aux r in
-            if found
-            then true, _make_node y l1 r1
-            else false, h
-          )
-          else false, h
-        )
-    in
-    snd (aux h)
+  (* let delete_one eq x h =
+   *   let rec aux = function
+   *     | E -> false, E
+   *     | N(_, y, l, r) as h ->
+   *       if eq x y then true, merge l r
+   *       else (
+   *         if E.leq y x
+   *         then (
+   *           let found_left, l1 = aux l in
+   *           let found, r1 = if found_left then true, r else aux r in
+   *           if found
+   *           then true, _make_node y l1 r1
+   *           else false, h
+   *         )
+   *         else false, h
+   *       )
+   *   in
+   *   snd (aux h) *)
 
   let rec delete_all eq x = function
     | E -> E
@@ -363,9 +364,9 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
         = (H.to_list h |> List.sort Stdlib.compare))
   *)
 
-  let rec to_tree h () = match h with
-    | E -> `Nil
-    | N (_, x, l, r) -> `Node(x, [to_tree l; to_tree r])
+  (* let rec to_tree h () = match h with
+   *   | E -> `Nil
+   *   | N (_, x, l, r) -> `Node(x, [to_tree l; to_tree r]) *)
 
   let to_string ?(sep=",") elt_to_string h =
     to_list_sorted h
@@ -383,16 +384,16 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
         = (List.sort Stdlib.compare l |> List.map string_of_int |> String.concat " "))
   *)
 
-  let pp ?(pp_start=fun _ () -> ()) ?(pp_stop=fun _ () -> ())
-      ?(pp_sep=fun out () -> Format.fprintf out ",") pp_elt out h =
-    let first=ref true in
-    pp_start out ();
-    iter
-      (fun x ->
-         if !first then first := false else pp_sep out ();
-         pp_elt out x)
-      h;
-    pp_stop out ();
+  (* let pp ?(pp_start=fun _ () -> ()) ?(pp_stop=fun _ () -> ())
+   *     ?(pp_sep=fun out () -> Format.fprintf out ",") pp_elt out h =
+   *   let first=ref true in
+   *   pp_start out ();
+   *   iter
+   *     (fun x ->
+   *        if !first then first := false else pp_sep out ();
+   *        pp_elt out x)
+   *     h;
+   *   pp_stop out (); *)
 end
 
 module Make_from_compare(E : TOTAL_ORD) =
