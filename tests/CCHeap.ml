@@ -13,11 +13,12 @@ module type PRE_ORD = sig
 
   (*@ function le: t -> t -> bool *)
 
-  (*@ predicate pre_order (leq: t -> t -> bool) =
+  (*@ predicate total_preorder (leq: t -> t -> bool) =
       (forall x. leq x x) /\
+      (forall x y. leq x y \/ leq y x) /\
       (forall x y z. (leq x y -> leq y z -> leq x z)) *)
 
-  (*@ axiom is_pre_order: pre_order le *)
+  (*@ axiom is_total_preorder: total_preorder le *)
 
   val leq : t -> t -> bool
   (** [leq x y] shall return [true] iff [x] is lower or equal to [y]. *)
@@ -244,13 +245,13 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
   let insert x h =
     merge (N(1,x,E,E)) h
   (*@ new_h = insert x h
-        requires leftist h
-        ensures  leftist new_h *)
+        requires leftist_heap h
+        ensures  leftist_heap new_h *)
 
   let add h x = insert x h
   (*@ new_h = insert x h
-        requires leftist h
-        ensures  leftist new_h *)
+        requires leftist_heap h
+        ensures  leftist_heap new_h *)
 
   (* TODO: support guarded expressions *)
   (* let rec filter p h = match h with
