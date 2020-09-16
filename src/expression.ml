@@ -8,6 +8,15 @@ module T = Uterm
 module S = Vspec
 module O = Oparsetree
 
+type info = { (* to be completed as needed *)
+  info_arith_construct: (string, int) Hashtbl.t
+}
+
+let rec string_of_longident = function
+  | Longident.Lident s -> s
+  | Ldot (t, s) -> string_of_longident t ^ s
+  | Lapply (t1, t2) -> string_of_longident t1 ^ string_of_longident t2
+
 let rec_flag = function Nonrecursive -> false | Recursive -> true
 
 let split_on_checks sp_pre =
@@ -104,25 +113,30 @@ let id_of_pat O.{ppat_desc; _} = match ppat_desc with
   | Ppat_extension _ -> assert false (* TODO *)
   | Ppat_open _ -> assert false (* TODO *)
 
-let rec pattern O.{ppat_desc = p_desc; ppat_loc; _} =
+let rec pattern info O.{ppat_desc = p_desc; ppat_loc; _} =
   let pat_loc = T.location ppat_loc in
   let mk_pat p = T.mk_pattern ~pat_loc p in
   let pat_desc = function
     | O.Ppat_any            -> Pwild
     | O.Ppat_var id         -> Pvar T.(mk_id ~id_loc:(location id.loc) id.txt)
-    | O.Ppat_tuple pat_list -> Ptuple (List.map pattern pat_list)
+    | O.Ppat_tuple pat_list -> Ptuple (List.map (pattern info) pat_list)
     | O.Ppat_construct (id, None) ->
         Papp (longident id.txt, [])
     | O.Ppat_construct (id, Some ({ppat_desc = Ppat_tuple pat_list; _})) ->
-        Papp (longident id.txt, List.map pattern pat_list)
+        let s = string_of_longident id.txt in
+        let pat = List.map (pattern info) pat_list in
+        if Hashtbl.find info.info_arith_construct s > 1 then
+          Papp (longident id.txt, pat)
+        else Papp (longident id.txt, [mk_pat (Ptuple pat)])
     | O.Ppat_construct (id, Some p) ->
-        Papp (longident id.txt, [pattern p])
+        Papp (longident id.txt, [pattern info p])
     | O.Ppat_or (pat1, pat2) ->
-        Por (pattern pat1, pattern pat2)
+        Por (pattern info pat1, pattern info pat2)
     | O.Ppat_constant _ ->
         Loc.errorm "Constants in case expressions are not supported."
     | Ppat_alias (pat, id) ->
-        Pas (pattern pat, T.(mk_id ~id_loc:(location id.loc)) id.txt, false)
+        let pat_id = T.(mk_id ~id_loc:(location id.loc)) id.txt in
+        Pas (pattern info pat, pat_id, false)
     | Ppat_interval _ -> assert false (* TODO *)
     | Ppat_variant _ -> assert false (* TODO *)
     | Ppat_record _ -> assert false (* TODO *)
@@ -141,10 +155,10 @@ let check_guard = function
                 "Guarded expressions are not supported."
   | None   -> ()
 
-let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
+let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let expr_loc = T.location spexp_loc in
   let mk_expr e = mk_expr ~expr_loc e in
-  let arg_expr (_, expr) = expression expr in
+  let arg_expr (_, expr) = expression info expr in
   let logic_attr = "logic" in
   let lemma_attr = "lemma" in
   let is_logic =
@@ -153,12 +167,12 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
     List.exists (fun O.{attr_name; _} -> attr_name.txt = lemma_attr) in
   let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
   let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
-  let field_expr ({txt; _}, e) = (longident txt, expression e) in
+  let field_expr ({txt; _}, e) = (longident txt, expression info e) in
   let rs_kind svb_list = if List.exists is_logic_svb svb_list then Expr.RKfunc
     else if List.exists is_lemma_svb svb_list then Expr.RKlemma
     else Expr.RKnone in
   let id_expr_rs_kind_of_svb_list svb_list =
-    rs_kind svb_list, List.map (fun svb -> s_value_binding svb) svb_list in
+    rs_kind svb_list, List.map (fun svb -> s_value_binding info svb) svb_list in
   let is_false = function
     | Uast.Sexp_construct ({txt = Lident "false"; _}, None) -> true
     | _ -> false in
@@ -171,14 +185,17 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let is_not = function
     | Uast.Sexp_ident {txt = Lident "not"; _} -> true
     | _ -> false in
+  let is_raise = function
+    | Uast.Sexp_ident {txt = Lident "raise"; _} -> true
+    | _ -> false in
   let pexp_desc = function
     | Uast.Sexp_ident {txt;loc} ->
         Eident (longident ~id_loc:(T.location loc) txt)
     | Uast.Sexp_constant c ->
         Econst (T.constant c)
     | Uast.Sexp_let (Nonrecursive, [svb], expr) ->
-        let id, binder_expr = s_value_binding svb in
-        let expr = expression expr in
+        let id, binder_expr = s_value_binding info svb in
+        let expr = expression info expr in
         Elet (id, false, Expr.RKnone, binder_expr, expr)
     | Uast.Sexp_let (Recursive, svb_list, expr) ->
         let mk_fun_def rs_kind (id, fun_expr) =
@@ -188,11 +205,12 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
           let mask_visible = Ity.MaskVisible in
           id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
         let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
-        Erec (List.map (mk_fun_def rs_kind) id_fun_expr_list, expression expr)
+        let expr_in = expression info expr in
+        Erec (List.map (mk_fun_def rs_kind) id_fun_expr_list, expr_in)
     | Uast.Sexp_function _ -> assert false (* TODO *)
     | Uast.Sexp_fun (Nolabel, None, pat, expr_body, spec) ->
         let ret = T.mk_pattern Pwild in
-        let expr_body = expression expr_body in
+        let expr_body = expression info expr_body in
         let spec = match spec with Some s -> S.fun_spec s | _ -> empty_spec in
         let mask = Ity.MaskVisible in
         Efun ([binder_of_pattern pat], None, ret, mask, spec, expr_body)
@@ -202,18 +220,26 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
         Eor (arg_expr arg1, arg_expr arg2)
     | Uast.Sexp_apply (s, [arg]) when is_not s.spexp_desc ->
         Enot (arg_expr arg)
+    | Uast.Sexp_apply (s, [_, arg]) when is_raise s.spexp_desc ->
+        (* TODO: write a smart constructor for exceptions *)
+        begin match arg.spexp_desc with
+        | Sexp_construct (id, exn_arg) ->
+            Eraise (longident id.txt, Opt.map (expression info) exn_arg)
+        | _ -> assert false (* TODO: not supported for now *) end
     | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
         Eidapp (longident s.txt, List.map arg_expr arg_expr_list)
+    | Uast.Sexp_apply (_expr, _arg_list) ->
+        assert false (* TODO *)
     | Uast.Sexp_match (expr, case_list) ->
-        Ematch (expression expr, List.map case case_list, [])
+        Ematch (expression info expr, List.map (case info) case_list, [])
     | Uast.Sexp_try (expr, case_list) ->
-        Ematch (expression expr, [], List.map case_exn case_list)
+        Ematch (expression info expr, [], List.map (case_exn info) case_list)
     | Uast.Sexp_tuple exp_list ->
-        Etuple (List.map expression exp_list)
+        Etuple (List.map (expression info) exp_list)
     | Uast.Sexp_sequence (e1, e2) ->
-        Esequence (expression e1, expression e2)
+        Esequence (expression info e1, expression info e2)
     | Uast.Sexp_constraint (e, cty) ->
-        Ecast (expression e, core_type cty)
+        Ecast (expression info e, core_type cty)
     | Uast.Sexp_construct ({txt = Lident "true"; _}, None) ->
         Etrue
     | Uast.Sexp_construct ({txt = Lident "false"; _}, None) ->
@@ -223,24 +249,27 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Uast.Sexp_construct (id, None) ->
         Eidapp (longident id.txt, [])
     | Uast.Sexp_construct (id, Some {spexp_desc = Sexp_tuple expr_list; _}) ->
-        Eidapp (longident id.txt, List.map expression expr_list)
+        let s = string_of_longident id.txt in
+        if Hashtbl.find info.info_arith_construct s > 1 then
+          Eidapp (longident id.txt, List.map (expression info) expr_list)
+        else let etuple = Etuple (List.map (expression info) expr_list) in
+          Eidapp (longident id.txt, [mk_expr etuple])
     | Uast.Sexp_construct (id, Some e) ->
-        Eidapp (longident id.txt, [expression e])
+        Eidapp (longident id.txt, [expression info e])
     | Uast.Sexp_record (field_list, None) ->
         Erecord (List.map field_expr field_list)
     | Uast.Sexp_record (_, Some _) ->
         assert false (* TODO *)
     | Uast.Sexp_field (expr, field) ->
-        Eidapp (longident field.txt, [expression expr])
+        Eidapp (longident field.txt, [expression info expr])
     | Uast.Sexp_ifthenelse (e1, e2, Some e3) ->
-        Eif (expression e1, expression e2, expression e3)
+        Eif (expression info e1, expression info e2, expression info e3)
     | Uast.Sexp_ifthenelse (e1, e2, None) ->
-        Eif (expression e1, expression e2, unit_expr)
+        Eif (expression info e1, expression info e2, unit_expr)
     | Uast.Sexp_assert {spexp_desc; _} when is_false spexp_desc ->
         Eabsurd
     | Sexp_let _ -> assert false (* TODO *)
     | Sexp_fun _ -> assert false (* TODO *)
-    | Sexp_apply _ -> assert false (* TODO *)
     | Sexp_variant _ -> assert false (* TODO *)
     | Sexp_setfield _ -> assert false (* TODO *)
     | Sexp_array _ -> assert false (* TODO *)
@@ -264,22 +293,22 @@ let rec expression Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Sexp_unreachable -> assert false (* TODO *) in
   mk_expr (pexp_desc p_desc)
 
-and case Uast.{spc_lhs; spc_guard; spc_rhs} =
+and case info Uast.{spc_lhs; spc_guard; spc_rhs} =
   check_guard spc_guard;
-  pattern spc_lhs, expression spc_rhs
+  pattern info spc_lhs, expression info spc_rhs
 
-and case_exn Uast.{spc_lhs; spc_guard; spc_rhs} =
+and case_exn info Uast.{spc_lhs; spc_guard; spc_rhs} =
   check_guard spc_guard;
   let q, pat = match spc_lhs.O.ppat_desc with
     | Ppat_any -> Qident (T.mk_id "_"), None
     | Ppat_var s -> let id_loc = T.location s.loc in
         Qident (T.mk_id s.txt ~id_loc), None
     | Ppat_construct (id, pat) -> let id_loc = T.location id.loc in
-        longident id.txt ~id_loc, Opt.map pattern pat
+        longident id.txt ~id_loc, Opt.map (pattern info) pat
     | _ -> assert false (* TODO *) in
-  q, pat, expression spc_rhs
+  q, pat, expression info spc_rhs
 
-and s_value_binding svb =
+and s_value_binding info svb =
   let pexp = svb.Uast.spvb_expr in
   let expr_loc = T.location svb.Uast.spvb_expr.spexp_loc in
   let spec = function None -> empty_spec | Some s -> S.vspec s in
@@ -292,10 +321,10 @@ and s_value_binding svb =
         let param_id = T.mk_id "param" in
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
         let arg = T.dummy_loc, Some (T.mk_id "param"), false, None in
-        let ematch = Ematch (param, List.map case case_list, []) in
+        let ematch = Ematch (param, List.map (case info) case_list, []) in
         let expr_loc = T.location expr.spexp_loc in
         List.rev (arg :: acc), mk_expr ematch ~expr_loc
-    | _ -> List.rev acc, expression expr in (* TODO *)
+    | _ -> List.rev acc, expression info expr in (* TODO *)
   let mk_binder expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, _, pat, e, _) ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
@@ -310,12 +339,12 @@ and s_value_binding svb =
         let param_id = T.mk_id "param" in
         let arg = T.dummy_loc, Some param_id, false, None in
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
-        let match_desc = Ematch (param, List.map case case_list, []) in
+        let match_desc = Ematch (param, List.map (case info) case_list, []) in
         let match_expr = mk_expr match_desc ~expr_loc in
-        let spec = empty_spec (* TODO *) in
+        let spec = spec svb.Uast.spvb_vspec (* TODO *) in
         let mask = Ity.MaskVisible in
         let efun = (Efun ([arg], None, ret, mask, spec, match_expr)) in
         mk_expr efun ~expr_loc
-    | _ -> expression expr in
+    | _ -> expression info expr in
   let id = id_of_pat svb.spvb_pat in
   id, mk_binder pexp
