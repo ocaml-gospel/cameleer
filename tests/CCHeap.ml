@@ -8,10 +8,21 @@
  * type 'a printer = Format.formatter -> 'a -> unit
  * type 'a ktree = unit -> [`Nil | `Node of 'a * 'a ktree list] *)
 
-module type PARTIAL_ORD = sig
+module type PRE_ORD = sig
   type t
+
+  (*@ function le: t -> t -> bool *)
+
+  (*@ predicate pre_order (leq: t -> t -> bool) =
+      (forall x. leq x x) /\
+      (forall x y z. (leq x y -> leq y z -> leq x z)) *)
+
+  (*@ axiom is_pre_order: pre_order le *)
+
   val leq : t -> t -> bool
   (** [leq x y] shall return [true] iff [x] is lower or equal to [y]. *)
+  (*@ b = leq x y
+        ensures b <-> le x y *)
 end
 
 module type TOTAL_ORD = sig
@@ -22,69 +33,6 @@ module type TOTAL_ORD = sig
       [0] if [a] and [b] are equal or
       a positive value if [a] is greater than [b] *)
 end
-
-(*$inject
-  module H = CCHeap.Make(struct
-    type t = int
-    let leq x y = x<=y
-  end)
-
-  let rec is_sorted l = match l with
-    | [_]
-    | [] -> true
-    | x::((y::_) as l') -> x <= y && is_sorted l'
-
-  let extract_list = H.to_list_sorted
-*)
-
-(*$R
-  let h = H.of_list [5;3;4;1;42;0] in
-  let h, x = H.take_exn h in
-  OUnit.assert_equal ~printer:string_of_int 0 x;
-  let h, x = H.take_exn h in
-  OUnit.assert_equal ~printer:string_of_int 1 x;
-  let h, x = H.take_exn h in
-  OUnit.assert_equal ~printer:string_of_int 3 x;
-  let h, x = H.take_exn h in
-  OUnit.assert_equal ~printer:string_of_int 4 x;
-  let h, x = H.take_exn h in
-  OUnit.assert_equal ~printer:string_of_int 5 x;
-  let h, x = H.take_exn h in
-  OUnit.assert_equal ~printer:string_of_int 42 x;
-  OUnit.assert_raises H.Empty (fun () -> H.take_exn h);
-*)
-
-(*$QR & ~count:30
-  Q.(list_of_size Gen.(return 1_000) int) (fun l ->
-    (* put elements into a heap *)
-    let h = H.of_iter (Iter.of_list l) in
-    OUnit.assert_equal 1_000 (H.size h);
-    let l' = extract_list h in
-    is_sorted l'
-  )
-*)
-
-(* test filter *)
-(*$QR & ~count:30
-  Q.(list_of_size Gen.(return 1_000) int) (fun l ->
-    (* put elements into a heap *)
-    let h = H.of_iter (Iter.of_list l) in
-    let h = H.filter (fun x->x mod 2=0) h in
-    OUnit.assert_bool "all odd"
-      (H.to_iter h |> Iter.for_all (fun x -> x mod 2 = 0));
-    let l' = extract_list h in
-    is_sorted l'
-  )
-*)
-
-(*$QR
-  Q.(list_of_size Gen.(return 1_000) int) (fun l ->
-    (* put elements into a heap *)
-    let h = H.of_iter (Iter.of_list l) in
-    let l' = H.to_iter_sorted h |> Iter.to_list in
-    is_sorted l'
-  )
-*)
 
 (* module type S = sig
  *   type elt
@@ -168,18 +116,88 @@ end
  *
  * end *)
 
-module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
+module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
   type elt = E.t
 
   type t =
     | E
     | N of int * elt * t * t
 
+  let[@logic] rec size = function
+    | E -> 0
+    | N (_,_,l,r) -> 1 + size l + size r
+  (*@ r = size param
+        ensures 0 <= r
+        ensures r = 0 <-> param = E *)
+
+  (*@ function occ (x: elt) (h: t) : integer = match h with
+        | E -> 0
+        | N _ e l r -> let occ_l = occ x l in let occ_r = occ x r in
+            let occ_lr = occ_l + occ_r in
+            if x = e then 1 + occ_lr else occ_lr *)
+
+  let [@lemma] rec occ_nonneg (y: elt) = function
+    | E -> ()
+    | N (_, _, l, r) -> occ_nonneg y l; occ_nonneg y r
+  (*@ occ_nonneg y param
+        ensures 0 <= occ y param *)
+
+  (*@ predicate mem (x: elt) (h: t) =
+        0 < occ x h *)
+
+  (*@ predicate le_root (e: elt) (h: t) = match h with
+        | E -> true
+        | N _ x _ _ -> E.le e x *)
+
+  let [@lemma] le_root_trans (x: elt) (y: elt) = function
+    | E -> ()
+    | N (_, _, _, _) -> ()
+  (*@ le_root_trans x y param
+        requires E.le x y
+        requires le_root y param
+        ensures  le_root x param *)
+
+  (*@ predicate is_heap (h: t) = match h with
+        | E -> true
+        | N _ x l r -> le_root x l && is_heap l && le_root x r && is_heap r *)
+
+  (*@ function minimum (h: t) : elt *)
+  (*@ axiom minimum_def: forall l x r n. minimum (N n x l r) = x *)
+
+  (*@ predicate is_minimum (x: elt) (h: t) =
+        mem x h && forall e. mem e h -> le x e *)
+
+  let [@lemma] rec root_is_miminum = function
+    | E -> assert false
+    | N (_, _, l, r) ->
+        begin match l with E -> () | _ -> root_is_miminum l end;
+        match r with E -> () | _ -> root_is_miminum r
+  (*@ is_minimum param
+       requires is_heap param && 0 < size param
+       ensures  is_minimum (minimum param) param
+       variant  param *)
+
+  (*@ function rank (h: t) : integer = match h with
+        | E -> 0
+        | N _ _ l r -> 1 + min (rank l) (rank r) *)
+
+  (*@ predicate leftist (h: t) = match h with
+        | E -> true
+        | N n _ l r ->
+            n = rank h && leftist l && leftist r && rank l >= rank r *)
+
+  (*@ predicate leftist_heap (h: t) =
+        is_heap h && leftist h *)
+
   let empty = E
+  (*@ r = empty
+        ensures r = E *)
 
   let is_empty = function
     | E -> true
-    | N _ -> false
+    | N (_, _, _, _) -> false
+  (*@ b = is_empty param
+        ensures b <-> param = E *)
 
   exception Empty
 
@@ -187,6 +205,9 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
   let _rank = function
     | E -> 0
     | N (r, _, _, _) -> r
+  (*@ r = _rank param
+        requires leftist_heap param
+        ensures  r = rank param *)
 
   (* Make a balanced node labelled with [x], and subtrees [a] and [b].
      We ensure that the right child's rank is ≤ to the rank of the
@@ -196,6 +217,14 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
     if _rank a >= _rank b
     then N (_rank b + 1, x, a, b)
     else N (_rank a + 1, x, b, a)
+  (*@ h = _make_node x a b
+        requires leftist_heap a && leftist_heap b
+        requires le_root x a && le_root x b
+        ensures  leftist_heap h
+        ensures  minimum h = x
+        ensures  size h = 1 + size a + size b
+        ensures  occ x h = 1 + occ x a + occ x b
+        ensures  forall y. x <> y -> occ y h = occ y a + occ y b *)
 
   let rec merge t1 t2 =
     match t1, t2 with
@@ -205,11 +234,23 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
         if E.leq x y
         then _make_node x a1 (merge b1 t2)
         else _make_node y a2 (merge t1 b2)
+  (*@ h = merge t1 t2
+        requires leftist_heap t1 && leftist_heap t2
+        ensures  size h = size t1 + size t2
+        ensures  forall x. occ x h = occ x t1 + occ x t2
+        ensures  leftist_heap h
+        variant  size t1 + size t2 *)
 
   let insert x h =
     merge (N(1,x,E,E)) h
+  (*@ new_h = insert x h
+        requires leftist h
+        ensures  leftist new_h *)
 
   let add h x = insert x h
+  (*@ new_h = insert x h
+        requires leftist h
+        ensures  leftist new_h *)
 
   (* TODO: support guarded expressions *)
   (* let rec filter p h = match h with
@@ -218,9 +259,9 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
    *   | N(_, _, l, r) ->
    *     merge (filter p l) (filter p r) *)
 
-  let find_min_exn = function
-    | E -> raise Empty
-    | N (_, x, _, _) -> x
+  (* let find_min_exn = function
+   *   | E -> raise Empty
+   *   | N (_, x, _, _) -> x *)
 
   let find_min = function
     | E -> None
@@ -230,9 +271,9 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
     | E -> None
     | N (_, x, l, r) -> Some (merge l r, x)
 
-  let take_exn = function
-    | E -> raise Empty
-    | N (_, x, l, r) -> merge l r, x
+  (* let take_exn = function
+   *   | E -> raise Empty
+   *   | N (_, x, l, r) -> merge l r, x *)
 
   (* let delete_one eq x h =
    *   let rec aux = function
@@ -274,10 +315,6 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
       let acc = fold f acc a in
       fold f acc b
 
-  let rec size = function
-    | E -> 0
-    | N (_,_,l,r) -> 1 + size l + size r
-
   (** {2 Conversions} *)
 
   let to_list h =
@@ -287,51 +324,51 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
         x::aux (aux acc l) r
     in aux [] h
 
-  let to_list_sorted heap =
-    let rec recurse acc h = match take h with
-      | None -> List.rev acc
-      | Some (h',x) -> recurse (x::acc) h'
-    in
-    recurse [] heap
+  (* let to_list_sorted heap =
+   *   let rec recurse acc h = match take h with
+   *     | None -> List.rev acc
+   *     | Some (h',x) -> recurse (x::acc) h'
+   *   in
+   *   recurse [] heap *)
 
-  let add_list h l = List.fold_left add h l
+  (* let add_list h l = List.fold_left add h l *)
 
-  let of_list l = add_list empty l
+  (* let of_list l = add_list empty l *)
 
-  let add_iter h i =
-    let h = ref h in
-    i (fun x -> h := insert x !h);
-    !h
+  (* let add_iter h i =
+   *   let h = ref h in
+   *   i (fun x -> h := insert x !h);
+   *   !h *)
 
-  let add_seq h seq =
-    let h = ref h in
-    Seq.iter (fun x -> h := insert x !h) seq;
-    !h
+  (* let add_seq h seq =
+   *   let h = ref h in
+   *   Seq.iter (fun x -> h := insert x !h) seq;
+   *   !h *)
 
-  let of_iter i = add_iter empty i
-  let of_seq seq = add_seq empty seq
+  (* let of_iter i = add_iter empty i
+   * let of_seq seq = add_seq empty seq *)
 
   let to_iter h k = iter k h
 
-  let to_seq h =
-    (* use an explicit stack [st] *)
-    let rec aux st () =
-      match st with
-      | [] -> Seq.Nil
-      | E :: st' -> aux st' ()
-      | N(_,x,l,r) :: st' -> Seq.Cons (x, aux (l::r::st'))
-    in aux [h]
+  (* let to_seq h =
+   *   (\* use an explicit stack [st] *\)
+   *   let rec aux st () =
+   *     match st with
+   *     | [] -> Seq.Nil
+   *     | E :: st' -> aux st' ()
+   *     | N(_,x,l,r) :: st' -> Seq.Cons (x, aux (l::r::st'))
+   *   in aux [h] *)
 
-  let to_iter_sorted heap =
-    let rec recurse h k = match take h with
-      | None -> ()
-      | Some (h',x) -> k x; recurse h' k
-    in
-    fun k -> recurse heap k
+  (* let to_iter_sorted heap =
+   *   let rec recurse h k = match take h with
+   *     | None -> ()
+   *     | Some (h',x) -> k x; recurse h' k
+   *   in
+   *   fun k -> recurse heap k *)
 
-  let rec to_seq_sorted h () = match take h with
-    | None -> Seq.Nil
-    | Some (h', x) -> Seq.Cons (x, to_seq_sorted h')
+  (* let rec to_seq_sorted h () = match take h with
+   *   | None -> Seq.Nil
+   *   | Some (h', x) -> Seq.Cons (x, to_seq_sorted h') *)
 
   let rec add_gen h g = match g () with
     | None -> h
@@ -340,19 +377,19 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
 
   let of_gen g = add_gen empty g
 
-  let to_gen h =
-    let stack = Stack.create () in
-    Stack.push h stack;
-    let rec next () =
-      if Stack.is_empty stack
-      then None
-      else match Stack.pop stack with
-        | E -> next()
-        | N (_, x, a, b) ->
-          Stack.push a stack;
-          Stack.push b stack;
-          Some x
-    in next
+  (* let to_gen h =
+   *   let stack = Stack.create () in
+   *   Stack.push h stack;
+   *   let rec next () =
+   *     if Stack.is_empty stack
+   *     then None
+   *     else match Stack.pop stack with
+   *       | E -> next()
+   *       | N (_, x, a, b) ->
+   *         Stack.push a stack;
+   *         Stack.push b stack;
+   *         Some x
+   *   in next *)
 
   (*$Q
     Q.(list int) (fun l -> \
@@ -368,10 +405,10 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
    *   | E -> `Nil
    *   | N (_, x, l, r) -> `Node(x, [to_tree l; to_tree r]) *)
 
-  let to_string ?(sep=",") elt_to_string h =
-    to_list_sorted h
-    |> List.map elt_to_string
-    |> String.concat sep
+  (* let to_string ?(sep=",") elt_to_string h =
+   *   to_list_sorted h
+   *   |> List.map elt_to_string
+   *   |> String.concat sep *)
 
   (*$Q
     Q.(list int) (fun l -> \
@@ -396,11 +433,11 @@ module Make(E : PARTIAL_ORD) (*: S with type elt = E.t *) = struct
    *   pp_stop out (); *)
 end
 
-module Make_from_compare(E : TOTAL_ORD) =
-  Make(struct
-    type t = E.t
-    let leq a b = E.compare a b <= 0
-  end)
+(* module Make_from_compare(E : TOTAL_ORD) =
+ *   Make(struct
+ *     type t = E.t
+ *     let leq a b = E.compare a b <= 0
+ *   end) *)
 
 (*$QR
   Q.(list_of_size Gen.(return 1_000) int) (fun l ->
