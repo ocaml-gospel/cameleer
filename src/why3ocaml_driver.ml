@@ -17,13 +17,14 @@ let driver: syntax_map = Hstr.create 16
 let () = List.iter (fun (x, y) -> Hstr.add driver x y)
     [
       "integer", "int";
-      "int", "int63";
+      "int", "int"; (* FIXME? For now, no proofs of arith overflow absence *)
       "+", "infix +";
       "*", "infix *";
       "-", "infix -";
       "/", "infix /";
       "mod", "infix %";
       "<=", "infix <=";
+      ">=", "infix >=";
       "<", "infix <";
       ">", "infix >";
       "=", "infix ="; (* FIXME: this is only true for integers *)
@@ -33,6 +34,8 @@ let () = List.iter (fun (x, y) -> Hstr.add driver x y)
       "infix ::", "Cons";
       "::", "Cons"; (* FIXME: understand why this happens in program symbols *)
       "infix @", "infix ++";
+      "!", "prefix !";
+      ":=", "infix :=";
     ]
 
 let query_syntax str =
