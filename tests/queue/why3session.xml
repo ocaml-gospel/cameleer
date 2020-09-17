@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="queue.ml"/>
+<theory name="Queue" proved="true">
+ <goal name="t&#39;vc" expl="VC for t" proved="true">
+ <proof prover="0"><result status="valid" time="0.04" steps="5824"/></proof>
+ </goal>
+ <goal name="create&#39;vc" expl="VC for create" proved="true">
+ <proof prover="0"><result status="valid" time="0.04" steps="7250"/></proof>
+ </goal>
+ <goal name="push&#39;vc" expl="VC for push" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="push&#39;vc.0" expl="type invariant" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="8282"/></proof>
+  </goal>
+  <goal name="push&#39;vc.1" expl="type invariant" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="9033"/></proof>
+  </goal>
+  <goal name="push&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="5442"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
