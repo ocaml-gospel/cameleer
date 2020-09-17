@@ -194,7 +194,7 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
   (*@ r = empty
         ensures r = E *)
 
-  let is_empty = function
+  let[@logic] is_empty = function
     | E -> true
     | N (_, _, _, _) -> false
   (*@ b = is_empty param
@@ -260,9 +260,13 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
    *   | N(_, _, l, r) ->
    *     merge (filter p l) (filter p r) *)
 
-  (* let find_min_exn = function
-   *   | E -> raise Empty
-   *   | N (_, x, _, _) -> x *)
+  let find_min_exn = function
+    | E -> raise Empty
+    | N (_, x, _, _) -> x
+  (*@ r = find_min_exn param
+        requires leftist_heap param
+        raises   Empty -> is_empty param
+        ensures  r = minimum param *)
 
   let find_min = function
     | E -> None
@@ -270,12 +274,22 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
   (*@ r = find_min param
         requires leftist_heap param
         ensures  match r with
-                 | None -> param = E
+                 | None -> is_empty param
                  | Some x -> is_minimum x param *)
 
   let take = function
     | E -> None
     | N (_, x, l, r) -> Some (merge l r, x)
+  (*@ r = take param
+        requires leftist_heap param
+        ensures  match r with
+                 | None -> is_empty param
+                 | Some (h, x) ->
+                     is_minimum x param &&
+                     occ (minimum param) h = occ (minimum param) param - 1 &&
+                     forall y. y <> minimum param -> occ y param = occ y h &&
+                     size h = size param - 1 &&
+                     leftist_heap h *)
 
   (* let take_exn = function
    *   | E -> raise Empty
