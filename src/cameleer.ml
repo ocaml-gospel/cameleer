@@ -382,6 +382,7 @@ let use_std_lib =
   let length = Qdot (Qident (mk_id "list"), mk_id "List") in
   let list = Qdot (Qident (mk_id "list"), mk_id "Length") in
   let append = Qdot (Qident (mk_id "list"), mk_id "Append") in
+  let reverse = Qdot (Qident (mk_id "list"), mk_id "Reverse") in
   let ocaml_exn = Qdot (Qident (mk_id "ocaml"), mk_id "Exceptions") in
   let option = Qdot (Qident (mk_id "option"), mk_id "Option") in
   let ocaml_ref = Qdot (Qident (mk_id "ref"), mk_id "Ref") in
@@ -391,13 +392,14 @@ let use_std_lib =
   let use_list = Duseimport (Loc.dummy_position, false, [list, None]) in
   let use_length = Duseimport (Loc.dummy_position, false, [length, None]) in
   let use_append = Duseimport (Loc.dummy_position, false, [append, None]) in
+  let use_reverse = Duseimport (Loc.dummy_position, false, [reverse, None]) in
   let use_ocaml_exn =
     Duseimport (Loc.dummy_position, false, [ocaml_exn, None]) in
   let use_option = Duseimport (Loc.dummy_position, false, [option, None]) in
   let use_ref = Duseimport (Loc.dummy_position, false, [ocaml_ref, None]) in
   [Odecl use_int; Odecl use_minmax; (* Odecl use_int63; *) Odecl use_list;
-   Odecl use_length; Odecl use_append; Odecl use_ocaml_exn; Odecl use_ref;
-   Odecl use_option]
+   Odecl use_length; Odecl use_append; Odecl use_reverse;
+   Odecl use_ocaml_exn; Odecl use_ref; Odecl use_option]
 
 let mk_info () =
   let info = E.{ info_arith_construct = Hashtbl.create 32 } in
