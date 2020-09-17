@@ -228,7 +228,8 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
             Eraise (longident id.txt, Opt.map (expression info) exn_arg)
         | _ -> assert false (* TODO: not supported for now *) end
     | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
-        Eidapp (longident s.txt, List.map arg_expr arg_expr_list)
+        let id_loc = T.location s.loc in
+        Eidapp (longident ~id_loc s.txt, List.map arg_expr arg_expr_list)
     | Uast.Sexp_apply (_expr, _arg_list) ->
         assert false (* TODO *)
     | Uast.Sexp_match (expr, case_list) ->
@@ -277,7 +278,8 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         let id = longident ~id_loc:T.(location l.loc) l.txt in
         Eassign [(lexpr, Some id, rexpr)]
     | Sexp_array _ -> assert false (* TODO *)
-    | Sexp_while _ -> assert false (* TODO *)
+    | Sexp_while (expr_test, expr_body) ->
+        Ewhile (expression info expr_test, [], [], expression info expr_body)
     | Sexp_for _ -> assert false (* TODO *)
     | Sexp_coerce _ -> assert false (* TODO *)
     | Sexp_send _ -> assert false (* TODO *)
