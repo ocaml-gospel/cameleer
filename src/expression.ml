@@ -10,6 +10,7 @@ module O = Oparsetree
 
 type info = { (* to be completed as needed *)
   info_arith_construct: (string, int) Hashtbl.t
+  (* TODO: include here information to generate refinement modules *)
 }
 
 let rec string_of_longident = function
@@ -271,7 +272,10 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Sexp_let _ -> assert false (* TODO *)
     | Sexp_fun _ -> assert false (* TODO *)
     | Sexp_variant _ -> assert false (* TODO *)
-    | Sexp_setfield _ -> assert false (* TODO *)
+    | Sexp_setfield (lvalue, l, rvalue) ->
+        let lexpr = expression info lvalue and rexpr = expression info rvalue in
+        let id = longident ~id_loc:T.(location l.loc) l.txt in
+        Eassign [(lexpr, Some id, rexpr)]
     | Sexp_array _ -> assert false (* TODO *)
     | Sexp_while _ -> assert false (* TODO *)
     | Sexp_for _ -> assert false (* TODO *)
