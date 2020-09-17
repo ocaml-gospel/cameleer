@@ -3,6 +3,7 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="queue.ml"/>
 <theory name="Queue" proved="true">
@@ -24,6 +25,59 @@
   <proof prover="0"><result status="valid" time="0.02" steps="5442"/></proof>
   </goal>
  </transf>
+ </goal>
+ <goal name="pop&#39;vc" expl="VC for pop" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="pop&#39;vc.0" expl="type invariant" proved="true">
+  <proof prover="1"><result status="valid" time="0.54" steps="504"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.1" expl="type invariant" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="8926"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.2" expl="exceptional postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="44"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.3" expl="unreachable point" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="38"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.4" expl="type invariant" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="pop&#39;vc.4.0" expl="type invariant" proved="true">
+   <proof prover="1" timelimit="5"><result status="valid" time="1.37" steps="1902"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="pop&#39;vc.5" expl="type invariant" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="9740"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.6" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="5658"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.7" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="11865"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.8" expl="exceptional postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="5901"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.9" expl="unreachable point" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="34"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.10" expl="type invariant" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="7831"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.11" expl="type invariant" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="10156"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.12" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="5650"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.13" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="58"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="is_empy&#39;vc" expl="VC for is_empy" proved="true">
+ <proof prover="0"><result status="valid" time="0.06" steps="8541"/></proof>
  </goal>
 </theory>
 </file>
