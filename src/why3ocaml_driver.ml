@@ -34,8 +34,10 @@ let () = List.iter (fun (x, y) -> Hstr.add driver x y)
       "infix ::", "Cons";
       "::", "Cons"; (* FIXME: understand why this happens in program symbols *)
       "infix @", "infix ++";
+      "@", "infix ++";
       "!", "prefix !";
       ":=", "infix :=";
+      "rev", "reverse";
     ]
 
 let query_syntax str =
