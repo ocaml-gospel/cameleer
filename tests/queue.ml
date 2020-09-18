@@ -46,7 +46,7 @@ let is_empty q =
       ensures b <-> q.view = [] *)
 
 let transfer q1 q2 =
-  while not (is_empty q1) do
+  while [@gospel "invariantt true"] not (is_empty q1) do
     push (pop q1) q2
   done
 (*@ transfer q1 q2
