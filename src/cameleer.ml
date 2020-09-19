@@ -7,8 +7,8 @@ let mk_field ~mut:f_mutable ~ghost:f_ghost f_loc f_ident f_pty  =
   { f_loc; f_ident; f_pty; f_mutable; f_ghost }
 
 module Convert = struct
-  open Oasttypes
-  open Oparsetree
+  open Asttypes
+  open Parsetree
   open Vspec
   module T  = Uterm
   module Tt = Tterm
@@ -28,10 +28,10 @@ module Convert = struct
   (** Visibility of type declarations. An alias type cannot be private, so we
       check whether or not the GOSPEL type manifest is [None]. *)
   let td_private manifest private_ tkind = match manifest, private_, tkind with
-    | Some _ , _, _           -> Ptree.Public
-    | _, _, Ptype_abstract    -> Ptree.Private
-    | _, Oasttypes.Private, _ -> Ptree.Private
-    | _, Oasttypes.Public, _  -> Ptree.Public
+    | Some _ , _, _          -> Ptree.Public
+    | _, _, Ptype_abstract   -> Ptree.Private
+    | _, Asttypes.Private, _ -> Ptree.Private
+    | _, Asttypes.Public, _  -> Ptree.Public
 
   let param_of_cty cty =
     let loc = T.location cty.ptyp_loc in
@@ -282,7 +282,8 @@ module Convert = struct
           [Odecl (Dprop (Decl.Paxiom, T.preid a.ax_name, T.term a.ax_term))]
       | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
           let scope_loc = T.location spmb_loc in
-          let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
+          let scope_str = Option.get txt in (* FIXME: think about None case *)
+          let scope_id  = T.(mk_id ~id_loc:(location loc) scope_str) in
           [Omodule (scope_loc, scope_id, s_module_expr info spmb_expr)]
       | Uast.Str_modtype {mtdname = {txt; loc}; mtdtype; mtdloc; _} ->
           let scope_loc = T.location mtdloc in
@@ -295,10 +296,10 @@ module Convert = struct
           let id, pty, mask = type_exception ty_exn in
           [Odecl (Dexn (id, pty, mask))]
       | Uast.Str_open _ -> assert false (* TODO *)
-      | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
+      | Uast.Str_ghost_open {popen_expr; popen_loc; _} ->
           let loc = T.location popen_loc in
-          let id_loc = T.location popen_lid.loc in
-          let open_txt = popen_lid.txt in
+          let id_loc = T.location popen_expr.loc in
+          let open_txt = popen_expr.txt in
           let mname_txt = match open_txt with
             | Longident.Lident s -> s
             | Ldot (_, s) -> s
@@ -325,11 +326,15 @@ module Convert = struct
           Loc.errorm "Module aliasing is not supported."
       | Uast.Smod_structure str ->
           s_structure info str
-      | Uast.Smod_functor (arg_name, arg, body) ->
-          let id_loc = T.location arg_name.loc in
-          let id = T.mk_id ~id_loc arg_name.txt in
+      | Uast.Smod_functor (Sunit, _) ->
+          Loc.errorm "Unit functor argument is not supported."
+      | Uast.Smod_functor (Snamed ({txt = None; _}, _), _) ->
+          Loc.errorm "Unamed functor argument is not supported."
+      | Uast.Smod_functor (Snamed ({txt = Some id; loc}, arg), body) ->
+          let id_loc = T.location loc in
+          let id = T.mk_id ~id_loc id in
           let body = s_module_expr info body in
-          Omodule (decl_loc, id, s_module_type info (Opt.get arg)) :: body
+          Omodule (decl_loc, id, s_module_type info arg) :: body
       | Smod_apply _ -> assert false (* TODO *)
       | Smod_constraint _ -> assert false (* TODO *)
       | Smod_unpack _ -> assert false (* TODO *)

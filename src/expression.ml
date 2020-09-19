@@ -1,12 +1,12 @@
 open Why3
 open Ptree
 open Gospel
-open Oasttypes
+open Asttypes
 open Longident
 open Why3ocaml_driver
 module T = Uterm
 module S = Vspec
-module O = Oparsetree
+module P = Parsetree
 
 type info = { (* to be completed as needed *)
   info_arith_construct: (string, int) Hashtbl.t
@@ -56,23 +56,23 @@ let rec longident ?(id_loc=T.dummy_loc) ?(prefix="") = function
       Qdot (longident ~id_loc t, T.mk_id ~id_loc id)
   | _ -> assert false (* TODO *)
 
-let rec core_type O.{ptyp_desc; ptyp_loc; _} = match ptyp_desc with
-  | O.Ptyp_var s ->
+let rec core_type P.{ptyp_desc; ptyp_loc; _} = match ptyp_desc with
+  | P.Ptyp_var s ->
       PTtyvar T.(mk_id ~id_loc:(location ptyp_loc) s)
-  | O.Ptyp_constr ({txt; loc}, cty_list) ->
+  | P.Ptyp_constr ({txt; loc}, cty_list) ->
       let args = List.map core_type cty_list in
       PTtyapp (longident ~id_loc:(T.location loc) txt, args)
-  | O.Ptyp_arrow (Nolabel, cty1, cty2) ->
+  | P.Ptyp_arrow (Nolabel, cty1, cty2) ->
       PTarrow (core_type cty1, core_type cty2)
-  | O.Ptyp_arrow (Labelled _, _, _) ->
+  | P.Ptyp_arrow (Labelled _, _, _) ->
       assert false (* TODO *)
-  | O.Ptyp_arrow (Optional _, _, _) ->
+  | P.Ptyp_arrow (Optional _, _, _) ->
       assert false (* TODO *)
-  | O.Ptyp_tuple cty_list ->
+  | P.Ptyp_tuple cty_list ->
       PTtuple (List.map core_type cty_list)
   | _ -> assert false (* TODO *)
 
-let binder_of_pattern O.{ppat_desc; ppat_loc; _} = match ppat_desc with
+let binder_of_pattern P.{ppat_desc; ppat_loc; _} = match ppat_desc with
   | Ppat_any ->
       let id  = T.(mk_id "us" ~id_loc:(location ppat_loc)) in
       let loc = T.location ppat_loc in
@@ -94,7 +94,7 @@ let binder_of_pattern O.{ppat_desc; ppat_loc; _} = match ppat_desc with
   | Ppat_alias _ -> assert false (* TODO *)
   | _ -> assert false (* TODO *)
 
-let id_of_pat O.{ppat_desc; _} = match ppat_desc with
+let id_of_pat P.{ppat_desc; _} = match ppat_desc with
   | Ppat_var {txt; loc} -> T.(mk_id ~id_loc:(location loc) txt)
   | Ppat_any -> assert false (* TODO *)
   | Ppat_alias _ -> assert false (* TODO *)
@@ -114,26 +114,26 @@ let id_of_pat O.{ppat_desc; _} = match ppat_desc with
   | Ppat_extension _ -> assert false (* TODO *)
   | Ppat_open _ -> assert false (* TODO *)
 
-let rec pattern info O.{ppat_desc = p_desc; ppat_loc; _} =
+let rec pattern info P.{ppat_desc = p_desc; ppat_loc; _} =
   let pat_loc = T.location ppat_loc in
   let mk_pat p = T.mk_pattern ~pat_loc p in
   let pat_desc = function
-    | O.Ppat_any            -> Pwild
-    | O.Ppat_var id         -> Pvar T.(mk_id ~id_loc:(location id.loc) id.txt)
-    | O.Ppat_tuple pat_list -> Ptuple (List.map (pattern info) pat_list)
-    | O.Ppat_construct (id, None) ->
+    | P.Ppat_any            -> Pwild
+    | P.Ppat_var id         -> Pvar T.(mk_id ~id_loc:(location id.loc) id.txt)
+    | P.Ppat_tuple pat_list -> Ptuple (List.map (pattern info) pat_list)
+    | P.Ppat_construct (id, None) ->
         Papp (longident id.txt, [])
-    | O.Ppat_construct (id, Some ({ppat_desc = Ppat_tuple pat_list; _})) ->
+    | P.Ppat_construct (id, Some ({ppat_desc = Ppat_tuple pat_list; _})) ->
         let s = string_of_longident id.txt in
         let pat = List.map (pattern info) pat_list in
         if Hashtbl.find info.info_arith_construct s > 1 then
           Papp (longident id.txt, pat)
         else Papp (longident id.txt, [mk_pat (Ptuple pat)])
-    | O.Ppat_construct (id, Some p) ->
+    | P.Ppat_construct (id, Some p) ->
         Papp (longident id.txt, [pattern info p])
-    | O.Ppat_or (pat1, pat2) ->
+    | P.Ppat_or (pat1, pat2) ->
         Por (pattern info pat1, pattern info pat2)
-    | O.Ppat_constant _ ->
+    | P.Ppat_constant _ ->
         Loc.errorm "Constants in case expressions are not supported."
     | Ppat_alias (pat, id) ->
         let pat_id = T.(mk_id ~id_loc:(location id.loc)) id.txt in
@@ -163,9 +163,9 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let logic_attr = "logic" in
   let lemma_attr = "lemma" in
   let is_logic =
-    List.exists (fun O.{attr_name; _} -> attr_name.txt = logic_attr) in
+    List.exists (fun P.{attr_name; _} -> attr_name.txt = logic_attr) in
   let is_lemma =
-    List.exists (fun O.{attr_name; _} -> attr_name.txt = lemma_attr) in
+    List.exists (fun P.{attr_name; _} -> attr_name.txt = lemma_attr) in
   let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
   let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
   let field_expr ({txt; _}, e) = (longident txt, expression info e) in
@@ -295,6 +295,7 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Sexp_newtype _ -> assert false (* TODO *)
     | Sexp_pack _ -> assert false (* TODO *)
     | Sexp_open _ -> assert false (* TODO *)
+    | Sexp_letop _ -> assert false (* TODO *)
     | Sexp_extension _ -> assert false (* TODO *)
     | Sexp_unreachable -> assert false (* TODO *) in
   mk_expr (pexp_desc p_desc)
@@ -305,7 +306,7 @@ and case info Uast.{spc_lhs; spc_guard; spc_rhs} =
 
 and case_exn info Uast.{spc_lhs; spc_guard; spc_rhs} =
   check_guard spc_guard;
-  let q, pat = match spc_lhs.O.ppat_desc with
+  let q, pat = match spc_lhs.P.ppat_desc with
     | Ppat_any -> Qident (T.mk_id "_"), None
     | Ppat_var s -> let id_loc = T.location s.loc in
         Qident (T.mk_id s.txt ~id_loc), None
