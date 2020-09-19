@@ -1,12 +1,10 @@
 open Why3
 open Ptree
 open Gospel
-open Parsetree
+open Oasttypes
 open Identifier
-open Preid
 open Why3ocaml_driver
 module D = Why3.Dterm
-module I = Why3.Ident
 module Ty = Ttypes
 
 let dummy_loc = Loc.dummy_position
@@ -32,7 +30,7 @@ let ident_of_lsymbol Tterm.{ls_name = name; _} =
 let constant = function
   | Pconst_integer (s, _) ->
       Constant.ConstInt (Number.int_literal ILitDec ~neg:false s)
-  | Pconst_string (s, _, _) ->
+  | Pconst_string (s, _) ->
       Constant.ConstStr s
   | Pconst_float _ -> assert false (* TODO *)
   | _ -> assert false
@@ -103,7 +101,7 @@ let rec term Uast.{term_desc = t_desc; term_loc} =
     | Uast.Tor_asym  -> D.DTor_asym
     | Uast.Timplies  -> D.DTimplies
     | Uast.Tiff      -> D.DTiff in
-  let attr a = ATstr (I.create_attribute a) in
+  let attr a = ATstr (Ident.create_attribute a) in
   let pat_term (pat, t) = pattern pat, term t in
   let qualid_term (q, t) = qualid q, term t in
   let term_desc = function

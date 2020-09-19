@@ -9,8 +9,7 @@
 
 module I  = Gospel.Identifier
 module Ty = Gospel.Ttypes
-open Why3
-open Wstdlib
+open Gospel.Utils
 
 type syntax_map = string Hstr.t
 

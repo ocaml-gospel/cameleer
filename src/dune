@@ -2,8 +2,7 @@
   (libraries gospel why3 ocaml-compiler-libs.common)
   (name cameleer)
   (modes plugin)
-  (link_flags -linkall)
-  (embed_in_plugin_libraries gospel ocaml-compiler-libs.common))
+  (embed_in_plugin_libraries gospel))
 
 (install
   (section lib_root)
