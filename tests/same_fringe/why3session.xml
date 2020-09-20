@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="same_fringe.ml"/>
+<theory name="Same_fringe" proved="true">
+ <goal name="Make.enum&#39;vc" expl="VC for enum" proved="true">
+ <proof prover="1"><result status="valid" time="0.10" steps="13943"/></proof>
+ </goal>
+ <goal name="Make.eq_enum&#39;vc" expl="VC for eq_enum" proved="true">
+ <proof prover="0"><result status="valid" time="0.03" steps="299"/></proof>
+ </goal>
+ <goal name="Make.same_fringe&#39;vc" expl="VC for same_fringe" proved="true">
+ <proof prover="1"><result status="valid" time="0.05" steps="7544"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

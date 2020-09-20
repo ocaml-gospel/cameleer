@@ -1,48 +1,56 @@
-type 'a t = 'a list * 'a list
-  (** a queue is a pair (prefix, xiffus), with elements popped from prefix
-      and inserted into xiffus
-      invariant: prefix=[] -> xiffus=[] *)
-
-(*@ function view (t: 'a t) : 'a list = match t with
-      | (prefix, xiffus) -> prefix @ rev xiffus *)
-
-(*@ predicate invariant_t (t: 'a t) (l: 'a list) = match t with
-      | (prefix, xiffus) -> (prefix = [] -> xiffus = []) && view t = l *)
+type 'a t = {
+           self : 'a list * 'a list;
+  [@model] view : 'a list
+} (*@ invariant let (prefix, xiffus) = self in
+                (prefix=[] -> xiffus=[]) && view = prefix @ rev xiffus *)
+(** a queue is a pair (prefix, xiffus), with elements popped from prefix
+    and inserted into xiffus
+    invariant: prefix=[] -> xiffus=[] *)
 
 let empty = [], []
 (*@ t = empty
-      ensures invariant_t t [] *)
+      ensures t.view = [] *)
 
-let [@logic] is_empty (q: 'a t) = match q with
+let [@logic] is_empty (q: 'a t) = match q.self with
   | [], _ -> true
   | _ -> false
 (*@ b = is_empty q
-      requires exists l. invariant_t q l
-      ensures  b <-> invariant_t q []*)
+      ensures  b <-> q.view = [] *)
 
-let add queue elt = match queue with
-  | [], [] -> [elt], []
-  | prefix, xiffus -> prefix, elt :: xiffus
+let add queue elt = match queue.self with
+  | [], [] ->
+      { self = [elt], []; view = [elt] }
+  | prefix, xiffus ->
+      { self = prefix, elt :: xiffus; view = queue.view @ [elt] }
 (*@ r = add queue elt
-      requires exists l. invariant_t queue l
-      ensures  exists l. invariant_t r (l ++ (elt :: []))*)
+      ensures r.view = queue.view ++ (elt :: []) *)
 
-let head (param: 'a t) = match param with
+let head (param: 'a t) = match param.self with
   | head :: _, _-> head
   | [], _ -> raise Not_found
 (*@ x = head param
-      requires exists l. invariant_t param l
-      raises   Not_found -> is_empty param
-      ensures  exists l. invariant_t param (x :: l) *)
+      raises  Not_found -> is_empty param
+      ensures match param.view with
+              | [] -> false
+              | y :: _ -> x = y *)
 
-let tail = function
-  | [_], xiffus -> rev xiffus, []
-  | _ :: prefix, xiffus -> prefix, xiffus
+let [@ghost] tail_list = function
+  | [] -> assert false
+  | _ :: l -> l
+(*@ r = tail_list param
+      requires param <> []
+      ensures  match param with
+               | [] -> false
+               | _ :: l -> r = l *)
+
+let tail t = match t.self with
+  | [_], xiffus ->
+      { self = rev xiffus, []; view = tail_list t.view }
+  | _ :: prefix, xiffus ->
+      { self = prefix, xiffus; view = prefix @ rev xiffus }
   | [], _ -> raise Not_found
-(*@ t = tail param
-      requires exists l. invariant_t param l
-      raises   Not_found -> is_empty param
-      ensures  exists l. invariant_t param l &&
-                 match l with
-                 | [] -> false
-                 | _ :: ll -> invariant_t t ll *)
+(*@ r = tail t
+      raises  Not_found -> is_empty t
+      ensures match t.view with
+              | [] -> false
+              | _ :: ll -> r.view = ll *)
