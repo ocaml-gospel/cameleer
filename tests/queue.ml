@@ -12,6 +12,8 @@ let create () = {
   size  = 0;
   view  = [];
 }
+(*@ q = create ()
+      ensures q.view = [] *)
 
 let push x q =
   q.rear <- x :: q.rear;

@@ -1,10 +1,12 @@
-module Make (Eq: sig
-    type elt
+module type EQUAL = sig
+  type elt
 
-    val eq : elt -> elt -> bool
-    (*@ b = eq x y
-          ensures b <-> x = y *)
-  end)
+  val eq : elt -> elt -> bool
+  (*@ b = eq x y
+        ensures b <-> x = y *)
+end
+
+module Make (Eq: EQUAL)
 = struct
 
   type tree = Empty | Node of tree * Eq.elt * tree

@@ -4,14 +4,15 @@
 <why3session shape_version="6">
 <prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="1" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<file format="ocaml" proved="true">
+<prover id="2" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
 <path name=".."/><path name="queue.ml"/>
-<theory name="Queue" proved="true">
+<theory name="Queue">
  <goal name="t&#39;vc" expl="VC for t" proved="true">
  <proof prover="0"><result status="valid" time="0.04" steps="5824"/></proof>
  </goal>
  <goal name="create&#39;vc" expl="VC for create" proved="true">
- <proof prover="0"><result status="valid" time="0.04" steps="7250"/></proof>
+ <proof prover="0"><result status="valid" time="0.04" steps="7216"/></proof>
  </goal>
  <goal name="push&#39;vc" expl="VC for push" proved="true">
  <transf name="split_vc" proved="true" >
@@ -76,8 +77,13 @@
   </goal>
  </transf>
  </goal>
- <goal name="is_empy&#39;vc" expl="VC for is_empy" proved="true">
+ <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
  <proof prover="0"><result status="valid" time="0.06" steps="8541"/></proof>
+ </goal>
+ <goal name="transfer&#39;vc" expl="VC for transfer">
+ <proof prover="0"><result status="unknown" time="0.05" steps="10487"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="3517489"/></proof>
  </goal>
 </theory>
 </file>
