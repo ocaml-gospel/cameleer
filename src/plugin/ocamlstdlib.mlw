@@ -1,0 +1,23 @@
+module OCamlStdLib
+
+  use export int.Int
+  use export int.MinMax
+  use export list.List
+  use export list.Length
+  use export list.Append
+  (* use export list.Reverse *)
+  use export ocaml.Exceptions
+  use export option.Option
+  use export ref.Ref
+
+  scope List
+
+    use export list.List
+    use import list.Reverse as R
+
+    let rec function rev (l: list 'a) : list 'a =
+      R.reverse l
+
+  end
+
+end
