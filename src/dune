@@ -1,5 +1,4 @@
-(copy_files# (files plugin/*))
-(copy_files# (files compile/*))
+(include_subdirs unqualified)
 
 (executable
   (libraries gospel why3 ocaml-compiler-libs.common)
