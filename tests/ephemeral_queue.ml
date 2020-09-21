@@ -2,9 +2,9 @@ type 'a t = {
   mutable front: 'a list;
   mutable rear : 'a list;
   mutable size : int;
-} (*@ mutable model view: 'a list *)
-  (*@ invariant size = length front + length rear *)
-  (*@ invariant view = front ++ rev rear *)
+  mutable view : 'a list [@ghost]
+} (*@ invariant size = length view *)
+  (*@ invariant view = front ++ List.rev rear *)
 
 let create () = {
   front = [];
@@ -28,7 +28,7 @@ let [@logic] is_empty_list = function
 
 let pop q =
   if is_empty_list q.front then begin
-    q.front <- rev q.rear;
+    q.front <- List.rev q.rear;
     q.rear  <- [] end;
   match q.front with
   | [] -> raise Not_found
@@ -48,8 +48,9 @@ let is_empty q =
       ensures b <-> q.view = [] *)
 
 let transfer q1 q2 =
-  while [@gospel "invariantt true"] not (is_empty q1) do
+  while not (is_empty q1) do
     push (pop q1) q2
+    (*@ invariant true *)
   done
 (*@ transfer q1 q2
       raises Not_found -> false *)
