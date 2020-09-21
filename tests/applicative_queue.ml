@@ -1,8 +1,8 @@
 type 'a t = {
-           self : 'a list * 'a list;
-  [@model] view : 'a list
+  self : 'a list * 'a list;
+  view : 'a list [@ghost]
 } (*@ invariant let (prefix, xiffus) = self in
-                (prefix=[] -> xiffus=[]) && view = prefix @ rev xiffus *)
+                (prefix=[] -> xiffus=[]) && view = prefix @ List.rev xiffus *)
 (** a queue is a pair (prefix, xiffus), with elements popped from prefix
     and inserted into xiffus
     invariant: prefix=[] -> xiffus=[] *)
@@ -34,7 +34,7 @@ let head (param: 'a t) = match param.self with
               | [] -> false
               | y :: _ -> x = y *)
 
-let [@ghost] tail_list = function
+let [@logic] [@ghost] tail_list = function
   | [] -> assert false
   | _ :: l -> l
 (*@ r = tail_list param
@@ -45,12 +45,10 @@ let [@ghost] tail_list = function
 
 let tail t = match t.self with
   | [_], xiffus ->
-      { self = rev xiffus, []; view = tail_list t.view }
+      { self = List.rev xiffus, []; view = tail_list t.view }
   | _ :: prefix, xiffus ->
-      { self = prefix, xiffus; view = prefix @ rev xiffus }
+      { self = prefix, xiffus; view = prefix @ List.rev xiffus }
   | [], _ -> raise Not_found
 (*@ r = tail t
       raises  Not_found -> is_empty t
-      ensures match t.view with
-              | [] -> false
-              | _ :: ll -> r.view = ll *)
+      ensures r.view = tail_list t.view *)

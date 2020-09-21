@@ -13,7 +13,7 @@
  <proof prover="1"><result status="valid" time="0.05" steps="102"/></proof>
  </goal>
  <goal name="add&#39;vc" expl="VC for add" proved="true">
- <proof prover="1"><result status="valid" time="0.38" steps="734"/></proof>
+ <proof prover="1"><result status="valid" time="0.20" steps="734"/></proof>
  </goal>
  <goal name="head&#39;vc" expl="VC for head" proved="true">
  <proof prover="1"><result status="valid" time="0.18" steps="424"/></proof>
@@ -22,7 +22,7 @@
  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
  </goal>
  <goal name="tail&#39;vc" expl="VC for tail" proved="true">
- <proof prover="1"><result status="valid" time="0.73" steps="2384"/></proof>
+ <proof prover="1"><result status="valid" time="0.36" steps="1346"/></proof>
  </goal>
 </theory>
 </file>

@@ -1,3 +1,6 @@
+(copy_files# (files plugin/*))
+(copy_files# (files compile/*))
+
 (executable
   (libraries gospel why3 ocaml-compiler-libs.common)
   (name cameleer)
