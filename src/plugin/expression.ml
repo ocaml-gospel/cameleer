@@ -282,8 +282,11 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         let id = longident ~id_loc:T.(location l.loc) l.txt in
         Eassign [(lexpr, Some id, rexpr)]
     | Sexp_array _ -> assert false (* TODO *)
-    | Sexp_while (expr_test, expr_body) ->
-        Ewhile (expression info expr_test, [], [], expression info expr_body)
+    | Sexp_while (expr_test, expr_body, loop_annotation) ->
+        let mk_var t = (T.term t, None) in
+        let inv = List.map T.term loop_annotation.while_invariant in
+        let var = List.map mk_var loop_annotation.while_variant in
+        Ewhile (expression info expr_test, inv, var, expression info expr_body)
     | Sexp_for _ -> assert false (* TODO *)
     | Sexp_coerce _ -> assert false (* TODO *)
     | Sexp_send _ -> assert false (* TODO *)
