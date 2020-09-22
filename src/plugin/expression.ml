@@ -20,6 +20,8 @@ let rec string_of_longident = function
 
 let rec_flag = function Nonrecursive -> false | Recursive -> true
 
+let direction_flag = function Upto -> Expr.To | Downto -> Expr.DownTo
+
 let split_on_checks sp_pre =
   let mk_split (pre, checks) (t, is_checks) =
     if is_checks then pre, t :: checks else t :: pre, checks in
@@ -284,10 +286,17 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Sexp_array _ -> assert false (* TODO *)
     | Sexp_while (expr_test, expr_body, loop_annotation) ->
         let mk_var t = (T.term t, None) in
-        let inv = List.map T.term loop_annotation.while_invariant in
-        let var = List.map mk_var loop_annotation.while_variant in
+        let inv = List.map T.term loop_annotation.loop_invariant in
+        let var = List.map mk_var loop_annotation.loop_variant in
         Ewhile (expression info expr_test, inv, var, expression info expr_body)
-    | Sexp_for _ -> assert false (* TODO *)
+    | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, loop_annot) ->
+        let id = id_of_pat pat in
+        let expr_lower = expression info expr_lower in
+        let expr_upper = expression info expr_upper in
+        let flag = direction_flag flag in
+        let expr_body = expression info expr_body in
+        let invariant = List.map T.term loop_annot.loop_invariant in
+        Efor (id, expr_lower, flag, expr_upper, invariant, expr_body)
     | Sexp_coerce _ -> assert false (* TODO *)
     | Sexp_send _ -> assert false (* TODO *)
     | Sexp_new _ -> assert false (* TODO *)
