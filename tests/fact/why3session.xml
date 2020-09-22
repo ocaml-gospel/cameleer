@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="fact.ml"/>
+<theory name="Fact" proved="true">
+ <goal name="fact_rec&#39;vc" expl="VC for fact_rec" proved="true">
+ <proof prover="0"><result status="valid" time="0.05" steps="5473"/></proof>
+ </goal>
+ <goal name="fact_imp&#39;vc" expl="VC for fact_imp" proved="true">
+ <proof prover="0"><result status="valid" time="0.06" steps="6053"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
