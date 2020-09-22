@@ -1,6 +1,7 @@
 module OCamlStdLib
 
   use export int.Int
+  use export mach.int.Int
   use export int.MinMax
   use export list.List
   use export list.Length
