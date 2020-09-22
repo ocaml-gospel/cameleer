@@ -288,7 +288,8 @@ module Convert = struct
               | Ematch _ -> assert false (* TODO *)
               | _ -> assert false (* TODO *) end in
             let mask_visible = Ity.MaskVisible in
-            id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
+            let ghost = is_ghost_let svb_list in
+            id, ghost, rs_kind, args, None, ret, mask_visible, spec, expr in
           let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb svb_list in
           [Odecl (Drec (List.map (mk_fun_def rs_kind) id_fun_expr_list))]
       | Uast.Str_type (rec_flag, type_decl_list) ->
