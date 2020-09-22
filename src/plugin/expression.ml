@@ -166,8 +166,11 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     List.exists (fun O.{attr_name; _} -> attr_name.txt = logic_attr) in
   let is_lemma =
     List.exists (fun O.{attr_name; _} -> attr_name.txt = lemma_attr) in
+  let is_ghost attributes =
+    List.exists (fun O.{attr_name; _} -> attr_name.txt = "ghost") attributes in
   let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
   let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
+  let is_ghost_svb Uast.{spvb_attributes; _} = is_ghost spvb_attributes in
   let field_expr ({txt; _}, e) = (longident txt, expression info e) in
   let rs_kind svb_list = if List.exists is_logic_svb svb_list then Expr.RKfunc
     else if List.exists is_lemma_svb svb_list then Expr.RKlemma
@@ -197,7 +200,8 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Uast.Sexp_let (Nonrecursive, [svb], expr) ->
         let id, binder_expr = s_value_binding info svb in
         let expr = expression info expr in
-        Elet (id, false, Expr.RKnone, binder_expr, expr)
+        let ghost = is_ghost_svb svb in
+        Elet (id, ghost, Expr.RKnone, binder_expr, expr)
     | Uast.Sexp_let (Recursive, svb_list, expr) ->
         let mk_fun_def rs_kind (id, fun_expr) =
           let args, ret, spec, expr = begin match fun_expr.expr_desc with
