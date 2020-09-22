@@ -32,9 +32,7 @@ let [@ghost] head_list = function
   | x :: _ -> x
 (*@ r = head_list param
       requires param <> []
-      ensures  match param with
-               | [] -> false
-               | y :: _ -> r = y *)
+      ensures  match param with [] -> false | y :: _ -> r = y *)
 
 let pop q =
   if is_empty_list q.front then begin
