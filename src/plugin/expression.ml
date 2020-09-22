@@ -49,6 +49,9 @@ let unit_expr =
 
 let unit_pty = PTtuple []
 
+let is_ghost attributes =
+  List.exists (fun O.{attr_name; _} -> attr_name.txt = "ghost") attributes
+
 let rec longident ?(id_loc=T.dummy_loc) ?(prefix="") = function
   | Lident id -> (* FIXME? right place to driver lookup? *)
       let id = match query_syntax id with Some s -> s | None -> id in
@@ -74,25 +77,30 @@ let rec core_type O.{ptyp_desc; ptyp_loc; _} = match ptyp_desc with
       PTtuple (List.map core_type cty_list)
   | _ -> assert false (* TODO *)
 
-let binder_of_pattern O.{ppat_desc; ppat_loc; _} = match ppat_desc with
+let binder_of_pattern O.{ppat_desc; ppat_loc; ppat_attributes; _} =
+  match ppat_desc with
   | Ppat_any ->
       let id  = T.(mk_id "us" ~id_loc:(location ppat_loc)) in
       let loc = T.location ppat_loc in
-      (loc, Some id, false, None)
+      let ghost = is_ghost ppat_attributes in
+      (loc, Some id, ghost, None)
   | Ppat_var x ->
       let id  = T.(mk_id x.txt ~id_loc:(location x.loc)) in
       let loc = T.location ppat_loc in
-      (loc, Some id, false, None)
+      let ghost = is_ghost ppat_attributes in
+      (loc, Some id, ghost, None)
   | Ppat_constraint ({ppat_desc = Ppat_var s; ppat_loc; _}, cty) ->
       let id  = T.(mk_id s.txt ~id_loc:(location s.loc)) in
       let loc = T.location ppat_loc in
+      let ghost = is_ghost ppat_attributes in
       let pty = core_type cty in
-      (loc, Some id, false, Some pty)
+      (loc, Some id, ghost, Some pty)
   | Ppat_tuple _ -> assert false (* TODO *)
   | Ppat_construct ({txt = Lident "()"; loc}, None) ->
       let id = T.(mk_id "_" ~id_loc:(location loc)) in
       let loc = T.location ppat_loc in
-      (loc, Some id, false, Some unit_pty)
+      let ghost = is_ghost ppat_attributes in
+      (loc, Some id, ghost, Some unit_pty)
   | Ppat_alias _ -> assert false (* TODO *)
   | _ -> assert false (* TODO *)
 
@@ -168,8 +176,6 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     List.exists (fun O.{attr_name; _} -> attr_name.txt = logic_attr) in
   let is_lemma =
     List.exists (fun O.{attr_name; _} -> attr_name.txt = lemma_attr) in
-  let is_ghost attributes =
-    List.exists (fun O.{attr_name; _} -> attr_name.txt = "ghost") attributes in
   let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
   let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
   let is_ghost_svb Uast.{spvb_attributes; _} = is_ghost spvb_attributes in
