@@ -189,7 +189,9 @@ module Convert = struct
     let ld_params = List.map param f.fun_params in
     let ld_type = Opt.map T.pty f.fun_type in
     let ld_def = Opt.map T.term f.fun_def in
-    { ld_loc; ld_ident; ld_params; ld_type; ld_def }
+    let fun_spec = f.fun_spec in
+    let coercion = if fun_spec.fun_coer then Some (Qident ld_ident) else None in
+    { ld_loc; ld_ident; ld_params; ld_type; ld_def }, coercion
 
   let axiom a =
     T.preid a.Uast.ax_name, T.term a.ax_term
@@ -224,7 +226,12 @@ module Convert = struct
         let td_list = List.map (type_decl info) type_decl_list in
         [Odecl (Dtype td_list)]
     | Sig_function f ->
-        [Odecl (Dlogic [function_ f])]
+        let f, coerc = function_ f in
+        let odecl = Odecl (Dlogic [f]) in
+        begin match coerc with
+          | None -> [odecl]
+          | Some f -> let dmeta = Dmeta (T.mk_id "coercion", [Mfs f]) in
+              [odecl; Odecl dmeta] end
     | Sig_axiom a ->
         let ax_name, ax_term = axiom a in
         [Odecl (Dprop (Decl.Paxiom, ax_name, ax_term))]
@@ -299,7 +306,12 @@ module Convert = struct
           let td_list = List.map (type_decl info) type_decl_list in
           [Odecl (Dtype td_list)]
       | Uast.Str_function f ->
-          [Odecl (Dlogic [function_ f])]
+          let f, coerc = function_ f in
+          let odecl = Odecl (Dlogic [f]) in
+          begin match coerc with
+            | None -> [odecl]
+            | Some f -> let dmeta = Dmeta (T.mk_id "coercion", [Mfs f]) in
+                [odecl; Odecl dmeta] end
       | Uast.Str_axiom a ->
           [Odecl (Dprop (Decl.Paxiom, T.preid a.ax_name, T.term a.ax_term))]
       | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
@@ -421,12 +433,14 @@ let use_std_lib =
    * let use_option = Duseimport (Loc.dummy_position, false, [option, None]) in
    * let use_ref = Duseimport (Loc.dummy_position, false, [ocaml_ref, None])
      in *)
+  let array = Qdot (Qident (mk_id "array"), mk_id "Array") in
   let stdlib = Qdot (Qident (mk_id "ocamlstdlib"), mk_id "OCamlStdLib") in
+  let use_array = Duseimport (Loc.dummy_position, false, [array, None]) in
   let use_stdlib = Duseimport (Loc.dummy_position, false, [stdlib, None]) in
   [(* Odecl use_int; Odecl use_minmax; (\* Odecl use_int63; *\) Odecl use_list;
     * Odecl use_length; Odecl use_append; Odecl use_reverse;
     * Odecl use_ocaml_exn; Odecl use_ref; Odecl use_option *)
-  Odecl use_stdlib]
+    Odecl use_array; Odecl use_stdlib]
 
 let mk_info () =
   let info = E.{ info_arith_construct = Hashtbl.create 32 } in
