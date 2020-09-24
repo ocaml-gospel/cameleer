@@ -9,31 +9,13 @@
 <path name=".."/><path name="mjrty.ml"/>
 <theory name="Mjrty" proved="true">
  <goal name="numof_int&#39;vc" expl="VC for numof_int" proved="true">
- <proof prover="2"><result status="valid" time="0.06" steps="7496"/></proof>
+ <proof prover="0"><result status="valid" time="0.01" steps="2"/></proof>
  </goal>
  <goal name="numof_bounds&#39;vc" expl="VC for numof_bounds" proved="true">
- <transf name="split_vc" proved="true" >
-  <goal name="numof_bounds&#39;vc.0" expl="postcondition" proved="true">
-  <transf name="case" proved="true" arg1="(a &gt;= b)">
-   <goal name="numof_bounds&#39;vc.0.0" expl="true case (postcondition)" proved="true">
-   <proof prover="2"><result status="valid" time="0.03" steps="7660"/></proof>
-   </goal>
-   <goal name="numof_bounds&#39;vc.0.1" expl="false case (postcondition)" proved="true">
-   <transf name="induction" proved="true" arg1="b" arg2="from" arg3="a">
-    <goal name="numof_bounds&#39;vc.0.1.0" expl="base case (false case. postcondition)" proved="true">
-    <proof prover="2"><result status="valid" time="0.06" steps="7667"/></proof>
-    </goal>
-    <goal name="numof_bounds&#39;vc.0.1.1" expl="recursive case (false case. postcondition)" proved="true">
-    <proof prover="2"><result status="valid" time="0.09" steps="9457"/></proof>
-    </goal>
-   </transf>
-   </goal>
-  </transf>
-  </goal>
- </transf>
+ <proof prover="0"><result status="valid" time="0.02" steps="41"/></proof>
  </goal>
  <goal name="numof_append&#39;vc" expl="VC for numof_append" proved="true">
- <proof prover="2"><result status="valid" time="0.08" steps="10576"/></proof>
+ <proof prover="0"><result status="valid" time="0.02" steps="29"/></proof>
  </goal>
  <goal name="numof_left_no_add&#39;vc" expl="VC for numof_left_no_add" proved="true">
  <proof prover="2"><result status="valid" time="0.11" steps="16673"/></proof>

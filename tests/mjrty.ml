@@ -5,10 +5,11 @@ let [@logic] [@ghost] rec numof_int p a b =
 (*@ x = numof_int p a b
       variant b - a *)
 
-let [@lemma] numof_bounds (p: int -> bool) (a: int) (b: int) =
-  ()
+let [@lemma] rec numof_bounds (p: int -> bool) (a: int) (b: int) =
+  if a < b - 1 then numof_bounds p a (b - 1)
 (*@ numof_bounds p a b
       requires a < b
+      variant  b - a
       ensures  0 <= numof_int p a b <= b - a *)
 
 let [@lemma] rec numof_append (p : int -> bool) (a: int) (b: int) (c : int) =
