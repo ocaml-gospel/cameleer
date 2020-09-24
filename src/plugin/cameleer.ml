@@ -199,6 +199,8 @@ module Convert = struct
     let loc_exn = exn_construct.pext_name.loc in
     let id_exn = T.mk_id txt_exn ~id_loc:(T.location loc_exn) in
     let pty = match exn_construct.pext_kind with
+      | Pext_decl (Pcstr_tuple [cty], None) ->
+          E.core_type cty
       | Pext_decl (Pcstr_tuple cty_list, None) ->
           PTtuple (List.map E.core_type cty_list)
       | Pext_decl (Pcstr_record _, _) ->
