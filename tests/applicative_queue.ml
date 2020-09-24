@@ -1,3 +1,8 @@
+(** From OCamlGraph *)
+(* TODO: include link *)
+
+(* TODO: add comments to explain specification *)
+
 type 'a t = {
   self : 'a list * 'a list;
   view : 'a list [@ghost]
@@ -15,7 +20,7 @@ let [@logic] is_empty (q: 'a t) = match q.self with
   | [], _ -> true
   | _ -> false
 (*@ b = is_empty q
-      ensures  b <-> q.view = [] *)
+      ensures b <-> q.view = [] *)
 
 let add queue elt = match queue.self with
   | [], [] ->

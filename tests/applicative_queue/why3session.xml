@@ -22,7 +22,7 @@
  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
  </goal>
  <goal name="tail&#39;vc" expl="VC for tail" proved="true">
- <proof prover="1"><result status="valid" time="0.36" steps="1346"/></proof>
+ <proof prover="1"><result status="valid" time="0.55" steps="1346"/></proof>
  </goal>
 </theory>
 </file>

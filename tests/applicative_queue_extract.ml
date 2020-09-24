@@ -23,3 +23,14 @@ let tail : type xi3. (xi3 t) ->  (xi3 t) =
     | (_ :: prefix, xiffus) -> (prefix, xiffus)
     | ([], _) -> raise (Not_found)
 
+let rec mk_list acc i total =
+  if i <= total then
+    mk_list (add acc i) (i + 1) total
+  else acc
+
+let () =
+  let q = mk_list empty 0 1_000_000 in
+  let rec loop q =
+    if is_empty q then ()
+    else loop (tail q) in
+  loop q
