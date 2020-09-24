@@ -31,6 +31,7 @@ let () = List.iter (fun (x, y) -> Hstr.add driver x y)
       "=", "infix ="; (* FIXME: this is only true for integers *)
       "mixfix {}", "empty";
       "mixfix {:_:}", "singleton";
+      "mixfix [_]", "mixfix []";
       "[]", "Nil";
       "infix ::", "Cons";
       "::", "Cons"; (* FIXME: understand why this happens in program symbols *)
