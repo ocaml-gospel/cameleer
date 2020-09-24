@@ -10,6 +10,7 @@ module OCamlStdLib
   use export ocaml.Exceptions
   use export option.Option
   use export ref.Ref
+  use export ref.Refint
 
   scope List
 
@@ -19,6 +20,19 @@ module OCamlStdLib
     let rec function rev (l: list 'a) : list 'a =
       R.reverse l
 
+  end
+
+  scope Array
+    use import array.Array as A
+
+    let rec function length (a: array 'a) : int =
+      A.length a
+
+    function get (a: array 'a) (i: int) : 'a = a[i]
+
+    val get (a: array 'a) (i: int) : 'a
+      requires { 0 <= i < length a }
+      ensures  { result = get a i }
   end
 
 end
