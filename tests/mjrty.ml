@@ -47,6 +47,7 @@ module type EQUAL = sig
 end
 
 module Mjrty (Eq: EQUAL) = struct
+
   exception Not_found
 
   type candidate = Eq.t
@@ -85,6 +86,5 @@ module Mjrty (Eq: EQUAL) = struct
       raises   Found c -> 2 * numof a c 0 (Array.length a) > Array.length a
       raises   Not_found ->
                  forall x. 2 * numof a x 0 (Array.length a) <= Array.length a *)
-
 
 end
