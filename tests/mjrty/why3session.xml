@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="mjrty.ml"/>
+<theory name="Mjrty" proved="true">
+ <goal name="numof_int&#39;vc" expl="VC for numof_int" proved="true">
+ <proof prover="2"><result status="valid" time="0.06" steps="7496"/></proof>
+ </goal>
+ <goal name="numof_bounds&#39;vc" expl="VC for numof_bounds" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="numof_bounds&#39;vc.0" expl="postcondition" proved="true">
+  <transf name="case" proved="true" arg1="(a &gt;= b)">
+   <goal name="numof_bounds&#39;vc.0.0" expl="true case (postcondition)" proved="true">
+   <proof prover="2"><result status="valid" time="0.03" steps="7660"/></proof>
+   </goal>
+   <goal name="numof_bounds&#39;vc.0.1" expl="false case (postcondition)" proved="true">
+   <transf name="induction" proved="true" arg1="b" arg2="from" arg3="a">
+    <goal name="numof_bounds&#39;vc.0.1.0" expl="base case (false case. postcondition)" proved="true">
+    <proof prover="2"><result status="valid" time="0.06" steps="7667"/></proof>
+    </goal>
+    <goal name="numof_bounds&#39;vc.0.1.1" expl="recursive case (false case. postcondition)" proved="true">
+    <proof prover="2"><result status="valid" time="0.09" steps="9457"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="numof_append&#39;vc" expl="VC for numof_append" proved="true">
+ <proof prover="2"><result status="valid" time="0.08" steps="10576"/></proof>
+ </goal>
+ <goal name="numof_left_no_add&#39;vc" expl="VC for numof_left_no_add" proved="true">
+ <proof prover="2"><result status="valid" time="0.11" steps="16673"/></proof>
+ </goal>
+ <goal name="numof_left_add&#39;vc" expl="VC for numof_left_add" proved="true">
+ <proof prover="2"><result status="valid" time="0.17" steps="23429"/></proof>
+ </goal>
+ <goal name="Mjrty.mjrty&#39;vc" expl="VC for mjrty" proved="true">
+ <proof prover="1"><result status="valid" time="0.25" steps="678810"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="mjrty&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="2"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="10"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.2" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.3" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="21"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="15"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.5" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="226"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.6" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.40" steps="223"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.7" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="2.47" steps="3621"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="15"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.9" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="48"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.10" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="49"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.11" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.72" steps="417"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.12" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="46"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.13" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="53"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.14" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.94" steps="769"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.15" expl="exceptional postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="13"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.16" expl="exceptional postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="13"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.17" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="25"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.18" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="23"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.19" expl="exceptional postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.34" steps="40647"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.20" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="76"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.21" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.13" steps="71"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.22" expl="exceptional postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="21"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.23" expl="exceptional postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="15"/></proof>
+  </goal>
+  <goal name="mjrty&#39;vc.24" expl="out of loop bounds" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="2"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
