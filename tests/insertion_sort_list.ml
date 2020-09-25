@@ -11,41 +11,42 @@
 (*@ predicate permut (l1 l2: 'a list) =
       forall x: 'a. num_occ x l1 = num_occ x l2 *)
 
-(*@ axiom permut_refl: forall l: 'a list. permut l l *)
+(*@ lemma permut_refl: forall l: 'a list. permut l l *)
 
-(*@ axiom permut_sym: forall l1 l2: 'a list. permut l1 l2 -> permut l2 l1 *)
+(*@ lemma permut_sym: forall l1 l2: 'a list. permut l1 l2 -> permut l2 l1 *)
 
-(*@ axiom permut_trans:
-    forall l1 l2 l3: 'a list. permut l1 l2 -> permut l2 l3 -> permut l1 l3 *)
+(*@ lemma permut_trans:
+      forall l1 l2 l3: 'a list. permut l1 l2 -> permut l2 l3 -> permut l1 l3 *)
 
-(*@ axiom permut_cons:
-    forall x: 'a, l1 l2: 'a list.
-    permut l1 l2 -> permut (x :: l1) (x :: l2) *)
+(*@ lemma permut_cons:
+      forall x: 'a, l1 l2: 'a list.
+      permut l1 l2 -> permut (x :: l1) (x :: l2) *)
 
-(*@ axiom permut_swap:
-    forall x y: 'a, l: 'a list. permut (x :: y :: l) (y :: x :: l) *)
+(*@ lemma permut_swap:
+      forall x y: 'a, l: 'a list. permut (x :: y :: l) (y :: x :: l) *)
 
-(*@ axiom permut_cons_append:
-    forall x : 'a, l1 l2 : 'a list.
-    permut ((x :: l1) ++ l2) (l1 ++ (x :: l2)) *)
+(*@ lemma permut_cons_append:
+      forall x : 'a, l1 l2 : 'a list.
+      permut ((x :: l1) ++ l2) (l1 ++ (x :: l2)) *)
 
-(*@ axiom permut_assoc:
-    forall l1 l2 l3: 'a list.
-    permut ((l1 ++ l2) ++ l3) (l1 ++ (l2 ++ l3)) *)
+(*@ lemma permut_assoc:
+      forall l1 l2 l3: 'a list.
+      permut ((l1 ++ l2) ++ l3) (l1 ++ (l2 ++ l3)) *)
 
-(*@ axiom permut_append:
-    forall l1 l2 k1 k2 : 'a list.
-    permut l1 k1 -> permut l2 k2 -> permut (l1 ++ l2) (k1 ++ k2) *)
+(*@ lemma permut_append:
+      forall l1 l2 k1 k2 : 'a list.
+      permut l1 k1 -> permut l2 k2 -> permut (l1 ++ l2) (k1 ++ k2) *)
 
-(*@ axiom permut_append_swap:
-    forall l1 l2 : 'a list.
-    permut (l1 ++ l2) (l2 ++ l1) *)
+(*@ lemma permut_append_swap:
+      forall l1 l2 : 'a list.
+      permut (l1 ++ l2) (l2 ++ l1) *)
 
-(*@ axiom permut_mem:
-    forall x: 'a, l1 l2: 'a list. permut l1 l2 -> mem x l1 -> mem x l2 *)
+(*@ lemma permut_mem:
+      forall x: 'a, l1 l2: 'a list. permut l1 l2 -> mem x l1 -> mem x l2 *)
 
-(*@ axiom permut_length:
-    forall l1 [@induction] l2: 'a list. permut l1 l2 -> length l1 = length l2 *)
+(*@ lemma permut_length:
+      forall l1 [@induction] l2: 'a list. permut l1 l2 ->
+      length l1 = length l2 *)
 
 module type PRE_ORD = sig
   type t
@@ -72,12 +73,12 @@ module type PRE_ORD = sig
   (*@ axiom sorted_cons: forall x y l.
         le x y -> sorted_list (y :: l) -> sorted_list (x :: (y :: l)) *)
 
-  (*@ axiom sorted_mem: forall x l.
+  (*@ lemma sorted_mem: forall x l.
         (forall y. mem y l -> le x y) /\ sorted_list l <->
         sorted_list (x :: l) *)
 
-  (*@ axiom sorted_append: forall l1 l2.
-        (sorted_list l1 /\ sorted_list l2 /\
+  (*@ lemma sorted_append: forall l1 l2.
+        (sorted_list l1 && sorted_list l2 &&
           (forall x y. mem x l1 -> mem y l2 -> le x y))
         <->
         sorted_list (l1 ++ l2) *)
