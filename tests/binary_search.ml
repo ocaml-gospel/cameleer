@@ -9,7 +9,7 @@ let binary_search a v =
   let u = ref (Array.length a - 1) in
   while !l <= !u do
     (*@ invariant 0 <= !l /\ !u < Array.length a *)
-    (*@ invariant forall i : int. 0 <= i < Array.length a -> a[i] = v ->
+    (*@ invariant forall i. 0 <= i < Array.length a -> a[i] = v ->
           !l <= i <= !u *)
     (*@ variant !u - !l *)
     let m = !l + (!u - !l) / 2 in
