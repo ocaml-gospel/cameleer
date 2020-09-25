@@ -193,8 +193,10 @@ module Convert = struct
     let coercion = if fun_spec.fun_coer then Some (Qident ld_ident) else None in
     { ld_loc; ld_ident; ld_params; ld_type; ld_def }, coercion
 
-  let axiom a =
-    T.preid a.Uast.ax_name, T.term a.ax_term
+  let prop p =
+    let kind = match p.Uast.prop_kind with
+      Uast.Plemma -> Decl.Plemma | _ -> Decl.Paxiom in
+    T.preid p.Uast.prop_name, T.term p.prop_term, kind
 
   let type_exception {ptyexn_constructor = exn_construct; _} =
     let txt_exn = exn_construct.pext_name.txt in
@@ -232,9 +234,9 @@ module Convert = struct
           | None -> [odecl]
           | Some f -> let dmeta = Dmeta (T.mk_id "coercion", [Mfs f]) in
               [odecl; Odecl dmeta] end
-    | Sig_axiom a ->
-        let ax_name, ax_term = axiom a in
-        [Odecl (Dprop (Decl.Paxiom, ax_name, ax_term))]
+    | Sig_prop p ->
+        let prop_name, prop_term, prop_kind = prop p in
+        [Odecl (Dprop (prop_kind, prop_name, prop_term))]
     | Sig_typext _ -> assert false (* TODO *)
     | Sig_module _ -> assert false (* TODO *)
     | Sig_recmodule _ -> assert false (* TODO *)
@@ -312,8 +314,9 @@ module Convert = struct
             | None -> [odecl]
             | Some f -> let dmeta = Dmeta (T.mk_id "coercion", [Mfs f]) in
                 [odecl; Odecl dmeta] end
-      | Uast.Str_axiom a ->
-          [Odecl (Dprop (Decl.Paxiom, T.preid a.ax_name, T.term a.ax_term))]
+      | Uast.Str_prop p ->
+          let prop_name, prop_term, prop_kind = prop p in
+          [Odecl (Dprop (prop_kind, prop_name, prop_term))]
       | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
           let scope_loc = T.location spmb_loc in
           let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
