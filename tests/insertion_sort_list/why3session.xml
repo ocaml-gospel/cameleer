@@ -8,20 +8,22 @@
 <file format="ocaml">
 <path name=".."/><path name="insertion_sort_list.ml"/>
 <theory name="Insertion_sort_list">
+ <goal name="mem_decomp">
+ </goal>
  <goal name="permut_refl" proved="true">
- <proof prover="2"><result status="valid" time="0.07" steps="8913"/></proof>
+ <proof prover="2"><result status="valid" time="0.08" steps="9066"/></proof>
  </goal>
  <goal name="permut_sym" proved="true">
- <proof prover="2"><result status="valid" time="0.08" steps="9068"/></proof>
+ <proof prover="2"><result status="valid" time="0.07" steps="9221"/></proof>
  </goal>
  <goal name="permut_trans" proved="true">
- <proof prover="2"><result status="valid" time="0.07" steps="9643"/></proof>
+ <proof prover="2"><result status="valid" time="0.07" steps="9796"/></proof>
  </goal>
  <goal name="permut_cons" proved="true">
- <proof prover="2"><result status="valid" time="0.11" steps="13353"/></proof>
+ <proof prover="2"><result status="valid" time="0.11" steps="13620"/></proof>
  </goal>
  <goal name="permut_swap" proved="true">
- <proof prover="2"><result status="valid" time="0.19" steps="20826"/></proof>
+ <proof prover="2"><result status="valid" time="0.19" steps="21093"/></proof>
  </goal>
  <goal name="permut_cons_append" proved="true">
  <transf name="split_vc" proved="true" >
@@ -30,10 +32,10 @@
    <goal name="permut_cons_append.0.0" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="permut_cons_append.0.0.0" proved="true">
-    <proof prover="2"><result status="valid" time="0.09" steps="12841"/></proof>
+    <proof prover="2"><result status="valid" time="0.11" steps="13093"/></proof>
     </goal>
     <goal name="permut_cons_append.0.0.1" proved="true">
-    <proof prover="2"><result status="valid" time="0.16" steps="25188"/></proof>
+    <proof prover="2"><result status="valid" time="0.35" steps="25440"/></proof>
     </goal>
    </transf>
    </goal>
@@ -42,62 +44,127 @@
  </transf>
  </goal>
  <goal name="permut_assoc" proved="true">
- <proof prover="2"><result status="valid" time="0.08" steps="10328"/></proof>
+ <proof prover="2"><result status="valid" time="0.07" steps="10591"/></proof>
  </goal>
  <goal name="permut_append">
  </goal>
  <goal name="permut_append_swap" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="permut_append_swap.0" proved="true">
-  <transf name="induction_arg_ty_lex" proved="true" arg1="l2">
+  <transf name="induction_arg_ty_lex" proved="true" arg1="l1">
    <goal name="permut_append_swap.0.0" proved="true">
-   <proof prover="2"><result status="valid" time="0.41" steps="95290"/></proof>
+   <proof prover="2"><result status="valid" time="0.64" steps="96040"/></proof>
    </goal>
   </transf>
   </goal>
  </transf>
  </goal>
  <goal name="permut_mem">
- </goal>
- <goal name="permut_length">
  <proof prover="0"><result status="timeout" time="1.00"/></proof>
- <proof prover="1"><result status="timeout" time="1.00" steps="2243541"/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="377274"/></proof>
+ <proof prover="1"><result status="highfailure" time="0.72" steps="627035"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="139120"/></proof>
  </goal>
- <goal name="InsertionSort.E.sorted_mem">
- <transf name="split_vc" >
-  <goal name="sorted_mem.0" proved="true">
-  <proof prover="2"><result status="valid" time="0.25" steps="27602"/></proof>
-  </goal>
-  <goal name="sorted_mem.1">
-  <proof prover="0"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1"><result status="timeout" time="1.00" steps="901583"/></proof>
-  <proof prover="2"><result status="timeout" time="1.00" steps="147550"/></proof>
-  </goal>
-  <goal name="sorted_mem.2">
-  <proof prover="0"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1"><result status="timeout" time="1.00" steps="1017944"/></proof>
-  <proof prover="2"><result status="timeout" time="1.00" steps="242741"/></proof>
-  <transf name="case" arg1="(l = Nil)">
-   <goal name="sorted_mem.2.0" expl="true case" proved="true">
-   <proof prover="2"><result status="valid" time="0.07" steps="10387"/></proof>
-   </goal>
-   <goal name="sorted_mem.2.1" expl="false case">
-   <proof prover="0"><result status="timeout" time="1.00"/></proof>
-   <proof prover="1"><result status="timeout" time="1.00" steps="1056358"/></proof>
-   <proof prover="2"><result status="timeout" time="1.00" steps="171213"/></proof>
-   <transf name="assert" arg1="(exists a ll. l = Cons a ll)">
-    <goal name="sorted_mem.2.1.0" expl="asserted formula" proved="true">
-    <proof prover="2"><result status="valid" time="0.07" steps="14204"/></proof>
+ <goal name="permut_length" proved="true">
+ <transf name="intros" proved="true" arg1="l1">
+  <goal name="permut_length.0" proved="true">
+  <transf name="induction_arg_ty_lex" proved="true" arg1="l1">
+   <goal name="permut_length.0.0" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="permut_length.0.0.0" proved="true">
+    <proof prover="1"><result status="valid" time="0.07" steps="64513"/></proof>
     </goal>
-    <goal name="sorted_mem.2.1.1" expl="false case">
-    <proof prover="0"><result status="timeout" time="1.00"/></proof>
-    <proof prover="1"><result status="timeout" time="1.00" steps="1389611"/></proof>
-    <proof prover="2"><result status="timeout" time="1.00" steps="138231"/></proof>
-    <transf name="introduce_exists" >
-     <goal name="sorted_mem.2.1.1.0" expl="false case">
-     <transf name="subst_all" >
-      <goal name="sorted_mem.2.1.1.0.0" expl="false case">
+    <goal name="permut_length.0.0.1" proved="true">
+    <transf name="case" proved="true" arg1="(l2 = Nil)">
+     <goal name="permut_length.0.0.1.0" expl="true case" proved="true">
+     <proof prover="1"><result status="valid" time="0.12" steps="161350"/></proof>
+     </goal>
+     <goal name="permut_length.0.0.1.1" expl="false case" proved="true">
+     <transf name="assert" proved="true" arg1="(exists x ll. l2 = Cons x ll)">
+      <goal name="permut_length.0.0.1.1.0" expl="asserted formula" proved="true">
+      <proof prover="2"><result status="valid" time="0.11" steps="12437"/></proof>
+      </goal>
+      <goal name="permut_length.0.0.1.1.1" expl="false case" proved="true">
+      <transf name="introduce_exists" proved="true" >
+       <goal name="permut_length.0.0.1.1.1.0" expl="false case" proved="true">
+       <transf name="case" proved="true" arg1="(x = x2)">
+        <goal name="permut_length.0.0.1.1.1.0.0" expl="false case (true case)" proved="true">
+        <transf name="instantiate" proved="true" arg1="H1" arg2="ll">
+         <goal name="permut_length.0.0.1.1.1.0.0.0" expl="false case (true case)" proved="true">
+         <transf name="destruct_rec" proved="true" arg1="Hinst">
+          <goal name="permut_length.0.0.1.1.1.0.0.0.0" expl="destruct premise" proved="true">
+          <proof prover="2"><result status="valid" time="0.20" steps="18561"/></proof>
+          </goal>
+          <goal name="permut_length.0.0.1.1.1.0.0.0.1" expl="false case (true case)" proved="true">
+          <proof prover="2"><result status="valid" time="0.14" steps="13356"/></proof>
+          </goal>
+         </transf>
+         </goal>
+        </transf>
+        </goal>
+        <goal name="permut_length.0.0.1.1.1.0.1" expl="false case" proved="true">
+        <transf name="assert" proved="true" arg1="(mem x2 ll)">
+         <goal name="permut_length.0.0.1.1.1.0.1.0" expl="asserted formula" proved="true">
+         <transf name="assert" proved="true" arg1="(exists lll. lll = Cons x2 x1)">
+          <goal name="permut_length.0.0.1.1.1.0.1.0.0" expl="asserted formula" proved="true">
+          <proof prover="2"><result status="valid" time="0.07" steps="10724"/></proof>
+          </goal>
+          <goal name="permut_length.0.0.1.1.1.0.1.0.1" expl="asserted formula" proved="true">
+          <transf name="introduce_exists" proved="true" >
+           <goal name="permut_length.0.0.1.1.1.0.1.0.1.0" expl="asserted formula" proved="true">
+           <transf name="instantiate" proved="true" arg1="permut_mem" arg2="x2,lll,l2">
+            <goal name="permut_length.0.0.1.1.1.0.1.0.1.0.0" expl="asserted formula" proved="true">
+            <transf name="destruct_rec" proved="true" arg1="Hinst">
+             <goal name="permut_length.0.0.1.1.1.0.1.0.1.0.0.0" expl="destruct premise" proved="true">
+             <proof prover="2"><result status="valid" time="0.10" steps="10295"/></proof>
+             </goal>
+             <goal name="permut_length.0.0.1.1.1.0.1.0.1.0.0.1" expl="destruct premise" proved="true">
+             <proof prover="2"><result status="valid" time="0.11" steps="9824"/></proof>
+             </goal>
+             <goal name="permut_length.0.0.1.1.1.0.1.0.1.0.0.2" expl="asserted formula" proved="true">
+             <proof prover="2"><result status="valid" time="0.10" steps="9825"/></proof>
+             </goal>
+            </transf>
+            </goal>
+           </transf>
+           </goal>
+          </transf>
+          </goal>
+         </transf>
+         </goal>
+         <goal name="permut_length.0.0.1.1.1.0.1.1" expl="false case" proved="true">
+         <transf name="assert" proved="true" arg1="(exists la lb. ll = la ++ Cons x2 lb)">
+          <goal name="permut_length.0.0.1.1.1.0.1.1.0" expl="asserted formula" proved="true">
+          <proof prover="2"><result status="valid" time="0.08" steps="13195"/></proof>
+          </goal>
+          <goal name="permut_length.0.0.1.1.1.0.1.1.1" expl="false case" proved="true">
+          <transf name="introduce_exists" proved="true" >
+           <goal name="permut_length.0.0.1.1.1.0.1.1.1.0" expl="false case" proved="true">
+           <transf name="instantiate" proved="true" arg1="H1" arg2="(Cons x la ++ lb)">
+            <goal name="permut_length.0.0.1.1.1.0.1.1.1.0.0" expl="false case" proved="true">
+            <transf name="destruct_rec" proved="true" arg1="Hinst">
+             <goal name="permut_length.0.0.1.1.1.0.1.1.1.0.0.0" expl="destruct premise" proved="true">
+             <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),([]),is_nil,length,mem1,is_none,reverse,rev,get,mem,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,array&#39;invariant,([&lt;-])&#39;spec,make&#39;spec,is_nil&#39;spec,Length_nonnegative,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp1,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,mem_decomp,permut_refl,permut_sym,permut_trans,permut_cons,permut_swap,permut_cons_append,permut_assoc,permut_append,permut_mem,H1,h4,h2,h1">
+              <goal name="permut_length.0.0.1.1.1.0.1.1.1.0.0.0.0" expl="destruct premise" proved="true">
+              <proof prover="0" timelimit="5"><result status="valid" time="0.13" steps="369"/></proof>
+              </goal>
+             </transf>
+             </goal>
+             <goal name="permut_length.0.0.1.1.1.0.1.1.1.0.0.1" expl="false case" proved="true">
+             <proof prover="2"><result status="valid" time="0.13" steps="15426"/></proof>
+             </goal>
+            </transf>
+            </goal>
+           </transf>
+           </goal>
+          </transf>
+          </goal>
+         </transf>
+         </goal>
+        </transf>
+        </goal>
+       </transf>
+       </goal>
+      </transf>
       </goal>
      </transf>
      </goal>
@@ -109,13 +176,32 @@
   </goal>
  </transf>
  </goal>
+ <goal name="InsertionSort.E.sorted_mem" proved="true">
+ <proof prover="0"><result status="valid" time="0.05" steps="305"/></proof>
+ </goal>
  <goal name="InsertionSort.E.sorted_append">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="highfailure" time="0.78" steps="887524"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="115069"/></proof>
  </goal>
  <goal name="InsertionSort.insert&#39;vc" expl="VC for insert" proved="true">
- <proof prover="0"><result status="valid" time="0.60" steps="3167"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="insert&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.13" steps="15381"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="11280"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.67" steps="61448"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.33" steps="755"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="InsertionSort.insertion_sort&#39;vc" expl="VC for insertion_sort" proved="true">
- <proof prover="0" timelimit="5"><result status="valid" time="0.03" steps="234"/></proof>
+ <proof prover="0"><result status="valid" time="0.14" steps="241"/></proof>
  </goal>
 </theory>
 </file>

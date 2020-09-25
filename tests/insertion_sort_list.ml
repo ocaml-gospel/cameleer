@@ -3,6 +3,10 @@
       | []     -> false
       | y :: r -> x = y \/ mem x r *)
 
+(*@ lemma mem_decomp:
+      forall x: 'a, l: 'a list.
+      mem x l -> exists l1 l2: 'a list. l = l1 ++ Cons x l2 *)
+
 (*@ function num_occ (x: 'a) (l: 'a list) : integer =
       match l with
       | [] -> 0
@@ -72,6 +76,13 @@ module type PRE_ORD = sig
   (*@ axiom sorted_singleton: forall x. sorted_list (x :: []) *)
   (*@ axiom sorted_cons: forall x y l.
         le x y -> sorted_list (y :: l) -> sorted_list (x :: (y :: l)) *)
+
+  (** in order to properly simulate an induction predicate, I shall provide
+      the following inversion axiom: *)
+  (*@ axiom sorted_list_inversion:
+        forall l. sorted_list l ->
+          (l = []) \/ (exists x. l = x :: []) \/
+          (exists x y ll. le x y /\ sorted_list (y :: ll) /\ l = x :: y :: l) *)
 
   (*@ lemma sorted_mem: forall x l.
         (forall y. mem y l -> le x y) /\ sorted_list l <->
