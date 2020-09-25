@@ -13,8 +13,6 @@ let binary_search a v =
           !l <= i <= !u *)
     (*@ variant !u - !l *)
     let m = !l + (!u - !l) / 2 in
-    (* let m = (!l + !u) / 2 in *)
-    (* assert { !l <= m <= !u }; *)
     if a.(m) < v then
       l := m + 1
     else if a.(m) > v then
