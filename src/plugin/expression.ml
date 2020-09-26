@@ -206,10 +206,14 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Uast.Sexp_constant c ->
         Econst (T.constant c)
     | Uast.Sexp_let (Nonrecursive, [svb], expr) ->
-        let id, binder_expr = s_value_binding info svb in
         let expr = expression info expr in
-        let ghost = is_ghost_svb svb in
-        Elet (id, ghost, Expr.RKnone, binder_expr, expr)
+        begin match svb.spvb_pat.O.ppat_desc with
+          | (Ppat_tuple _) -> let svb_expr = expression info svb.spvb_expr in
+              let pat = pattern info svb.spvb_pat in
+              Ematch (svb_expr, [pat, expr], [])
+          | _ -> let id, svb_expr = s_value_binding info svb in
+              let ghost = is_ghost_svb svb in
+              Elet (id, ghost, Expr.RKnone, svb_expr, expr) end
     | Uast.Sexp_let (Recursive, svb_list, expr) ->
         let mk_fun_def rs_kind (id, fun_expr) =
           let args, ret, spec, expr = begin match fun_expr.expr_desc with
@@ -353,7 +357,7 @@ and s_value_binding info svb =
         let expr_loc = T.location expr.spexp_loc in
         List.rev (arg :: acc), mk_expr ematch ~expr_loc
     | _ -> List.rev acc, expression info expr in (* TODO *)
-  let mk_binder expr = match expr.Uast.spexp_desc with
+  let mk_svb_expr expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, _, pat, e, _) ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
         let args, expr = loop [] e in
@@ -375,4 +379,4 @@ and s_value_binding info svb =
         mk_expr efun ~expr_loc
     | _ -> expression info expr in
   let id = id_of_pat svb.spvb_pat in
-  id, mk_binder pexp
+  id, mk_svb_expr pexp
