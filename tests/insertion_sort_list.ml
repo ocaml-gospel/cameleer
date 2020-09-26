@@ -12,6 +12,16 @@
       | [] -> 0
       | y :: r -> (if x = y then 1 else 0) + num_occ x r *)
 
+(*@ lemma num_occ_positive: forall x: 'a, l: 'a list.
+      num_occ x l >= 0 *)
+
+(*@ lemma mem_num_occ :
+    forall x: 'a, l: 'a list. mem x l <-> num_occ x l > 0 *)
+
+(*@ lemma append_num_occ :
+      forall x: 'a, l1 [@induction] l2: 'a list.
+      num_occ x (l1 ++ l2) = num_occ x l1 + num_occ x l2 *)
+
 (*@ predicate permut (l1 l2: 'a list) =
       forall x: 'a. num_occ x l1 = num_occ x l2 *)
 
