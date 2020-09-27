@@ -8,13 +8,13 @@
 <path name=".."/><path name="same_fringe.ml"/>
 <theory name="Same_fringe" proved="true">
  <goal name="Make.enum&#39;vc" expl="VC for enum" proved="true">
- <proof prover="1"><result status="valid" time="0.10" steps="13942"/></proof>
+ <proof prover="1"><result status="valid" time="0.10" steps="16664"/></proof>
  </goal>
  <goal name="Make.eq_enum&#39;vc" expl="VC for eq_enum" proved="true">
  <proof prover="0"><result status="valid" time="0.03" steps="299"/></proof>
  </goal>
  <goal name="Make.same_fringe&#39;vc" expl="VC for same_fringe" proved="true">
- <proof prover="1"><result status="valid" time="0.05" steps="7543"/></proof>
+ <proof prover="1"><result status="valid" time="0.05" steps="10161"/></proof>
  </goal>
 </theory>
 </file>

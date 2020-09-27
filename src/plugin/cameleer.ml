@@ -29,7 +29,7 @@ module Convert = struct
       check whether or not the GOSPEL type manifest is [None]. *)
   let td_private manifest private_ tkind = match manifest, private_, tkind with
     | Some _ , _, _           -> Ptree.Public
-    | _, _, Ptype_abstract    -> Ptree.Private
+    | _, _, Ptype_abstract    -> Ptree.Abstract (* ???? Ptree.Private *)
     | _, Oasttypes.Private, _ -> Ptree.Private
     | _, Oasttypes.Public, _  -> Ptree.Public
 
@@ -150,7 +150,9 @@ module Convert = struct
       let mk_val id params ret pat mask spec =
         let e_any = Eany (params, Expr.RKnone, ret, pat, mask, spec) in
         let e_any = E.mk_expr e_any ~expr_loc:(T.location vd.Uast.vloc) in
-        Dlet (id, g, Expr.RKnone, e_any) in
+        let kind = if is_logic vd.vattributes then Expr.RKfunc
+          else Expr.RKnone in
+        Dlet (id, g, kind, e_any) in
       match vd.Uast.vspec with
       | None   -> mk_val (mk_id vd_id_str) params ret pat mask E.empty_spec
       | Some s -> mk_val (mk_id vd_id_str) params ret pat mask (vspec s) in
@@ -213,52 +215,87 @@ module Convert = struct
       | _ -> assert false (* TODO? *) in
     id_exn, pty, Ity.MaskVisible
 
-  let rec s_signature info s_sig =
-    List.map (s_signature_item info) s_sig
+  open Mod_subst
 
-  and s_signature_item info Uast.{sdesc; _} =
-    s_signature_item_desc info sdesc
+  let subst info ctr_list =
+    let subst = Hashtbl.create 16 in
+    let mk_subst = function
+      | Uast.Wtype (id, s_type_decl) -> let td = type_decl info s_type_decl in
+          Hashtbl.add subst (E.string_of_longident id.txt) (MCsharing td)
+      | Wtypesubst (id, s_type_decl) -> let td = type_decl info s_type_decl in
+          Hashtbl.add subst (E.string_of_longident id.txt) (MCdestructive td)
+      | _ -> Loc.errorm "Not yet supported@." in
+    List.iter mk_subst ctr_list;
+    subst
 
-  and s_signature_item_desc info sig_item_desc =
-    match sig_item_desc with
-    | Sig_val s_val ->
-        [Odecl (val_decl s_val false)]
-    | Sig_type (rec_flag, type_decl_list) ->
-        ignore (rec_flag); (* TODO *)
-        let td_list = List.map (type_decl info) type_decl_list in
-        [Odecl (Dtype td_list)]
-    | Sig_function f ->
-        let f, coerc = function_ f in
-        let odecl = Odecl (Dlogic [f]) in
-        begin match coerc with
-          | None -> [odecl]
-          | Some f -> let dmeta = Dmeta (T.mk_id "coercion", [Mfs f]) in
-              [odecl; Odecl dmeta] end
-    | Sig_prop p ->
-        let prop_name, prop_term, prop_kind = prop p in
-        [Odecl (Dprop (prop_kind, prop_name, prop_term))]
-    | Sig_typext _ -> assert false (* TODO *)
-    | Sig_module _ -> assert false (* TODO *)
-    | Sig_recmodule _ -> assert false (* TODO *)
-    | Sig_modtype _ -> assert false (* TODO *)
-    | Sig_exception ty_exn ->
-        let id, pty, mask = type_exception ty_exn in
-        [Odecl (Dexn (id, pty, mask))]
-    | Sig_open _ -> assert false (* TODO *)
-    | Sig_include _ -> assert false (* TODO *)
-    | Sig_class _ -> assert false (* TODO *)
-    | Sig_class_type _ -> assert false (* TODO *)
-    | Sig_attribute _ ->
-        []
-    | Sig_extension _ -> assert false (* TODO *)
-    | Sig_ghost_type _ -> assert false (* TODO *)
-    | Sig_ghost_val _ -> assert false (* TODO *)
-    | Sig_ghost_open _ -> assert false (* TODO *)
+  let rec apply_subst subst = function
+    | Odecl d -> Odecl (subst_decl subst d)
+    | Omodule (loc, id, od_list) ->
+        let mk_subst acc od = apply_subst subst od :: acc in
+        let od_subst = List.fold_left mk_subst [] od_list in
+        Omodule (loc, id, List.rev od_subst)
 
-  let s_structure =
+  let s_structure, s_signature =
     let mod_type_table : (string, odecl list) Hashtbl.t = Hashtbl.create 16 in
 
-    let rec s_structure_item info Uast.{sstr_desc; _} =
+    let rec s_signature info s_sig =
+      List.map (s_signature_item info) s_sig
+
+    and s_signature_item info Uast.{sdesc; _} =
+      s_signature_item_desc info sdesc
+
+    and s_signature_item_desc info sig_item_desc =
+      match sig_item_desc with
+      | Sig_val s_val ->
+          let ghost = E.is_ghost s_val.vattributes in
+          [Odecl (val_decl s_val ghost)]
+      | Sig_type (rec_flag, type_decl_list) ->
+          ignore (rec_flag); (* TODO *)
+          let td_list = List.map (type_decl info) type_decl_list in
+          [Odecl (Dtype td_list)]
+      | Sig_function f ->
+          let f, coerc = function_ f in
+          let odecl = Odecl (Dlogic [f]) in
+          begin match coerc with
+            | None -> [odecl]
+            | Some f -> let dmeta = Dmeta (T.mk_id "coercion", [Mfs f]) in
+                [odecl; Odecl dmeta] end
+      | Sig_prop p ->
+          let prop_name, prop_term, prop_kind = prop p in
+          [Odecl (Dprop (prop_kind, prop_name, prop_term))]
+      | Sig_typext _ -> assert false (* TODO *)
+      | Sig_module _ -> assert false (* TODO *)
+      | Sig_recmodule _ -> assert false (* TODO *)
+      | Sig_modtype _ -> assert false (* TODO *)
+      | Sig_exception ty_exn ->
+          let id, pty, mask = type_exception ty_exn in
+          [Odecl (Dexn (id, pty, mask))]
+      | Sig_open _ -> assert false (* TODO *)
+      | Sig_include {spincl_mod; _} -> begin match spincl_mod.mdesc with
+          | Mod_ident id -> let s = E.string_of_longident id.txt in
+              Hashtbl.find mod_type_table s
+          | Mod_signature _ -> assert false (* TODO *)
+          | Mod_functor _ -> assert false (* TODO *)
+          | Mod_with (mod_type, constraint_list) ->
+              let subst = subst info constraint_list in
+              let od_list = s_module_type info mod_type in
+              let mk_subst acc od = apply_subst subst od :: acc in
+              let od_list = List.fold_left mk_subst [] od_list in
+              List.rev od_list
+              (* s_module_type info mod_type *)
+          | Mod_typeof _ -> assert false (* TODO *)
+          | Mod_extension _ -> assert false (* TODO *)
+          | Mod_alias _ -> assert false (* TODO *) end
+      | Sig_class _ -> assert false (* TODO *)
+      | Sig_class_type _ -> assert false (* TODO *)
+      | Sig_attribute _ ->
+          []
+      | Sig_extension _ -> assert false (* TODO *)
+      | Sig_ghost_type _ -> assert false (* TODO *)
+      | Sig_ghost_val _ -> assert false (* TODO *)
+      | Sig_ghost_open _ -> assert false (* TODO *)
+
+    and s_structure_item info Uast.{sstr_desc; _} =
       s_structure_item_desc info sstr_desc
 
     and s_structure_item_desc info str_item_desc =
@@ -373,13 +410,12 @@ module Convert = struct
       | Smod_unpack _ -> assert false (* TODO *)
       | Smod_extension _ -> assert false (* TODO *)
 
-    and s_module_type info {mdesc; mloc; _} =
-      let _decl_loc = T.location mloc in
+    and s_module_type info {mdesc; _} =
       match mdesc with
       | Mod_ident id ->
           let s = E.string_of_longident id.txt in
-          begin try Hashtbl.find mod_type_table s with
-          Not_found -> assert false end
+          begin try Hashtbl.find mod_type_table s with Not_found ->
+            assert false end
       | Mod_signature s_sig ->
           List.flatten (s_signature info s_sig)
       | Mod_functor (arg_name, arg, body) ->
@@ -398,7 +434,8 @@ module Convert = struct
 
     and s_structure info s_str =
       List.flatten (List.map (s_structure_item info) s_str) in
-    s_structure
+
+    s_structure, s_signature
 
 end
 

@@ -42,7 +42,7 @@ let fib_main k =
 module type Monoid = sig
   type elt
 
-  (*@ function op (x y: elt) : elt *)
+  (*@ function op (x y: t) : elt *)
   (*@ axiom assoc: forall x y z. op (op x y) z = op x (op y z) *)
 
   (*@ function unit : elt *)
@@ -58,7 +58,7 @@ module type Exponentiation = sig
 
   (*@ function ( * ) (x y: t) : t *)
 
-  include Monoid with type elt := t
+  include Monoid with type elt = t
 end
 
 module LogFib (E: Exponentiation) = struct
