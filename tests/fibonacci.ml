@@ -40,15 +40,15 @@ let fib_main k =
 (*@ function m1110 : t = { a11 = 1; a12 = 1; a21 = 1; a22 = 0 } *)
 
 module type Monoid = sig
-  type elt
+  type t
 
-  (*@ function op (x y: t) : elt *)
+  (*@ function op (x y: t) : t *)
   (*@ axiom assoc: forall x y z. op (op x y) z = op x (op y z) *)
 
-  (*@ function unit : elt *)
+  (*@ function unit : t *)
 
-  (*@ axiom unit_def_l: forall x: elt. op unit x = x *)
-  (*@ axiom unit_def_r: forall x: elt. op x unit = x *)
+  (*@ axiom unit_def_l: forall x: t. op unit x = x *)
+  (*@ axiom unit_def_r: forall x: t. op x unit = x *)
 end
 
 module type Exponentiation = sig
@@ -58,7 +58,37 @@ module type Exponentiation = sig
 
   (*@ function ( * ) (x y: t) : t *)
 
-  include Monoid with type elt = t
+  include Monoid
+    with type t := t
+(*@ with function unit = one *)
+(* @ with function op = ( * )  ---> SHALL NOT USE SUCH CONSTRAINT *)
+(* @ with function op := ( * ) ---> SHALL ALWAYS USE THIS CONSTRAINT *)
+
+  (*@ function power (t: t) (x: integer) : t *)
+
+  (*@ axiom power_0 : forall x: t. power x 0 = one *)
+
+  (*@ axiom power_s :
+        forall x: t, n: integer. n >= 0 -> power x (n+1) = x * power x n *)
+
+  (*@ lemma power_s_alt:
+        forall x: t, n: int. n > 0 -> power x n = x * power x (n-1) *)
+
+  (*@ lemma power_1 : forall x : t. power x 1 = x *)
+
+  (*@ lemma power_sum : forall x: t, n m: int. 0 <= n -> 0 <= m ->
+        power x (n+m) = power x n * power x m *)
+
+  (*@ lemma power_mult : forall x:t, n m : int. 0 <= n -> 0 <= m ->
+        power x (Int.( * ) n m) = power (power x n) m *)
+
+  (*@ lemma power_comm1 : forall x y: t. x * y = y * x ->
+        forall n:int. 0 <= n ->
+        power x n * y = y * power x n *)
+
+  (*@ lemma power_comm2 : forall x y: t. x * y = y * x ->
+        forall n:int. 0 <= n ->
+        power (x * y) n = power x n * power y n *)
 end
 
 module LogFib (E: Exponentiation) = struct

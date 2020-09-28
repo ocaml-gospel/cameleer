@@ -221,19 +221,29 @@ module Convert = struct
     let subst = Hashtbl.create 16 in
     let mk_subst = function
       | Uast.Wtype (id, s_type_decl) -> let td = type_decl info s_type_decl in
-          Hashtbl.add subst (E.string_of_longident id.txt) (MCsharing td)
+          let subst_constr = MCtype_sharing td in
+          Hashtbl.add subst (E.string_of_longident id.txt) subst_constr
       | Wtypesubst (id, s_type_decl) -> let td = type_decl info s_type_decl in
-          Hashtbl.add subst (E.string_of_longident id.txt) (MCdestructive td)
+          let subst_constr = MCtype_destructive td in
+          Hashtbl.add subst (E.string_of_longident id.txt) subst_constr
+      | Wfunction (idl, idr) ->
+          let id_loc = T.location idr.pid_loc in
+          let q = T.mk_id ~id_loc idr.pid_str in
+          let subst_constr = MCfunction_sharing (Qident q) in
+          Hashtbl.add subst idl.pid_str subst_constr
       | _ -> Loc.errorm "Not yet supported@." in
     List.iter mk_subst ctr_list;
     subst
 
   let rec apply_subst subst = function
-    | Odecl d -> Odecl (subst_decl subst d)
+    | Odecl d -> begin match subst_decl subst d with
+        | []   -> []
+        | [od] -> [Odecl od]
+        | _    -> assert false end
     | Omodule (loc, id, od_list) ->
         let mk_subst acc od = apply_subst subst od :: acc in
         let od_subst = List.fold_left mk_subst [] od_list in
-        Omodule (loc, id, List.rev od_subst)
+        [Omodule (loc, id, List.rev (List.flatten od_subst))]
 
   let s_structure, s_signature =
     let mod_type_table : (string, odecl list) Hashtbl.t = Hashtbl.create 16 in
@@ -281,7 +291,7 @@ module Convert = struct
               let od_list = s_module_type info mod_type in
               let mk_subst acc od = apply_subst subst od :: acc in
               let od_list = List.fold_left mk_subst [] od_list in
-              List.rev od_list
+              List.rev (List.flatten od_list)
               (* s_module_type info mod_type *)
           | Mod_typeof _ -> assert false (* TODO *)
           | Mod_extension _ -> assert false (* TODO *)
