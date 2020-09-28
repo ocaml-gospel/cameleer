@@ -21,36 +21,36 @@
  <proof prover="1" timelimit="5"><result status="valid" time="0.01" steps="6"/></proof>
  </goal>
  <goal name="LogFib.E.power_s_alt" proved="true">
- <proof prover="0"><result status="valid" time="0.08" steps="8734"/></proof>
+ <proof prover="0"><result status="valid" time="0.08" steps="8733"/></proof>
  </goal>
- <goal name="LogFib.E.power_1">
+ <goal name="LogFib.E.power_1" proved="true">
  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="135014"/></proof>
  <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="1942819"/></proof>
- <transf name="split_vc" >
-  <goal name="power_1.0">
-  <transf name="instantiate" arg1="power_s_alt" arg2="x,1">
-   <goal name="power_1.0.0">
-   <transf name="destruct" arg1="Hinst">
+ <transf name="split_vc" proved="true" >
+  <goal name="power_1.0" proved="true">
+  <transf name="instantiate" proved="true" arg1="power_s_alt" arg2="x,1">
+   <goal name="power_1.0.0" proved="true">
+   <transf name="destruct" proved="true" arg1="Hinst">
     <goal name="power_1.0.0.0" expl="destruct premise" proved="true">
-    <proof prover="0"><result status="valid" time="0.05" steps="7619"/></proof>
+    <proof prover="0"><result status="valid" time="0.05" steps="7618"/></proof>
     </goal>
-    <goal name="power_1.0.0.1">
-    <transf name="replace" arg1="(1 - 1)" arg2="0" arg3="in" arg4="Hinst">
-     <goal name="power_1.0.0.1.0">
-     <transf name="replace" arg1="(power x 0)" arg2="one" arg3="in" arg4="Hinst">
-      <goal name="power_1.0.0.1.0.0">
-      <proof prover="0"><result status="timeout" time="1.00" steps="90824"/></proof>
-      <proof prover="1"><result status="timeout" time="1.00"/></proof>
-      <proof prover="2"><result status="timeout" time="1.00" steps="1840169"/></proof>
+    <goal name="power_1.0.0.1" proved="true">
+    <transf name="replace" proved="true" arg1="(1 - 1)" arg2="0" arg3="in" arg4="Hinst">
+     <goal name="power_1.0.0.1.0" proved="true">
+     <transf name="replace" proved="true" arg1="(power x 0)" arg2="one" arg3="in" arg4="Hinst">
+      <goal name="power_1.0.0.1.0.0" proved="true">
+      <proof prover="0"><result status="valid" time="0.06" steps="8204"/></proof>
+      <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
+      <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="1840169"/></proof>
       </goal>
       <goal name="power_1.0.0.1.0.1" expl="equality hypothesis" proved="true">
-      <proof prover="0"><result status="valid" time="0.06" steps="8200"/></proof>
+      <proof prover="0"><result status="valid" time="0.06" steps="8199"/></proof>
       </goal>
      </transf>
      </goal>
      <goal name="power_1.0.0.1.1" expl="equality hypothesis" proved="true">
-     <proof prover="0"><result status="valid" time="0.05" steps="7652"/></proof>
+     <proof prover="0"><result status="valid" time="0.05" steps="7651"/></proof>
      </goal>
     </transf>
     </goal>
@@ -61,27 +61,27 @@
  </transf>
  </goal>
  <goal name="LogFib.E.power_sum">
- <proof prover="0"><result status="timeout" time="1.00" steps="84708"/></proof>
+ <proof prover="0"><result status="timeout" time="1.00" steps="90275"/></proof>
  <proof prover="1"><result status="timeout" time="1.00"/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="1842364"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="1156669"/></proof>
  </goal>
  <goal name="LogFib.E.power_mult">
- <proof prover="0"><result status="timeout" time="1.00" steps="52150"/></proof>
- <proof prover="1"><undone/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="2220812"/></proof>
+ <proof prover="0"><result status="timeout" time="1.00" steps="88814"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="1312032"/></proof>
  </goal>
  <goal name="LogFib.E.power_comm1">
- <proof prover="0"><result status="timeout" time="1.00" steps="103989"/></proof>
- <proof prover="1"><undone/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="2080977"/></proof>
+ <proof prover="0"><result status="timeout" time="1.00" steps="95549"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="1113489"/></proof>
  </goal>
  <goal name="LogFib.E.power_comm2">
- <proof prover="0"><result status="timeout" time="1.00" steps="127360"/></proof>
- <proof prover="1"><undone/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="1088680"/></proof>
+ <proof prover="0"><result status="timeout" time="1.00" steps="68265"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="1317222"/></proof>
  </goal>
  <goal name="LogFib.logfib&#39;vc" expl="VC for logfib" proved="true">
- <proof prover="0"><result status="valid" time="0.05" steps="10046"/></proof>
+ <proof prover="0"><result status="valid" time="0.05" steps="10045"/></proof>
  </goal>
 </theory>
 </file>

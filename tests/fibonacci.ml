@@ -59,8 +59,8 @@ module type Exponentiation = sig
   (*@ function ( * ) (x y: t) : t *)
 
   include Monoid
-    with type t := t
-(*@ with function unit = one *)
+    with type t := t (* For now, this only works for types with the same name *)
+(*@ with function unit = one and function op := ( * ) *)
 (* @ with function op = ( * )  ---> SHALL NOT USE SUCH CONSTRAINT *)
 (* @ with function op := ( * ) ---> SHALL ALWAYS USE THIS CONSTRAINT *)
 

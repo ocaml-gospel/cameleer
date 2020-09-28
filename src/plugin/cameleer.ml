@@ -231,6 +231,11 @@ module Convert = struct
           let q = T.mk_id ~id_loc idr.pid_str in
           let subst_constr = MCfunction_sharing (Qident q) in
           Hashtbl.add subst idl.pid_str subst_constr
+      | Wfunctionsubst (idl, idr) ->
+          let id_loc = T.location idr.pid_loc in
+          let q = T.mk_id ~id_loc idr.pid_str in
+          let subst_constr = MCfunction_destructive (Qident q) in
+          Hashtbl.add subst idl.pid_str subst_constr
       | _ -> Loc.errorm "Not yet supported@." in
     List.iter mk_subst ctr_list;
     subst
