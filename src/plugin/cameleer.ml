@@ -260,14 +260,16 @@ module Convert = struct
       s_signature_item_desc info sdesc
 
     and s_signature_item_desc info sig_item_desc =
+      let mk_type_decl info type_decl_list =
+        let td_list = List.map (type_decl info) type_decl_list in
+        [Odecl (Dtype td_list)] in
       match sig_item_desc with
       | Sig_val s_val ->
           let ghost = E.is_ghost s_val.vattributes in
           [Odecl (val_decl s_val ghost)]
       | Sig_type (rec_flag, type_decl_list) ->
           ignore (rec_flag); (* TODO *)
-          let td_list = List.map (type_decl info) type_decl_list in
-          [Odecl (Dtype td_list)]
+          mk_type_decl info type_decl_list
       | Sig_function f ->
           let f, coerc = function_ f in
           let odecl = Odecl (Dlogic [f]) in
@@ -306,7 +308,9 @@ module Convert = struct
       | Sig_attribute _ ->
           []
       | Sig_extension _ -> assert false (* TODO *)
-      | Sig_ghost_type _ -> assert false (* TODO *)
+      | Sig_ghost_type (rec_flag, type_decl_list) ->
+          ignore (rec_flag); (* TODO *)
+          mk_type_decl info type_decl_list
       | Sig_ghost_val _ -> assert false (* TODO *)
       | Sig_ghost_open _ -> assert false (* TODO *)
 
