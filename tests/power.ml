@@ -70,6 +70,9 @@ module type Power = sig
   (*@ lemma power_pos:
         forall x y. x > 0 /\ y >= 0 -> power x y > 0 *)
 
+  (*@ lemma aux: forall x y z. x > 0 -> 0 <= y <= z ->
+      x * y <= x * z *)
+
   (*@ lemma power_monotonic:
         forall x n m:int. 0 < x /\ 0 <= n <= m -> power x n <= power x m *)
 end
