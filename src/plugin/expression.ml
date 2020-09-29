@@ -104,7 +104,7 @@ let binder_of_pattern O.{ppat_desc; ppat_loc; ppat_attributes; _} =
   | Ppat_alias _ -> assert false (* TODO *)
   | _ -> assert false (* TODO *)
 
-let id_of_pat O.{ppat_desc; _} = match ppat_desc with
+let rec id_of_pat O.{ppat_desc; _} = match ppat_desc with
   | Ppat_var {txt; loc} -> T.(mk_id ~id_loc:(location loc) txt)
   | Ppat_any -> assert false (* TODO *)
   | Ppat_alias _ -> assert false (* TODO *)
@@ -116,7 +116,8 @@ let id_of_pat O.{ppat_desc; _} = match ppat_desc with
   | Ppat_record _ -> assert false (* TODO *)
   | Ppat_array _ -> assert false (* TODO *)
   | Ppat_or _ -> assert false (* TODO *)
-  | Ppat_constraint _ -> assert false (* TODO *)
+  | Ppat_constraint (pat, _) ->
+      id_of_pat pat
   | Ppat_type _ -> assert false (* TODO *)
   | Ppat_lazy _ -> assert false (* TODO *)
   | Ppat_unpack _ -> assert false (* TODO *)

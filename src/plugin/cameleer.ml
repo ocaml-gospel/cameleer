@@ -1,5 +1,6 @@
 open Why3
 open Ptree
+open Wstdlib
 open Gospel
 open Parser_frontend
 
@@ -217,26 +218,38 @@ module Convert = struct
 
   open Mod_subst
 
+  let string_list_of_qualid q =
+    let rec sloq acc = function
+      | Qdot (p, id) -> sloq (id.id_str :: acc) p
+      | Qident id -> id.id_str :: acc in
+    sloq [] q
+
   let subst info ctr_list =
-    let subst = Hashtbl.create 16 in
+    let subst = empty_subst in
     let mk_subst = function
-      | Uast.Wtype (id, s_type_decl) -> let td = type_decl info s_type_decl in
-          let subst_constr = MCtype_sharing td in
-          Hashtbl.add subst (E.string_of_longident id.txt) subst_constr
-      | Wtypesubst (id, s_type_decl) -> let td = type_decl info s_type_decl in
-          let subst_constr = MCtype_destructive td in
-          Hashtbl.add subst (E.string_of_longident id.txt) subst_constr
+      | Uast.Wtype (id, s_type_decl) ->
+          let td = type_decl info s_type_decl in
+          Hstr.add subst.subst_ts (E.string_of_longident id.txt) td
+      | Wtypesubst (id, s_type_decl) ->
+          let td = type_decl info s_type_decl in
+          Hstr.add subst.subst_td (E.string_of_longident id.txt) td
       | Wfunction (idl, idr) ->
           let id_loc = T.location idr.pid_loc in
           let q = T.mk_id ~id_loc idr.pid_str in
-          let subst_constr = MCfunction_sharing (Qident q) in
-          Hashtbl.add subst idl.pid_str subst_constr
+          Hstr.add subst.subst_fs idl.pid_str (Qident q)
       | Wfunctionsubst (idl, idr) ->
           let id_loc = T.location idr.pid_loc in
           let q = T.mk_id ~id_loc idr.pid_str in
-          let subst_constr = MCfunction_destructive (Qident q) in
-          Hashtbl.add subst idl.pid_str subst_constr
-      | _ -> Loc.errorm "Not yet supported@." in
+          Hstr.add subst.subst_fd idl.pid_str (Qident q)
+      | Wgoal q ->
+          let str_q = string_list_of_qualid (T.qualid q) in
+          let (_, str) = Lists.chop_last str_q in (* FIXME: namespaces *)
+          Hstr.add subst.subst_pr str Decl.Pgoal
+      | Waxiom q ->
+          let str_q = string_list_of_qualid (T.qualid q) in
+          let (_, str) = Lists.chop_last str_q in (* FIXME: namespaces *)
+          Hstr.add subst.subst_pr str Decl.Paxiom
+      | _ -> assert false (* TODO *) in
     List.iter mk_subst ctr_list;
     subst
 
