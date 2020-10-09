@@ -11,78 +11,23 @@
  <goal name="fib&#39;vc" expl="VC for fib" proved="true">
  <proof prover="1" timelimit="5"><result status="valid" time="0.01" steps="10"/></proof>
  </goal>
- <goal name="fibonnaci&#39;vc" expl="VC for fibonnaci" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.08" steps="58"/></proof>
- </goal>
- <goal name="fib_rec_aux&#39;vc" expl="VC for fib_rec_aux" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.01" steps="32"/></proof>
+ <goal name="fibonacci&#39;vc" expl="VC for fibonacci" proved="true">
+ <proof prover="1" timelimit="5"><result status="valid" time="0.08" steps="56"/></proof>
  </goal>
  <goal name="fib_main&#39;vc" expl="VC for fib_main" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.01" steps="6"/></proof>
- </goal>
- <goal name="LogFib.M.assoc" proved="true">
- <transf name="split_vc" proved="true" >
-  <goal name="assoc.0" proved="true">
-  <transf name="unfold" proved="true" arg1="mult">
-   <goal name="assoc.0.0" proved="true">
-   <proof prover="1" timelimit="5"><result status="valid" time="0.05" steps="4"/></proof>
-   </goal>
-  </transf>
-  </goal>
- </transf>
- </goal>
- <goal name="LogFib.M.unit_def_l" proved="true">
- <proof prover="0"><result status="timeout" time="1.00" steps="21498"/></proof>
- <proof prover="2"><result status="valid" time="0.04" steps="38464"/></proof>
- </goal>
- <goal name="LogFib.M.unit_def_r" proved="true">
- <proof prover="0"><result status="timeout" time="1.00" steps="21488"/></proof>
- <proof prover="2"><result status="valid" time="0.04" steps="38657"/></proof>
+ <proof prover="1" timelimit="5"><result status="valid" time="0.01" steps="55"/></proof>
  </goal>
  <goal name="LogFib.M.power_0">
  <proof prover="0"><result status="unknown" time="0.12" steps="13864"/></proof>
  <proof prover="1"><result status="timeout" time="1.00"/></proof>
- <proof prover="2"><result status="highfailure" time="0.79" steps="1390037"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="1665595"/></proof>
  </goal>
  <goal name="LogFib.M.power_s">
  <proof prover="0"><result status="unknown" time="0.13" steps="15875"/></proof>
  <proof prover="1"><result status="timeout" time="1.00"/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="1062759"/></proof>
- </goal>
- <goal name="LogFib.M.power_s_alt" proved="true">
- <proof prover="0"><result status="valid" time="0.08" steps="9054"/></proof>
- <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
- <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="1500308"/></proof>
- </goal>
- <goal name="LogFib.M.power_1" proved="true">
- <proof prover="0"><result status="valid" time="0.08" steps="9084"/></proof>
- <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
- <proof prover="2" obsolete="true"><result status="highfailure" time="0.74" steps="1403792"/></proof>
- </goal>
- <goal name="LogFib.M.power_sum">
- <proof prover="0"><result status="timeout" time="1.00" steps="81635"/></proof>
- <proof prover="1"><result status="timeout" time="1.00"/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="1532721"/></proof>
- </goal>
- <goal name="LogFib.M.power_mult">
- <proof prover="0"><result status="timeout" time="1.00" steps="50872"/></proof>
- <proof prover="1"><result status="timeout" time="1.00"/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="1852367"/></proof>
- </goal>
- <goal name="LogFib.M.power_comm1">
- <proof prover="0"><result status="timeout" time="1.00" steps="52314"/></proof>
- <proof prover="1"><result status="timeout" time="1.00"/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="1844707"/></proof>
- </goal>
- <goal name="LogFib.M.power_comm2">
- <proof prover="0"><result status="timeout" time="1.00" steps="67622"/></proof>
- <proof prover="1"><result status="timeout" time="1.00"/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="1483694"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="1469890"/></proof>
  </goal>
  <goal name="LogFib.logfib&#39;vc" expl="VC for logfib">
- <proof prover="0"><result status="timeout" time="1.00" steps="70748"/></proof>
- <proof prover="1"><result status="timeout" time="1.00"/></proof>
- <proof prover="2"><result status="timeout" time="1.00" steps="1386236"/></proof>
  <transf name="split_vc" >
   <goal name="logfib&#39;vc.0" expl="check division by zero" proved="true">
   <proof prover="0"><result status="valid" time="0.05" steps="8422"/></proof>
@@ -97,9 +42,6 @@
   <proof prover="0"><result status="valid" time="0.05" steps="8482"/></proof>
   </goal>
   <goal name="logfib&#39;vc.4" expl="postcondition">
-  <proof prover="0"><result status="timeout" time="1.00" steps="81632"/></proof>
-  <proof prover="1"><result status="timeout" time="1.00"/></proof>
-  <proof prover="2"><result status="timeout" time="1.00" steps="1470665"/></proof>
   <transf name="split_vc" >
    <goal name="logfib&#39;vc.4.0" expl="postcondition" proved="true">
    <proof prover="0"><result status="valid" time="0.06" steps="9161"/></proof>
@@ -110,9 +52,6 @@
     <proof prover="0"><result status="valid" time="0.09" steps="10528"/></proof>
     </goal>
     <goal name="logfib&#39;vc.4.1.1" expl="postcondition">
-    <proof prover="0"><result status="timeout" time="1.00" steps="72562"/></proof>
-    <proof prover="1"><result status="timeout" time="1.00"/></proof>
-    <proof prover="2"><result status="timeout" time="1.00" steps="1408684"/></proof>
     <transf name="eliminate_let_fmla" >
      <goal name="logfib&#39;vc.4.1.1.0" expl="postcondition">
      <transf name="destruct" arg1="H">
@@ -125,24 +64,18 @@
        <proof prover="0"><result status="valid" time="0.05" steps="8589"/></proof>
        </goal>
        <goal name="logfib&#39;vc.4.1.1.0.0.1" expl="postcondition">
-       <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.00" steps="1014970"/></proof>
-       <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.00"/></proof>
-       <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.00" steps="15145215"/></proof>
+       <proof prover="0"><result status="timeout" time="1.00" steps="72722"/></proof>
+       <proof prover="1"><result status="timeout" time="1.00"/></proof>
+       <proof prover="2"><result status="timeout" time="1.00" steps="871811"/></proof>
        </goal>
       </transf>
       </goal>
       <goal name="logfib&#39;vc.4.1.1.0.1" expl="postcondition">
-      <proof prover="0"><result status="timeout" time="1.00" steps="140099"/></proof>
-      <proof prover="1"><result status="timeout" time="1.00"/></proof>
-      <proof prover="2"><result status="timeout" time="1.00" steps="1604326"/></proof>
       <transf name="assert" arg1="(2 * (div n 2) + 1 = (div n 2) + (div n 2) + 1)">
        <goal name="logfib&#39;vc.4.1.1.0.1.0" expl="asserted formula" proved="true">
        <proof prover="0"><result status="valid" time="0.05" steps="8605"/></proof>
        </goal>
        <goal name="logfib&#39;vc.4.1.1.0.1.1" expl="postcondition">
-       <proof prover="0"><result status="timeout" time="1.00" steps="83528"/></proof>
-       <proof prover="1"><result status="timeout" time="1.00"/></proof>
-       <proof prover="2"><result status="timeout" time="1.00" steps="1475314"/></proof>
        </goal>
       </transf>
       </goal>

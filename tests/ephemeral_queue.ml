@@ -20,7 +20,7 @@ let push x q =
   q.size <- q.size + 1;
   q.view <- q.view @ (x :: [])
 (*@ push x q
-      ensures q.size = (old q.size) + 1
+      modifies q.rear, q.size, q.view
       ensures q.view = (old q.view) @ (x :: []) *)
 
 let [@logic] is_empty_list = function
@@ -47,7 +47,7 @@ let pop q =
       x
 (*@ x = pop q
       raises  Not_found -> is_empty_list (old q).view (* SUPER IMPORTANT ! *)
-      ensures q.size + 1 = (old q).size
+      modifies q
       ensures x :: q.view = (old q).view *)
 
 let is_empty q =
@@ -68,6 +68,7 @@ let transfer q1 q2 =
     push (pop q1) q2
   done
 (*@ transfer q1 q2
-      raises  Not_found -> false
-      ensures q1.view = []
-      ensures q2.view = (old q2.view) @ (old q1.view) *)
+      raises   Not_found -> false
+      modifies q1, q2.rear, q2.size, q2.view
+      ensures  q1.view = []
+      ensures  q2.view = (old q2.view) @ (old q1.view) *)

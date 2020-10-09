@@ -214,7 +214,7 @@ module Convert = struct
           Loc.errorm
             "Record expressions in exceptions declaration is not supported."
       | _ -> assert false (* TODO? *) in
-    id_exn, pty, Ity.MaskVisible
+    id_exn, pty, Ity.MaskVisible (* TODO: account for a different mask *)
 
   open Mod_subst
 
@@ -356,7 +356,7 @@ module Convert = struct
             | rs_kind, [id, expr] -> let ghost = is_ghost_let svb_list in
                 [Odecl (Dlet (id, ghost, rs_kind, expr))]
             | _ -> assert false (* no multiple bindings here *) end
-          (* FIXME? I am not sure I agree with this last comment. I am mostly
+          (* FIXME? I am not sure I agree with this last comment. I am almost
              positive that multiple bindings in non-recursive values means a
              list of `and` bindings. These could be easily translated into a
              list of `let..in` bindings *)
@@ -379,10 +379,9 @@ module Convert = struct
       | Uast.Str_function f ->
           let f, coerc = function_ f in
           let odecl = Odecl (Dlogic [f]) in
-          begin match coerc with
-            | None -> [odecl]
-            | Some f -> let dmeta = Dmeta (T.mk_id "coercion", [Mfs f]) in
-                [odecl; Odecl dmeta] end
+          let coerc = match coerc with None -> [] | Some f ->
+            [Odecl (Dmeta (T.mk_id "coercion", [Mfs f]))] in
+          odecl :: coerc
       | Uast.Str_prop p ->
           let prop_name, prop_term, prop_kind = prop p in
           [Odecl (Dprop (prop_kind, prop_name, prop_term))]

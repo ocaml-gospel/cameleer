@@ -1,7 +1,7 @@
 (include_subdirs unqualified)
 
 (executable
-  (libraries gospel why3 ocaml-compiler-libs.common)
+  (libraries gospel why3)
   (name cameleer)
   (modes plugin)
   (embed_in_plugin_libraries gospel))

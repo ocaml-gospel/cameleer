@@ -35,94 +35,161 @@ module type TOTAL_ORD = sig
       a positive value if [a] is greater than [b] *)
 end
 
-(* module type S = sig
- *   type elt
- *   type t
- *
- *   val empty : t
- *   (\** Empty heap. *\)
- *
- *   val is_empty : t -> bool
- *   (\** Is the heap empty? *\)
- *
- *   exception Empty
- *
- *   val merge : t -> t -> t
- *   (\** Merge two heaps. *\)
- *
- *   val insert : elt -> t -> t
- *   (\** Insert a value in the heap. *\)
- *
- *   val add : t -> elt -> t
- *   (\** Synonym to {!insert}. *\)
- *
- *   (\* val filter :  (elt -> bool) -> t -> t
- *    * (\\** Filter values, only retaining the ones that satisfy the predicate.
- *    *     Linear time at least. *\\) *\)
- *
- *   val find_min : t -> elt option
- *   (\** Find minimal element. *\)
- *
- *   val find_min_exn : t -> elt
- *   (\** Like {!find_min} but can fail.
- *       @raise Empty if the heap is empty. *\)
- *
- *   val take : t -> (t * elt) option
- *   (\** Extract and return the minimum element, and the new heap (without
- *       this element), or [None] if the heap is empty. *\)
- *
- *   val take_exn : t -> t * elt
- *   (\** Like {!take}, but can fail.
- *       @raise Empty if the heap is empty. *\)
- *
- *   val delete_one : (elt -> elt -> bool) -> elt -> t -> t
- *   (\** Delete one occurrence of a value if it exist in the heap.
- *       [delete_one eq x h], use [eq] to find one [x] in [h] and delete it.
- *       If [h] do not contain [x] then it return [h].
- *       @since 2.0 *\)
- *
- *   val delete_all : (elt -> elt -> bool) -> elt -> t -> t
- *   (\** Delete all occurrences of a value in the heap.
- *       [delete_all eq x h], use [eq] to find all [x] in [h] and delete them.
- *       If [h] do not contain [x] then it return [h].
- *       The difference with {!filter} is that [delete_all] stops as soon as
- *       it enters a subtree whose root is bigger than the element.
- *       @since 2.0 *\)
- *
- *   val iter : (elt -> unit) -> t -> unit
- *   (\** Iterate on elements. *\)
- *
- *   val fold : ('a -> elt -> 'a) -> 'a -> t -> 'a
- *   (\** Fold on all values. *\)
- *
- *   val size : t -> int
- *   (\** Number of elements (linear complexity). *\)
- *
- *   (\** {2 Conversions} *\)
- *
- *   val to_list : t -> elt list
- *   (\** Return the elements of the heap, in no particular order. *\)
- *
- *   val to_list_sorted : t -> elt list
- *   (\** Return the elements in increasing order.
- *       @since 1.1 *\)
- *
- *   val add_list : t -> elt list -> t
- *   (\** Add the elements of the list to the heap. An element occurring several
- *       times will be added that many times to the heap.
- *       @since 0.16 *\)
- *
- *   val of_list : elt list -> t
- *   (\** [of_list l] is [add_list empty l]. Complexity: [O(n log n)]. *\)
- *
- * end *)
+module type S = sig
+  type elt
+  type t
+
+  val empty : t
+  (** Empty heap. *)
+
+  val is_empty : t -> bool
+  (** Is the heap empty? *)
+
+  exception Empty
+
+  val merge : t -> t -> t
+  (** Merge two heaps. *)
+
+  val insert : elt -> t -> t
+  (** Insert a value in the heap. *)
+
+  val add : t -> elt -> t
+  (** Synonym to {!insert}. *)
+
+  val filter :  (elt -> bool) -> t -> t
+  (** Filter values, only retaining the ones that satisfy the predicate.
+      Linear time at least. *)
+
+  val find_min : t -> elt option
+  (** Find minimal element. *)
+
+  val find_min_exn : t -> elt
+  (** Like {!find_min} but can fail.
+      @raise Empty if the heap is empty. *)
+
+  val take : t -> (t * elt) option
+  (** Extract and return the minimum element, and the new heap (without
+      this element), or [None] if the heap is empty. *)
+
+  val take_exn : t -> t * elt
+  (** Like {!take}, but can fail.
+      @raise Empty if the heap is empty. *)
+
+  val delete_one : (elt -> elt -> bool) -> elt -> t -> t
+  (** Delete one occurrence of a value if it exist in the heap.
+      [delete_one eq x h], use [eq] to find one [x] in [h] and delete it.
+      If [h] do not contain [x] then it return [h].
+      @since 2.0 *)
+
+  val delete_all : (elt -> elt -> bool) -> elt -> t -> t
+  (** Delete all occurrences of a value in the heap.
+      [delete_all eq x h], use [eq] to find all [x] in [h] and delete them.
+      If [h] do not contain [x] then it return [h].
+      The difference with {!filter} is that [delete_all] stops as soon as
+      it enters a subtree whose root is bigger than the element.
+      @since 2.0 *)
+
+  val iter : (elt -> unit) -> t -> unit
+  (** Iterate on elements. *)
+
+  val fold : ('a -> elt -> 'a) -> 'a -> t -> 'a
+  (** Fold on all values. *)
+
+  val size : t -> int
+  (** Number of elements (linear complexity). *)
+
+  (** {2 Conversions} *)
+
+  val to_list : t -> elt list
+  (** Return the elements of the heap, in no particular order. *)
+
+  val to_list_sorted : t -> elt list
+  (** Return the elements in increasing order.
+      @since 1.1 *)
+
+  val add_list : t -> elt list -> t
+  (** Add the elements of the list to the heap. An element occurring several
+      times will be added that many times to the heap.
+      @since 0.16 *)
+
+  val of_list : elt list -> t
+  (** [of_list l] is [add_list empty l]. Complexity: [O(n log n)]. *)
+
+end
 
 module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
   type elt = E.t
 
-  type t =
+  (*@ type 'a bag *)
+
+  (*@ function nb_occ (x: 'a) (b: 'a bag): integer *)
+
+  (*@ axiom occ_non_negative: forall b: 'a bag, x: 'a.
+        nb_occ x b >= 0 *)
+
+  (*@ predicate mem (x: 'a) (b: 'a bag) =
+        nb_occ x b > 0 *)
+
+  (*@ predicate eq_bag (a b: 'a bag) =
+        forall x:'a. nb_occ x a = nb_occ x b *)
+
+  (*@ axiom bag_extensionality: forall a b: 'a bag.
+        eq_bag a b -> a = b *)
+
+  (*@ function empty_bag: 'a bag *)
+
+  (*@ axiom occ_empty: forall x: 'a. nb_occ x empty_bag = 0 *)
+
+  (*@ function singleton (x: 'a) : 'a bag *)
+
+  (*@ axiom occ_singleton: forall x y: 'a.
+        nb_occ y (singleton x) = if x = y then 1 else 0 *)
+
+  (*@ function union (x:'a bag) (y:'a bag) : 'a bag *)
+
+  (* axiom occ_union: forall x: 'a, a b: 'a bag.
+      nb_occ x (union a b) = nb_occ x a + nb_occ x b *)
+
+    (** add operation *)
+
+  (*@ function add (x: 'a) (b: 'a bag) : 'a bag =
+        union (singleton x) b *)
+
+  (** cardinality of bags *)
+
+  (*@ function card (x:'a bag): integer *)
+
+  (*@ axiom card_nonneg: forall x: 'a bag.
+        card x >= 0 *)
+
+  (*@ axiom card_empty: card (empty_bag: 'a bag) = 0 *)
+
+  (*@ axiom card_zero_empty: forall x: 'a bag.
+        card x = 0 -> x = empty_bag *)
+
+  (*@ axiom card_singleton: forall x:'a.
+        card (singleton x) = 1 *)
+
+  (*@ axiom card_union: forall x y: 'a bag.
+        card (union x y) = card x + card y *)
+
+  (** bag difference *)
+
+  (*@ function diff (x: 'a bag) (y: 'a bag) : 'a bag *)
+
+  (*@ axiom diff_occ: forall b1 b2: 'a bag, x:'a.
+      nb_occ x (diff b1 b2) = max 0 (nb_occ x b1 - nb_occ x b2) *)
+
+  (** arbitrary element *)
+
+  (*@ function choose (b: 'a bag) : 'a *)
+
+  (*@ axiom choose_mem: forall b: 'a bag.
+        empty_bag <> b -> mem (choose b) b *)
+
+  type tree =
     | E
-    | N of int * elt * t * t
+    | N of int * elt * tree * tree
 
   let[@logic] rec size = function
     | E -> 0
@@ -131,10 +198,9 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
         ensures 0 <= r
         ensures r = 0 <-> param = E *)
 
-  (*@ function occ (x: elt) (h: t) : integer = match h with
+  (*@ function occ (x: elt) (h: tree) : integer = match h with
         | E -> 0
-        | N _ e l r -> let occ_l = occ x l in let occ_r = occ x r in
-            let occ_lr = occ_l + occ_r in
+        | N _ e l r -> let occ_lr = occ x l + occ x r in
             if x = e then 1 + occ_lr else occ_lr *)
 
   let [@lemma] rec occ_nonneg (y: elt) = function
@@ -143,10 +209,10 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
   (*@ occ_nonneg y param
         ensures 0 <= occ y param *)
 
-  (*@ predicate mem (x: elt) (h: t) =
+  (*@ predicate mem_heap (x: elt) (h: tree) =
         0 < occ x h *)
 
-  (*@ predicate le_root (e: elt) (h: t) = match h with
+  (*@ predicate le_root (e: elt) (h: tree) = match h with
         | E -> true
         | N _ x _ _ -> E.le e x *)
 
@@ -158,15 +224,15 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
         requires le_root y param
         ensures  le_root x param *)
 
-  (*@ predicate is_heap (h: t) = match h with
+  (*@ predicate is_heap (h: tree) = match h with
         | E -> true
         | N _ x l r -> le_root x l && is_heap l && le_root x r && is_heap r *)
 
-  (*@ function minimum (h: t) : elt *)
+  (*@ function minimum (h: tree) : elt *)
   (*@ axiom minimum_def: forall l x r n. minimum (N n x l r) = x *)
 
-  (*@ predicate is_minimum (x: elt) (h: t) =
-        mem x h && forall e. mem e h -> le x e *)
+  (*@ predicate is_minimum (x: elt) (h: tree) =
+        mem_heap x h && forall e. mem_heap e h -> le x e *)
 
   let [@lemma] rec root_is_miminum = function
     | E -> assert false
@@ -178,17 +244,22 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
        ensures  is_minimum (minimum param) param
        variant  param *)
 
-  (*@ function rank (h: t) : integer = match h with
+  (*@ function rank (h: tree) : integer = match h with
         | E -> 0
         | N _ _ l r -> 1 + min (rank l) (rank r) *)
 
-  (*@ predicate leftist (h: t) = match h with
+  (*@ predicate leftist (h: tree) = match h with
         | E -> true
         | N n _ l r ->
             n = rank h && leftist l && leftist r && rank l >= rank r *)
 
-  (*@ predicate leftist_heap (h: t) =
+  (*@ predicate leftist_heap (h: tree) =
         is_heap h && leftist h *)
+
+  type t = {
+    h : tree;
+  } (*@ model view : elt bag *)
+    (*@ invariant leftist_heap h *)
 
   let empty = E
   (*@ r = empty
@@ -285,7 +356,7 @@ module Make(E : PRE_ORD) (*: S with type elt = E.t *) = struct
         ensures  match r with
                  | None -> is_empty param
                  | Some (h, x) ->
-                     is_minimum x param &&
+                     is_minimum x param && (* minimum element *)
                      occ (minimum param) h = occ (minimum param) param - 1 &&
                      forall y. y <> minimum param -> occ y param = occ y h &&
                      size h = size param - 1 &&

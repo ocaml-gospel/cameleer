@@ -1,7 +1,6 @@
-(*@ predicate mem (x: 'a) (l: 'a list) =
-      match l with
+(*@ predicate mem (x: 'a) (l: 'a list) = match l with
       | []     -> false
-      | y :: r -> x = y \/ mem x r *)
+      | y :: r -> x = y || mem x r *)
 
 (*@ lemma mem_decomp:
       forall x: 'a, l: 'a list.

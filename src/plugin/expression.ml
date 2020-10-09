@@ -296,9 +296,9 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         Eassign [(lexpr, Some id, rexpr)]
     | Sexp_array _ -> assert false (* TODO *)
     | Sexp_while (expr_test, expr_body, loop_annotation) ->
-        let mk_var t = (T.term t, None) in
+        let mk_variant t = (T.term t, None) in
         let inv = List.map T.term loop_annotation.loop_invariant in
-        let var = List.map mk_var loop_annotation.loop_variant in
+        let var = List.map mk_variant loop_annotation.loop_variant in
         Ewhile (expression info expr_test, inv, var, expression info expr_body)
     | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, loop_annot) ->
         let id = id_of_pat pat in
