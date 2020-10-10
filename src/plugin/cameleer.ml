@@ -201,21 +201,6 @@ module Convert = struct
       Uast.Plemma -> Decl.Plemma | _ -> Decl.Paxiom in
     T.preid p.Uast.prop_name, T.term p.prop_term, kind
 
-  let type_exception {ptyexn_constructor = exn_construct; _} =
-    let txt_exn = exn_construct.pext_name.txt in
-    let loc_exn = exn_construct.pext_name.loc in
-    let id_exn = T.mk_id txt_exn ~id_loc:(T.location loc_exn) in
-    let pty = match exn_construct.pext_kind with
-      | Pext_decl (Pcstr_tuple [cty], None) ->
-          E.core_type cty
-      | Pext_decl (Pcstr_tuple cty_list, None) ->
-          PTtuple (List.map E.core_type cty_list)
-      | Pext_decl (Pcstr_record _, _) ->
-          Loc.errorm
-            "Record expressions in exceptions declaration is not supported."
-      | _ -> assert false (* TODO? *) in
-    id_exn, pty, Ity.MaskVisible (* TODO: account for a different mask *)
-
   open Mod_subst
 
   let string_list_of_qualid q =
@@ -297,8 +282,8 @@ module Convert = struct
       | Sig_module _ -> assert false (* TODO *)
       | Sig_recmodule _ -> assert false (* TODO *)
       | Sig_modtype _ -> assert false (* TODO *)
-      | Sig_exception ty_exn ->
-          let id, pty, mask = type_exception ty_exn in
+      | Sig_exception {ptyexn_constructor; _} ->
+          let id, pty, mask = E.exception_constructor ptyexn_constructor in
           [Odecl (Dexn (id, pty, mask))]
       | Sig_open _ -> assert false (* TODO *)
       | Sig_include {spincl_mod; _} -> begin match spincl_mod.mdesc with
@@ -398,8 +383,8 @@ module Convert = struct
           (* FIXME? should I generate a new scope for each mod type? *)
           (* [Omodule (scope_loc, scope_id, scope_decls)] *)
           []
-      | Uast.Str_exception ty_exn ->
-          let id, pty, mask = type_exception ty_exn in
+      | Uast.Str_exception {ptyexn_constructor; _} ->
+          let id, pty, mask = E.exception_constructor ptyexn_constructor in
           [Odecl (Dexn (id, pty, mask))]
       | Uast.Str_open _ -> assert false (* TODO *)
       | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->

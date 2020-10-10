@@ -167,6 +167,21 @@ let check_guard = function
                 "Guarded expressions are not supported."
   | None   -> ()
 
+let exception_constructor exn_construct =
+  let txt_exn = exn_construct.O.pext_name.txt in
+  let loc_exn = exn_construct.pext_name.loc in
+  let id_exn = T.mk_id txt_exn ~id_loc:(T.location loc_exn) in
+  let pty = match exn_construct.pext_kind with
+    | Pext_decl (Pcstr_tuple [cty], None) ->
+        core_type cty
+    | Pext_decl (Pcstr_tuple cty_list, None) ->
+        PTtuple (List.map core_type cty_list)
+    | Pext_decl (Pcstr_record _, _) ->
+        Loc.errorm
+          "Record expressions in exceptions declaration is not supported."
+    | _ -> assert false (* TODO? *) in
+  id_exn, pty, Ity.MaskVisible (* TODO: account for a different mask *)
+
 let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let expr_loc = T.location spexp_loc in
   let mk_expr e = mk_expr ~expr_loc e in
@@ -308,13 +323,15 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         let expr_body = expression info expr_body in
         let invariant = List.map T.term loop_annot.loop_invariant in
         Efor (id, expr_lower, flag, expr_upper, invariant, expr_body)
+    | Sexp_letexception (exn_constructor, expr) ->
+        let id, pty, mask = exception_constructor exn_constructor in
+        Eexn (id, pty, mask, expression info expr)
     | Sexp_coerce _ -> assert false (* TODO *)
     | Sexp_send _ -> assert false (* TODO *)
     | Sexp_new _ -> assert false (* TODO *)
     | Sexp_setinstvar _ -> assert false (* TODO *)
     | Sexp_override _ -> assert false (* TODO *)
     | Sexp_letmodule _ -> assert false (* TODO *)
-    | Sexp_letexception _ -> assert false (* TODO *)
     | Sexp_assert _ -> assert false (* TODO *)
     | Sexp_lazy _ -> assert false (* TODO *)
     | Sexp_poly _ -> assert false (* TODO *)
