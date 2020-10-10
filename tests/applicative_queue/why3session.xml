@@ -2,6 +2,7 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="1" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="applicative_queue.ml"/>
@@ -9,20 +10,23 @@
  <goal name="t&#39;vc" expl="VC for t" proved="true">
  <proof prover="1"><result status="valid" time="0.02" steps="9"/></proof>
  </goal>
+ <goal name="empty&#39;vc" expl="VC for empty" proved="true">
+ <proof prover="0"><result status="valid" time="0.06" steps="10472"/></proof>
+ </goal>
  <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
- <proof prover="1"><result status="valid" time="0.05" steps="102"/></proof>
+ <proof prover="1"><result status="valid" time="0.05" steps="103"/></proof>
  </goal>
  <goal name="add&#39;vc" expl="VC for add" proved="true">
- <proof prover="1"><result status="valid" time="0.20" steps="734"/></proof>
+ <proof prover="1"><result status="valid" time="0.20" steps="657"/></proof>
  </goal>
  <goal name="head&#39;vc" expl="VC for head" proved="true">
- <proof prover="1"><result status="valid" time="0.18" steps="424"/></proof>
+ <proof prover="1"><result status="valid" time="0.18" steps="423"/></proof>
  </goal>
  <goal name="tail_list&#39;vc" expl="VC for tail_list" proved="true">
  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
  </goal>
  <goal name="tail&#39;vc" expl="VC for tail" proved="true">
- <proof prover="1"><result status="valid" time="0.55" steps="1346"/></proof>
+ <proof prover="1"><result status="valid" time="0.55" steps="1358"/></proof>
  </goal>
 </theory>
 </file>

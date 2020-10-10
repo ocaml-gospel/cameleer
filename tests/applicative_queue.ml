@@ -12,7 +12,7 @@ type 'a t = {
     and inserted into xiffus
     invariant: prefix=[] -> xiffus=[] *)
 
-let empty = [], []
+let empty = { self = [], []; view = [] }
 (*@ t = empty
       ensures t.view = [] *)
 

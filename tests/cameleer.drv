@@ -38,9 +38,9 @@ module bool.Bool
 end
 
 module list.List
-  syntax type     list "%1 list"
-  syntax val Nil  "[]"
-  syntax val Cons "%1 :: %2"        prec 9 8 9
+  syntax type list "%1 list"
+  syntax val  Nil  "[]"
+  syntax val  Cons "%1 :: %2"        prec 9 8 9
 end
 
 module list.Length
