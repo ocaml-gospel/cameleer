@@ -20,13 +20,13 @@
  <proof prover="1"><result status="valid" time="0.20" steps="657"/></proof>
  </goal>
  <goal name="head&#39;vc" expl="VC for head" proved="true">
- <proof prover="1"><result status="valid" time="0.18" steps="423"/></proof>
+ <proof prover="0"><result status="valid" time="0.17" steps="25752"/></proof>
  </goal>
  <goal name="tail_list&#39;vc" expl="VC for tail_list" proved="true">
  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
  </goal>
  <goal name="tail&#39;vc" expl="VC for tail" proved="true">
- <proof prover="1"><result status="valid" time="0.55" steps="1358"/></proof>
+ <proof prover="1"><result status="valid" time="1.24" steps="2302"/></proof>
  </goal>
 </theory>
 </file>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="ephemeral_queue.ml"/>
+<theory name="Ephemeral_queue" proved="true">
+ <goal name="t&#39;vc" expl="VC for t" proved="true">
+ <proof prover="0"><result status="valid" time="0.01" steps="9"/></proof>
+ </goal>
+ <goal name="create&#39;vc" expl="VC for create" proved="true">
+ <proof prover="0"><result status="valid" time="0.01" steps="3"/></proof>
+ </goal>
+ <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
+ <proof prover="2"><result status="valid" time="0.13" steps="26775"/></proof>
+ </goal>
+ <goal name="push&#39;vc" expl="VC for push" proved="true">
+ <proof prover="0"><result status="valid" time="0.07" steps="263"/></proof>
+ </goal>
+ <goal name="head_list&#39;vc" expl="VC for head_list" proved="true">
+ <proof prover="2"><result status="valid" time="0.18" steps="11683"/></proof>
+ </goal>
+ <goal name="tail_list&#39;vc" expl="VC for tail_list" proved="true">
+ <proof prover="2"><result status="valid" time="0.16" steps="11683"/></proof>
+ </goal>
+ <goal name="pop&#39;vc" expl="VC for pop" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="pop&#39;vc.0" expl="exceptional postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="8728"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.17" steps="11497"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.2" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.20" steps="14402"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.19" steps="14378"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.20" steps="18574"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.5" expl="type invariant" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="pop&#39;vc.5.0" expl="type invariant" proved="true">
+   <proof prover="2"><result status="valid" time="0.13" steps="10593"/></proof>
+   </goal>
+   <goal name="pop&#39;vc.5.1" expl="type invariant" proved="true">
+   <proof prover="2"><result status="valid" time="0.08" steps="14254"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="pop&#39;vc.6" expl="postcondition" proved="true">
+  <proof prover="0" timelimit="1"><result status="valid" time="0.01" steps="60"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="transfer&#39;vc" expl="VC for transfer" proved="true">
+ <proof prover="2" obsolete="true"><result status="valid" time="0.11" steps="21692"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="transfer&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.12" steps="10207"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.13" steps="10061"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.2" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.12" steps="10629"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.3" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.13" steps="10648"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.4" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.09" steps="9499"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.10" steps="9587"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.6" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="9849"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.7" expl="loop variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.19" steps="15019"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.8" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.14" steps="11056"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.9" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.15" steps="10782"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.10" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.68" steps="847237"/></proof>
+  <proof prover="2"><result status="timeout" time="1.00" steps="110796"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.11" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.14" steps="11170"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.12" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.09" steps="9827"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.13" expl="exceptional postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="8490"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.14" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="9613"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.15" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="9650"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.16" expl="postcondition" proved="true">
+  <proof prover="0" timelimit="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3235555"/></proof>
+  <proof prover="2"><result status="valid" time="0.09" steps="10404"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>

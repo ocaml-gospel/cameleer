@@ -1,6 +1,6 @@
 
 (*@ predicate is_sorted (a: int array) =
-      forall i1 i2. 0 <= i1 <= i2 < Array.length a -> a[i1] <= a[i2] *)
+      forall i1 i2. 0 <= i1 <= i2 < Array.length a -> a.(i1) <= a.(i2) *)
 
 let binary_search a v =
   let l = ref 0 in

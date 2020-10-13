@@ -1,16 +1,9 @@
-(** From OCamlGraph *)
-(* TODO: include link *)
-
-(* TODO: add comments to explain specification *)
 
 type 'a t = {
   self : 'a list * 'a list;
   view : 'a list [@ghost]
 } (*@ invariant let (prefix, xiffus) = self in
                 (prefix=[] -> xiffus=[]) && view = prefix @ List.rev xiffus *)
-(** a queue is a pair (prefix, xiffus), with elements popped from prefix
-    and inserted into xiffus
-    invariant: prefix=[] -> xiffus=[] *)
 
 let empty = { self = [], []; view = [] }
 (*@ t = empty
@@ -52,7 +45,7 @@ let tail t = match t.self with
   | [_], xiffus ->
       { self = List.rev xiffus, []; view = tail_list t.view }
   | _ :: prefix, xiffus ->
-      { self = prefix, xiffus; view = prefix @ List.rev xiffus }
+      { self = prefix, xiffus; view = tail_list t.view }
   | [], _ -> raise Not_found
 (*@ r = tail t
       raises  Not_found -> is_empty t

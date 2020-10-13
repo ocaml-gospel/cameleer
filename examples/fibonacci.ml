@@ -20,6 +20,16 @@ let fibonacci n =
       requires n >= 0
       ensures  fib n = r *)
 
+  let rec fib_aux a b k
+    = if k = 0 then a else fib_aux b (a+b) (k-1)
+  (*@ result = fib_aux a b k
+         requires k >= 0
+         requires exists n. 0 <= n && a = fib n && b = fib (n+1)
+         variant  k
+         ensures  forall n. 0 <= n && a = fib n && b = fib (n+1) ->
+                              result = fib (n+k) *)
+
+
 let fib_main k =
   let rec fib_rec_aux (n [@ghost]) a b k =
     if k = 0 then a else fib_rec_aux (n + 1) b (a + b) (k - 1)
