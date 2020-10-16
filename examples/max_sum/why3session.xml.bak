@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="max_sum.ml"/>
+<theory name="Max_sum" proved="true">
+ <goal name="max_sum&#39;vc" expl="VC for max_sum" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="max_sum&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="8318"/></proof>
+  </goal>
+  <goal name="max_sum&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="8364"/></proof>
+  </goal>
+  <goal name="max_sum&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="8378"/></proof>
+  </goal>
+  <goal name="max_sum&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="8363"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
