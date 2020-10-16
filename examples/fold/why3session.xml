@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="fold.ml"/>
+<theory name="Fold" proved="true">
+ <goal name="append_empty_right" proved="true">
+ <proof prover="1"><result status="valid" time="0.05" steps="13281"/></proof>
+ </goal>
+ <goal name="append_empty_left" proved="true">
+ <proof prover="1"><result status="valid" time="0.13" steps="19501"/></proof>
+ </goal>
+ <goal name="append_assoc" proved="true">
+ <proof prover="0"><result status="valid" time="0.03" steps="118"/></proof>
+ </goal>
+ <goal name="snoc_empty" proved="true">
+ <proof prover="1"><result status="valid" time="0.18" steps="28501"/></proof>
+ </goal>
+ <goal name="seq_of_list_append" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="seq_of_list_append.0" proved="true">
+  <transf name="induction_arg_ty_lex" proved="true" arg1="l1">
+   <goal name="seq_of_list_append.0.0" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="seq_of_list_append.0.0.0" proved="true">
+    <proof prover="1"><result status="valid" time="0.10" steps="13866"/></proof>
+    </goal>
+    <goal name="seq_of_list_append.0.0.1" proved="true">
+    <proof prover="0" timelimit="1"><result status="valid" time="0.10" steps="207"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="fold_left&#39;vc" expl="VC for fold_left" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="fold_left&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="1"><result status="valid" time="0.10" steps="15778"/></proof>
+  </goal>
+  <goal name="fold_left&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="1.31" steps="2497"/></proof>
+  </goal>
+  <goal name="fold_left&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.17" steps="21357"/></proof>
+  </goal>
+  <goal name="fold_left&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.78" steps="1449"/></proof>
+  </goal>
+  <goal name="fold_left&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.08" steps="11515"/></proof>
+  </goal>
+  <goal name="fold_left&#39;vc.5" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="fold_left&#39;vc.5.0" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.14" steps="14415"/></proof>
+   </goal>
+   <goal name="fold_left&#39;vc.5.1" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.08" steps="19980"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="fold_left&#39;vc.6" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="fold_left&#39;vc.6.0" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.04" steps="11648"/></proof>
+   </goal>
+   <goal name="fold_left&#39;vc.6.1" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.05" steps="11800"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
