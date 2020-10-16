@@ -117,11 +117,9 @@ module Make(E : PRE_ORD) = struct
         ensures  occ x h = 1 + occ x a + occ x b
         ensures  forall y. x <> y -> occ y h = occ y a + occ y b *)
 
-  let rec merge t1 t2 =
-    match t1, t2 with
-      | t, E -> t
-      | E, t -> t
-      | N (_, x, a1, b1), N (_, y, a2, b2) ->
+  let rec merge t1 t2 = match t1, t2 with
+    | t, E | E, t -> t
+    | N (_, x, a1, b1), N (_, y, a2, b2) ->
         if E.leq x y
         then _make_node x a1 (merge b1 t2)
         else _make_node y a2 (merge t1 b2)

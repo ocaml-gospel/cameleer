@@ -1,7 +1,5 @@
 let [@logic] [@ghost] rec fib n =
-  if n = 0 then 0 else
-  if n = 1 then 1 else
-  fib (n-1) + fib (n-2)
+  if n <= 1 then n else fib (n-1) + fib (n-2)
 (*@ r = fib n
       requires n >= 0
       variant  n *)
