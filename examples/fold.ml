@@ -65,12 +65,11 @@ type 'a seq
 (*@ predicate complete (l: 'a seq) (v: 'a seq) =
       length v = length l *)
 
-let rec fold_left ((v: 'a list) [@ghost])
-    ((inv: 'b -> 'a seq -> bool) [@ghost]) ((l0: 'a list) [@ghost]) f (acc: 'b)
-  = function
+let rec fold_left ((v: 'a list) [@ghost]) ((inv: 'b -> 'a seq -> bool) [@ghost])
+    ((l0: 'a list) [@ghost]) f (acc: 'b) = function
   | []     -> acc
   | x :: l -> fold_left (v @ [x]) inv l0 f (f acc x) l
-(*@ r = fold_left f acc param
+(*@ r = fold_left v inv l0 f acc param
       requires permitted v l0
       requires l0 == v ++ param
       requires inv acc v
