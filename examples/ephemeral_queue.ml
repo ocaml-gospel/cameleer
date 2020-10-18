@@ -60,7 +60,7 @@ let pop q = match q.front with
 let transfer q1 q2 =
   let [@ghost] todo_view = ref [] in
   while not (is_empty q1) do
-    (*@ variant   q1.view *)
+    (*@ variant   List.length q1.view *)
     (*@ invariant (q1.front = [] -> q1.rear = []) /\
                   (q2.front = [] -> q2.rear = []) *)
     (*@ invariant q1.view = q1.front @ List.rev q1.rear /\
@@ -74,3 +74,10 @@ let transfer q1 q2 =
       raises   Not_found -> false
       ensures  q1.view = []
       ensures  q2.view = (old q2.view) @ (old q1.view) *)
+
+let alternative_transfer q1 q2 =
+  q2.rear <- q1.rear @ ((List.rev q1.front) @ q2.rear);
+  q1.front <- [];
+  q2.front <- [];
+  q1.view <- [];
+  q2.view <- List.rev q2.rear

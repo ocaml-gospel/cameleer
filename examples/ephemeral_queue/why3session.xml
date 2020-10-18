@@ -3,7 +3,6 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="ephemeral_queue.ml"/>
@@ -59,7 +58,6 @@
  </transf>
  </goal>
  <goal name="transfer&#39;vc" expl="VC for transfer" proved="true">
- <proof prover="2" obsolete="true"><result status="valid" time="0.11" steps="21692"/></proof>
  <transf name="split_vc" proved="true" >
   <goal name="transfer&#39;vc.0" expl="loop invariant init" proved="true">
   <proof prover="2"><result status="valid" time="0.12" steps="10207"/></proof>
@@ -83,7 +81,7 @@
   <proof prover="2"><result status="valid" time="0.07" steps="9849"/></proof>
   </goal>
   <goal name="transfer&#39;vc.7" expl="loop variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.19" steps="15019"/></proof>
+  <proof prover="2"><result status="valid" time="0.19" steps="13134"/></proof>
   </goal>
   <goal name="transfer&#39;vc.8" expl="loop invariant preservation" proved="true">
   <proof prover="2"><result status="valid" time="0.14" steps="11056"/></proof>
@@ -92,8 +90,7 @@
   <proof prover="2"><result status="valid" time="0.15" steps="10782"/></proof>
   </goal>
   <goal name="transfer&#39;vc.10" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.68" steps="847237"/></proof>
-  <proof prover="2"><result status="timeout" time="1.00" steps="110796"/></proof>
+  <proof prover="0"><result status="valid" time="0.13" steps="508"/></proof>
   </goal>
   <goal name="transfer&#39;vc.11" expl="loop invariant preservation" proved="true">
   <proof prover="2"><result status="valid" time="0.14" steps="11170"/></proof>
@@ -111,8 +108,6 @@
   <proof prover="2"><result status="valid" time="0.07" steps="9650"/></proof>
   </goal>
   <goal name="transfer&#39;vc.16" expl="postcondition" proved="true">
-  <proof prover="0" timelimit="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3235555"/></proof>
   <proof prover="2"><result status="valid" time="0.09" steps="10404"/></proof>
   </goal>
  </transf>
