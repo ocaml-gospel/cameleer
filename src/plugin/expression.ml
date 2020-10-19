@@ -44,10 +44,47 @@ let empty_spec = {
 let mk_expr ?(expr_loc=T.dummy_loc) expr_desc =
   { expr_desc; expr_loc }
 
+(** Smart constructors for Ptree expressions *)
+
 let unit_expr =
   mk_expr (Etuple [])
 
 let unit_pty = PTtuple []
+
+let mk_fun_def ghost rs_kind (id, fun_expr) =
+  let args, ret, spec, expr = match fun_expr.expr_desc with
+    | Efun (args, _, ret, _, spec, expr) -> args, ret, spec, expr
+    | Erec _ -> assert false (* TODO *)
+    | Ematch _ -> assert false (* TODO *)
+    | _ -> assert false (* TODO *) in
+  id, ghost, rs_kind, args, None, ret, Ity.MaskVisible, spec, expr
+
+let mk_elet_none id ghost expr expr_in =
+  Elet (id, ghost, Expr.RKnone, expr, expr_in)
+
+let mk_ematch expr case_list exn_list =
+  Ematch (expr, case_list, exn_list)
+
+let mk_ematch_no_exn expr reg_branch =
+  mk_ematch expr reg_branch []
+
+let mk_ematch_no_reg expr exn_branch =
+  mk_ematch expr [] exn_branch
+
+let mk_erec fd_list expr =
+  Erec (fd_list, expr)
+
+let mk_efun binder_list pty pat mask spec expr =
+  Efun (binder_list, pty, pat, mask, spec, expr)
+
+let mk_efun_visible binder_list pty spec expr =
+  mk_efun binder_list pty (T.mk_pattern Pwild) Ity.MaskVisible spec expr
+
+let mk_eraise id expr =
+  Eraise (id, expr)
+
+let mk_eidapp id expr_list =
+  Eidapp (id, expr_list)
 
 let is_ghost attributes =
   List.exists (fun O.{attr_name; _} -> attr_name.txt = "ghost") attributes
@@ -163,8 +200,9 @@ let rec pattern info O.{ppat_desc = p_desc; ppat_loc; _} =
   mk_pat (pat_desc p_desc)
 
 let check_guard = function
-  | Some e -> Loc.errorm ~loc:(T.location e.Uast.spexp_loc)
-                "Guarded expressions are not supported."
+  | Some e ->
+      Loc.errorm ~loc:(T.location e.Uast.spexp_loc)
+        "Guarded expressions are not supported."
   | None   -> ()
 
 let exception_constructor exn_construct =
@@ -226,27 +264,18 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         begin match svb.spvb_pat.O.ppat_desc with
           | (Ppat_tuple _) -> let svb_expr = expression info svb.spvb_expr in
               let pat = pattern info svb.spvb_pat in
-              Ematch (svb_expr, [pat, expr], [])
+              mk_ematch_no_exn svb_expr [pat, expr]
           | _ -> let id, svb_expr = s_value_binding info svb in
-              let ghost = is_ghost_svb svb in
-              Elet (id, ghost, Expr.RKnone, svb_expr, expr) end
+              mk_elet_none id (is_ghost_svb svb) svb_expr expr end
     | Uast.Sexp_let (Recursive, svb_list, expr) ->
-        let mk_fun_def rs_kind (id, fun_expr) =
-          let args, ret, spec, expr = begin match fun_expr.expr_desc with
-            | Efun (args, _, ret, _, spec, expr) -> args, ret, spec, expr
-            | _ -> assert false (* TODO *) end in
-          let mask_visible = Ity.MaskVisible in
-          id, false, rs_kind, args, None, ret, mask_visible, spec, expr in
         let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
         let expr_in = expression info expr in
-        Erec (List.map (mk_fun_def rs_kind) id_fun_expr_list, expr_in)
+        mk_erec (List.map (mk_fun_def false rs_kind) id_fun_expr_list) expr_in
     | Uast.Sexp_function _ -> assert false (* TODO *)
     | Uast.Sexp_fun (Nolabel, None, pat, expr_body, spec) ->
-        let ret = T.mk_pattern Pwild in
         let expr_body = expression info expr_body in
         let spec = match spec with Some s -> S.fun_spec s | _ -> empty_spec in
-        let mask = Ity.MaskVisible in
-        Efun ([binder_of_pattern pat], None, ret, mask, spec, expr_body)
+        mk_efun_visible [binder_of_pattern pat] None spec expr_body
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
         Eand (arg_expr arg1, arg_expr arg2)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
@@ -254,20 +283,18 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Uast.Sexp_apply (s, [arg]) when is_not s.spexp_desc ->
         Enot (arg_expr arg)
     | Uast.Sexp_apply (s, [_, arg]) when is_raise s.spexp_desc ->
-        (* TODO: write a smart constructor for exceptions *)
-        begin match arg.spexp_desc with
-        | Sexp_construct (id, exn_arg) ->
-            Eraise (longident id.txt, Opt.map (expression info) exn_arg)
-        | _ -> assert false (* TODO: not supported for now *) end
+        apply_raise info arg.spexp_desc
     | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
         let id_loc = T.location s.loc in
-        Eidapp (longident ~id_loc s.txt, List.map arg_expr arg_expr_list)
+        mk_eidapp (longident ~id_loc s.txt) (List.map arg_expr arg_expr_list)
     | Uast.Sexp_apply (_expr, _arg_list) ->
         assert false (* TODO *)
     | Uast.Sexp_match (expr, case_list) ->
-        Ematch (expression info expr, List.map (case info) case_list, [])
+        let reg_branch = List.map (case info) case_list in
+        mk_ematch_no_exn (expression info expr) reg_branch
     | Uast.Sexp_try (expr, case_list) ->
-        Ematch (expression info expr, [], List.map (case_exn info) case_list)
+        let exn_branch = List.map (case_exn info) case_list in
+        mk_ematch_no_reg (expression info expr) exn_branch
     | Uast.Sexp_tuple exp_list ->
         Etuple (List.map (expression info) exp_list)
     | Uast.Sexp_sequence (e1, e2) ->
@@ -357,6 +384,11 @@ and case_exn info Uast.{spc_lhs; spc_guard; spc_rhs} =
         longident id.txt ~id_loc, Opt.map (pattern info) pat
     | _ -> assert false (* TODO *) in
   q, pat, expression info spc_rhs
+
+and apply_raise info = function
+  | Uast.Sexp_construct (id, exn_arg) ->
+      mk_eraise (longident id.txt) (Opt.map (expression info) exn_arg)
+  | _ -> assert false (* TODO: not supported for now *)
 
 and s_value_binding info svb =
   let pexp = svb.Uast.spvb_expr in
