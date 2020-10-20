@@ -1,1 +1,3 @@
-/tests/*.bak
+*.bak
+*~
+.merlin
