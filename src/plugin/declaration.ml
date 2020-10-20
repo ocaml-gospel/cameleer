@@ -13,7 +13,7 @@ type odecl =
   | Odecl of decl
   | Omodule of Loc.position * ident * odecl list
 
-(** Smart constructors for Ptree nodes *)
+(** Smart constructors for Ptree declarations *)
 
 let mk_const svb_list expr =
   let p = T.mk_pattern Pwild in
@@ -27,10 +27,10 @@ let mk_const svb_list expr =
   E.mk_expr d
 
 let mk_odecl d =
-  [Odecl d]
+  Odecl d
 
 let mk_omodule loc id mod_expr =
-  [Omodule (loc, id, mod_expr)]
+  Omodule (loc, id, mod_expr)
 
 let mk_dtype td_list =
   mk_odecl (Dtype td_list)
@@ -39,7 +39,7 @@ let mk_coercion f =
   mk_odecl (Dmeta (T.mk_id "coercion", [Mfs f]))
 
 let mk_dlogic coercion f =
-  let coercion = match coercion with None -> [] | Some c -> mk_coercion c in
+  let coercion = match coercion with None -> [] | Some c -> [mk_coercion c] in
   (Odecl (Dlogic f)) :: coercion
 
 let mk_dprop prop_kind id t =
@@ -203,7 +203,7 @@ let val_decl vd g =
         else Expr.RKnone in
       mk_dlet id g kind e_any in
     match vd.Uast.vspec with
-    | None   -> mk_val (mk_id vd_id_str) params ret pat mask E.empty_spec
+    | None   -> mk_val (mk_id vd_id_str) params ret pat mask empty_spec
     | Some s -> mk_val (mk_id vd_id_str) params ret pat mask (vspec s) in
   let params, ret, pat, mask =
     let core_tys = flat_ptyp_arrow vd.Uast.vtype in
@@ -320,7 +320,7 @@ let s_structure, s_signature =
   let mod_type_table : (string, odecl list) Hashtbl.t = Hashtbl.create 16 in
 
   let rec s_signature info s_sig =
-    List.map (s_signature_item info) s_sig
+    List.flatten (List.map (s_signature_item info) s_sig)
 
   and s_signature_item info Uast.{sdesc; _} =
     s_signature_item_desc info sdesc
@@ -328,21 +328,21 @@ let s_structure, s_signature =
   and s_signature_item_desc info sig_item_desc =
     match sig_item_desc with
     | Sig_val s_val -> let ghost = E.is_ghost s_val.vattributes in
-        val_decl s_val ghost
+        [val_decl s_val ghost]
     | Sig_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
-        mk_type_decl info type_decl_list
+        [mk_type_decl info type_decl_list]
     | Sig_function f ->
         let f, coerc = function_ f in
         mk_dlogic coerc [f]
     | Sig_prop p ->
-        mk_prop p
+        [mk_prop p]
     | Sig_typext _ -> assert false (* TODO *)
     | Sig_module _ -> assert false (* TODO *)
     | Sig_recmodule _ -> assert false (* TODO *)
     | Sig_modtype _ -> assert false (* TODO *)
     | Sig_exception {ptyexn_constructor; _} ->
-        mk_exn ptyexn_constructor
+        [mk_exn ptyexn_constructor]
     | Sig_open _ -> assert false (* TODO *)
     | Sig_include {spincl_mod; _} -> begin match spincl_mod.mdesc with
         | Mod_ident id -> let s = E.string_of_longident id.txt in
@@ -366,7 +366,7 @@ let s_structure, s_signature =
     | Sig_extension _ -> assert false (* TODO *)
     | Sig_ghost_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
-        mk_type_decl info type_decl_list
+        [mk_type_decl info type_decl_list]
     | Sig_ghost_val _ -> assert false (* TODO *)
     | Sig_ghost_open _ -> assert false (* TODO *)
 
@@ -407,20 +407,20 @@ let s_structure, s_signature =
     | Uast.Str_value (Recursive, svb_list) ->
         let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb svb_list in
         let ghost = is_ghost_let svb_list in
-        mk_drec (List.map (E.mk_fun_def ghost rs_kind) id_fun_expr_list)
+        [mk_drec (List.map (E.mk_fun_def ghost rs_kind) id_fun_expr_list)]
     | Uast.Str_type (rec_flag, type_decl_list)
     | Uast.Str_ghost_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
-        mk_type_decl info type_decl_list
+        [mk_type_decl info type_decl_list]
     | Uast.Str_function f ->
         let f, coerc = function_ f in
         mk_dlogic coerc [f]
     | Uast.Str_prop p ->
-        mk_prop p
+        [mk_prop p]
     | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
         let scope_loc = T.location spmb_loc in
         let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
-        mk_omodule scope_loc scope_id (s_module_expr info spmb_expr)
+        [mk_omodule scope_loc scope_id (s_module_expr info spmb_expr)]
     | Uast.Str_modtype {mtdname = {txt; _}; mtdtype; _} ->
         (* FIXME: do not use that [Opt.get] *)
         let scope_decls = s_module_type info (Opt.get mtdtype) in
@@ -430,12 +430,12 @@ let s_structure, s_signature =
         []
     | Uast.Str_exception {ptyexn_constructor; _} ->
         let id, pty, mask = E.exception_constructor ptyexn_constructor in
-        mk_dexn id pty mask
+        [mk_dexn id pty mask]
     | Uast.Str_open {popen_lid; popen_loc; _}
     | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
         let loc = T.location popen_loc in
         let fname, mname = mk_import_name_list popen_lid in
-        mk_duseimport loc [Qdot (fname, mname), Some mname]
+        [mk_duseimport loc [Qdot (fname, mname), Some mname]]
     | Uast.Str_ghost_val _ ->
         assert false (* TODO *)
     | Uast.Str_attribute _ ->
@@ -466,7 +466,7 @@ let s_structure, s_signature =
         begin try Hashtbl.find mod_type_table s with Not_found ->
           assert false end
     | Mod_signature s_sig ->
-        List.flatten (s_signature info s_sig)
+        s_signature info s_sig
     | Mod_functor (arg_name, arg, body) ->
         let id_loc = T.location arg_name.loc in
         let id = T.mk_id arg_name.txt ~id_loc in

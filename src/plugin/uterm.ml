@@ -21,6 +21,7 @@ let mk_term ?(term_loc=dummy_loc) term_desc =
 let mk_pattern ?(pat_loc=dummy_loc) pat_desc =
   { pat_desc; pat_loc }
 
+(* TO BE USED : *)
 let ident_of_tvsymbol Ty.{tv_name = name} =
   mk_id name.id_str ~id_loc:(location name.id_loc)
 

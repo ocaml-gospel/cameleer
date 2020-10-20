@@ -12,7 +12,7 @@ type mod_constraint =
   | MCfunction_destructive of qualid
   | MCprop                 of Decl.prop_kind
 
-(* TODO: change to Set instead of Hashtbl *)
+(* TODO: change to Map instead of Hashtbl *)
 type subst = {
   subst_ts : type_decl Hstr.t;
   subst_td : type_decl Hstr.t;
@@ -96,7 +96,7 @@ let subst_logic_decl subst ld =
   | None   -> match Hstr.find_opt subst.subst_fd id_str with
   | Some _ -> (* creative indentation *)
       []
-  | None   -> let ld_def = Utils.opmap (subst_term subst) ld.ld_def in
+  | None -> let ld_def = Utils.opmap (subst_term subst) ld.ld_def in
       [{ ld with ld_def }]
 
 let subst_decl subst = function

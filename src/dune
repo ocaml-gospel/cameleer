@@ -2,12 +2,12 @@
 
 (executable
   (libraries gospel why3)
-  (name cameleer)
+  (name plugin_cameleer)
   (modes plugin)
   (embed_in_plugin_libraries gospel))
 
 (install
   (section lib_root)
   (files
-    (cameleer.cmxs as why3/plugins/plugin_cameleer.cmxs))
+    (plugin_cameleer.cmxs as why3/plugins/plugin_cameleer.cmxs))
   (package cameleer))

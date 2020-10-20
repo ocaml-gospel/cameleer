@@ -42,6 +42,19 @@ let sp_xpost (loc, q_pat_t_option_list) =
   let qualid_pat_term_opt (q, pt_opt) = T.qualid q, Opt.map pat_term pt_opt in
   loc, List.map qualid_pat_term_opt q_pat_t_option_list
 
+let empty_spec = {
+  sp_pre     = [];
+  sp_post    = [];
+  sp_xpost   = [];
+  sp_reads   = [];
+  sp_writes  = [];
+  sp_alias   = [];
+  sp_variant = [];
+  sp_checkrw = false;
+  sp_diverge = false;
+  sp_partial = false;
+}
+
 let vspec spec =
   let sp_writes  = List.map T.term spec.Uast.sp_writes in
   let sp_checkrw = match sp_writes with [] -> false |  _ -> true in {
@@ -65,19 +78,6 @@ let fun_spec spec = {
   sp_writes  = [];
   sp_alias   = [];
   sp_variant = List.map (fun t -> T.term t, None) spec.fun_variant;
-  sp_checkrw = false;
-  sp_diverge = false;
-  sp_partial = false;
-}
-
-let empty_spec = {
-  sp_pre     = [];
-  sp_post    = [];
-  sp_xpost   = [];
-  sp_reads   = [];
-  sp_writes  = [];
-  sp_alias   = [];
-  sp_variant = [];
   sp_checkrw = false;
   sp_diverge = false;
   sp_partial = false;

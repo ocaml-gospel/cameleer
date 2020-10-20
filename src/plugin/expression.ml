@@ -13,20 +13,28 @@ type info = { (* to be completed as needed *)
   (* TODO: include here information to generate refinement modules *)
 }
 
+let empty_info () =
+  { info_arith_construct = Hashtbl.create 32 }
+
+let add_info info id arith =
+  Hashtbl.add info.info_arith_construct id arith
+
 let rec string_of_longident = function
   | Longident.Lident s -> s
   | Ldot (t, s) -> string_of_longident t ^ s
   | Lapply (t1, t2) -> string_of_longident t1 ^ string_of_longident t2
 
-let rec_flag = function Nonrecursive -> false | Recursive -> true
+(* TO BE USED : *)
+(* let rec_flag = function Nonrecursive -> false | Recursive -> true *)
 
 let direction_flag = function Upto -> Expr.To | Downto -> Expr.DownTo
 
-let split_on_checks sp_pre =
-  let mk_split (pre, checks) (t, is_checks) =
-    if is_checks then pre, t :: checks else t :: pre, checks in
-  let pre, checks = List.fold_left mk_split ([], []) sp_pre in
-  List.rev pre, List.rev checks
+(* TO BE USED : *)
+(* let split_on_checks sp_pre =
+ *   let mk_split (pre, checks) (t, is_checks) =
+ *     if is_checks then pre, t :: checks else t :: pre, checks in
+ *   let pre, checks = List.fold_left mk_split ([], []) sp_pre in
+ *   List.rev pre, List.rev checks *)
 
 let empty_spec = {
   sp_pre     = [];
