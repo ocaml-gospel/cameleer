@@ -18,12 +18,11 @@ module Make (E: PRE_ORD) = struct
 
   type tree = T of E.t * tree list
 
-  (*@ predicate le_tree (e: elt) (t: tree) = match t with
-        | T x _ -> E.le e x *)
+  let [@logic] [@ghost] le_tree e = function T (x, _) -> E.leq e x
 
-  (*@ predicate le_tree_list (e: elt) (l: tree list) = match l with
-        | [] -> true
-        | x :: r -> le_tree e x && le_tree_list e r *)
+  let [@logic] [@ghost] rec le_tree_list e = function
+    | [] -> true
+    | t :: r -> le_tree e t && le_tree_list e r
 
   (*@ lemma le_roots_trans: forall x y l.
         E.le x y -> le_tree_list y l -> le_tree_list x l *)
@@ -62,14 +61,11 @@ module Make (E: PRE_ORD) = struct
 
   (*@ function minimum_tree (t: tree) : elt = match t with T x _ -> x *)
 
-  (*@ predicate heap_tree_list (l: tree list) *)
-
-  (*@ predicate heap_tree (t: tree) = match t with
-        | T x l -> le_tree_list x l && heap_tree_list l *)
-
-  (*@ axiom heap_tree_list_def: forall l. match l with
-        | [] -> true
-        | t :: r -> heap_tree t && heap_tree_list r *)
+  let [@logic] [@ghost] rec heap_tree = function
+    | T (x, l) -> le_tree_list x l && heap_tree_list l
+  and [@logic] [@ghost] heap_tree_list = function
+    | [] -> true
+    | t :: r -> heap_tree t && heap_tree_list r
 
   type t = E | N of tree
 
@@ -178,6 +174,15 @@ module Make (E: PRE_ORD) = struct
         ensures  heap t
         ensures  size t = size t1 + size t2
         ensures  forall x. occ_t x t = occ_t x t1 + occ_t x t2 *)
+
+  let add x t =
+    merge (N (T (x, []))) t
+  (*@ h = add x t
+        requires heap t
+        ensures  heap h
+        ensures  size h = size t + 1
+        ensures  occ_t x h = occ_t x t + 1
+        ensures  forall y. x <> y -> occ_t y h = occ_t y t *)
 
   let rec merge_list = function
     | [] -> E
