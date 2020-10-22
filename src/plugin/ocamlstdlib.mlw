@@ -4,7 +4,7 @@ module OCamlStdLib
   use export mach.int.Int
   use export int.MinMax
   use export list.List
-  use export list.Length
+  (* use export list.Length *)
   use export list.Append
   (* use export list.Reverse *)
   use export ocaml.Exceptions
