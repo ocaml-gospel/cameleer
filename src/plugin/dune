@@ -9,3 +9,9 @@
   (files
     (plugin_cameleer.cmxs as why3/plugins/plugin_cameleer.cmxs))
   (package cameleer))
+
+(install
+  (section share_root)
+  (files
+    (ocamlstdlib.mlx as why3/stdlib/ocamlstdlib.mlw))
+  (package cameleer))
