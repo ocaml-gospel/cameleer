@@ -13,5 +13,5 @@
 (install
   (section share_root)
   (files
-    (ocamlstdlib.mlx as why3/stdlib/ocamlstdlib.mlw))
+    (ocamlstdlib.mlw as why3/stdlib/ocamlstdlib.mlw))
   (package cameleer))
