@@ -4,8 +4,13 @@ let fname = ref None
 
 let path = Queue.create ()
 
-let spec = ["-L", Arg.String (fun s -> Queue.add s path),
-            "add <dir> to the search path"]
+let version = "0.1~dev"
+
+let spec = [ "-L", Arg.String (fun s -> Queue.add s path),
+             "add <dir> to the search path";
+             "--version",
+             Arg.Unit (fun () -> printf "Cameleer %s@." version; exit 0),
+             " print version information" ]
 
 let usage_msg =
   sprintf "%s <file>.ml\n\
