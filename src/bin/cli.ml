@@ -24,4 +24,4 @@ let fname = match !fname with None -> usage () | Some f -> f
 let path = Queue.fold (fun acc s -> sprintf "-L %s %s" s acc) "" path
 
 let _ =
-  Sys.command (sprintf "why3ide %s %s" fname path)
+  Sys.command (sprintf "why3 ide %s %s" fname path)
