@@ -11,7 +11,7 @@ repository.
 
 Install
 -------
-First, starting by cloning the Cameleer project by doing:
+First, start by cloning the Cameleer project:
 ```
   $ git clone --recursive git@github.com:mariojppereira/cameleer.git
 ```
@@ -19,7 +19,7 @@ This will clone the Cameleer repository into a directory named `cameleer`.
 Note the use of the `--recursive` option, in order to fetch the `vocal`
 repository.
 
-Next, pin add the needed opam packages. First:
+Next, pin add the needed opam packages:
 ```
   $ opam pin add path/to/cameleer/vocal
 ```
