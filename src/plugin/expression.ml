@@ -349,15 +349,15 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let expr_loc = T.location spexp_loc in
   let mk_expr e = mk_expr ~expr_loc e in
   let arg_expr (_, expr) = expression info expr in
-  let logic_attr = "logic" in
-  let lemma_attr = "lemma" in
+  let logic_attr = "logic" and lemma_attr = "lemma" in
   let is_logic =
     List.exists (fun O.{attr_name; _} -> attr_name.txt = logic_attr) in
   let is_lemma =
     List.exists (fun O.{attr_name; _} -> attr_name.txt = lemma_attr) in
   let is_logic_svb Uast.{spvb_attributes; _} = is_logic spvb_attributes in
   let is_lemma_svb Uast.{spvb_attributes; _} = is_lemma spvb_attributes in
-  let field_expr ({txt; _}, e) = (longident txt, expression info e) in
+  let field_expr ({txt; loc}, e) = let id_loc = T.location loc in
+    (longident txt ~id_loc, expression info e) in
   let rs_kind svb_list = if List.exists is_logic_svb svb_list then Expr.RKfunc
     else if List.exists is_lemma_svb svb_list then Expr.RKlemma
     else Expr.RKnone in
@@ -406,7 +406,7 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
         let id_loc = T.location s.loc in
         mk_eidapp (longident ~id_loc s.txt) (List.map arg_expr arg_expr_list)
-    | Uast.Sexp_apply (_expr, _arg_list) ->
+    | Uast.Sexp_apply _ ->
         assert false (* TODO *)
     | Uast.Sexp_match (expr, case_list) ->
         let reg_branch = List.map (case info) case_list in
