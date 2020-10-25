@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="zipper.ml"/>
+<theory name="Zipper" proved="true">
+ <goal name="t&#39;vc" expl="VC for t" proved="true">
+ <proof prover="0"><result status="valid" time="0.14" steps="33985"/></proof>
+ </goal>
+ <goal name="empty&#39;vc" expl="VC for empty" proved="true">
+ <proof prover="0"><result status="valid" time="0.27" steps="41802"/></proof>
+ </goal>
+ <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
+ <proof prover="0"><result status="valid" time="0.39" steps="65286"/></proof>
+ </goal>
+ <goal name="to_list&#39;vc" expl="VC for to_list" proved="true">
+ <proof prover="0"><result status="valid" time="0.18" steps="36894"/></proof>
+ </goal>
+ <goal name="to_rev_list&#39;vc" expl="VC for to_rev_list" proved="true">
+ <proof prover="0"><result status="timeout" time="1.00" steps="171608"/></proof>
+ <proof prover="1"><result status="valid" time="0.15" steps="467668"/></proof>
+ </goal>
+ <goal name="make&#39;vc" expl="VC for make" proved="true">
+ <proof prover="0"><result status="valid" time="0.28" steps="42203"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
