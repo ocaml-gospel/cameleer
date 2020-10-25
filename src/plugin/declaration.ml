@@ -10,7 +10,7 @@ module Tt = Tterm
 module E  = Expression
 
 type odecl =
-  | Odecl of decl
+  | Odecl   of Loc.position * decl
   | Omodule of Loc.position * ident * odecl list
 
 (** Smart constructors for Ptree declarations *)
@@ -25,36 +25,36 @@ let mk_const svb_list expr =
   let d = Eattr (ATstr Vc.wb_attr, E.mk_expr d) in
   E.mk_expr d
 
-let mk_odecl d =
-  Odecl d
+let mk_odecl loc d =
+  Odecl (loc, d)
 
 let mk_omodule loc id mod_expr =
   Omodule (loc, id, mod_expr)
 
-let mk_dtype td_list =
-  mk_odecl (Dtype td_list)
+let mk_dtype loc td_list =
+  mk_odecl loc (Dtype td_list)
 
-let mk_coercion f =
-  mk_odecl (Dmeta (T.mk_id "coercion", [Mfs f]))
+let mk_coercion loc f =
+  mk_odecl loc (Dmeta (T.mk_id "coercion", [Mfs f]))
 
-let mk_dlogic coercion f =
-  let coercion = match coercion with None -> [] | Some c -> [mk_coercion c] in
-  (Odecl (Dlogic f)) :: coercion
+let mk_dlogic loc coerc f =
+  let coerc = match coerc with None -> [] | Some c -> [mk_coercion loc c] in
+  (Odecl (loc, Dlogic f)) :: coerc
 
-let mk_dprop prop_kind id t =
-  mk_odecl (Dprop (prop_kind, id, t))
+let mk_dprop loc prop_kind id t =
+  mk_odecl loc (Dprop (prop_kind, id, t))
 
-let mk_dlet id ghost rs_kind expr =
-  mk_odecl (Dlet (id, ghost, rs_kind, expr))
+let mk_dlet loc id ghost rs_kind expr =
+  mk_odecl loc (Dlet (id, ghost, rs_kind, expr))
 
-let mk_drec fd_list =
-  mk_odecl (Drec fd_list)
+let mk_drec loc fd_list =
+  mk_odecl loc (Drec fd_list)
 
-let mk_dexn id pty mask =
-  mk_odecl (Dexn (id, pty, mask))
+let mk_dexn loc id pty mask =
+  mk_odecl loc (Dexn (id, pty, mask))
 
 let mk_duseimport loc ?(import=true) q_list =
-  mk_odecl (Duseimport (loc, import, q_list))
+  mk_odecl loc (Duseimport (loc, import, q_list))
 
 let mk_functor loc id arg body =
   Omodule (loc, id, arg) :: body
@@ -136,9 +136,9 @@ let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) = {
   td_def    = td_def info tspec tmanifest tkind
 }
 
-let mk_type_decl info type_decl_list =
+let mk_type_decl info loc type_decl_list =
   let td_list = List.map (type_decl info) type_decl_list in
-  mk_dtype td_list
+  mk_dtype loc td_list
 
 let logic_attr = "logic"
 let lemma_attr = "lemma"
@@ -153,7 +153,7 @@ let is_lemma attributes =
 let is_ghost attributes =
   List.exists (fun {attr_name; _} -> attr_name.txt = ghost_attr) attributes
 
-let val_decl vd g =
+let val_decl loc vd g =
   let rec flat_ptyp_arrow ct = match ct.ptyp_desc with
     | Ptyp_var _ | Ptyp_tuple _ | Ptyp_constr _ -> [ct]
     | Ptyp_arrow (_, t1, t2) ->
@@ -200,7 +200,7 @@ let val_decl vd g =
       let e_any = E.mk_expr e_any ~expr_loc:(T.location vd.Uast.vloc) in
       let kind = if is_logic vd.vattributes then Expr.RKfunc
         else Expr.RKnone in
-      mk_dlet id g kind e_any in
+      mk_dlet loc id g kind e_any in
     match vd.Uast.vspec with
     | None   -> mk_val (mk_id vd_id_str) params ret pat mask empty_spec
     | Some s -> mk_val (mk_id vd_id_str) params ret pat mask (vspec s) in
@@ -248,13 +248,13 @@ let prop p =
     Uast.Plemma -> Decl.Plemma | _ -> Decl.Paxiom in
   T.preid p.Uast.prop_name, T.term p.prop_term, kind
 
-let mk_prop p =
+let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
-  mk_dprop prop_kind prop_name prop_term
+  mk_dprop loc prop_kind prop_name prop_term
 
-let mk_exn ptyexn_constructor =
+let mk_exn loc ptyexn_constructor =
   let id, pty, mask = E.exception_constructor ptyexn_constructor in
-  mk_dexn id pty mask
+  mk_dexn loc id pty mask
 
 let mk_import_name_list popen_lid =
   let id_loc = T.location popen_lid.loc in
@@ -306,9 +306,9 @@ let subst info ctr_list =
   subst
 
 let rec apply_subst subst = function
-  | Odecl d -> begin match subst_decl subst d with
+  | Odecl (loc, d) -> begin match subst_decl subst d with
       | []   -> []
-      | [od] -> [Odecl od]
+      | [od] -> [Odecl (loc, od)]
       | _    -> assert false end
   | Omodule (loc, id, od_list) ->
       let mk_subst acc od = apply_subst subst od :: acc in
@@ -321,27 +321,27 @@ let s_structure, s_signature =
   let rec s_signature info s_sig =
     List.flatten (List.map (s_signature_item info) s_sig)
 
-  and s_signature_item info Uast.{sdesc; _} =
-    s_signature_item_desc info sdesc
+  and s_signature_item info Uast.{sdesc; sloc} =
+    s_signature_item_desc info (T.location sloc) sdesc
 
-  and s_signature_item_desc info sig_item_desc =
+  and s_signature_item_desc info loc sig_item_desc =
     match sig_item_desc with
     | Sig_val s_val -> let ghost = E.is_ghost s_val.vattributes in
-        [val_decl s_val ghost]
+        [val_decl loc s_val ghost]
     | Sig_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
-        [mk_type_decl info type_decl_list]
+        [mk_type_decl info loc type_decl_list]
     | Sig_function f ->
         let f, coerc = function_ f in
-        mk_dlogic coerc [f]
+        mk_dlogic loc coerc [f]
     | Sig_prop p ->
-        [mk_prop p]
+        [mk_prop loc p]
     | Sig_typext _ -> assert false (* TODO *)
     | Sig_module _ -> assert false (* TODO *)
     | Sig_recmodule _ -> assert false (* TODO *)
     | Sig_modtype _ -> assert false (* TODO *)
     | Sig_exception {ptyexn_constructor; _} ->
-        [mk_exn ptyexn_constructor]
+        [mk_exn loc ptyexn_constructor]
     | Sig_open _ -> assert false (* TODO *)
     | Sig_include {spincl_mod; _} -> begin match spincl_mod.mdesc with
         | Mod_ident id -> let s = E.string_of_longident id.txt in
@@ -365,14 +365,14 @@ let s_structure, s_signature =
     | Sig_extension _ -> assert false (* TODO *)
     | Sig_ghost_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
-        [mk_type_decl info type_decl_list]
+        [mk_type_decl info loc type_decl_list]
     | Sig_ghost_val _ -> assert false (* TODO *)
     | Sig_ghost_open _ -> assert false (* TODO *)
 
-  and s_structure_item info Uast.{sstr_desc; _} =
-    s_structure_item_desc info sstr_desc
+  and s_structure_item info Uast.{sstr_desc; sstr_loc} =
+    s_structure_item_desc info (T.location sstr_loc) sstr_desc
 
-  and s_structure_item_desc info str_item_desc =
+  and s_structure_item_desc info loc str_item_desc =
     let is_const_svb Uast.{spvb_expr; _} = match spvb_expr.spexp_desc with
       | Sexp_function _ | Sexp_fun _ -> false
       (*FIXME: this is not all there is to test. One might have a complex
@@ -397,7 +397,7 @@ let s_structure, s_signature =
           | rs_kind, [id, expr] -> let ghost = is_ghost_let svb_list in
               let expr = if List.exists is_const_svb svb_list then
                   mk_const svb_list expr else expr in
-              [Odecl (Dlet (id, ghost, rs_kind, expr))]
+              [Odecl (loc, (Dlet (id, ghost, rs_kind, expr)))]
           | _ -> assert false (* no multiple bindings here *) end
     (* FIXME? I am not sure I agree with this last comment. I am almost
        positive that multiple bindings in non-recursive values means a
@@ -406,16 +406,16 @@ let s_structure, s_signature =
     | Uast.Str_value (Recursive, svb_list) ->
         let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb svb_list in
         let ghost = is_ghost_let svb_list in
-        [mk_drec (List.map (E.mk_fun_def ghost rs_kind) id_fun_expr_list)]
+        [mk_drec loc (List.map (E.mk_fun_def ghost rs_kind) id_fun_expr_list)]
     | Uast.Str_type (rec_flag, type_decl_list)
     | Uast.Str_ghost_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
-        [mk_type_decl info type_decl_list]
+        [mk_type_decl info loc type_decl_list]
     | Uast.Str_function f ->
         let f, coerc = function_ f in
-        mk_dlogic coerc [f]
+        mk_dlogic loc coerc [f]
     | Uast.Str_prop p ->
-        [mk_prop p]
+        [mk_prop loc p]
     | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
         let scope_loc = T.location spmb_loc in
         let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
@@ -429,7 +429,7 @@ let s_structure, s_signature =
         []
     | Uast.Str_exception {ptyexn_constructor; _} ->
         let id, pty, mask = E.exception_constructor ptyexn_constructor in
-        [mk_dexn id pty mask]
+        [mk_dexn loc id pty mask]
     | Uast.Str_open {popen_lid; popen_loc; _}
     | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
         let loc = T.location popen_loc in

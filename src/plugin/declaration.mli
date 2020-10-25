@@ -3,7 +3,7 @@ open Why3
 open Expression
 
 type odecl = private
-  | Odecl of Ptree.decl
+  | Odecl   of Loc.position * Ptree.decl
   | Omodule of Loc.position * Ptree.ident * odecl list
 
 val mk_duseimport : Loc.position -> ?import:bool ->

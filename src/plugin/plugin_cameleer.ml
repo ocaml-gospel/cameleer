@@ -58,13 +58,13 @@ let read_channel env path file c =
     | [] -> ()
     | x :: r -> Format.eprintf "%a" pp x; pp_list pp fmt r in
   let rec pp_decl fmt d = match d with
-    | Odecl d -> Format.fprintf fmt "%a@." Mlw_printer.pp_decl d
+    | Odecl (_loc, d) -> Format.fprintf fmt "%a@." Mlw_printer.pp_decl d
     | Omodule (_loc, id, dl) ->
         Format.eprintf "@[<hv 2>scope %s@\n%a@]@\nend@." id.id_str
           (pp_list pp_decl) dl in
   let rec add_decl od = match od with
-    | Odecl d ->
-        Why3.Typing.add_decl Loc.dummy_position d;
+    | Odecl (loc, d) ->
+        Why3.Typing.add_decl loc d;
     | Omodule (loc, id, dl) ->
         Why3.Typing.open_scope id.id_loc id;
         List.iter add_decl dl;
