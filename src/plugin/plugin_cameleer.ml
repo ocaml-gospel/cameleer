@@ -17,11 +17,11 @@ let print_modules = Debug.lookup_flag "print_modules"
 
 let use_std_lib =
   let dummy_pos = Loc.dummy_position in
-  let array = Qdot (Qident (T.mk_id "array"), T.mk_id "Array") in
+  (* let array = Qdot (Qident (T.mk_id "array"), T.mk_id "Array") in *)
   let stdlib = Qdot (Qident (T.mk_id "ocamlstdlib"), T.mk_id "OCamlStdLib") in
-  let use_array = mk_duseimport dummy_pos ~import:false [array, None] in
+  (* let use_array = mk_duseimport dummy_pos ~import:false [array, None] in *)
   let use_stdlib = mk_duseimport dummy_pos ~import:false [stdlib, None] in
-  [use_array; use_stdlib]
+  [(* use_array;  *)use_stdlib]
 
 let mk_info () =
   let info = E.empty_info () in

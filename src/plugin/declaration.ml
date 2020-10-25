@@ -17,9 +17,8 @@ type odecl =
 
 let mk_const svb_list expr =
   let p = T.mk_pattern Pwild in
-  let mk_spec acc Uast.{spvb_vspec; _} = let s = match spvb_vspec with
-      | None -> empty_spec
-      | Some s -> vspec s in
+  let mk_spec acc Uast.{spvb_vspec; _} =
+    let s = match spvb_vspec with None -> empty_spec | Some s -> vspec s in
     spec_union acc s in
   let spec = List.fold_left mk_spec empty_spec svb_list in
   let d = Efun ([], None, p, Ity.MaskVisible, spec, expr) in

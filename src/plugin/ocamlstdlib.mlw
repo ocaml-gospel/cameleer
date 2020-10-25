@@ -16,8 +16,9 @@ module OCamlStdLib
 
     use export list.List
     use export list.Length
-    use import list.Append  as A
-    use import list.Reverse as R
+    use import list.Append    as A
+    use import list.Reverse   as R
+    use import list.RevAppend as RA
 
     let function rev (l: list 'a) : list 'a =
       R.reverse l
@@ -25,27 +26,54 @@ module OCamlStdLib
     let function append (l1 l2: list 'a) : list 'a =
       A.(++) l1 l2
 
-    goal G: forall l1 l2 l3: list 'a.
-      append l1 (append l2 l3) = append (append l1 l2) l3
+    let function rev_append (s t: list 'a) : list 'a =
+      RA.rev_append s t
 
   end
+
+  use import array.Array as A
+
+  type array 'a = A.array 'a
 
   scope import Array
-    use import array.Array as A
 
-    type array 'a = A.array 'a
+    use export array.Init
 
-    function get (a: array 'a) (i: int) : 'a = a[i]
+    (* function get (a: array 'a) (i: int) : 'a = a[i] *)
 
-    val get (a: array 'a) (i: int) : 'a
-      requires { 0 <= i < length a }
-      ensures  { result = get a i }
+    (* val get (a: array 'a) (i: int) : 'a *)
+    (*   requires { 0 <= i < length a } *)
+    (*   ensures  { result = get a i } *)
 
-    val set (a: array 'a) (i: int) (v: 'a) : unit
-      writes   { a }
-      requires { 0 <= i < length a }
-      ensures  { a.elts = Map.set (old a).elts i v }
-      ensures  { a = (old a)[i <- v] }
+    (* val set (a: array 'a) (i: int) (v: 'a) : unit *)
+    (*   writes   { a } *)
+    (*   requires { 0 <= i < length a } *)
+    (*   ensures  { a.elts = Map.set (old a).elts i v } *)
+    (*   ensures  { a = (old a)[i <- v] } *)
   end
+
+  predicate is_pre_order (cmp: 'a -> 'a -> int) =
+    (forall x. cmp x x = 0) /\
+    (forall x y. cmp x y = 0 <-> cmp y x = 0) /\
+    (forall x y. cmp x y < 0 <-> cmp y x > 0) /\
+    (forall x y z.
+      (cmp x y = 0 -> cmp y z = 0 -> cmp x z = 0) /\
+      (cmp x y = 0 -> cmp y z < 0 -> cmp x z < 0) /\
+      (cmp x y < 0 -> cmp y z = 0 -> cmp x z < 0) /\
+      (cmp x y < 0 -> cmp y z < 0 -> cmp x z < 0))
+
+  lemma cmp_eq: forall x y: 'a, cmp: 'a -> 'a -> int.
+    is_pre_order cmp -> (cmp x y = 0 <-> x = y)
+
+  scope Sys
+
+    val constant max_array_length : int
+    axiom non_neg_max_array_length : 0 < max_array_length
+
+  end
+
+  let invalid_arg (s: string)
+    raises { Invalid_argument }
+  = raise (Invalid_argument s)
 
 end
