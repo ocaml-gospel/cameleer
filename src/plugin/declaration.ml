@@ -420,13 +420,15 @@ let s_structure, s_signature =
         let scope_loc = T.location spmb_loc in
         let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
         [mk_omodule scope_loc scope_id (s_module_expr info spmb_expr)]
-    | Uast.Str_modtype {mtdname = {txt; _}; mtdtype; _} ->
+    | Uast.Str_modtype {mtdname = {txt; loc}; mtdtype; mtdloc; _} ->
         (* FIXME: do not use that [Opt.get] *)
         let scope_decls = s_module_type info (Opt.get mtdtype) in
         Hashtbl.add mod_type_table txt scope_decls;
         (* FIXME? should I generate a new scope for each mod type? *)
-        (* [Omodule (scope_loc, scope_id, scope_decls)] *)
-        []
+        let scope_loc = T.location mtdloc in
+        let id_loc = T.location loc in
+        let scope_id = T.mk_id ~id_loc txt in
+        [mk_omodule scope_loc scope_id scope_decls]
     | Uast.Str_exception {ptyexn_constructor; _} ->
         let id, pty, mask = E.exception_constructor ptyexn_constructor in
         [mk_dexn loc id pty mask]

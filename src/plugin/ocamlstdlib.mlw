@@ -39,17 +39,17 @@ module OCamlStdLib
 
     use export array.Init
 
-    (* function get (a: array 'a) (i: int) : 'a = a[i] *)
+    function get (a: array 'a) (i: int) : 'a = a[i]
 
-    (* val get (a: array 'a) (i: int) : 'a *)
-    (*   requires { 0 <= i < length a } *)
-    (*   ensures  { result = get a i } *)
+    val get (a: array 'a) (i: int) : 'a
+      requires { 0 <= i < length a }
+      ensures  { result = get a i }
 
-    (* val set (a: array 'a) (i: int) (v: 'a) : unit *)
-    (*   writes   { a } *)
-    (*   requires { 0 <= i < length a } *)
-    (*   ensures  { a.elts = Map.set (old a).elts i v } *)
-    (*   ensures  { a = (old a)[i <- v] } *)
+    val set (a: array 'a) (i: int) (v: 'a) : unit
+      writes   { a }
+      requires { 0 <= i < length a }
+      ensures  { a.elts = Map.set (old a).elts i v }
+      ensures  { a = (old a)[i <- v] }
   end
 
   predicate is_pre_order (cmp: 'a -> 'a -> int) =
