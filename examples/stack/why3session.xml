@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="stack.ml"/>
+<theory name="Stack" proved="true">
+ <goal name="t&#39;vc" expl="VC for t" proved="true">
+ <proof prover="1"><result status="valid" time="0.05" steps="9970"/></proof>
+ </goal>
+ <goal name="create&#39;vc" expl="VC for create" proved="true">
+ <proof prover="1"><result status="valid" time="0.05" steps="11269"/></proof>
+ </goal>
+ <goal name="clear&#39;vc" expl="VC for clear" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="11886"/></proof>
+ </goal>
+ <goal name="copy&#39;vc" expl="VC for copy" proved="true">
+ <proof prover="1"><result status="valid" time="0.04" steps="11184"/></proof>
+ </goal>
+ <goal name="push&#39;vc" expl="VC for push" proved="true">
+ <proof prover="1"><result status="valid" time="0.08" steps="15555"/></proof>
+ </goal>
+ <goal name="pop&#39;vc" expl="VC for pop" proved="true">
+ <proof prover="0"><result status="valid" time="0.02" steps="78"/></proof>
+ </goal>
+ <goal name="pop_opt&#39;vc" expl="VC for pop_opt" proved="true">
+ <proof prover="0"><result status="valid" time="0.02" steps="99"/></proof>
+ </goal>
+ <goal name="top&#39;vc" expl="VC for top" proved="true">
+ <proof prover="1"><result status="valid" time="0.09" steps="14064"/></proof>
+ </goal>
+ <goal name="top_opt&#39;vc" expl="VC for top_opt" proved="true">
+ <proof prover="1"><result status="valid" time="0.08" steps="14698"/></proof>
+ </goal>
+ <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="13864"/></proof>
+ </goal>
+ <goal name="length&#39;vc" expl="VC for length" proved="true">
+ <proof prover="1"><result status="valid" time="0.04" steps="10972"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
