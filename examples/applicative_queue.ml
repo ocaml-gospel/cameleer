@@ -21,25 +21,21 @@ let add queue elt = match queue.self with
   | prefix, xiffus ->
       { self = prefix, elt :: xiffus; view = queue.view @ [elt] }
 (*@ r = add queue elt
-      ensures r.view = queue.view ++ (elt :: []) *)
+      ensures r.view = queue.view @ (elt :: []) *)
 
 let head (param: 'a t) = match param.self with
   | head :: _, _-> head
   | [], _ -> raise Not_found
 (*@ x = head param
       raises  Not_found -> is_empty param
-      ensures match param.view with
-              | [] -> false
-              | y :: _ -> x = y *)
+      ensures match param.view with [] -> false | y :: _ -> x = y *)
 
 let [@logic] [@ghost] tail_list = function
   | [] -> assert false
   | _ :: l -> l
 (*@ r = tail_list param
       requires param <> []
-      ensures  match param with
-               | [] -> false
-               | _ :: l -> r = l *)
+      ensures  match param with [] -> false | _ :: l -> r = l *)
 
 let tail t = match t.self with
   | [_], xiffus ->
