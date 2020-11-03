@@ -2,16 +2,12 @@ open Gospel
 open Oasttypes
 open Oparsetree
 open Why3
-open Wstdlib
 open Ptree
 open Vspec
 module T  = Uterm
 module Tt = Tterm
 module E  = Expression
-
-type odecl =
-  | Odecl   of Loc.position * decl
-  | Omodule of Loc.position * ident * odecl list
+module O  = Odecl
 
 (** Smart constructors for Ptree declarations *)
 
@@ -24,40 +20,6 @@ let mk_const svb_list expr =
   let d = Efun ([], None, p, Ity.MaskVisible, spec, expr) in
   let d = Eattr (ATstr Vc.wb_attr, E.mk_expr d) in
   E.mk_expr d
-
-let mk_odecl loc d =
-  Odecl (loc, d)
-
-let mk_omodule loc id mod_expr =
-  Omodule (loc, id, mod_expr)
-
-let mk_dtype loc td_list =
-  mk_odecl loc (Dtype td_list)
-
-let mk_coercion loc f =
-  mk_odecl loc (Dmeta (T.mk_id "coercion", [Mfs f]))
-
-let mk_dlogic loc coerc f =
-  let coerc = match coerc with None -> [] | Some c -> [mk_coercion loc c] in
-  (Odecl (loc, Dlogic f)) :: coerc
-
-let mk_dprop loc prop_kind id t =
-  mk_odecl loc (Dprop (prop_kind, id, t))
-
-let mk_dlet loc id ghost rs_kind expr =
-  mk_odecl loc (Dlet (id, ghost, rs_kind, expr))
-
-let mk_drec loc fd_list =
-  mk_odecl loc (Drec fd_list)
-
-let mk_dexn loc id pty mask =
-  mk_odecl loc (Dexn (id, pty, mask))
-
-let mk_duseimport loc ?(import=true) q_list =
-  mk_odecl loc (Duseimport (loc, import, q_list))
-
-let mk_functor loc id arg body =
-  Omodule (loc, id, arg) :: body
 
 let mk_field ~mut:f_mutable ~ghost:f_ghost f_loc f_ident f_pty  =
   { f_loc; f_ident; f_pty; f_mutable; f_ghost }
@@ -81,14 +43,14 @@ let param_of_cty cty =
   let loc = T.location cty.ptyp_loc in
   (loc, None, false, E.core_type cty)
 
-(** Translate a list of OCaml constructors declaration list into the
-    corresponding Why3's Ptree algebraic constructors list. *)
+(** Translate a list of OCaml constructors declaration into the corresponding
+    Why3's Ptree algebraic constructors list. *)
 let constructor_declaration info {pcd_loc; pcd_name; pcd_args; _} =
   match pcd_args with
   | Pcstr_tuple cty_list -> let id_loc = T.location pcd_name.loc in
       let id = T.mk_id ~id_loc pcd_name.txt in
       let construct_arith = List.length cty_list in
-      Hashtbl.add info.E.info_arith_construct pcd_name.txt (construct_arith);
+      Hashtbl.add info.O.info_arith_construct pcd_name.txt (construct_arith);
       (T.location pcd_loc, id, List.map param_of_cty cty_list)
   | Pcstr_record _ -> assert false
 
@@ -138,7 +100,7 @@ let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) = {
 
 let mk_type_decl info loc type_decl_list =
   let td_list = List.map (type_decl info) type_decl_list in
-  mk_dtype loc td_list
+  O.mk_dtype loc td_list
 
 let logic_attr = "logic"
 let lemma_attr = "lemma"
@@ -200,7 +162,7 @@ let val_decl loc vd g =
       let e_any = E.mk_expr e_any ~expr_loc:(T.location vd.Uast.vloc) in
       let kind = if is_logic vd.vattributes then Expr.RKfunc
         else Expr.RKnone in
-      mk_dlet loc id g kind e_any in
+      O.mk_dlet loc id g kind e_any in
     match vd.Uast.vspec with
     | None   -> mk_val (mk_id vd_id_str) params ret pat mask empty_spec
     | Some s -> mk_val (mk_id vd_id_str) params ret pat mask (vspec s) in
@@ -250,11 +212,11 @@ let prop p =
 
 let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
-  mk_dprop loc prop_kind prop_name prop_term
+  O.mk_dprop loc prop_kind prop_name prop_term
 
 let mk_exn loc ptyexn_constructor =
   let id, pty, mask = E.exception_constructor ptyexn_constructor in
-  mk_dexn loc id pty mask
+  O.mk_dexn loc id pty mask
 
 let mk_import_name_list popen_lid =
   let id_loc = T.location popen_lid.loc in
@@ -270,53 +232,51 @@ let mk_import_name_list popen_lid =
 
 open Mod_subst
 
-let string_list_of_qualid q =
-  let rec sloq acc = function
-    | Qdot (p, id) -> sloq (id.id_str :: acc) p
-    | Qident id -> id.id_str :: acc in
-  sloq [] q
+(* TO BE USED *)
+(* let string_list_of_qualid q =
+ *   let rec sloq acc = function
+ *     | Qdot (p, id) -> sloq (id.id_str :: acc) p
+ *     | Qident id -> id.id_str :: acc in
+ *   sloq [] q *)
 
 let subst info ctr_list =
-  let subst = empty_subst in
-  let mk_subst = function
+  let mk_subst subst = function
     | Uast.Wtype (id, s_type_decl) ->
         let td = type_decl info s_type_decl in
-        Hstr.add subst.subst_ts (E.string_of_longident id.txt) td
+        let id_loc = T.location id.loc and id_str = id.txt in
+        add_ts_subst (E.longident ~id_loc id_str) td subst
     | Wtypesubst (id, s_type_decl) ->
         let td = type_decl info s_type_decl in
-        Hstr.add subst.subst_td (E.string_of_longident id.txt) td
-    | Wfunction (idl, idr) ->
-        let id_loc = T.location idr.pid_loc in
-        let q = T.mk_id ~id_loc idr.pid_str in
-        Hstr.add subst.subst_fs idl.pid_str (Qident q)
-    | Wfunctionsubst (idl, idr) ->
-        let id_loc = T.location idr.pid_loc in
-        let q = T.mk_id ~id_loc idr.pid_str in
-        Hstr.add subst.subst_fd idl.pid_str (Qident q)
+        let id_loc = T.location id.loc and id_str = id.txt in
+        add_td_subst (E.longident ~id_loc id_str) td subst
+    | Wfunction (ql, qr) ->
+        let ql = T.qualid ql and qr = T.qualid qr in
+        add_fs_subst ql qr subst
+    | Wfunctionsubst (ql, qr) ->
+        let ql = T.qualid ql and qr = T.qualid qr in
+        add_fd_subst ql qr subst
     | Wgoal q ->
-        let str_q = string_list_of_qualid (T.qualid q) in
-        let (_, str) = Lists.chop_last str_q in (* FIXME: namespaces *)
-        Hstr.add subst.subst_pr str Decl.Pgoal
+        add_pr_subst (T.qualid q) Decl.Pgoal subst
     | Waxiom q ->
-        let str_q = string_list_of_qualid (T.qualid q) in
-        let (_, str) = Lists.chop_last str_q in (* FIXME: namespaces *)
-        Hstr.add subst.subst_pr str Decl.Paxiom
+        add_pr_subst (T.qualid q) Decl.Paxiom subst
     | _ -> assert false (* TODO *) in
-  List.iter mk_subst ctr_list;
-  subst
+  List.fold_left mk_subst empty_subst ctr_list
 
-let rec apply_subst subst = function
-  | Odecl (loc, d) -> begin match subst_decl subst d with
-      | []   -> []
-      | [od] -> [Odecl (loc, od)]
-      | _    -> assert false end
-  | Omodule (loc, id, od_list) ->
-      let mk_subst acc od = apply_subst subst od :: acc in
-      let od_subst = List.fold_left mk_subst [] od_list in
-      [Omodule (loc, id, List.rev (List.flatten od_subst))]
+let clone_subst subst =
+  let mk_csfsym (q1, q2) = CSfsym (q1, q2) in
+  let csfsym = List.map mk_csfsym (Mqual.bindings subst.subst_fs) in
+  (* | Odecl (loc, d) -> begin match subst_decl subst d with
+   *     | []   -> []
+   *     | [od] -> [Odecl (loc, od)]
+   *     | _    -> assert false end
+   * | Omodule (loc, id, od_list) ->
+   *     let mk_subst acc od = apply_subst subst od :: acc in
+   *     let od_subst = List.fold_left mk_subst [] od_list in
+   *     [Omodule (loc, id, List.rev (List.flatten od_subst))] *)
+  csfsym
 
 let s_structure, s_signature =
-  let mod_type_table : (string, odecl list) Hashtbl.t = Hashtbl.create 16 in
+  let mod_type_table : (string, O.odecl list) Hashtbl.t = Hashtbl.create 16 in
 
   let rec s_signature info s_sig =
     List.flatten (List.map (s_signature_item info) s_sig)
@@ -333,7 +293,7 @@ let s_structure, s_signature =
         [mk_type_decl info loc type_decl_list]
     | Sig_function f ->
         let f, coerc = function_ f in
-        mk_dlogic loc coerc [f]
+        O.mk_dlogic loc coerc [f]
     | Sig_prop p ->
         [mk_prop loc p]
     | Sig_typext _ -> assert false (* TODO *)
@@ -348,13 +308,16 @@ let s_structure, s_signature =
             Hashtbl.find mod_type_table s
         | Mod_signature _ -> assert false (* TODO *)
         | Mod_functor _ -> assert false (* TODO *)
-        | Mod_with (mod_type, constraint_list) ->
+        | Mod_with ({mdesc = Mod_ident s; mloc; _}, constraint_list) ->
             let subst = subst info constraint_list in
-            let od_list = s_module_type info mod_type in
-            let mk_subst acc od = apply_subst subst od :: acc in
-            let od_list = List.fold_left mk_subst [] od_list in
-            List.rev (List.flatten od_list)
-        (* s_module_type info mod_type *)
+            (* let od_list = s_module_type info mod_type in *)
+            (* let mk_subst acc od = clone_subst subst od :: acc in *)
+            let cl_subst = clone_subst subst in
+            (* let od_list = List.fold_left mk_subst [] od_list in
+             * List.rev (List.flatten od_list) *)
+            let id = E.longident ~id_loc:(T.location s.loc) s.txt in
+            [O.mk_odecl (T.location mloc) (Dcloneexport (id, cl_subst))]
+        | Mod_with _ -> assert false (* TODO *)
         | Mod_typeof _ -> assert false (* TODO *)
         | Mod_extension _ -> assert false (* TODO *)
         | Mod_alias _ -> assert false (* TODO *) end
@@ -395,9 +358,9 @@ let s_structure, s_signature =
     | Uast.Str_value (Nonrecursive, svb_list) ->
         begin match id_expr_rs_kind_of_svb svb_list with
           | rs_kind, [id, expr] -> let ghost = is_ghost_let svb_list in
-              let expr = if List.exists is_const_svb svb_list then
-                  mk_const svb_list expr else expr in
-              [Odecl (loc, (Dlet (id, ghost, rs_kind, expr)))]
+              let rs_kind, expr = if List.exists is_const_svb svb_list then
+                Expr.RKfunc, mk_const svb_list expr else rs_kind, expr in
+              [O.mk_odecl loc (Dlet (id, ghost, rs_kind, expr))]
           | _ -> assert false (* no multiple bindings here *) end
     (* FIXME? I am not sure I agree with this last comment. I am almost
        positive that multiple bindings in non-recursive values means a
@@ -406,59 +369,62 @@ let s_structure, s_signature =
     | Uast.Str_value (Recursive, svb_list) ->
         let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb svb_list in
         let ghost = is_ghost_let svb_list in
-        [mk_drec loc (List.map (E.mk_fun_def ghost rs_kind) id_fun_expr_list)]
+        [O.mk_drec loc (List.map (E.mk_fun_def ghost rs_kind) id_fun_expr_list)]
     | Uast.Str_type (rec_flag, type_decl_list)
     | Uast.Str_ghost_type (rec_flag, type_decl_list) ->
         ignore (rec_flag); (* TODO *)
         [mk_type_decl info loc type_decl_list]
     | Uast.Str_function f ->
         let f, coerc = function_ f in
-        mk_dlogic loc coerc [f]
+        O.mk_dlogic loc coerc [f]
     | Uast.Str_prop p ->
         [mk_prop loc p]
-    | Uast.Str_module {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} ->
-        let scope_loc = T.location spmb_loc in
-        let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
-        [mk_omodule scope_loc scope_id (s_module_expr info spmb_expr)]
+    | Uast.Str_module mod_binding (* {spmb_loc; spmb_name = {txt; loc};
+                                     spmb_expr; _} *) ->
+        s_module_binding info mod_binding
     | Uast.Str_modtype {mtdname = {txt; loc}; mtdtype; mtdloc; _} ->
         (* FIXME: do not use that [Opt.get] *)
         let scope_decls = s_module_type info (Opt.get mtdtype) in
         Hashtbl.add mod_type_table txt scope_decls;
-        (* FIXME? should I generate a new scope for each mod type? *)
         let scope_loc = T.location mtdloc in
         let id_loc = T.location loc in
         let scope_id = T.mk_id ~id_loc txt in
-        [mk_omodule scope_loc scope_id scope_decls]
+        [O.mk_omodule scope_loc scope_id scope_decls]
     | Uast.Str_exception {ptyexn_constructor; _} ->
         let id, pty, mask = E.exception_constructor ptyexn_constructor in
-        [mk_dexn loc id pty mask]
+        [O.mk_dexn loc id pty mask]
     | Uast.Str_open {popen_lid; popen_loc; _}
     | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
         let loc = T.location popen_loc in
         let fname, mname = mk_import_name_list popen_lid in
-        [mk_duseimport loc [Qdot (fname, mname), Some mname]]
+        [O.mk_duseimport loc [Qdot (fname, mname), Some mname]]
     | Uast.Str_ghost_val _ ->
         assert false (* TODO *)
     | Uast.Str_attribute _ ->
         []
     | _ -> assert false (* TODO *)
 
-  and s_module_expr info {spmod_desc; spmod_loc; _} =
-    let decl_loc = T.location spmod_loc in
-    match spmod_desc with
-    | Uast.Smod_ident _ ->
-        Loc.errorm "Module aliasing is not supported."
-    | Uast.Smod_structure str ->
-        s_structure info str
-    | Uast.Smod_functor (arg_name, arg, body) ->
-        let id_loc = T.location arg_name.loc in
-        let id = T.mk_id ~id_loc arg_name.txt in
-        let body = s_module_expr info body in
-        mk_functor decl_loc id (s_module_type info (Opt.get arg)) body
-    | Smod_apply _ -> assert false (* TODO *)
-    | Smod_constraint _ -> assert false (* TODO *)
-    | Smod_unpack _ -> assert false (* TODO *)
-    | Smod_extension _ -> assert false (* TODO *)
+  and s_module_binding info {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} =
+    let rec s_module_expr Uast.{spmod_desc; spmod_loc; _} =
+      let decl_loc = T.location spmod_loc in
+      match spmod_desc with
+      | Uast.Smod_ident _ ->
+          Loc.errorm "Module aliasing is not supported."
+      | Uast.Smod_structure str ->
+          s_structure info str
+      | Uast.Smod_functor (arg_name, arg, body) ->
+          let id_loc = T.location arg_name.loc in
+          let id = T.mk_id ~id_loc arg_name.txt in
+          let body = s_module_expr body in
+          O.mk_functor decl_loc id (s_module_type info (Opt.get arg)) body
+      | Smod_apply _ -> assert false (* TODO *)
+      | Smod_constraint (mod_expr, _) ->
+          s_module_expr mod_expr
+      | Smod_unpack _ -> assert false (* TODO *)
+      | Smod_extension _ -> assert false (* TODO *) in
+    let scope_loc = T.location spmb_loc in
+    let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
+    [O.mk_omodule scope_loc scope_id (s_module_expr spmb_expr)]
 
   and s_module_type info {mdesc; _} =
     match mdesc with
@@ -472,7 +438,7 @@ let s_structure, s_signature =
         let id_loc = T.location arg_name.loc in
         let id = T.mk_id arg_name.txt ~id_loc in
         let body = s_module_type info body in
-        mk_functor id_loc id (s_module_type info (Opt.get arg)) body
+        O.mk_functor id_loc id (s_module_type info (Opt.get arg)) body
     | Mod_with _ (* of s_module_type * s_with_constraint list *) ->
         assert false (* TODO *)
     | Mod_typeof _ (* of module_expr *) ->

@@ -17,16 +17,14 @@ let print_modules = Debug.lookup_flag "print_modules"
 
 let use_std_lib =
   let dummy_pos = Loc.dummy_position in
-  (* let array = Qdot (Qident (T.mk_id "array"), T.mk_id "Array") in *)
   let stdlib = Qdot (Qident (T.mk_id "ocamlstdlib"), T.mk_id "OCamlStdLib") in
-  (* let use_array = mk_duseimport dummy_pos ~import:false [array, None] in *)
-  let use_stdlib = mk_duseimport dummy_pos ~import:false [stdlib, None] in
-  [(* use_array;  *)use_stdlib]
+  let use_stdlib = Odecl.mk_duseimport dummy_pos ~import:false [stdlib, None] in
+  [use_stdlib]
 
 let mk_info () =
-  let info = E.empty_info () in
-  E.add_info info "Some" 1;
-  E.add_info info "::" 2;
+  let info = Odecl.empty_info () in
+  Odecl.add_info info "Some" 1;
+  Odecl.add_info info "::" 2;
   info
 
 let read_file file nm c =
@@ -58,14 +56,14 @@ let read_channel env path file c =
     | [] -> ()
     | x :: r -> Format.eprintf "%a" pp x; pp_list pp fmt r in
   let rec pp_decl fmt d = match d with
-    | Odecl (_loc, d) -> Format.fprintf fmt "%a@." Mlw_printer.pp_decl d
-    | Omodule (_loc, id, dl) ->
+    | Odecl.Odecl (_loc, d) -> Format.fprintf fmt "%a@." Mlw_printer.pp_decl d
+    | Odecl.Omodule (_loc, id, dl) ->
         Format.eprintf "@[<hv 2>scope %s@\n%a@]@\nend@." id.id_str
           (pp_list pp_decl) dl in
   let rec add_decl od = match od with
-    | Odecl (loc, d) ->
+    | Odecl.Odecl (loc, d) ->
         Why3.Typing.add_decl loc d;
-    | Omodule (loc, id, dl) ->
+    | Odecl.Omodule (loc, id, dl) ->
         Why3.Typing.open_scope id.id_loc id;
         List.iter add_decl dl;
         Why3.Typing.close_scope ~import:true loc in

@@ -1,15 +1,8 @@
 open Gospel
 open Why3
+open Odecl
 
 module O = Oparsetree
-
-type info = private {
-  info_arith_construct : (string, int) Hashtbl.t;
-}
-
-val empty_info : unit -> info
-
-val add_info : info -> string -> int -> unit
 
 val string_of_longident : Longident.t -> string
 
@@ -21,6 +14,9 @@ val mk_fun_def :
   Ptree.ghost -> Expr.rs_kind -> (Ptree.ident * Ptree.expr) -> Ptree.fundef
 
 val is_ghost : O.attributes -> Ptree.ghost
+
+val longident :
+  ?id_loc:Loc.position -> ?prefix:string -> Longident.t -> Ptree.qualid
 
 val core_type : O.core_type -> Ptree.pty
 

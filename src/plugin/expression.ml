@@ -8,17 +8,6 @@ module T = Uterm
 module S = Vspec
 module O = Oparsetree
 
-type info = { (* to be completed as needed *)
-  info_arith_construct: (string, int) Hashtbl.t
-  (* TODO: include here information to generate refinement modules *)
-}
-
-let empty_info () =
-  { info_arith_construct = Hashtbl.create 32 }
-
-let add_info info id arith =
-  Hashtbl.add info.info_arith_construct id arith
-
 let rec string_of_longident = function
   | Longident.Lident s -> s
   | Ldot (t, s) -> string_of_longident t ^ s
@@ -289,7 +278,7 @@ let rec pattern info O.{ppat_desc = p_desc; ppat_loc; _} =
   let mk_pat p = T.mk_pattern ~pat_loc p in
   let pat_arith info s pat_list =
     let pat = List.map (pattern info) pat_list in
-    if Hashtbl.find info.info_arith_construct s > 1 then pat
+    if Hashtbl.find info.Odecl.info_arith_construct s > 1 then pat
     else [mk_pat (Ptuple pat)] in
   let pat_desc = function
     | O.Ppat_any    -> mk_pwild

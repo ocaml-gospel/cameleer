@@ -6,30 +6,10 @@ module OCamlStdLib
   use export list.List
   use export list.Length
   use export list.Append
-  (* use export list.Reverse *)
   use export ocaml.Exceptions
   use export option.Option
   use export ref.Ref
   use export ref.Refint
-
-  scope List
-
-    use export list.List
-    use export list.Length
-    use import list.Append    as A
-    use import list.Reverse   as R
-    use import list.RevAppend as RA
-
-    let function rev (l: list 'a) : list 'a =
-      R.reverse l
-
-    let function append (l1 l2: list 'a) : list 'a =
-      A.(++) l1 l2
-
-    let function rev_append (s t: list 'a) : list 'a =
-      RA.rev_append s t
-
-  end
 
   use import array.Array as A
 
@@ -75,5 +55,24 @@ module OCamlStdLib
   let invalid_arg (s: string)
     raises { Invalid_argument }
   = raise (Invalid_argument s)
+
+  scope List
+
+    use export list.List
+    use export list.Length
+    use import list.Append    as A
+    use import list.Reverse   as R
+    use import list.RevAppend as RA
+
+    let function rev (l: list 'a) : list 'a =
+      R.reverse l
+
+    let function append (l1 l2: list 'a) : list 'a =
+      A.(++) l1 l2
+
+    let function rev_append (s t: list 'a) : list 'a =
+      RA.rev_append s t
+
+  end
 
 end
