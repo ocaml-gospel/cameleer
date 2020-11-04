@@ -243,12 +243,12 @@ let subst info ctr_list =
   let mk_subst subst = function
     | Uast.Wtype (id, s_type_decl) ->
         let td = type_decl info s_type_decl in
-        let id_loc = T.location id.loc and id_str = id.txt in
-        add_ts_subst (E.longident ~id_loc id_str) td subst
+        let id_loc = T.location id.loc and id_txt = id.txt in
+        add_ts_subst (E.longident ~id_loc id_txt) td subst
     | Wtypesubst (id, s_type_decl) ->
         let td = type_decl info s_type_decl in
-        let id_loc = T.location id.loc and id_str = id.txt in
-        add_td_subst (E.longident ~id_loc id_str) td subst
+        let id_loc = T.location id.loc and id_txt = id.txt in
+        add_td_subst (E.longident ~id_loc id_txt) td subst
     | Wfunction (ql, qr) ->
         let ql = T.qualid ql and qr = T.qualid qr in
         add_fs_subst ql qr subst
@@ -405,6 +405,8 @@ let s_structure, s_signature =
     | _ -> assert false (* TODO *)
 
   and s_module_binding info {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} =
+    let mod_bind_name = txt in
+    let mod_type_name = function Uast.Mod_ident s -> Some s.txt | _ -> None in
     let rec s_module_expr Uast.{spmod_desc; spmod_loc; _} =
       let decl_loc = T.location spmod_loc in
       match spmod_desc with
@@ -418,7 +420,12 @@ let s_structure, s_signature =
           let body = s_module_expr body in
           O.mk_functor decl_loc id (s_module_type info (Opt.get arg)) body
       | Smod_apply _ -> assert false (* TODO *)
-      | Smod_constraint (mod_expr, _) ->
+      | Smod_constraint (mod_expr, mod_type) ->
+          let mod_type_name = mod_type_name mod_type.Uast.mdesc in
+          let mod_type_name = Opt.map E.longident mod_type_name in
+          let mod_type = s_module_type info mod_type in
+          let info_ref = Odecl.mk_info_refinement mod_type_name mod_type in
+          Odecl.add_info_refinement info mod_bind_name info_ref;
           s_module_expr mod_expr
       | Smod_unpack _ -> assert false (* TODO *)
       | Smod_extension _ -> assert false (* TODO *) in

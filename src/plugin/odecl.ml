@@ -14,8 +14,13 @@ let mk_omodule loc id mod_expr =
   Omodule (loc, id, mod_expr)
 
 type info_refinement = {
-  info_ref_name : string option;
+  info_ref_name : qualid option;
   info_ref_decl : odecl list;
+}
+
+let mk_info_refinement ref_name ref_decl = {
+  info_ref_name = ref_name;
+  info_ref_decl = ref_decl;
 }
 
 type info = { (* to be completed as needed *)
@@ -31,6 +36,9 @@ let empty_info () = {
 
 let add_info info id arith =
   Hashtbl.add info.info_arith_construct id arith
+
+let add_info_refinement info id info_refinement =
+  Hashtbl.add info.info_refinement id info_refinement
 
 let mk_dtype loc td_list =
   mk_odecl loc (Dtype td_list)
@@ -59,3 +67,7 @@ let mk_duseimport loc ?(import=true) q_list =
 
 let mk_functor loc id arg body =
   (mk_omodule loc id arg) :: body
+
+let mk_cloneexport ?odecl_loc id clone_subst =
+  let loc = match odecl_loc with Some l -> l | None -> Loc.dummy_position in
+  mk_odecl loc (Dcloneexport (id, clone_subst))

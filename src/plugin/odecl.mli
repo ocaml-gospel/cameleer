@@ -9,9 +9,11 @@ val mk_odecl : Loc.position -> Ptree.decl -> odecl
 val mk_omodule : Loc.position -> Ptree.ident -> odecl list -> odecl
 
 type info_refinement = private {
-  info_ref_name : string option;
-  info_ref_decl : odecl list;
+  info_ref_name : Ptree.qualid option; (* module type name to be refined *)
+  info_ref_decl : odecl list;          (* list of declarations to be refined *)
 }
+
+val mk_info_refinement : Ptree.qualid option -> odecl list -> info_refinement
 
 type info = private {
   info_arith_construct : (string, int) Hashtbl.t;
@@ -21,6 +23,7 @@ type info = private {
 val empty_info : unit -> info
 
 val add_info : info -> string -> int -> unit
+val add_info_refinement : info -> string -> info_refinement -> unit
 
 val mk_dtype : Loc.position -> Ptree.type_decl list -> odecl
 
@@ -42,3 +45,6 @@ val mk_duseimport : Loc.position -> ?import:bool ->
 
 val mk_functor :
   Loc.position -> Ptree.ident -> odecl list -> odecl list -> odecl list
+
+val mk_cloneexport :
+  ?odecl_loc:Loc.position -> Ptree.qualid -> Ptree.clone_subst list -> odecl

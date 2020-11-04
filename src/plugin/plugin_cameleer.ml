@@ -39,6 +39,63 @@ let type_check name nm structs =
   let md = List.fold_left (Gospel.Typing.type_str_item penv) md structs in
   Gospel.Tmodule.wrap_up_muc md
 
+let rec add_decl od =
+  match od with
+  | Odecl.Odecl (loc, d) ->
+      Why3.Typing.add_decl loc d;
+  | Odecl.Omodule (loc, id, dl) ->
+      Why3.Typing.open_scope id.id_loc id;
+      List.iter add_decl dl;
+      Why3.Typing.close_scope ~import:true loc
+
+let mk_refine_modules info top_mod_name =
+  let open_module_id id = open_module id in
+  let use_top_mod id =
+    let ouse = Odecl.mk_duseimport Loc.dummy_position [id, None] in
+    add_decl ouse in
+  let top_mod_qualid = Qident (T.mk_id top_mod_name) in
+  let mk_ref_q mod_name id = Qdot (mod_name, id) in
+  let mk_clone_subst mod_refinee mod_refiner acc odecl =
+    let mk_id_refinee id = mk_ref_q mod_refinee id in
+    let mk_id_refiner id = mk_ref_q mod_refiner id in
+    match odecl with
+    | Odecl.Odecl (_, Dlet (id, _, _, _)) ->
+        let id = { id with id_loc = Loc.dummy_position } in
+        let id_refinee = mk_id_refinee id in
+        let id_refiner = mk_id_refiner id in
+        CSvsym (id_refinee, id_refiner) :: acc
+    | Odecl.Odecl (_, Dtype [{td_ident; td_params; _}]) ->
+        let id = { td_ident with id_loc = Loc.dummy_position } in
+        let id_refinee = mk_id_refinee id in
+        let id_refiner = mk_id_refiner id in
+        let pty = PTtyapp (id_refiner, []) in
+        CStsym (id_refinee, td_params, pty) :: acc
+    | Odecl.Odecl (_, Dlogic [{ld_ident; ld_type = None; _}]) ->
+        let id = { ld_ident with id_loc = Loc.dummy_position } in
+        let id_refinee = mk_id_refinee id in
+        let id_refiner = mk_id_refiner id in
+        CSpsym (id_refinee, id_refiner) :: acc
+    | Odecl.Odecl (_, Dlogic [{ld_ident; ld_type = Some _; _}]) ->
+        let id = { ld_ident with id_loc = Loc.dummy_position } in
+        let id_refinee = mk_id_refinee id in
+        let id_refiner = mk_id_refiner id in
+        CSfsym (id_refinee, id_refiner) :: acc
+    | _ -> acc (* TODO *) in
+  let mk_module refines_name info_refinement =
+    let mod_id = "Refinement__" ^ refines_name in
+    open_module_id (T.mk_id mod_id);
+    use_top_mod top_mod_qualid;
+    let mod_refinee = match info_refinement.Odecl.info_ref_name with
+      | Some s -> s | None -> assert false (* TODO *) in
+    let mod_refiner = Qident (T.mk_id refines_name) in
+    let odecl_ref = info_refinement.Odecl.info_ref_decl in
+    let mk_subst = mk_clone_subst mod_refinee mod_refiner in
+    let clone_subst = List.fold_left mk_subst [] odecl_ref in
+    let odecl_clone = Odecl.mk_cloneexport top_mod_qualid clone_subst in
+    add_decl odecl_clone;
+    close_module Loc.dummy_position in
+  Hashtbl.iter mk_module info.Odecl.info_refinement
+
 let read_channel env path file c =
   if !debug then Format.eprintf "reading file '%s'@." file;
   let mod_name =
@@ -60,16 +117,10 @@ let read_channel env path file c =
     | Odecl.Omodule (_loc, id, dl) ->
         Format.eprintf "@[<hv 2>scope %s@\n%a@]@\nend@." id.id_str
           (pp_list pp_decl) dl in
-  let rec add_decl od = match od with
-    | Odecl.Odecl (loc, d) ->
-        Why3.Typing.add_decl loc d;
-    | Odecl.Omodule (loc, id, dl) ->
-        Why3.Typing.open_scope id.id_loc id;
-        List.iter add_decl dl;
-        Why3.Typing.close_scope ~import:true loc in
   pp_list pp_decl (Format.err_formatter) f;
   List.iter add_decl f;
   close_module Loc.dummy_position; (* Closes the top module *)
+  mk_refine_modules info mod_name;
   let mm = close_file () in
   if Debug.test_flag print_modules then begin
     let print_m _ m = Format.eprintf "%a@\n@." Pm.print_module m in
