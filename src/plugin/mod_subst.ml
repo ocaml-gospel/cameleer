@@ -1,7 +1,6 @@
 open Why3
 open Ptree
-module E = Expression
-module T = Uterm
+open Wstdlib
 
 type mod_constraint =
   | MCtype_sharing         of type_decl
@@ -16,26 +15,26 @@ module Mqual = Map.Make(struct
 end)
 
 type subst = {
-  subst_ts : Ptree.type_decl Mqual.t;
-  subst_td : Ptree.type_decl Mqual.t;
+  subst_ts : Ptree.type_decl Mstr.t;
+  subst_td : Ptree.type_decl Mstr.t;
   subst_fs : Ptree.qualid Mqual.t;
   subst_fd : Ptree.qualid Mqual.t;
   subst_pr : Decl.prop_kind Mqual.t
 }
 
 let empty_subst = {
-  subst_ts = Mqual.empty;
-  subst_td = Mqual.empty;
+  subst_ts = Mstr.empty;
+  subst_td = Mstr.empty;
   subst_fs = Mqual.empty;
   subst_fd = Mqual.empty;
   subst_pr = Mqual.empty;
 }
 
 let add_ts_subst k td subst =
-  { subst with subst_ts = Mqual.add k td subst.subst_ts }
+  { subst with subst_ts = Mstr.add k td subst.subst_ts }
 
 let add_td_subst k td subst =
-  { subst with subst_td = Mqual.add k td subst.subst_td }
+  { subst with subst_td = Mstr.add k td subst.subst_td }
 
 let add_fs_subst k q subst =
   { subst with subst_fs = Mqual.add k q subst.subst_fs }

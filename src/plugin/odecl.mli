@@ -1,4 +1,5 @@
 open Why3
+open Mod_subst
 
 type odecl = private
   | Odecl   of Loc.position * Ptree.decl
@@ -11,9 +12,11 @@ val mk_omodule : Loc.position -> Ptree.ident -> odecl list -> odecl
 type info_refinement = private {
   info_ref_name : Ptree.qualid option; (* module type name to be refined *)
   info_ref_decl : odecl list;          (* list of declarations to be refined *)
+  info_subst    : subst;               (* module constraints *)
 }
 
-val mk_info_refinement : Ptree.qualid option -> odecl list -> info_refinement
+val mk_info_refinement :
+  Ptree.qualid option -> odecl list -> subst -> info_refinement
 
 type info = private {
   info_arith_construct : (string, int) Hashtbl.t;

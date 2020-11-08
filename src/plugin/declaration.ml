@@ -9,8 +9,6 @@ module Tt = Tterm
 module E  = Expression
 module O  = Odecl
 
-(** Smart constructors for Ptree declarations *)
-
 let mk_const svb_list expr =
   let p = T.mk_pattern Pwild in
   let mk_spec acc Uast.{spvb_vspec; _} =
@@ -243,12 +241,12 @@ let subst info ctr_list =
   let mk_subst subst = function
     | Uast.Wtype (id, s_type_decl) ->
         let td = type_decl info s_type_decl in
-        let id_loc = T.location id.loc and id_txt = id.txt in
-        add_ts_subst (E.longident ~id_loc id_txt) td subst
+        let id_txt = E.string_of_longident id.txt in
+        add_ts_subst id_txt td subst
     | Wtypesubst (id, s_type_decl) ->
         let td = type_decl info s_type_decl in
-        let id_loc = T.location id.loc and id_txt = id.txt in
-        add_td_subst (E.longident ~id_loc id_txt) td subst
+        let id_txt = E.string_of_longident id.txt in
+        add_td_subst id_txt td subst
     | Wfunction (ql, qr) ->
         let ql = T.qualid ql and qr = T.qualid qr in
         add_fs_subst ql qr subst
@@ -384,7 +382,7 @@ let s_structure, s_signature =
         s_module_binding info mod_binding
     | Uast.Str_modtype {mtdname = {txt; loc}; mtdtype; mtdloc; _} ->
         (* FIXME: do not use that [Opt.get] *)
-        let scope_decls = s_module_type info (Opt.get mtdtype) in
+        let scope_decls, _ = s_module_type info (Opt.get mtdtype) in
         Hashtbl.add mod_type_table txt scope_decls;
         let scope_loc = T.location mtdloc in
         let id_loc = T.location loc in
@@ -405,12 +403,17 @@ let s_structure, s_signature =
     | _ -> assert false (* TODO *)
 
   and s_module_binding info {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} =
+    let open Odecl in
     let mod_bind_name = txt in
-    let mod_type_name = function Uast.Mod_ident s -> Some s.txt | _ -> None in
+    let mod_type_name = function (* FIXME: make it more robust *)
+      | Uast.Mod_ident s | Mod_with ({mdesc = Mod_ident s; _}, _) -> Some s.txt
+      | _ -> None in
     let rec s_module_expr Uast.{spmod_desc; spmod_loc; _} =
       let decl_loc = T.location spmod_loc in
       match spmod_desc with
-      | Uast.Smod_ident _ ->
+      | Uast.Smod_ident x ->
+          ignore x;
+          (* FIXME: this could may be a [use import as X] *)
           Loc.errorm "Module aliasing is not supported."
       | Uast.Smod_structure str ->
           s_structure info str
@@ -418,14 +421,16 @@ let s_structure, s_signature =
           let id_loc = T.location arg_name.loc in
           let id = T.mk_id ~id_loc arg_name.txt in
           let body = s_module_expr body in
-          O.mk_functor decl_loc id (s_module_type info (Opt.get arg)) body
+          let arg, subst_arg = s_module_type info (Opt.get arg) in
+          ignore (subst_arg); (* TODO *)
+          O.mk_functor decl_loc id arg body
       | Smod_apply _ -> assert false (* TODO *)
       | Smod_constraint (mod_expr, mod_type) ->
           let mod_type_name = mod_type_name mod_type.Uast.mdesc in
           let mod_type_name = Opt.map E.longident mod_type_name in
-          let mod_type = s_module_type info mod_type in
-          let info_ref = Odecl.mk_info_refinement mod_type_name mod_type in
-          Odecl.add_info_refinement info mod_bind_name info_ref;
+          let mod_type, subst = s_module_type info mod_type in
+          let info_ref = mk_info_refinement mod_type_name mod_type subst in
+          add_info_refinement info mod_bind_name info_ref;
           s_module_expr mod_expr
       | Smod_unpack _ -> assert false (* TODO *)
       | Smod_extension _ -> assert false (* TODO *) in
@@ -437,17 +442,21 @@ let s_structure, s_signature =
     match mdesc with
     | Mod_ident id ->
         let s = E.string_of_longident id.txt in
-        begin try Hashtbl.find mod_type_table s with Not_found ->
+        begin try Hashtbl.find mod_type_table s, empty_subst with Not_found ->
           assert false end
     | Mod_signature s_sig ->
-        s_signature info s_sig
+        s_signature info s_sig, empty_subst
     | Mod_functor (arg_name, arg, body) ->
         let id_loc = T.location arg_name.loc in
         let id = T.mk_id arg_name.txt ~id_loc in
-        let body = s_module_type info body in
-        O.mk_functor id_loc id (s_module_type info (Opt.get arg)) body
-    | Mod_with _ (* of s_module_type * s_with_constraint list *) ->
-        assert false (* TODO *)
+        let body, subst = s_module_type info body in
+        let arg, subst_arg = s_module_type info (Opt.get arg) in
+        ignore (subst_arg);
+        O.mk_functor id_loc id arg body, subst
+    | Mod_with (mod_type, constraint_list) ->
+        let mod_type, subst_mod_type = s_module_type info mod_type in
+        ignore (subst_mod_type); (* TODO *)
+        mod_type, subst info constraint_list
     | Mod_typeof _ (* of module_expr *) ->
         assert false (* TODO *)
     | Mod_extension _ (* of extension *) ->

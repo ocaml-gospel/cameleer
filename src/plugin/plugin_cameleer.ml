@@ -48,6 +48,8 @@ let rec add_decl od =
       List.iter add_decl dl;
       Why3.Typing.close_scope ~import:true loc
 
+open Mod_subst
+
 let mk_refine_modules info top_mod_name =
   let open_module_id id = open_module id in
   let use_top_mod id =
@@ -55,31 +57,43 @@ let mk_refine_modules info top_mod_name =
     add_decl ouse in
   let top_mod_qualid = Qident (T.mk_id top_mod_name) in
   let mk_ref_q mod_name id = Qdot (mod_name, id) in
-  let mk_clone_subst mod_refinee mod_refiner acc odecl =
+  let mk_clone_subst mod_refinee mod_refiner subst acc odecl =
+    let open Odecl in
     let mk_id_refinee id = mk_ref_q mod_refinee id in
     let mk_id_refiner id = mk_ref_q mod_refiner id in
     match odecl with
-    | Odecl.Odecl (_, Dlet (id, _, _, _)) ->
-        let id = { id with id_loc = Loc.dummy_position } in
+    | Odecl (_, Dlet (id, _, _, _)) ->
+        let id_str = id.id_str in
+        let id = { id with id_loc = Loc.dummy_position } in (* FIXME *)
         let id_refinee = mk_id_refinee id in
-        let id_refiner = mk_id_refiner id in
+        let id_refiner = try (Mstr.find id_str subst.subst_ts).td_ident
+          with Not_found -> id in
+        let id_refiner = mk_id_refiner id_refiner in
         CSvsym (id_refinee, id_refiner) :: acc
-    | Odecl.Odecl (_, Dtype [{td_ident; td_params; _}]) ->
+    | Odecl (_, Dtype [{td_ident; td_params; _}]) ->
         let id = { td_ident with id_loc = Loc.dummy_position } in
         let id_refinee = mk_id_refinee id in
         let id_refiner = mk_id_refiner id in
         let pty = PTtyapp (id_refiner, []) in
         CStsym (id_refinee, td_params, pty) :: acc
-    | Odecl.Odecl (_, Dlogic [{ld_ident; ld_type = None; _}]) ->
+    | Odecl (_, Dlogic [{ld_ident; ld_type = None; _}]) ->
         let id = { ld_ident with id_loc = Loc.dummy_position } in
         let id_refinee = mk_id_refinee id in
         let id_refiner = mk_id_refiner id in
         CSpsym (id_refinee, id_refiner) :: acc
-    | Odecl.Odecl (_, Dlogic [{ld_ident; ld_type = Some _; _}]) ->
+    | Odecl (_, Dlogic [{ld_ident; ld_type = Some _; _}]) ->
         let id = { ld_ident with id_loc = Loc.dummy_position } in
         let id_refinee = mk_id_refinee id in
         let id_refiner = mk_id_refiner id in
         CSfsym (id_refinee, id_refiner) :: acc
+    | Odecl (_, Dexn (id, _, _)) ->
+        let id = { id with id_loc = Loc.dummy_position } in
+        let id_refinee = mk_id_refinee id in
+        let id_refiner = mk_id_refiner id in
+        CSxsym (id_refinee, id_refiner) :: acc
+    | Odecl (_, Dprop (Decl.Paxiom, id, _)) ->
+        let id = { id with id_loc = Loc.dummy_position } in
+        CSlemma (mk_id_refinee id) ::acc
     | _ -> acc (* TODO *) in
   let mk_module refines_name info_refinement =
     let mod_id = "Refinement__" ^ refines_name in
@@ -89,8 +103,10 @@ let mk_refine_modules info top_mod_name =
       | Some s -> s | None -> assert false (* TODO *) in
     let mod_refiner = Qident (T.mk_id refines_name) in
     let odecl_ref = info_refinement.Odecl.info_ref_decl in
-    let mk_subst = mk_clone_subst mod_refinee mod_refiner in
-    let clone_subst = List.fold_left mk_subst [] odecl_ref in
+    let subst = info_refinement.info_subst in
+    let mk_subst = mk_clone_subst mod_refinee mod_refiner subst in
+    let acc = [CSprop Decl.Paxiom] in
+    let clone_subst = List.fold_left mk_subst acc odecl_ref in
     let odecl_clone = Odecl.mk_cloneexport top_mod_qualid clone_subst in
     add_decl odecl_clone;
     close_module Loc.dummy_position in

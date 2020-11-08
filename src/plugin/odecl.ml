@@ -1,5 +1,6 @@
 open Why3
 open Ptree
+open Mod_subst
 
 module T = Uterm
 
@@ -16,17 +17,15 @@ let mk_omodule loc id mod_expr =
 type info_refinement = {
   info_ref_name : qualid option;
   info_ref_decl : odecl list;
+  info_subst    : subst;
 }
 
-let mk_info_refinement ref_name ref_decl = {
-  info_ref_name = ref_name;
-  info_ref_decl = ref_decl;
-}
+let mk_info_refinement info_ref_name info_ref_decl info_subst =
+  { info_ref_name; info_ref_decl; info_subst; }
 
 type info = { (* to be completed as needed *)
   info_arith_construct : (string, int) Hashtbl.t;
   info_refinement      : (string, info_refinement) Hashtbl.t
-  (* TODO: include here information to generate refinement modules *)
 }
 
 let empty_info () = {
