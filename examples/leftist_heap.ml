@@ -26,6 +26,8 @@ module type S = sig
 
   val [@logic] size : t -> int
   (** Number of elements (linear complexity). *)
+  (*@ r = size t
+        ensures 0 <= r *)
 
   (*@ function occ (x: elt) (t: t) : integer *)
 
