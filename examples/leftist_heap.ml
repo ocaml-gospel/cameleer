@@ -1,7 +1,7 @@
 module type PRE_ORD = sig
   type t
 
-  (*@ function le : t -> t -> bool *)
+  (*@ predicate le (x: t) (y: t) *)
 
   (*@ axiom reflexive : forall x. le x x *)
   (*@ axiom total     : forall x y. le x y \/ le y x *)
@@ -12,8 +12,118 @@ module type PRE_ORD = sig
         ensures b <-> le x y *)
 end
 
-module Make(E : PRE_ORD) = struct
+module type S = sig
+  type elt
+  (*@ predicate le (x: elt) (y: elt) *)
+
+  (*@ axiom reflexive : forall x. le x x *)
+  (*@ axiom total     : forall x y. le x y \/ le y x *)
+  (*@ axiom transitive: forall x y z. le x y -> le y z -> le x z *)
+
+  type t
+
+  (*@ predicate leftist (h: t) *)
+
+  val [@logic] size : t -> int
+  (** Number of elements (linear complexity). *)
+
+  (*@ function occ (x: elt) (t: t) : integer *)
+
+  (*@ predicate mem (x: elt) (h: t) *)
+
+  (*@ function minimum (t: t) : elt *)
+
+  (*@ predicate is_minimum (x: elt) (h: t) *)
+
+  (*@ axiom is_minimum_def: forall x h.
+        is_minimum x h <->
+        (mem x h && forall e. mem e h -> le x e) *)
+
+  (*@ predicate is_heap (t: t) *)
+
+  (*@ axiom min_def:
+        forall h. 0 < size h -> is_heap h -> is_minimum (minimum h) h *)
+
+  (*@ predicate leftist_heap (h: t) *)
+
+  val [@logic] empty : t
+  (** Empty heap. *)
+  (*@ r = empty
+        ensures size r = 0
+        ensures forall x. occ x r = 0 *)
+
+  val [@logic] is_empty : t -> bool
+  (** Is the heap empty? *)
+  (*@ b = is_empty t
+        requires leftist_heap t
+        ensures  b <-> size t = 0 *)
+
+  exception Empty
+
+  val merge : t -> t -> t
+  (** Merge two heaps. *)
+  (*@ r = merge h1 h2
+        requires leftist_heap h1 && leftist_heap h2
+        ensures  leftist_heap r
+        ensures  forall x. occ x r = occ x h1 + occ x h2
+        ensures  size r = size h1 + size h2 *)
+
+  val insert : elt -> t -> t
+  (** Insert a value in the heap. *)
+  (*@ r = insert x t
+        requires leftist_heap t
+        ensures  leftist_heap r
+        ensures  occ x r = occ x t + 1
+        ensures  forall y. y <> x -> occ y t = occ y r
+        ensures  size r = size t + 1 *)
+
+  val filter :  (elt -> bool) -> t -> t
+  (** Filter values, only retaining the ones that satisfy the predicate.
+      Linear time at least. *)
+  (*@ r = filter p t
+        requires leftist_heap t
+        ensures  leftist_heap r
+        ensures  forall x. not (p x) -> occ x r = 0
+        ensures  forall x. p x -> occ x r = occ x t *)
+
+  val find_min : t -> elt option
+  (** Find minimal element. *)
+  (*@ r = find_min t
+        requires leftist_heap t
+        ensures match r with
+                | None -> is_empty t
+                | Some x -> x = minimum t *)
+
+  val find_min_exn : t -> elt
+  (** Like {!find_min} but can fail.
+      @raise Empty if the heap is empty. *)
+  (*@ r = find_min_exn t
+        requires leftist_heap t
+        raises   Empty -> is_empty t
+        ensures  r = minimum t *)
+
+  val delete_all : (elt -> elt -> bool) -> elt -> t -> t
+  (** Delete all occurrences of a value in the heap.
+      [delete_all eq x h], use [eq] to find all [x] in [h] and delete them.
+      If [h] do not contain [x] then it return [h].
+      The difference with {!filter} is that [delete_all] stops as soon as
+      it enters a subtree whose root is bigger than the element.
+      @since 2.0 *)
+  (*@ r = delete_all eq x t
+        requires forall a b. a = b <-> eq a b
+        requires leftist_heap t
+        ensures  leftist_heap r
+        ensures  occ x r = 0
+        ensures  forall y. x <> y -> occ y r = occ y t
+        ensures  size r = size t - occ x t *)
+
+end
+
+module Make (E: PRE_ORD) : S with type elt = E.t
+                             [@gospel "with predicate le = E.le"] = struct
   type elt = E.t
+
+  (*@ predicate le (x: elt) (y: elt) = E.le x y *)
 
   type t =
     | E
@@ -46,7 +156,7 @@ module Make(E : PRE_ORD) = struct
   (*@ occ_nonneg y param
         ensures 0 <= occ y param *)
 
-  (*@ predicate mem_heap (x: elt) (h: t) =
+  (*@ predicate mem (x: elt) (h: t) =
         0 < occ x h *)
 
   (*@ predicate le_root (e: elt) (h: t) = match h with
@@ -69,13 +179,13 @@ module Make(E : PRE_ORD) = struct
   (*@ axiom minimum_def: forall l x r n. minimum (N n x l r) = x *)
 
   (*@ predicate is_minimum (x: elt) (h: t) =
-        mem_heap x h && forall e. mem_heap e h -> le x e *)
+        mem x h && forall e. mem e h -> le x e *)
 
-  let [@lemma] rec root_is_miminum = function
+  let [@lemma] rec root_is_minimum = function
     | E -> assert false
     | N (_, _, l, r) ->
-        begin match l with E -> () | _ -> root_is_miminum l end;
-        match r with E -> () | _ -> root_is_miminum r
+        begin match l with E -> () | _ -> root_is_minimum l end;
+        match r with E -> () | _ -> root_is_minimum r
   (*@ root_is_minimum param
        requires is_heap param && 0 < size param
        ensures  is_minimum (minimum param) param
@@ -202,5 +312,4 @@ module Make(E : PRE_ORD) = struct
         ensures  occ x h = 0
         ensures  forall y. x <> y -> occ y h = occ y param
         ensures  size h = size param - occ x param *)
-
 end
