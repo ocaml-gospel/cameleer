@@ -119,7 +119,8 @@ module type S = sig
 
 end
 
-module Make (E: PRE_ORD) : S with type elt = E.t = struct
+module Make (E: PRE_ORD) : (S with type elt = E.t
+                              [@gospel "with predicate le = E.le"]) = struct
   type elt = E.t
 
   (*@ predicate le (x: elt) (y: elt) = E.le x y *)
