@@ -19,6 +19,8 @@ type subst = {
   subst_td : Ptree.type_decl Mstr.t;
   subst_fs : Ptree.qualid Mqual.t;
   subst_fd : Ptree.qualid Mqual.t;
+  subst_ps : Ptree.qualid Mqual.t;
+  subst_pd : Ptree.qualid Mqual.t;
   subst_pr : Decl.prop_kind Mqual.t
 }
 
@@ -27,6 +29,8 @@ let empty_subst = {
   subst_td = Mstr.empty;
   subst_fs = Mqual.empty;
   subst_fd = Mqual.empty;
+  subst_ps = Mqual.empty;
+  subst_pd = Mqual.empty;
   subst_pr = Mqual.empty;
 }
 
@@ -41,6 +45,12 @@ let add_fs_subst k q subst =
 
 let add_fd_subst k q subst =
   { subst with subst_fd = Mqual.add k q subst.subst_fd }
+
+let add_ps_subst k q subst =
+  { subst with subst_ps = Mqual.add k q subst.subst_ps }
+
+let add_pd_subst k q subst =
+  { subst with subst_pd = Mqual.add k q subst.subst_pd }
 
 let add_pr_subst k pr subst =
   { subst with subst_pr = Mqual.add k pr subst.subst_pr }

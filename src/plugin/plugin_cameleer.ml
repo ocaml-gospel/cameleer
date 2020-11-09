@@ -63,10 +63,9 @@ let mk_refine_modules info top_mod_name =
     let mk_id_refiner id = mk_ref_q mod_refiner id in
     match odecl with
     | Odecl (_, Dlet (id, _, _, _)) ->
-        let id_str = id.id_str in
         let id = { id with id_loc = Loc.dummy_position } in (* FIXME *)
         let id_refinee = mk_id_refinee id in
-        let id_refiner = try (Mstr.find id_str subst.subst_ts).td_ident
+        let id_refiner = try (Mstr.find id.id_str subst.subst_ts).td_ident
           with Not_found -> id in
         let id_refiner = mk_id_refiner id_refiner in
         CSvsym (id_refinee, id_refiner) :: acc

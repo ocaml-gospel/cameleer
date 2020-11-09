@@ -253,6 +253,12 @@ let subst info ctr_list =
     | Wfunctionsubst (ql, qr) ->
         let ql = T.qualid ql and qr = T.qualid qr in
         add_fd_subst ql qr subst
+    | Wpredicate (ql, qr) ->
+        let ql = T.qualid ql and qr = T.qualid qr in
+        add_ps_subst ql qr subst
+    | Wpredicatesubst (ql, qr) ->
+        let ql = T.qualid ql and qr = T.qualid qr in
+        add_pd_subst ql qr subst
     | Wgoal q ->
         add_pr_subst (T.qualid q) Decl.Pgoal subst
     | Waxiom q ->
