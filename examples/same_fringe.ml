@@ -6,8 +6,7 @@ module type EQUAL = sig
         ensures b <-> x = y *)
 end
 
-module Make (Eq: EQUAL)
-= struct
+module Make (Eq: EQUAL) = struct
 
   type tree = Empty | Node of tree * Eq.elt * tree
 

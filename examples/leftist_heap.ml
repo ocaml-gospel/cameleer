@@ -187,7 +187,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
     | E -> assert false
     | N (_, _, l, r) ->
         begin match l with E -> () | _ -> root_is_minimum l end;
-        match r with E -> () | _ -> root_is_minimum r
+              match r with E -> () | _ -> root_is_minimum r
   (*@ root_is_minimum param
        requires is_heap param && 0 < size param
        ensures  is_minimum (minimum param) param
