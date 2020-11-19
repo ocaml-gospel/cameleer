@@ -30,7 +30,11 @@ let ident_of_lsymbol Tterm.{ls_name = name; _} =
 
 let constant = function
   | Pconst_integer (s, _) ->
-      Constant.ConstInt (Number.int_literal ILitDec ~neg:false s)
+      if s.[0] = '-' then let s = String.sub s 1 (String.length s - 1) in
+        let n = Number.int_literal ILitDec ~neg:false s in
+        Constant.(ConstInt (Number.neg_int n))
+      else let n = Number.int_literal ILitDec ~neg:false s in
+        Constant.ConstInt n
   | Pconst_string (s, _) ->
       Constant.ConstStr s
   | Pconst_float _ -> assert false (* TODO *)

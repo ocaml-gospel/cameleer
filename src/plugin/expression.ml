@@ -378,6 +378,8 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
         let expr_in = expression info expr in
         mk_erec (List.map (mk_fun_def false rs_kind) id_fun_expr_list) expr_in
+    | Sexp_let _ ->
+        assert false (* TODO *)
     | Uast.Sexp_function _ ->
         assert false (* TODO *)
     | Uast.Sexp_fun (Nolabel, None, pat, expr_body, spec) ->
@@ -433,8 +435,6 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         mk_eif (expression info e1) (expression info e2) expr3
     | Uast.Sexp_assert {spexp_desc; _} when is_false spexp_desc ->
         Eabsurd
-    | Sexp_let _ ->
-        assert false (* TODO *)
     | Sexp_fun _ ->
         assert false (* TODO *)
     | Sexp_variant _ ->

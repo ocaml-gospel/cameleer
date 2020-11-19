@@ -42,7 +42,7 @@ let type_check name nm structs =
 let rec add_decl od =
   match od with
   | Odecl.Odecl (loc, d) ->
-      Why3.Typing.add_decl loc d;
+      Why3.Typing.add_decl loc d
   | Odecl.Omodule (loc, id, dl) ->
       Why3.Typing.open_scope id.id_loc id;
       List.iter add_decl dl;
@@ -61,6 +61,13 @@ let mk_refine_modules info top_mod_name =
     let open Odecl in
     let mk_id_refinee id = mk_ref_q mod_refinee id in
     let mk_id_refiner id = mk_ref_q mod_refiner id in
+    let mk_id_ref id =
+      let id = Ptree.{ id with id_loc = Loc.dummy_position } in (* FIXME *)
+      (mk_id_refinee id, mk_id_refiner id) in
+    let mk_cstsym id td_params = let id_refee, id_refer = mk_id_ref id in
+      CStsym (id_refee, td_params, PTtyapp (id_refer, [])) in
+    let mk_cspsym id = let id_refee, id_refer = mk_id_ref id in
+      CSpsym (id_refee, id_refer) in
     match odecl with
     | Odecl (_, Dlet (id, _, _, _)) ->
         let id = { id with id_loc = Loc.dummy_position } in (* FIXME *)
@@ -70,16 +77,9 @@ let mk_refine_modules info top_mod_name =
         let id_refiner = mk_id_refiner id_refiner in
         CSvsym (id_refinee, id_refiner) :: acc
     | Odecl (_, Dtype [{td_ident; td_params; _}]) ->
-        let id = { td_ident with id_loc = Loc.dummy_position } in
-        let id_refinee = mk_id_refinee id in
-        let id_refiner = mk_id_refiner id in
-        let pty = PTtyapp (id_refiner, []) in
-        CStsym (id_refinee, td_params, pty) :: acc
+        mk_cstsym td_ident td_params :: acc
     | Odecl (_, Dlogic [{ld_ident; ld_type = None; _}]) ->
-        let id = { ld_ident with id_loc = Loc.dummy_position } in
-        let id_refinee = mk_id_refinee id in
-        let id_refiner = mk_id_refiner id in
-        CSpsym (id_refinee, id_refiner) :: acc
+        mk_cspsym ld_ident :: acc
     | Odecl (_, Dlogic [{ld_ident; ld_type = Some _; _}]) ->
         let id = { ld_ident with id_loc = Loc.dummy_position } in
         let id_refinee = mk_id_refinee id in
