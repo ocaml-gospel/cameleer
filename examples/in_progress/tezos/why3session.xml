@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
+<path name=".."/><path name="tezos.ml"/>
+<theory name="Tezos">
+ <goal name="sum_until_negative&#39;vc" expl="VC for sum_until_negative">
+ <transf name="split_vc" >
+  <goal name="sum_until_negative&#39;vc.0" expl="loop invariant init">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1489412"/></proof>
+  <proof prover="2" obsolete="true"><result status="unknown" time="0.10" steps="15617"/></proof>
+  <transf name="split_vc" >
+   <goal name="sum_until_negative&#39;vc.0.0" expl="loop invariant init" proved="true">
+   <proof prover="2"><result status="valid" time="0.04" steps="9184"/></proof>
+   </goal>
+   <goal name="sum_until_negative&#39;vc.0.1" expl="loop invariant init">
+   <proof prover="0"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00" steps="1644712"/></proof>
+   <proof prover="2"><result status="unknown" time="0.11" steps="15779"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="sum_until_negative&#39;vc.1" expl="termination">
+  <transf name="split_vc" >
+   <goal name="sum_until_negative&#39;vc.1.0" expl="termination">
+   <proof prover="0"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00" steps="1253581"/></proof>
+   <proof prover="2"><result status="unknown" time="0.12" steps="14864"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="sum_until_negative&#39;vc.2" expl="index in array bounds" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="sum_until_negative&#39;vc.2.0" expl="index in array bounds" proved="true">
+   <proof prover="2"><result status="valid" time="0.09" steps="9356"/></proof>
+   </goal>
+   <goal name="sum_until_negative&#39;vc.2.1" expl="index in array bounds" proved="true">
+   <proof prover="2"><result status="valid" time="0.08" steps="9903"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="sum_until_negative&#39;vc.3" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.10" steps="9936"/></proof>
+  </goal>
+  <goal name="sum_until_negative&#39;vc.4" expl="loop invariant preservation">
+  <proof prover="0"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1"><result status="timeout" time="1.00" steps="1489342"/></proof>
+  <proof prover="2"><result status="timeout" time="1.00" steps="278443"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="sum_until_negative2&#39;vc" expl="VC for sum_until_negative2">
+ <transf name="split_vc" >
+  <goal name="sum_until_negative2&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="10693"/></proof>
+  </goal>
+  <goal name="sum_until_negative2&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="10786"/></proof>
+  </goal>
+  <goal name="sum_until_negative2&#39;vc.2" expl="index in array bounds" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="10178"/></proof>
+  </goal>
+  <goal name="sum_until_negative2&#39;vc.3" expl="loop variant decrease">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1711642"/></proof>
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="279246"/></proof>
+  <transf name="split_vc" >
+   <goal name="sum_until_negative2&#39;vc.3.0" expl="loop variant decrease" proved="true">
+   <proof prover="2"><result status="valid" time="0.11" steps="10719"/></proof>
+   </goal>
+   <goal name="sum_until_negative2&#39;vc.3.1" expl="loop variant decrease">
+   <proof prover="0"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00" steps="2461616"/></proof>
+   <proof prover="2"><result status="timeout" time="1.00" steps="278677"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="sum_until_negative2&#39;vc.4" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="10948"/></proof>
+  </goal>
+  <goal name="sum_until_negative2&#39;vc.5" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="10350"/></proof>
+  </goal>
+  <goal name="sum_until_negative2&#39;vc.6" expl="loop variant decrease" proved="true">
+  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1474131"/></proof>
+  <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="411372"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="sum_until_negative2&#39;vc.6.0" expl="loop variant decrease" proved="true">
+   <proof prover="2"><result status="valid" time="0.08" steps="10825"/></proof>
+   </goal>
+   <goal name="sum_until_negative2&#39;vc.6.1" expl="loop variant decrease" proved="true">
+   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1551433"/></proof>
+   <proof prover="2"><result status="valid" time="0.10" steps="10898"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="sum_until_negative2&#39;vc.7" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="12095"/></proof>
+  </goal>
+  <goal name="sum_until_negative2&#39;vc.8" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.09" steps="11343"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="logic_sum_left">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="2076626"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="133151"/></proof>
+ <transf name="split_vc" >
+  <goal name="logic_sum_left.0">
+  </goal>
+ </transf>
+ </goal>
+ <goal name="logic_sum_ext">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="13029388"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="83287"/></proof>
+ </goal>
+ <goal name="logic_sum_le">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="8765192"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="62238"/></proof>
+ </goal>
+ <goal name="logic_sum_zero">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="2837497"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="66611"/></proof>
+ </goal>
+ <goal name="logic_sum_nonneg">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="3077654"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="68644"/></proof>
+ </goal>
+ <goal name="logic_sum_decomp">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="3363304"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="77915"/></proof>
+ </goal>
+ <goal name="shift_left&#39;vc" expl="VC for shift_left" proved="true">
+ <proof prover="2"><result status="valid" time="0.16" steps="19984"/></proof>
+ </goal>
+ <goal name="sum_until_negative3&#39;vc" expl="VC for sum_until_negative3" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="sum_until_negative3&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.13" steps="13594"/></proof>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.11" steps="12083"/></proof>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.2" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.16" steps="14565"/></proof>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.3" expl="index in array bounds" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="12425"/></proof>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.4" expl="postcondition" proved="true">
+  <transf name="assert" proved="true" arg1="(sum iter = logic_sum (fun (i2:int) -&gt; if a[i2] &lt; 0 then 0 else a[i2]) 0 (i iter) + logic_sum (fun (i2:int) -&gt; if a[i2] &lt; 0 then 0 else a[i2]) (i iter) (length a))">
+   <goal name="sum_until_negative3&#39;vc.4.0" expl="asserted formula" proved="true">
+   <proof prover="2"><result status="valid" time="0.52" steps="48891"/></proof>
+   </goal>
+   <goal name="sum_until_negative3&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.64" steps="65736"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.5" expl="loop variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.13" steps="13304"/></proof>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.6" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.12" steps="13307"/></proof>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.7" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.16" steps="14633"/></proof>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.8" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.28" steps="26850"/></proof>
+  </goal>
+  <goal name="sum_until_negative3&#39;vc.9" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.15" steps="15799"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="sum_until_negative4&#39;vc" expl="VC for sum_until_negative4">
+ </goal>
+ <goal name="main&#39;vc" expl="VC for main" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="main&#39;vc.0" expl="array creation size" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="11712"/></proof>
+  </goal>
+  <goal name="main&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.11" steps="12275"/></proof>
+  </goal>
+  <goal name="main&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.16" steps="13034"/></proof>
+  </goal>
+  <goal name="main&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.13" steps="13234"/></proof>
+  </goal>
+  <goal name="main&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.14" steps="13402"/></proof>
+  </goal>
+  <goal name="main&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.13" steps="13570"/></proof>
+  </goal>
+  <goal name="main&#39;vc.6" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.11" steps="13742"/></proof>
+  </goal>
+  <goal name="main&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.12" steps="13918"/></proof>
+  </goal>
+  <goal name="main&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.14" steps="14094"/></proof>
+  </goal>
+  <goal name="main&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="0" timelimit="5"><result status="valid" time="0.95" steps="1999"/></proof>
+  </goal>
+  <goal name="main&#39;vc.10" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.49" steps="620867"/></proof>
+  <proof prover="2"><result status="timeout" time="1.00" steps="87952"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
