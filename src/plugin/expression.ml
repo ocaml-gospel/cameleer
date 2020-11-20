@@ -443,8 +443,8 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         let lexpr = expression info lvalue and rexpr = expression info rvalue in
         let id = longident ~id_loc:T.(location l.loc) l.txt in
         mk_eassign lexpr id rexpr
-    | Sexp_array _ ->
-        assert false (* TODO *)
+    | Sexp_array expr_list ->
+        mk_array info expr_list
     | Sexp_while (e_test, e_body, loop_annotation) ->
         let mk_variant t = (T.term t, None) in
         let inv = List.map T.term loop_annotation.loop_invariant in
@@ -492,6 +492,33 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Sexp_unreachable ->
         assert false (* TODO *) in
   mk_expr (pexp_desc p_desc)
+
+and mk_array info expr_list =
+  let array_name = T.mk_id "a'make" in
+  let e_array_name = mk_expr (Eident (Qident array_name)) in
+  let array_make = Qdot (Qident (T.mk_id "Array"), T.mk_id "make") in
+  let array_set = Qdot (Qident (T.mk_id "Array"), T.mk_id "set") in
+  let const_of_pos_int n =
+    assert (n >= 0);
+    let s = string_of_int n in
+    let n = Number.int_literal ILitDec ~neg:false s in
+    let c = Econst (Constant.ConstInt n) in
+    mk_expr c in
+  let mk_set_expr  i e = mk_expr (mk_eidapp array_set  [e_array_name; i; e]) in
+  let mk_make_expr l v = mk_expr (mk_eidapp array_make [l; v]) in
+  let c = ref 0 in
+  let mk_n_incr e = let save = e in incr c; save in
+  let rec loop = function
+    | [] -> assert false
+    | [e] -> mk_n_incr (mk_set_expr (const_of_pos_int !c) e)
+    | e :: r -> let e = mk_set_expr (const_of_pos_int !c) e in
+        incr c;
+        mk_expr (mk_eseq e (loop r)) in
+  let expr_list = List.map (expression info) expr_list in
+  let v = match expr_list with [] -> assert false | x :: _ -> x in
+  let e_make = mk_make_expr (const_of_pos_int (List.length expr_list)) v in
+  let ret_array = mk_expr (mk_eseq (loop expr_list) (e_array_name)) in
+  mk_elet_none array_name false e_make ret_array
 
 and let_match info expr svb = match svb.Uast.spvb_pat.O.ppat_desc with
   | (Ppat_tuple _) -> let svb_expr = expression info svb.spvb_expr in
