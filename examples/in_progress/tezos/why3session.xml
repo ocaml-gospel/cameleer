@@ -240,34 +240,10 @@
   <proof prover="2"><result status="valid" time="0.08" steps="11712"/></proof>
   </goal>
   <goal name="main&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.10" steps="12275"/></proof>
+  <proof prover="0"><result status="valid" time="1.94" steps="2702"/></proof>
   </goal>
-  <goal name="main&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.16" steps="13034"/></proof>
-  </goal>
-  <goal name="main&#39;vc.3" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.17" steps="13234"/></proof>
-  </goal>
-  <goal name="main&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.16" steps="13402"/></proof>
-  </goal>
-  <goal name="main&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.13" steps="13570"/></proof>
-  </goal>
-  <goal name="main&#39;vc.6" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.15" steps="13742"/></proof>
-  </goal>
-  <goal name="main&#39;vc.7" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.15" steps="13918"/></proof>
-  </goal>
-  <goal name="main&#39;vc.8" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.13" steps="14094"/></proof>
-  </goal>
-  <goal name="main&#39;vc.9" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.93" steps="2365"/></proof>
-  </goal>
-  <goal name="main&#39;vc.10" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.21" steps="606421"/></proof>
+  <goal name="main&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="1.11" steps="80853"/></proof>
   </goal>
  </transf>
  </goal>
