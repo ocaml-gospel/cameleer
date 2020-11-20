@@ -506,7 +506,7 @@ and mk_array info expr_list =
     mk_expr (Einfix (index, T.mk_id "infix =", const_of_pos_int n)) in
   let mk_eif_expr n e1 e2 = mk_eif (mk_test n) e1 (Some e2) in
   let rec loop = function
-    | [] -> assert false
+    | [] -> assert false (* TODO *)
     | [e] -> e
     | e :: r -> let e_if = mk_eif_expr !c e (incr c; loop r) in mk_expr e_if in
   let array_init = Qdot (Qident (T.mk_id "Array"), T.mk_id "init") in
