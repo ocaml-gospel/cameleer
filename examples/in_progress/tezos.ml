@@ -10,7 +10,7 @@ type iterator = {mutable i : int ; mutable sum : int}
 let sum_until_negative a =
   let iter = { i = 0 ; sum = 0} in
   let finished = ref false in
-  while (!finished) do
+  while !finished do
     (*@ invariant 0 <= iter.i < Array.length a *)
     let element = a.(iter.i) in
     if element < 0 then
@@ -20,12 +20,11 @@ let sum_until_negative a =
   done ;
   iter.sum
 
-
 let sum_until_negative2 a =
   let iter = { i = 0 ; sum = 0} in
   let finished = ref false in
-  while (!finished) do
-    (*@ variant   Array.length a - iter.i *)
+  while !finished do
+    (*@ variant   Array.length a - iter.i - !finished *)
     (*@ invariant exists j. 0 <= j < Array.length a && a.(j) < 0 && iter.i <= j *)
     (*@ invariant 0 <= iter.i < Array.length a *)
     let element = a.(iter.i) in
@@ -35,7 +34,7 @@ let sum_until_negative2 a =
       (iter.i <- iter.i + 1 ; iter.sum <- iter.sum + element)
   done ;
   iter.sum
-(*@ r = sum_until_negative a
+(*@ r = sum_until_negative_2 a
       requires exists i. 0 <= i < Array.length a && a.(i) < 0 *)
 
 (*@ function logic_sum (f: int -> int) (l: int) (u: int) : integer *)
@@ -102,46 +101,12 @@ let sum_until_negative3 a =
     done;
     iter.sum
   with Finish i -> i
-(*@ r = sum_until_negative a
-      requires negative_array a
-      ensures  r =
-       logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 (Array.length a) *)
-
-let sum_until_negative4 a =
-  let iter = { i = 0 ; sum = 0} in
-  let finished = ref false in
-  while not !finished  do
-    (*@ variant   Array.length a - iter.i - !finished *)
-    (*@ invariant 0 <= iter.i < Array.length a *)
-    (*@ invariant forall j. 0 <= j < iter.i -> a.(j) >= 0 *)
-    (*@ invariant iter.sum =
-               logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 iter.i *)
-    let element = a.(iter.i) in
-    if element < 0 then
-      finished := true
-    else
-      (iter.i <- iter.i + 1 ; iter.sum <- iter.sum + element)
-  done ;
-  iter.sum
-(*@ r = sum_until_negative a
+(*@ r = sum_until_negative_3 a
       requires negative_array a
       ensures  r =
        logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 (Array.length a) *)
 
 let main () =
-  let a = Array.make 8 0 in
-  a.(0) <- 1;
-  a.(1) <- 2;
-  a.(2) <- 3;
-  a.(3) <- 4;
-  a.(4) <- (-5);
-  a.(5) <- (-6);
-  a.(6) <- (-7);
-  a.(7) <- (-8);
-  sum_until_negative3 a
+  sum_until_negative3 [| 1 ; 2 ; 3 ; 4 ; -5 ; -6; -7; -8; |]
 (*@ r = main ()
       ensures r = 10 *)
-
-(* let () =
- *   assert (sum_until_negative [| 1 ; 2 ; 3 ; 4 ; (\* -5 ; -6; -7; -8 *\)|] = 0) *)
-(* why does the assertion fail ? *)
