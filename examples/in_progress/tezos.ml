@@ -110,6 +110,3 @@ let main () =
   sum_until_negative3 [| 1 ; 2 ; 3 ; 4 ; -5 ; -6; -7; -8; |]
 (*@ r = main ()
       ensures r = 10 *)
-
-let main2 () =
-  [||]
