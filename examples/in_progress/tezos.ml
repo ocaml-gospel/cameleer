@@ -163,6 +163,6 @@ let main () =
 
 (** Exercise: Let us relax the property that the array must contain a suffix of
     only negative values. For instance, `[| 1; 2; -3; 4; 5; |]`. What would be
-    correct specification for this case? Namely, how would we change the logical
-    function `logic_sum` to cope with this scenario? Do we also need to change
-    the code? *)
+    the correct specification for this case? Namely, how should we change the
+    use of `logic_sum` to cope with this scenario? Do we also need to change the
+    code? *)
