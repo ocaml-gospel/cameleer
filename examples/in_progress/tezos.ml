@@ -1,13 +1,35 @@
 (* Compute imperatively the sum of the first elements of an array, until we meet
  * a negative number *)
 
-(*@ function bool_to_int (b: bool) : integer =
-      if b then 1 else 0
-    coercion *)
-
 type iterator = {mutable i : int ; mutable sum : int}
 
-let sum_until_negative a =
+(** Trying to prove the following function, with no specification attached,
+    generates two verification conditions (VC): termination and index in array
+    bounds. Proving such VCs ensures the program is *safe* to execute. So, the
+    first thing to do is to add a *loop invariant* to state the cursor index is
+    within bounds of the array. *)
+let sum_until_negative_0 a =
+  let iter = { i = 0 ; sum = 0} in
+  let finished = ref false in
+  while !finished do
+    let element = a.(iter.i) in
+    if element < 0 then
+      finished := true
+    else
+      (iter.i <- iter.i + 1 ; iter.sum <- iter.sum + element)
+  done ;
+  iter.sum
+
+(** With the following invariant, we can indeed prove the value of `iter.i`
+    stays within bounds. However, a new proof challenge arises: to prove the
+    invariant holds for every iteration of the loop. Well, the truth is the loop
+    never actually executes. For proof purposes, our specification must be
+    strong enough to handle both scenarios of loop execution. The fact is one
+    cannot prove the loop invariant preservation. If the array `a` contains
+    only non-negative values, `iter.i` would reach `Array.length a`, causing an
+    out of bounds access. Let us refine our specification to prove this
+    invariant, while also trying to prove the loop always terminates. *)
+let sum_until_negative_1 a =
   let iter = { i = 0 ; sum = 0} in
   let finished = ref false in
   while !finished do
@@ -20,13 +42,36 @@ let sum_until_negative a =
   done ;
   iter.sum
 
+(*@ function bool_to_int (b: bool) : integer =
+      if b then 1 else 0
+    coercion *)
+
+(** For this version of `sum_until_negative`, we attach a *pre-condition*
+    to the function stating there is at least one negative element in the
+    array. The loop invariant is changed accordingly, namely the value of
+    `iter.i` is no greater than the index of the first negative element. We are
+    now able to prove the invariant holds for any iteration of the loop. The
+    new challenge now is to also prove the loop halts. To do so, we provide a
+    *variant*, i.e., a measure that must strictly decreases after each
+    iteration. An obvious such measure is the difference between the length of
+    `a` and the value of `iter.i`. However, in order to account for the `then`
+    case (when `iter.i` is not changed), we must be a little more creative. We
+    use the above logical function `bool_to_int` to be able to use the value of
+    `finished` as an integer. We come up with `Array.length a - iter.i +
+    !finished` as our decreasing measure (since we declare `bool_to_int` as a
+    coercion, we do not need to explicititly write it in the specification),
+    which would work when the value of `finished` flips from `false` to
+    `true`. The problem is, since the variant must decrease within a loop
+    iteration, the generated VC features as premise `finished = true`. So, it
+    never really flips. The next version of `sum_until_negative` fixes the
+    specification and the code, providing a provably correct implementation. *)
 let sum_until_negative2 a =
   let iter = { i = 0 ; sum = 0} in
   let finished = ref false in
   while !finished do
-    (*@ variant   Array.length a - iter.i - !finished *)
+    (*@ variant   Array.length a - iter.i + !finished *)
     (*@ invariant exists j. 0 <= j < Array.length a && a.(j) < 0 && iter.i <= j *)
-    (*@ invariant 0 <= iter.i < Array.length a *)
+    (*@ invariant 0 <= iter.i *)
     let element = a.(iter.i) in
     if element < 0 then
       finished := true
@@ -110,3 +155,9 @@ let main () =
   sum_until_negative3 [| 1 ; 2 ; 3 ; 4 ; -5 ; -6; -7; -8; |]
 (*@ r = main ()
       ensures r = 10 *)
+
+(** Exercise: Let us relax the property that the array must contain a suffix of
+    only negative values. For instance, `[| 1; 2; -3; 4; 5; |]`. What would be
+    correct specification for this case? Namely, how would we change the logical
+    function `logic_sum` to cope with this scenario? Do we also need to change
+    the code? *)
