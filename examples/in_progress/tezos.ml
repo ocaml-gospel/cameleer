@@ -129,6 +129,11 @@ let [@lemma] rec shift_left (f: int -> int) (g: int -> int) a b c (d: int) =
         (forall j. 0 <= j < i -> a.(j) >= 0) &&
         (forall j. i <= j < Array.length a -> a.(j) < 0)) *)
 
+(** As it is very frequently the case, while proving the `sum_until_negative`
+    function correct, we came up with a small optimization with respect to the
+    original code. Instead of using the `finished` flag, we use a much more
+    OCaml idiomatic style and raise an exception. We immediately catch `Finish`
+    and take its argument as the function return value. *)
 let sum_until_negative3 a =
   let iter = { i = 0 ; sum = 0} in
   let exception Finish of int in
