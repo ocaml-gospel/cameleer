@@ -22,7 +22,7 @@ let () = List.iter (fun (x, y) -> Hstr.add driver x y)
       "*", "infix *";
       "-", "infix -";
       "/", "infix /";
-      "mod", "infix %";
+      "infix mod", "infix %";
       "<=", "infix <=";
       ">=", "infix >=";
       "<", "infix <";

@@ -1,7 +1,7 @@
 module OCamlStdLib
 
   use export int.Int
-  use export mach.int.Int
+  use export int.ComputerDivision
   use export int.MinMax
   use export list.List
   use export list.Length
@@ -14,6 +14,8 @@ module OCamlStdLib
   use import array.Array as A
 
   type array 'a = A.array 'a
+
+  function (%) (x y: int) : int = mod x y
 
   scope import Array
 

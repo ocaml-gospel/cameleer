@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="even_odd.ml"/>
+<theory name="Even_odd" proved="true">
+ <goal name="even&#39;vc" expl="VC for even" proved="true">
+ <proof prover="0"><result status="valid" time="0.09" steps="11513"/></proof>
+ </goal>
+ <goal name="odd&#39;vc" expl="VC for odd" proved="true">
+ <proof prover="0"><result status="valid" time="0.08" steps="11623"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
