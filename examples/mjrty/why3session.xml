@@ -3,103 +3,101 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="mjrty.ml"/>
 <theory name="Mjrty" proved="true">
  <goal name="numof_int&#39;vc" expl="VC for numof_int" proved="true">
- <proof prover="0"><result status="valid" time="0.01" steps="2"/></proof>
+ <proof prover="2"><result status="valid" time="0.04" steps="9623"/></proof>
  </goal>
  <goal name="numof_bounds&#39;vc" expl="VC for numof_bounds" proved="true">
- <proof prover="0"><result status="valid" time="0.02" steps="41"/></proof>
+ <proof prover="2"><result status="valid" time="0.04" steps="11660"/></proof>
  </goal>
  <goal name="numof_append&#39;vc" expl="VC for numof_append" proved="true">
- <proof prover="0"><result status="valid" time="0.02" steps="29"/></proof>
+ <proof prover="2"><result status="valid" time="0.05" steps="12666"/></proof>
  </goal>
  <goal name="numof_left_no_add&#39;vc" expl="VC for numof_left_no_add" proved="true">
- <proof prover="2"><result status="valid" time="0.11" steps="16673"/></proof>
+ <proof prover="2"><result status="valid" time="0.11" steps="18767"/></proof>
  </goal>
  <goal name="numof_left_add&#39;vc" expl="VC for numof_left_add" proved="true">
- <proof prover="2"><result status="valid" time="0.17" steps="23429"/></proof>
+ <proof prover="2"><result status="valid" time="0.17" steps="25524"/></proof>
  </goal>
  <goal name="Mjrty.mjrty&#39;vc" expl="VC for mjrty" proved="true">
- <proof prover="1"><result status="valid" time="0.25" steps="678810"/></proof>
  <transf name="split_vc" proved="true" >
-  <goal name="mjrty&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="2"/></proof>
+  <goal name="mjrty&#39;vc.0" expl="index in array bounds" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11083"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="10"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="12997"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.2" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="13030"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.3" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="21"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="12922"/></proof>
   </goal>
-  <goal name="mjrty&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="15"/></proof>
+  <goal name="mjrty&#39;vc.4" expl="index in array bounds" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11341"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="226"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="15832"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.6" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.40" steps="223"/></proof>
+  <proof prover="2"><result status="valid" time="0.08" steps="19958"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.7" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="2.47" steps="3621"/></proof>
+  <proof prover="0"><result status="valid" time="1.75" steps="4157"/></proof>
   </goal>
-  <goal name="mjrty&#39;vc.8" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="15"/></proof>
+  <goal name="mjrty&#39;vc.8" expl="index in array bounds" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11345"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.9" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="48"/></proof>
+  <proof prover="2"><result status="valid" time="0.06" steps="13907"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.10" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="49"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="13394"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.11" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.72" steps="417"/></proof>
+  <proof prover="2"><result status="valid" time="0.11" steps="19975"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.12" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="46"/></proof>
+  <proof prover="2"><result status="valid" time="0.09" steps="13664"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.13" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="53"/></proof>
+  <proof prover="2"><result status="valid" time="0.08" steps="13482"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.14" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.94" steps="769"/></proof>
+  <proof prover="2"><result status="valid" time="0.13" steps="24031"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.15" expl="exceptional postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="13"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="12954"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.16" expl="exceptional postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="13"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="12126"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.17" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="25"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="13678"/></proof>
   </goal>
-  <goal name="mjrty&#39;vc.18" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="23"/></proof>
+  <goal name="mjrty&#39;vc.18" expl="index in array bounds" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="11472"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.19" expl="exceptional postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.34" steps="40647"/></proof>
+  <proof prover="2"><result status="valid" time="0.18" steps="39751"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.20" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="76"/></proof>
+  <proof prover="2"><result status="valid" time="0.11" steps="18044"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.21" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.13" steps="71"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="14802"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.22" expl="exceptional postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="21"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="12804"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.23" expl="exceptional postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="15"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="11454"/></proof>
   </goal>
   <goal name="mjrty&#39;vc.24" expl="out of loop bounds" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="2"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="11840"/></proof>
   </goal>
  </transf>
  </goal>

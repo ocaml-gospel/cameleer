@@ -35,7 +35,7 @@ let [@lemma] numof_left_add (p : int -> bool) (a: int) (b : int) =
       ensures  numof_int p a b = 1 + numof_int p (a+1) b *)
 
 (*@ function numof (a: 'a array) (v: 'a) (l u: integer) : integer =
-  numof_int (fun i -> a[i] = v) l u *)
+  numof_int (fun i -> a.(i) = v) l u *)
 
 module type EQUAL = sig
   type t
