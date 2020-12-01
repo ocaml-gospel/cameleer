@@ -65,7 +65,8 @@ let mk_refine_modules info top_mod_name =
       let id = Ptree.{ id with id_loc = Loc.dummy_position } in (* FIXME *)
       (mk_id_refinee id, mk_id_refiner id) in
     let mk_cstsym id td_params = let id_refee, id_refer = mk_id_ref id in
-      CStsym (id_refee, td_params, PTtyapp (id_refer, [])) in
+      let pty_params = List.map (fun x -> PTtyvar x) td_params in
+      CStsym (id_refee, td_params, PTtyapp (id_refer, pty_params)) in
     let mk_cspsym id = let id_refee, id_refer = mk_id_ref id in
       CSpsym (id_refee, id_refer) in
     match odecl with
