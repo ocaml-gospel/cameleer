@@ -1,3 +1,4 @@
+(*@ open Sum *)
 (*@ open Sequence *)
 
 module type Cursor = sig
@@ -36,6 +37,9 @@ module CursorList : Cursor = struct
   (*@ lemma seq_of_list_append: forall l1 l2: 'a list.
         seq_of_list (List.append l1 l2) == seq_of_list l1 ++ seq_of_list l2 *)
 
+  (*@ lemma seq_of_list_length: forall l: 'a list.
+        length (seq_of_list l) = List.length l *)
+
   (*@ predicate permitted (t: 'a t) =
         length t.visited <= length (seq_of_list t.collection) &&
         forall i. 0 <= i < length t.visited ->
@@ -60,4 +64,24 @@ module CursorList : Cursor = struct
   (*@ b = has_next c
         requires permitted c
         ensures  b <-> not (complete c) *)
+
+  let create l =
+    { visited = empty; collection = l; to_visit = l }
+  (*@ r = create l
+        ensures r.visited = empty
+        ensures r.collection = l *)
 end
+
+let sum_cursor l =
+  let s = ref 0 in
+  let c = CursorList.create l in
+  while CursorList.has_next c do
+    (*@ variant length (seq_of_list l) - length c.visited *)
+    (*@ invariant permitted c *)
+    (*@ invariant !s = logic_sum (fun i -> c.visited[i]) 0 (length c.visited) *)
+    let x = CursorList.next c in
+    s := !s + x
+  done;
+  !s
+(*@ r = sum_cursor l
+      ensures r = logic_sum (fun i -> (seq_of_list l)[i]) 0 (List.length l) *)
