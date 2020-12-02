@@ -62,6 +62,7 @@ module OCamlStdLib
 
     use export list.List
     use export list.Length
+    use export list.Mem
     use import list.Append    as A
     use import list.Reverse   as R
     use import list.RevAppend as RA

@@ -3,11 +3,11 @@ type 'a sequence
 (*@ function length (s: 'a sequence): integer *)
 (*@ axiom length_nonnegative: forall s: 'a sequence. length s >= 0 *)
 
-(*@ function ([_]) (s: 'a sequence) (i:integer): 'a *)
+(*@ function ([_]) (s: 'a sequence) (i: integer): 'a *)
 
 (*@ predicate (==) (s1 s2: 'a sequence) =
       length s1 = length s2 &&
-      forall i. 0 <= i < length s1 -> s1[i] = s2[i] *)
+      forall i: integer. 0 <= i < length s1 -> s1[i] = s2[i] *)
 
 (*@ axiom ext_eq: forall s1 s2: 'a sequence. s1 == s2 -> s1 = s2 *)
 
@@ -49,3 +49,13 @@ type 'a sequence
 
 (*@ lemma snoc_empty: forall s: 'a sequence, x: 'a.
       s ++ (cons x (empty: 'a sequence)) == snoc s x *)
+
+(*@ predicate mem (x: 'a) (s: 'a sequence) =
+      exists i: integer. 0 <= i < length s && s[i] = x *)
+
+(*@ lemma mem_append : forall x: 'a, s1 s2.
+      mem x (s1 ++ s2) <-> mem x s1 \/ mem x s2 *)
+
+(*@ lemma mem_tail: forall x: 'a, s.
+      length s > 0 ->
+      mem x s <-> (x = s[0] \/ mem x s[1 .. ]) *)

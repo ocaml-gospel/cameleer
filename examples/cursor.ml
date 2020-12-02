@@ -40,6 +40,9 @@ module CursorList : Cursor = struct
   (*@ lemma seq_of_list_length: forall l: 'a list.
         length (seq_of_list l) = List.length l *)
 
+  (*@ lemma seq_of_list_mem: forall l: 'a list, x: 'a.
+        List.mem x l <-> mem x (seq_of_list l) *)
+
   (*@ predicate permitted (t: 'a t) =
         length t.visited <= length (seq_of_list t.collection) &&
         forall i. 0 <= i < length t.visited ->
@@ -85,3 +88,25 @@ let sum_cursor l =
   !s
 (*@ r = sum_cursor l
       ensures r = logic_sum (fun i -> (seq_of_list l)[i]) 0 (List.length l) *)
+
+module Mem (Eq: sig
+    type elt
+    val eq : elt -> elt -> bool
+    (*@ b = eq x y
+          ensures b <-> x = y *)
+  end) = struct
+
+  let mem_cursor l x =
+    let c = CursorList.create l in
+    let exception Found in
+    try while CursorList.has_next c do
+      (*@ variant length (seq_of_list l) - length c.visited *)
+      (*@ invariant permitted c *)
+      (*@ invariant forall i. 0 <= i < length c.visited -> c.visited[i] <> x *)
+      if Eq.eq (CursorList.next c) x then raise Found
+    done;
+    false
+    with Found -> true
+    (*@ b = mem_cursor l x
+          ensures b <-> List.mem x l *)
+end
