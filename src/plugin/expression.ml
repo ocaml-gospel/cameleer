@@ -78,6 +78,9 @@ let mk_por pat1 pat2 =
 let mk_pas ?(ghost=false) pat id =
   Pas (pat, id, ghost)
 
+let mk_pattern pat_desc pat_loc =
+  { pat_desc; pat_loc }
+
 (** Smart constructors for Ptree expressions *)
 
 let mk_expr ?(expr_loc=T.dummy_loc) expr_desc =
@@ -273,18 +276,21 @@ let rec id_of_pat O.{ppat_desc; _} = match ppat_desc with
   | Ppat_extension _ -> assert false (* TODO *)
   | Ppat_open _ -> assert false (* TODO *)
 
-let rec pattern info O.{ppat_desc = p_desc; ppat_loc; _} =
+type pat_with_exn = { pat_term : pattern; pat_is_exn : bool }
+
+let pattern info O.({ppat_desc = p_desc; ppat_loc; _} as pat) =
   let pat_loc = T.location ppat_loc in
   let mk_pat p = T.mk_pattern ~pat_loc p in
-  let pat_arith info s pat_list =
-    let pat = List.map (pattern info) pat_list in
+  let rec pat_arith info s pat_list =
+    let pat = List.map (inner_pattern info) pat_list in
     if Hashtbl.find info.Odecl.info_arith_construct s > 1 then pat
-    else [mk_pat (Ptuple pat)] in
-  let pat_desc = function
+    else [mk_pat (Ptuple pat)]
+  and inner_pattern info p =
+    let pat_desc = match p.O.ppat_desc with
     | O.Ppat_any    -> mk_pwild
     | O.Ppat_var id -> mk_pvar T.(mk_id ~id_loc:(location id.loc) id.txt)
     | O.Ppat_tuple pat_list ->
-        mk_ptuple (List.map (pattern info) pat_list)
+        mk_ptuple (List.map (inner_pattern info) pat_list)
     | O.Ppat_construct (id, None) ->
         mk_papp_no_args (longident id.txt)
     | O.Ppat_construct (id, Some ({ppat_desc = Ppat_tuple pat_list; _})) ->
@@ -292,14 +298,14 @@ let rec pattern info O.{ppat_desc = p_desc; ppat_loc; _} =
         let args = pat_arith info s pat_list in
         mk_papp (longident id.txt) args
     | O.Ppat_construct (id, Some p) ->
-        mk_papp (longident id.txt) [pattern info p]
+        mk_papp (longident id.txt) [inner_pattern info p]
     | O.Ppat_or (pat1, pat2) ->
-        mk_por (pattern info pat1) (pattern info pat2)
+        mk_por (inner_pattern info pat1) (inner_pattern info pat2)
     | O.Ppat_constant _ ->
         Loc.errorm "Constants in case expressions are not supported."
     | Ppat_alias (pat, id) ->
         let pat_id = T.(mk_id ~id_loc:(location id.loc)) id.txt in
-        mk_pas (pattern info pat) pat_id
+        mk_pas (inner_pattern info pat) pat_id
     | Ppat_interval _ -> assert false (* TODO *)
     | Ppat_variant _ -> assert false (* TODO *)
     | Ppat_record _ -> assert false (* TODO *)
@@ -308,10 +314,16 @@ let rec pattern info O.{ppat_desc = p_desc; ppat_loc; _} =
     | Ppat_type _ -> assert false (* TODO *)
     | Ppat_lazy _ -> assert false (* TODO *)
     | Ppat_unpack _ -> assert false (* TODO *)
-    | Ppat_exception _ -> assert false (* TODO *)
+    | Ppat_exception _ ->
+        Loc.errorm ~loc:pat_loc
+          "Exception patterns are not allowed in this position."
     | Ppat_extension _ -> assert false (* TODO *)
     | Ppat_open _ -> assert false (* TODO *) in
-  mk_pat (pat_desc p_desc)
+    mk_pat pat_desc in
+  match p_desc with
+  | Ppat_exception pat ->
+         { pat_term = inner_pattern info pat; pat_is_exn = true }
+  | _ -> { pat_term = inner_pattern info pat; pat_is_exn = false }
 
 let check_guard = function
   | Some e ->
@@ -400,8 +412,10 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Uast.Sexp_apply _ ->
         assert false (* TODO *)
     | Uast.Sexp_match (expr, case_list) ->
-        let reg_branch = List.map (case info) case_list in
-        mk_ematch_no_exn (expression info expr) reg_branch
+        let reg_branch, exn_branch = case info case_list in
+        let reg_branch = List.rev reg_branch in
+        let exn_branch = List.rev exn_branch in
+        mk_ematch (expression info expr) reg_branch exn_branch
     | Uast.Sexp_try (expr, case_list) ->
         let exn_branch = List.map (case_exn info) case_list in
         mk_ematch_no_reg (expression info expr) exn_branch
@@ -520,24 +534,45 @@ and mk_array info expr_list =
 and let_match info expr svb = match svb.Uast.spvb_pat.O.ppat_desc with
   | (Ppat_tuple _) -> let svb_expr = expression info svb.spvb_expr in
       let pat = pattern info svb.spvb_pat in
-      mk_ematch_no_exn svb_expr [pat, expr]
+      assert (not pat.pat_is_exn);
+      mk_ematch_no_exn svb_expr [pat.pat_term, expr]
   | _ -> let id, svb_expr = s_value_binding info svb in
       mk_elet_none id (is_ghost_svb svb) svb_expr expr
 
-and case info Uast.{spc_lhs; spc_guard; spc_rhs} =
-  check_guard spc_guard;
-  pattern info spc_lhs, expression info spc_rhs
+and exception_name_of_pattern info O.{ppat_desc; _} = match ppat_desc with
+  | Ppat_any -> Qident (T.mk_id "_"), None
+  | Ppat_var s -> let id_loc = T.location s.loc in
+      Qident (T.mk_id s.txt ~id_loc), None
+  | Ppat_construct (id, pat) -> let id_loc = T.location id.loc in
+      longident id.txt ~id_loc, Opt.map (pattern info) pat
+  | _ -> assert false (* TODO *)
+
+and exception_name_of_pattern_pat {pat_desc; pat_loc} = match pat_desc with
+  | Pwild  -> Qident (T.mk_id "_"), None
+  | Pvar s -> Qident s, None
+  | Papp (q, pat) -> q, Some (mk_pattern (mk_ptuple pat) pat_loc)
+  | _ -> assert false (* TODO *)
+
+and case info pat_list =
+  let mk_case (acc_reg, acc_exn) Uast.{spc_lhs; spc_guard; spc_rhs} =
+    check_guard spc_guard;
+    let {pat_term; pat_is_exn} = pattern info spc_lhs in
+    let expr = expression info spc_rhs in
+    if pat_is_exn then let q, pat = exception_name_of_pattern_pat pat_term in
+      acc_reg, (q, pat, expr)::acc_exn
+    else (pat_term, expr)::acc_reg, acc_exn in
+  List.fold_left mk_case ([], []) pat_list
 
 and case_exn info Uast.{spc_lhs; spc_guard; spc_rhs} =
   check_guard spc_guard;
-  let q, pat = match spc_lhs.O.ppat_desc with
-    | Ppat_any -> Qident (T.mk_id "_"), None
-    | Ppat_var s -> let id_loc = T.location s.loc in
-        Qident (T.mk_id s.txt ~id_loc), None
-    | Ppat_construct (id, pat) -> let id_loc = T.location id.loc in
-        longident id.txt ~id_loc, Opt.map (pattern info) pat
-    | _ -> assert false (* TODO *) in
-  q, pat, expression info spc_rhs
+  let mk_pat = function
+    | None -> None
+    | Some {pat_term; pat_is_exn} ->
+        if pat_is_exn then Loc.errorm ~loc:pat_term.pat_loc
+            "Exception patterns are not allowed in this position."
+        else Some pat_term in
+  let q, pat = exception_name_of_pattern info spc_lhs in
+  q, mk_pat pat, expression info spc_rhs
 
 and apply_raise info = function
   | Uast.Sexp_construct (id, exn_arg) ->
@@ -563,7 +598,10 @@ and s_value_binding info svb =
         let param_id = T.mk_id "param" in
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
         let arg = T.dummy_loc, Some (T.mk_id "param"), false, None in
-        let ematch = Ematch (param, List.map (case info) case_list, []) in
+        let reg_branch, exn_branch = case info case_list in
+        let reg_branch = List.rev reg_branch in
+        let exn_branch = List.rev exn_branch in
+        let ematch = mk_ematch param reg_branch exn_branch in
         let expr_loc = T.location expr.spexp_loc in
         List.rev (arg :: acc), mk_expr ematch ~expr_loc
     | _ -> List.rev acc, expression info expr in (* TODO *)
@@ -581,7 +619,10 @@ and s_value_binding info svb =
         let param_id = T.mk_id "param" in
         let arg = T.dummy_loc, Some param_id, false, None in
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
-        let match_desc = Ematch (param, List.map (case info) case_list, []) in
+        let reg_branch, exn_branch = case info case_list in
+        let reg_branch = List.rev reg_branch in
+        let exn_branch = List.rev exn_branch in
+        let match_desc = mk_ematch param reg_branch exn_branch in
         let match_expr = mk_expr match_desc ~expr_loc in
         let spec = spec svb.Uast.spvb_vspec (* TODO *) in
         let mask = Ity.MaskVisible in
