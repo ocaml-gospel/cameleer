@@ -413,8 +413,6 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         assert false (* TODO *)
     | Uast.Sexp_match (expr, case_list) ->
         let reg_branch, exn_branch = case info case_list in
-        let reg_branch = List.rev reg_branch in
-        let exn_branch = List.rev exn_branch in
         mk_ematch (expression info expr) reg_branch exn_branch
     | Uast.Sexp_try (expr, case_list) ->
         let exn_branch = List.map (case_exn info) case_list in
@@ -561,7 +559,8 @@ and case info pat_list =
     if pat_is_exn then let q, pat = exception_name_of_pattern_pat pat_term in
       acc_reg, (q, pat, expr)::acc_exn
     else (pat_term, expr)::acc_reg, acc_exn in
-  List.fold_left mk_case ([], []) pat_list
+  let reg_branch, exn_branch = List.fold_left mk_case ([], []) pat_list in
+  List.rev reg_branch, List.rev exn_branch
 
 and case_exn info Uast.{spc_lhs; spc_guard; spc_rhs} =
   check_guard spc_guard;
@@ -599,8 +598,6 @@ and s_value_binding info svb =
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
         let arg = T.dummy_loc, Some (T.mk_id "param"), false, None in
         let reg_branch, exn_branch = case info case_list in
-        let reg_branch = List.rev reg_branch in
-        let exn_branch = List.rev exn_branch in
         let ematch = mk_ematch param reg_branch exn_branch in
         let expr_loc = T.location expr.spexp_loc in
         List.rev (arg :: acc), mk_expr ematch ~expr_loc
@@ -620,8 +617,6 @@ and s_value_binding info svb =
         let arg = T.dummy_loc, Some param_id, false, None in
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
         let reg_branch, exn_branch = case info case_list in
-        let reg_branch = List.rev reg_branch in
-        let exn_branch = List.rev exn_branch in
         let match_desc = mk_ematch param reg_branch exn_branch in
         let match_expr = mk_expr match_desc ~expr_loc in
         let spec = spec svb.Uast.spvb_vspec (* TODO *) in
