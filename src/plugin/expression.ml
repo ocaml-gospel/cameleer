@@ -78,9 +78,6 @@ let mk_por pat1 pat2 =
 let mk_pas ?(ghost=false) pat id =
   Pas (pat, id, ghost)
 
-let mk_pattern pat_desc pat_loc =
-  { pat_desc; pat_loc }
-
 (** Smart constructors for Ptree expressions *)
 
 let mk_expr ?(expr_loc=T.dummy_loc) expr_desc =
@@ -206,87 +203,22 @@ let rec core_type O.{ptyp_desc; ptyp_loc; _} = match ptyp_desc with
   | Ptyp_extension _ ->
       assert false (* TODO *)
 
-let binder_of_pattern O.{ppat_desc; ppat_loc; ppat_attributes; _} =
-  let binder id pat_loc ghost_pat pty =
-    mk_binder (T.location pat_loc) (Some id) (is_ghost ghost_pat) pty in
+type pat_with_exn = { pat_term : pattern option; pat_exn_name : qualid option }
+
+let rec pattern info O.({ppat_desc; _} as pat) =
   match ppat_desc with
-  | Ppat_any ->
-      let id = T.(mk_id "us" ~id_loc:(location ppat_loc)) in
-      binder id ppat_loc ppat_attributes None
-  | Ppat_var x ->
-      let id = T.(mk_id x.txt ~id_loc:(location x.loc)) in
-      binder id ppat_loc ppat_attributes None
-  | Ppat_alias _ ->
-      assert false (* TODO *)
-  | Ppat_constant _ ->
-      assert false (* TODO *)
-  | Ppat_interval _ ->
-      assert false (* TODO *)
-  | Ppat_tuple _ ->
-      assert false (* TODO *)
-  | Ppat_construct ({txt = Lident "()"; loc}, None) ->
-      let id = T.(mk_id "_" ~id_loc:(location loc)) in
-      binder id ppat_loc ppat_attributes (Some unit_pty)
-  | Ppat_construct _ ->
-      assert false (* TODO *)
-  | Ppat_variant _ ->
-      assert false (* TODO *)
-  | Ppat_record _ ->
-      assert false (* TODO *)
-  | Ppat_array _ ->
-      assert false (* TODO *)
-  | Ppat_or _ ->
-      assert false (* TODO *)
-  | Ppat_constraint ({ppat_desc = Ppat_var s; ppat_loc; _}, cty) ->
-      let id = T.(mk_id s.txt ~id_loc:(location s.loc)) in
-      binder id ppat_loc ppat_attributes (Some (core_type cty))
-  | Ppat_constraint _ ->
-      assert false (* TODO *)
-  | Ppat_type _ ->
-      assert false (* TODO *)
-  | Ppat_lazy _ ->
-      assert false (* TODO *)
-  | Ppat_unpack _ ->
-      assert false (* TODO *)
-  | Ppat_exception _ ->
-      assert false (* TODO *)
-  | Ppat_extension _ ->
-      assert false (* TODO *)
-  | Ppat_open _ ->
-      assert false (* TODO *)
+  | Ppat_exception pat -> let q, pat = exception_name_of_pattern info pat in
+         { pat_term = pat; pat_exn_name = Some q }
+  | _ -> { pat_term = Some (inner_pattern info pat); pat_exn_name = None }
 
-let rec id_of_pat O.{ppat_desc; _} = match ppat_desc with
-  | Ppat_var {txt; loc} -> T.(mk_id ~id_loc:(location loc) txt)
-  | Ppat_any -> assert false (* TODO *)
-  | Ppat_alias _ -> assert false (* TODO *)
-  | Ppat_constant _ -> assert false (* TODO *)
-  | Ppat_interval _ -> assert false (* TODO *)
-  | Ppat_tuple _ -> assert false (* TODO *)
-  | Ppat_construct _ -> assert false (* TODO *)
-  | Ppat_variant _ -> assert false (* TODO *)
-  | Ppat_record _ -> assert false (* TODO *)
-  | Ppat_array _ -> assert false (* TODO *)
-  | Ppat_or _ -> assert false (* TODO *)
-  | Ppat_constraint (pat, _) ->
-      id_of_pat pat
-  | Ppat_type _ -> assert false (* TODO *)
-  | Ppat_lazy _ -> assert false (* TODO *)
-  | Ppat_unpack _ -> assert false (* TODO *)
-  | Ppat_exception _ -> assert false (* TODO *)
-  | Ppat_extension _ -> assert false (* TODO *)
-  | Ppat_open _ -> assert false (* TODO *)
-
-type pat_with_exn = { pat_term : pattern; pat_is_exn : bool }
-
-let pattern info O.({ppat_desc = p_desc; ppat_loc; _} as pat) =
+and inner_pattern info O.{ppat_desc; ppat_loc; _} =
   let pat_loc = T.location ppat_loc in
   let mk_pat p = T.mk_pattern ~pat_loc p in
-  let rec pat_arith info s pat_list =
+  let pat_arith info s pat_list =
     let pat = List.map (inner_pattern info) pat_list in
     if Hashtbl.find info.Odecl.info_arith_construct s > 1 then pat
-    else [mk_pat (Ptuple pat)]
-  and inner_pattern info p =
-    let pat_desc = match p.O.ppat_desc with
+    else [mk_pat (Ptuple pat)] in
+  let pat_desc = match ppat_desc with
     | O.Ppat_any    -> mk_pwild
     | O.Ppat_var id -> mk_pvar T.(mk_id ~id_loc:(location id.loc) id.txt)
     | O.Ppat_tuple pat_list ->
@@ -319,11 +251,109 @@ let pattern info O.({ppat_desc = p_desc; ppat_loc; _} as pat) =
           "Exception patterns are not allowed in this position."
     | Ppat_extension _ -> assert false (* TODO *)
     | Ppat_open _ -> assert false (* TODO *) in
-    mk_pat pat_desc in
-  match p_desc with
-  | Ppat_exception pat ->
-         { pat_term = inner_pattern info pat; pat_is_exn = true }
-  | _ -> { pat_term = inner_pattern info pat; pat_is_exn = false }
+  mk_pat pat_desc
+
+and exception_name_of_pattern info O.{ppat_desc; _} = match ppat_desc with
+  | Ppat_any -> Qident (T.mk_id "_"), None
+  | Ppat_var s -> let id_loc = T.location s.loc in
+      Qident (T.mk_id s.txt ~id_loc), None
+  | Ppat_construct (id, pat) -> let id_loc = T.location id.loc in
+      longident id.txt ~id_loc, Opt.map (inner_pattern info) pat
+  | _ -> assert false (* TODO ?*)
+
+type binder_info = {
+  binder_info_loc  : Loc.position;
+  binder_info_desc : binder_info_desc;
+}
+
+and binder_info_desc =
+  | BTuple of ident * pattern list
+  | BNone
+
+let mk_binder_info binder_info_loc binder_info_desc =
+  { binder_info_loc; binder_info_desc }
+
+let mk_binder_info_none =
+  mk_binder_info (T.dummy_loc) BNone
+
+let binder_of_pattern =
+  let counter = ref 0 in
+  fun info O.{ppat_desc; ppat_loc; ppat_attributes; _} ->
+    let binder id pat_loc ghost_pat pty =
+      mk_binder (T.location pat_loc) (Some id) (is_ghost ghost_pat) pty in
+    match ppat_desc with
+    | Ppat_any ->
+        let id = T.(mk_id "us" ~id_loc:(location ppat_loc)) in
+        binder id ppat_loc ppat_attributes None, mk_binder_info_none
+    | Ppat_var x ->
+        let id = T.(mk_id x.txt ~id_loc:(location x.loc)) in
+        binder id ppat_loc ppat_attributes None, mk_binder_info_none
+    | Ppat_alias _ ->
+        assert false (* TODO *)
+    | Ppat_constant _ ->
+        assert false (* TODO *)
+    | Ppat_interval _ ->
+        assert false (* TODO *)
+    | Ppat_tuple pat_list -> incr counter;
+        let id_str = "binder'" ^ (string_of_int !counter) in
+        let id = T.(mk_id id_str ~id_loc:(location ppat_loc)) in
+        let pat_list = List.map (pattern info) pat_list in
+        let mk_pat p = assert (p.pat_exn_name = None); Opt.get (p.pat_term) in
+        let pat_list = List.map mk_pat pat_list in
+        let b = binder id ppat_loc ppat_attributes None  in
+        b, mk_binder_info (T.location ppat_loc) (BTuple (id, pat_list))
+    | Ppat_construct ({txt = Lident "()"; loc}, None) ->
+        let id = T.(mk_id "_" ~id_loc:(location loc)) in
+        binder id ppat_loc ppat_attributes (Some unit_pty), mk_binder_info_none
+    | Ppat_construct _ ->
+        assert false (* TODO *)
+    | Ppat_variant _ ->
+        assert false (* TODO *)
+    | Ppat_record (_,  _) ->
+        assert false (* TODO *)
+    | Ppat_array _ ->
+        assert false (* TODO *)
+    | Ppat_or _ ->
+        assert false (* TODO *)
+    | Ppat_constraint ({ppat_desc = Ppat_var s; ppat_loc; _}, cty) ->
+        let id = T.(mk_id s.txt ~id_loc:(location s.loc)) in
+        let pty = Some (core_type cty) in
+        binder id ppat_loc ppat_attributes pty, mk_binder_info_none
+    | Ppat_constraint _ ->
+        assert false (* TODO *)
+    | Ppat_type _ ->
+        assert false (* TODO *)
+    | Ppat_lazy _ ->
+        assert false (* TODO *)
+    | Ppat_unpack _ ->
+        assert false (* TODO *)
+    | Ppat_exception _ ->
+        assert false (* TODO *)
+    | Ppat_extension _ ->
+        assert false (* TODO *)
+    | Ppat_open _ ->
+        assert false (* TODO *)
+
+let rec id_of_pat O.{ppat_desc; _} = match ppat_desc with
+  | Ppat_var {txt; loc} -> T.(mk_id ~id_loc:(location loc) txt)
+  | Ppat_any -> assert false (* TODO *)
+  | Ppat_alias _ -> assert false (* TODO *)
+  | Ppat_constant _ -> assert false (* TODO *)
+  | Ppat_interval _ -> assert false (* TODO *)
+  | Ppat_tuple _ -> assert false (* TODO *)
+  | Ppat_construct _ -> assert false (* TODO *)
+  | Ppat_variant _ -> assert false (* TODO *)
+  | Ppat_record _ -> assert false (* TODO *)
+  | Ppat_array _ -> assert false (* TODO *)
+  | Ppat_or _ -> assert false (* TODO *)
+  | Ppat_constraint (pat, _) ->
+      id_of_pat pat
+  | Ppat_type _ -> assert false (* TODO *)
+  | Ppat_lazy _ -> assert false (* TODO *)
+  | Ppat_unpack _ -> assert false (* TODO *)
+  | Ppat_exception _ -> assert false (* TODO *)
+  | Ppat_extension _ -> assert false (* TODO *)
+  | Ppat_open _ -> assert false (* TODO *)
 
 let check_guard = function
   | Some e ->
@@ -394,10 +424,11 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         assert false (* TODO *)
     | Uast.Sexp_function _ ->
         assert false (* TODO *)
-    | Uast.Sexp_fun (Nolabel, None, pat, expr_body, spec) ->
-        let expr_body = expression info expr_body in
+    | Uast.Sexp_fun (Nolabel, None, pat, expr_fun, spec) ->
         let spec = match spec with Some s -> S.fun_spec s | _ -> empty_spec in
-        mk_efun_visible [binder_of_pattern pat] None spec expr_body
+        let binder, binder_info = binder_of_pattern info pat in
+        let expr_fun = special_binder (expression info expr_fun) binder_info in
+        mk_efun_visible [binder] None spec expr_fun
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
         Eand (arg_expr arg1, arg_expr arg2)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
@@ -532,46 +563,37 @@ and mk_array info expr_list =
 and let_match info expr svb = match svb.Uast.spvb_pat.O.ppat_desc with
   | (Ppat_tuple _) -> let svb_expr = expression info svb.spvb_expr in
       let pat = pattern info svb.spvb_pat in
-      assert (not pat.pat_is_exn);
-      mk_ematch_no_exn svb_expr [pat.pat_term, expr]
+      assert (pat.pat_exn_name = None);
+      mk_ematch_no_exn svb_expr [Opt.get pat.pat_term, expr]
   | _ -> let id, svb_expr = s_value_binding info svb in
       mk_elet_none id (is_ghost_svb svb) svb_expr expr
 
-and exception_name_of_pattern info O.{ppat_desc; _} = match ppat_desc with
-  | Ppat_any -> Qident (T.mk_id "_"), None
-  | Ppat_var s -> let id_loc = T.location s.loc in
-      Qident (T.mk_id s.txt ~id_loc), None
-  | Ppat_construct (id, pat) -> let id_loc = T.location id.loc in
-      longident id.txt ~id_loc, Opt.map (pattern info) pat
-  | _ -> assert false (* TODO *)
-
-and exception_name_of_pattern_pat {pat_desc; pat_loc} = match pat_desc with
-  | Pwild  -> Qident (T.mk_id "_"), None
-  | Pvar s -> Qident s, None
-  | Papp (q, pat) -> q, Some (mk_pattern (mk_ptuple pat) pat_loc)
-  | _ -> assert false (* TODO *)
+and special_binder expr {binder_info_desc; binder_info_loc = loc} =
+  match binder_info_desc with
+  | BNone -> expr
+  | BTuple (id, pat_list) -> let e_id = Eident (Qident id) in
+      let pat = T.mk_pattern ~pat_loc:loc (Ptuple pat_list) in
+      let expr_loc = expr.expr_loc in
+      let lhs_expr = mk_expr ~expr_loc:loc e_id in
+      let expr_desc = mk_ematch_no_exn lhs_expr [pat, expr] in
+      mk_expr ~expr_loc expr_desc
 
 and case info pat_list =
   let mk_case (acc_reg, acc_exn) Uast.{spc_lhs; spc_guard; spc_rhs} =
     check_guard spc_guard;
-    let {pat_term; pat_is_exn} = pattern info spc_lhs in
+    let {pat_term; pat_exn_name} = pattern info spc_lhs in
     let expr = expression info spc_rhs in
-    if pat_is_exn then let q, pat = exception_name_of_pattern_pat pat_term in
-      acc_reg, (q, pat, expr)::acc_exn
-    else (pat_term, expr)::acc_reg, acc_exn in
+    match pat_term, pat_exn_name with
+    | Some pat, None -> (pat, expr)::acc_reg, acc_exn
+    | pat, Some q    ->  acc_reg, (q, pat, expr)::acc_exn
+    | _ -> assert false in
   let reg_branch, exn_branch = List.fold_left mk_case ([], []) pat_list in
   List.rev reg_branch, List.rev exn_branch
 
 and case_exn info Uast.{spc_lhs; spc_guard; spc_rhs} =
   check_guard spc_guard;
-  let mk_pat = function
-    | None -> None
-    | Some {pat_term; pat_is_exn} ->
-        if pat_is_exn then Loc.errorm ~loc:pat_term.pat_loc
-            "Exception patterns are not allowed in this position."
-        else Some pat_term in
   let q, pat = exception_name_of_pattern info spc_lhs in
-  q, mk_pat pat, expression info spc_rhs
+  q, pat, expression info spc_rhs
 
 and apply_raise info = function
   | Uast.Sexp_construct (id, exn_arg) ->
@@ -591,8 +613,9 @@ and s_value_binding info svb =
   let rec loop acc expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
-        let arg = binder_of_pattern pat in
-        loop (arg :: acc) e
+        let arg, binder_info = binder_of_pattern info pat in
+        let binder_list, expr = loop (arg :: acc) e in
+        binder_list, special_binder expr binder_info
     | Sexp_function case_list ->
         let param_id = T.mk_id "param" in
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
@@ -603,10 +626,9 @@ and s_value_binding info svb =
         List.rev (arg :: acc), mk_expr ematch ~expr_loc
     | _ -> List.rev acc, expression info expr in (* TODO *)
   let mk_svb_expr expr = match expr.Uast.spexp_desc with
-    | Sexp_fun (_, _, pat, e, _) ->
+    | Sexp_fun _ ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
-        let args, expr = loop [] e in
-        let args = binder_of_pattern pat :: args in
+        let args, expr = loop [] expr in
         let ret  = T.mk_pattern Pwild in
         let spec = spec svb.Uast.spvb_vspec in
         let efun = (Efun (args, None, ret, Ity.MaskVisible, spec, expr)) in
