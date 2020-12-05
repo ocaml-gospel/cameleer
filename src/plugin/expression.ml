@@ -268,6 +268,7 @@ type binder_info = {
 
 and binder_info_desc =
   | BTuple of ident * pattern list
+  | BRecord of ident * (ident * pattern) list
   | BNone
 
 let mk_binder_info binder_info_loc binder_info_desc =
@@ -281,6 +282,11 @@ let binder_of_pattern =
   fun info O.{ppat_desc; ppat_loc; ppat_attributes; _} ->
     let binder id pat_loc ghost_pat pty =
       mk_binder (T.location pat_loc) (Some id) (is_ghost ghost_pat) pty in
+    let mk_id_pat (id, pat) =
+      let field_str = Longident.last id.txt in
+      let pattern = inner_pattern info pat in
+      let id_field = T.mk_id ~id_loc:(T.location id.loc) field_str in
+      (id_field, pattern) in
     match ppat_desc with
     | Ppat_any ->
         let id = T.(mk_id "us" ~id_loc:(location ppat_loc)) in
@@ -304,13 +310,23 @@ let binder_of_pattern =
         b, mk_binder_info (T.location ppat_loc) (BTuple (id, pat_list))
     | Ppat_construct ({txt = Lident "()"; loc}, None) ->
         let id = T.(mk_id "_" ~id_loc:(location loc)) in
-        binder id ppat_loc ppat_attributes (Some unit_pty), mk_binder_info_none
+        let b = binder id ppat_loc ppat_attributes (Some unit_pty) in
+        b, mk_binder_info_none
     | Ppat_construct _ ->
         assert false (* TODO *)
     | Ppat_variant _ ->
         assert false (* TODO *)
-    | Ppat_record (_,  _) ->
-        assert false (* TODO *)
+    | Ppat_record (id_pat_list, _) -> incr counter;
+        let id_str = "binder" ^ (string_of_int !counter) in
+        let pat_loc = T.location ppat_loc in
+        let id = T.(mk_id id_str ~id_loc:pat_loc) in
+        let b = binder id ppat_loc ppat_attributes None in
+        (* let field_str = Longident.last id_qualid.txt in
+         * let pattern = inner_pattern info pat in
+         * let id_field = T.mk_id ~id_loc:(T.location id_qualid.loc) field_str
+           in *)
+        let id_pat_list = List.map mk_id_pat id_pat_list in
+        b, mk_binder_info pat_loc (BRecord (id, id_pat_list))
     | Ppat_array _ ->
         assert false (* TODO *)
     | Ppat_or _ ->
@@ -335,7 +351,8 @@ let binder_of_pattern =
         assert false (* TODO *)
 
 let rec id_of_pat O.{ppat_desc; _} = match ppat_desc with
-  | Ppat_var {txt; loc} -> T.(mk_id ~id_loc:(location loc) txt)
+  | Ppat_var {txt; loc} ->
+      T.(mk_id ~id_loc:(location loc) txt)
   | Ppat_any -> assert false (* TODO *)
   | Ppat_alias _ -> assert false (* TODO *)
   | Ppat_constant _ -> assert false (* TODO *)
@@ -569,6 +586,18 @@ and let_match info expr svb = match svb.Uast.spvb_pat.O.ppat_desc with
       mk_elet_none id (is_ghost_svb svb) svb_expr expr
 
 and special_binder expr {binder_info_desc; binder_info_loc = loc} =
+  let expr_of_pat {pat_desc; _} = match pat_desc with
+    | Pvar x -> x
+    | _ -> assert false (* TODO *) in
+  let rec mk_let_pat binder_expr expr = function
+    | [] -> expr
+    | (id_field, pat) :: r ->
+        let e_pat = expr_of_pat pat in
+        let expr_loc = pat.pat_loc in
+        let e_rhs = mk_let_pat binder_expr expr r in
+        let e_lhs = mk_expr ~expr_loc (Eidapp (Qident e_pat, [binder_expr])) in
+        let e_let = mk_elet_none id_field false e_lhs e_rhs in
+        mk_expr ~expr_loc:expr.expr_loc e_let in
   match binder_info_desc with
   | BNone -> expr
   | BTuple (id, pat_list) -> let e_id = Eident (Qident id) in
@@ -577,6 +606,9 @@ and special_binder expr {binder_info_desc; binder_info_loc = loc} =
       let lhs_expr = mk_expr ~expr_loc:loc e_id in
       let expr_desc = mk_ematch_no_exn lhs_expr [pat, expr] in
       mk_expr ~expr_loc expr_desc
+  | BRecord (id, id_pat_list) ->
+      let binder_expr = mk_expr ~expr_loc:id.id_loc (Eident (Qident id)) in
+      mk_let_pat binder_expr expr id_pat_list
 
 and case info pat_list =
   let mk_case (acc_reg, acc_exn) Uast.{spc_lhs; spc_guard; spc_rhs} =
@@ -629,7 +661,7 @@ and s_value_binding info svb =
     | Sexp_fun _ ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
         let args, expr = loop [] expr in
-        let ret  = T.mk_pattern Pwild in
+        let ret = T.mk_pattern Pwild in
         let spec = spec svb.Uast.spvb_vspec in
         let efun = (Efun (args, None, ret, Ity.MaskVisible, spec, expr)) in
         mk_expr efun ~expr_loc
