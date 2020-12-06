@@ -363,7 +363,8 @@ let s_structure, s_signature =
         begin match id_expr_rs_kind_of_svb svb_list with
           | rs_kind, [id, expr] -> let ghost = is_ghost_let svb_list in
               let rs_kind, expr = if List.exists is_const_svb svb_list then
-                Expr.RKfunc, mk_const svb_list expr else rs_kind, expr in
+                Expr.RKfunc, mk_const svb_list expr
+              else rs_kind, expr in
               [O.mk_odecl loc (Dlet (id, ghost, rs_kind, expr))]
           | _ -> assert false (* no multiple bindings here *) end
     (* FIXME? I am not sure I agree with this last comment. I am almost

@@ -52,7 +52,7 @@ let mk_ptarrow pty1 pty2 =
 let mk_pttuple pty_list =
   PTtuple pty_list
 
-let mk_binder loc id ghost pty =
+let mk_binder loc id ghost pty : Ptree.binder =
   (loc, id, ghost, pty)
 
 (** Smart constructors for Ptree pattern *)
@@ -628,9 +628,24 @@ and construct_arith info s expr_list =
     [mk_expr etuple]
 
 and s_value_binding info svb =
+  let open Uast in
   let pexp = svb.Uast.spvb_expr in
   let expr_loc = T.location svb.Uast.spvb_expr.spexp_loc in
   let spec = function None -> empty_spec | Some s -> S.vspec s in
+  let mk_arg = function
+    | Lnone {pid_loc; pid_str; _} -> let id_loc = T.location pid_loc in
+        mk_binder id_loc (Some (T.mk_id ~id_loc pid_str)) false None
+    | _ -> assert false (* TODO *) in
+  let pair_args binder_spec binder_code expr =
+    let id_spec, id_code = match binder_spec, binder_code with
+    | (_, Some id_spec, _, _), (_, Some id_code, _, _) -> id_spec, id_code
+    | _ -> assert false in
+    let e_lhs = mk_expr ~expr_loc:(id_spec.id_loc) (Eident (Qident id_spec)) in
+    mk_expr ~expr_loc:(expr.expr_loc) (mk_elet_none id_code false e_lhs expr) in
+  let subst_args_expr args expr = function
+    | None -> args, expr
+    | Some {sp_hd_args; _} -> let spec_args = List.map mk_arg sp_hd_args in
+        spec_args, List.fold_right2 pair_args spec_args args expr in
   let rec loop acc expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
@@ -649,22 +664,25 @@ and s_value_binding info svb =
   let mk_svb_expr expr = match expr.Uast.spexp_desc with
     | Sexp_fun _ ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
+        let spec_uast = svb.Uast.spvb_vspec in
         let args, expr = loop [] expr in
+        let expr_loc = expr.expr_loc in
+        let args, expr = subst_args_expr args expr spec_uast in
         let ret = T.mk_pattern Pwild in
         let spec = spec svb.Uast.spvb_vspec in
         let efun = (Efun (args, None, ret, Ity.MaskVisible, spec, expr)) in
         mk_expr efun ~expr_loc
     | Sexp_function case_list ->
-        let ret = T.mk_pattern Pwild in
+        let spec_uast = svb.Uast.spvb_vspec in
         let param_id = T.mk_id "param" in
         let arg = T.dummy_loc, Some param_id, false, None in
         let param = mk_expr (Eident (Qident param_id)) ~expr_loc:T.dummy_loc in
         let reg_branch, exn_branch = case info case_list in
         let match_desc = mk_ematch param reg_branch exn_branch in
         let match_expr = mk_expr match_desc ~expr_loc in
+        let args, expr = subst_args_expr [arg] match_expr spec_uast in
         let spec = spec svb.Uast.spvb_vspec (* TODO *) in
-        let mask = Ity.MaskVisible in
-        let efun = (Efun ([arg], None, ret, mask, spec, match_expr)) in
+        let efun = mk_efun_visible args None spec expr in
         mk_expr efun ~expr_loc
     | _ -> expression info expr in
   let id = id_of_pat svb.spvb_pat in
