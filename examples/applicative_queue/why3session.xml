@@ -7,25 +7,25 @@
 <path name=".."/><path name="applicative_queue.ml"/>
 <theory name="Applicative_queue" proved="true">
  <goal name="t&#39;vc" expl="VC for t" proved="true">
- <proof prover="0"><result status="valid" time="0.05" steps="11571"/></proof>
+ <proof prover="0"><result status="valid" time="0.05" steps="11225"/></proof>
  </goal>
  <goal name="empty&#39;vc" expl="VC for empty" proved="true">
- <proof prover="0"><result status="valid" time="0.06" steps="13405"/></proof>
+ <proof prover="0"><result status="valid" time="0.06" steps="13053"/></proof>
  </goal>
  <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
- <proof prover="0"><result status="valid" time="0.22" steps="23959"/></proof>
+ <proof prover="0"><result status="valid" time="0.22" steps="23545"/></proof>
  </goal>
  <goal name="add&#39;vc" expl="VC for add" proved="true">
- <proof prover="0"><result status="valid" time="0.39" steps="28580"/></proof>
+ <proof prover="0"><result status="valid" time="0.13" steps="28166"/></proof>
  </goal>
  <goal name="head&#39;vc" expl="VC for head" proved="true">
- <proof prover="0"><result status="valid" time="0.42" steps="30616"/></proof>
+ <proof prover="0"><result status="valid" time="0.17" steps="30202"/></proof>
  </goal>
  <goal name="tail_list&#39;vc" expl="VC for tail_list" proved="true">
- <proof prover="0"><result status="valid" time="0.13" steps="15628"/></proof>
+ <proof prover="0"><result status="valid" time="0.13" steps="15214"/></proof>
  </goal>
  <goal name="tail&#39;vc" expl="VC for tail" proved="true">
- <proof prover="0"><result status="valid" time="0.29" steps="23668"/></proof>
+ <proof prover="0"><result status="valid" time="0.11" steps="23254"/></proof>
  </goal>
 </theory>
 </file>
