@@ -343,10 +343,6 @@ let binder_of_pattern =
         let pat_loc = T.location ppat_loc in
         let id = T.(mk_id id_str ~id_loc:pat_loc) in
         let b = binder id ppat_loc ppat_attributes None in
-        (* let field_str = Longident.last id_qualid.txt in
-         * let pattern = inner_pattern info pat in
-         * let id_field = T.mk_id ~id_loc:(T.location id_qualid.loc) field_str
-           in *)
         let id_pat_list = List.map mk_id_pat id_pat_list in
         b, mk_binder_info pat_loc (BRecord (id, id_pat_list))
     | Ppat_array _ ->
@@ -587,9 +583,9 @@ and let_match info expr svb = match svb.Uast.spvb_pat.O.ppat_desc with
 
 and special_binder expr {binder_info_desc; binder_info_loc = loc} =
   let mk_let_pat binder_expr (id_field, id_pat) e_rhs =
-    let e_app = Eidapp (Qident id_pat, [binder_expr]) in
+    let e_app = Eidapp (Qident id_field, [binder_expr]) in
     let e_lhs = mk_expr ~expr_loc:id_field.id_loc e_app in
-    let e_let = mk_elet_none id_field false e_lhs e_rhs in
+    let e_let = mk_elet_none id_pat false e_lhs e_rhs in
     mk_expr ~expr_loc:expr.expr_loc e_let in
   match binder_info_desc with
   | BNone -> expr
