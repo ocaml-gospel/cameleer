@@ -261,6 +261,28 @@ and exception_name_of_pattern info O.{ppat_desc; _} = match ppat_desc with
       longident id.txt ~id_loc, Opt.map (inner_pattern info) pat
   | _ -> assert false (* TODO ?*)
 
+let rec id_of_pat O.{ppat_desc; _} = match ppat_desc with
+  | Ppat_var {txt; loc} ->
+      T.(mk_id ~id_loc:(location loc) txt)
+  | Ppat_any -> assert false (* TODO *)
+  | Ppat_alias _ -> assert false (* TODO *)
+  | Ppat_constant _ -> assert false (* TODO *)
+  | Ppat_interval _ -> assert false (* TODO *)
+  | Ppat_tuple _ -> assert false (* TODO *)
+  | Ppat_construct _ -> assert false (* TODO *)
+  | Ppat_variant _ -> assert false (* TODO *)
+  | Ppat_record _ -> assert false (* TODO *)
+  | Ppat_array _ -> assert false (* TODO *)
+  | Ppat_or _ -> assert false (* TODO *)
+  | Ppat_constraint (pat, _) ->
+      id_of_pat pat
+  | Ppat_type _ -> assert false (* TODO *)
+  | Ppat_lazy _ -> assert false (* TODO *)
+  | Ppat_unpack _ -> assert false (* TODO *)
+  | Ppat_exception _ -> assert false (* TODO *)
+  | Ppat_extension _ -> assert false (* TODO *)
+  | Ppat_open _ -> assert false (* TODO *)
+
 type binder_info = {
   binder_info_loc  : Loc.position;
   binder_info_desc : binder_info_desc;
@@ -268,7 +290,7 @@ type binder_info = {
 
 and binder_info_desc =
   | BTuple of ident * pattern list
-  | BRecord of ident * (ident * pattern) list
+  | BRecord of ident * (ident * ident) list
   | BNone
 
 let mk_binder_info binder_info_loc binder_info_desc =
@@ -284,9 +306,9 @@ let binder_of_pattern =
       mk_binder (T.location pat_loc) (Some id) (is_ghost ghost_pat) pty in
     let mk_id_pat (id, pat) =
       let field_str = Longident.last id.txt in
-      let pattern = inner_pattern info pat in
       let id_field = T.mk_id ~id_loc:(T.location id.loc) field_str in
-      (id_field, pattern) in
+      let id_pat = id_of_pat pat in
+      (id_field, id_pat) in
     match ppat_desc with
     | Ppat_any ->
         let id = T.(mk_id "us" ~id_loc:(location ppat_loc)) in
@@ -349,28 +371,6 @@ let binder_of_pattern =
         assert false (* TODO *)
     | Ppat_open _ ->
         assert false (* TODO *)
-
-let rec id_of_pat O.{ppat_desc; _} = match ppat_desc with
-  | Ppat_var {txt; loc} ->
-      T.(mk_id ~id_loc:(location loc) txt)
-  | Ppat_any -> assert false (* TODO *)
-  | Ppat_alias _ -> assert false (* TODO *)
-  | Ppat_constant _ -> assert false (* TODO *)
-  | Ppat_interval _ -> assert false (* TODO *)
-  | Ppat_tuple _ -> assert false (* TODO *)
-  | Ppat_construct _ -> assert false (* TODO *)
-  | Ppat_variant _ -> assert false (* TODO *)
-  | Ppat_record _ -> assert false (* TODO *)
-  | Ppat_array _ -> assert false (* TODO *)
-  | Ppat_or _ -> assert false (* TODO *)
-  | Ppat_constraint (pat, _) ->
-      id_of_pat pat
-  | Ppat_type _ -> assert false (* TODO *)
-  | Ppat_lazy _ -> assert false (* TODO *)
-  | Ppat_unpack _ -> assert false (* TODO *)
-  | Ppat_exception _ -> assert false (* TODO *)
-  | Ppat_extension _ -> assert false (* TODO *)
-  | Ppat_open _ -> assert false (* TODO *)
 
 let check_guard = function
   | Some e ->
@@ -586,18 +586,11 @@ and let_match info expr svb = match svb.Uast.spvb_pat.O.ppat_desc with
       mk_elet_none id (is_ghost_svb svb) svb_expr expr
 
 and special_binder expr {binder_info_desc; binder_info_loc = loc} =
-  let expr_of_pat {pat_desc; _} = match pat_desc with
-    | Pvar x -> x
-    | _ -> assert false (* TODO *) in
-  let rec mk_let_pat binder_expr expr = function
-    | [] -> expr
-    | (id_field, pat) :: r ->
-        let e_pat = expr_of_pat pat in
-        let expr_loc = pat.pat_loc in
-        let e_rhs = mk_let_pat binder_expr expr r in
-        let e_lhs = mk_expr ~expr_loc (Eidapp (Qident e_pat, [binder_expr])) in
-        let e_let = mk_elet_none id_field false e_lhs e_rhs in
-        mk_expr ~expr_loc:expr.expr_loc e_let in
+  let mk_let_pat binder_expr (id_field, id_pat) e_rhs =
+    let e_app = Eidapp (Qident id_pat, [binder_expr]) in
+    let e_lhs = mk_expr ~expr_loc:id_field.id_loc e_app in
+    let e_let = mk_elet_none id_field false e_lhs e_rhs in
+    mk_expr ~expr_loc:expr.expr_loc e_let in
   match binder_info_desc with
   | BNone -> expr
   | BTuple (id, pat_list) -> let e_id = Eident (Qident id) in
@@ -608,7 +601,7 @@ and special_binder expr {binder_info_desc; binder_info_loc = loc} =
       mk_expr ~expr_loc expr_desc
   | BRecord (id, id_pat_list) ->
       let binder_expr = mk_expr ~expr_loc:id.id_loc (Eident (Qident id)) in
-      mk_let_pat binder_expr expr id_pat_list
+      List.fold_right (mk_let_pat binder_expr) id_pat_list expr
 
 and case info pat_list =
   let mk_case (acc_reg, acc_exn) Uast.{spc_lhs; spc_guard; spc_rhs} =
