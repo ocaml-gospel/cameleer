@@ -5,8 +5,8 @@ module OCamlStdLib
   use export int.MinMax
   use export int.Abs
   use export list.List
-  use export list.Length
-  use export list.Append
+  use export list.Length (* TO REMOVE *)
+  use export list.Append (* TO REMOVE *)
   use export ocaml.Exceptions
   use export option.Option
   use export ref.Ref

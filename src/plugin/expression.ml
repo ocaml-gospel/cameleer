@@ -819,9 +819,16 @@ and s_value_binding info svb =
     | _ -> assert false in
     let e_lhs = mk_expr ~expr_loc:(id_spec.id_loc) (Eident (Qident id_spec)) in
     mk_expr ~expr_loc:(expr.expr_loc) (mk_elet_none id_code false e_lhs expr) in
+  let rec args_pos = function
+    | [] -> T.dummy_loc
+    | [(l, _, _, _)] -> l
+    | (l, _, _, _) :: r -> Loc.join l (args_pos r) in
   let subst_args_expr args expr = function
     | None -> args, expr
     | Some {sp_hd_args; _} -> let spec_args = List.map mk_arg sp_hd_args in
+        if List.length args <> List.length spec_args then
+          Loc.errorm ~loc:(args_pos spec_args)
+            "The number of arguments in spec and in the code do not match.";
         spec_args, List.fold_right2 pair_args spec_args args expr in
   let rec loop acc expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
