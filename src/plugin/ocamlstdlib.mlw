@@ -3,6 +3,7 @@ module OCamlStdLib
   use export int.Int
   use export int.ComputerDivision
   use export int.MinMax
+  use export int.Abs
   use export list.List
   use export list.Length
   use export list.Append

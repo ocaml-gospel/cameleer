@@ -389,8 +389,177 @@ let exception_constructor exn_construct =
     | _ -> assert false (* TODO? *) in
   id_exn, pty, Ity.MaskVisible (* TODO: account for a different mask *)
 
-let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
-  let expr_loc = T.location spexp_loc in
+let rec term info Uast.{spexp_desc = p_desc; spexp_loc; _} =
+  let term_loc = T.location spexp_loc in
+  let mk_term e = T.mk_term ~term_loc e in
+  let term_expr (_, expr) = term info expr in
+  let is_false = function
+    | Uast.Sexp_construct ({txt = Lident "false"; _}, None) -> true
+    | _ -> false in
+  let is_and = function
+    | Uast.Sexp_ident {txt = Lident "&&"; _} -> true
+    | _ -> false in
+  let is_or = function
+    | Uast.Sexp_ident {txt = Lident "||"; _} -> true
+    | _ -> false in
+  let is_not = function
+    | Uast.Sexp_ident {txt = Lident "not"; _} -> true
+    | _ -> false in
+  let is_raise = function
+    | Uast.Sexp_ident {txt = Lident "raise"; _} -> true
+    | _ -> false in
+  let pexp_desc = function
+    | Uast.Sexp_ident {txt;loc} ->
+        Tident (longident ~id_loc:(T.location loc) txt)
+    | Uast.Sexp_constant c ->
+        Tconst (T.constant c)
+    | Uast.Sexp_let (Nonrecursive, [svb], expr) ->
+        ignore ([svb]);
+        ignore (expr);
+        assert false (* TODO *)
+    | Uast.Sexp_let (Recursive, svb_list, expr) ->
+        ignore (svb_list);
+        ignore (expr);
+        assert false (* TODO *)
+    | Sexp_let _ ->
+        assert false (* TODO *)
+    | Uast.Sexp_function _ ->
+        assert false (* TODO *)
+    | Uast.Sexp_fun (Nolabel, None, pat, expr_fun, _) ->
+        let binder, binder_info = binder_of_pattern info pat in
+        ignore (binder_info); (* TODO *)
+        Tquant (Why3.Dterm.DTlambda, [binder], [], term info expr_fun)
+    | Sexp_fun _ ->
+        assert false (* TODO *)
+    | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
+        ignore (s);
+        ignore (arg1);
+        ignore (arg2);
+        assert false (* TODO *)
+    | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
+        ignore (arg1);
+        ignore (arg2);
+        assert false (* TODO *)
+    | Uast.Sexp_apply (s, [arg]) when is_not s.spexp_desc ->
+        ignore (arg);
+        assert false (* TODO *)
+    | Uast.Sexp_apply (s, [_, arg]) when is_raise s.spexp_desc ->
+        ignore (arg);
+        assert false (* TODO *)
+    | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
+        let id_loc = T.location s.loc in
+        Tidapp (longident ~id_loc s.txt, List.map term_expr arg_expr_list)
+    | Uast.Sexp_apply (expr, arg_expr_list) ->
+        let mk_app acc (_, e) = mk_term (Tapply (acc, term info e)) in
+        let e_acc = term info expr in
+        (List.fold_left mk_app e_acc arg_expr_list).term_desc (* :O *)
+    | Uast.Sexp_match (expr, case_list) ->
+        ignore (expr);
+        ignore (case_list);
+        assert false (* TODO *)
+    | Uast.Sexp_try (expr, case_list) ->
+        ignore (expr);
+        ignore (case_list);
+        assert false (* TODO *)
+    | Uast.Sexp_tuple expr_list ->
+        ignore (expr_list);
+        assert false (* TODO *)
+    | Uast.Sexp_sequence (e1, e2) ->
+        ignore (e1);
+        ignore (e2);
+        assert false (* TODO *)
+    | Uast.Sexp_constraint (e, cty) ->
+        ignore (e);
+        ignore (cty);
+        assert false (* TODO *)
+    | Uast.Sexp_construct ({txt = Lident "true"; _}, None) ->
+        Ttrue
+    | Uast.Sexp_construct ({txt = Lident "false"; _}, None) ->
+        Tfalse
+    | Uast.Sexp_construct ({txt = Lident "()"; _}, None) ->
+        assert false (* TODO *)
+    | Uast.Sexp_construct (id, None) ->
+        ignore (id);
+        assert false (* TODO *)
+    | Uast.Sexp_construct (id, Some {spexp_desc = Sexp_tuple expr_list; _}) ->
+        ignore (id);
+        ignore (expr_list);
+        assert false (* TODO *)
+    | Uast.Sexp_construct (id, Some e) ->
+        ignore (id);
+        ignore (e);
+        assert false (* TODO *)
+    | Uast.Sexp_record (field_list, e) ->
+        ignore (field_list);
+        ignore (e);
+        assert false (* TODO *)
+    | Uast.Sexp_field (expr, field) ->
+        Tidapp (longident field.txt, [term info expr])
+    | Uast.Sexp_ifthenelse (e1, e2, e3) ->
+        let term3 = term info (Opt.get e3) in
+        Tif (term info e1, term info e2, term3)
+    | Uast.Sexp_assert {spexp_desc; _} when is_false spexp_desc ->
+        assert false (* TODO *)
+    | Sexp_variant _ ->
+        assert false (* TODO *)
+    | Sexp_setfield (lvalue, l, rvalue) ->
+        ignore (lvalue);
+        ignore (l);
+        ignore (rvalue);
+        assert false (* TODO *)
+    | Sexp_array expr_list ->
+        ignore (expr_list);
+        assert false (* TODO *)
+    | Sexp_while (e_test, e_body, loop_annotation) ->
+        ignore (e_test);
+        ignore (e_body);
+        ignore (loop_annotation);
+        assert false (* TODO *)
+    | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, loop_annot) ->
+        ignore (pat);
+        ignore (expr_lower);
+        ignore (expr_upper);
+        ignore (flag);
+        ignore (expr_body);
+        ignore (loop_annot);
+        assert false (* TODO *)
+    | Sexp_letexception (exn_constructor, expr) ->
+        ignore (exn_constructor);
+        ignore (expr);
+        assert false (* TODO *)
+    | Sexp_coerce _ ->
+        assert false (* TODO *)
+    | Sexp_send _ ->
+        assert false (* TODO *)
+    | Sexp_new _ ->
+        assert false (* TODO *)
+    | Sexp_setinstvar _ ->
+        assert false (* TODO *)
+    | Sexp_override _ ->
+        assert false (* TODO *)
+    | Sexp_letmodule _ ->
+        assert false (* TODO *)
+    | Sexp_assert _ ->
+        assert false (* TODO *)
+    | Sexp_lazy _ ->
+        assert false (* TODO *)
+    | Sexp_poly _ ->
+        assert false (* TODO *)
+    | Sexp_object _ ->
+        assert false (* TODO *)
+    | Sexp_newtype _ ->
+        assert false (* TODO *)
+    | Sexp_pack _ ->
+        assert false (* TODO *)
+    | Sexp_open _ ->
+        assert false (* TODO *)
+    | Sexp_extension _ ->
+        assert false (* TODO *)
+    | Sexp_unreachable ->
+        assert false (* TODO *) in
+  mk_term (pexp_desc p_desc)
+
+let rec expression_desc info expr_loc expr_desc =
   let mk_expr e = mk_expr ~expr_loc e in
   let arg_expr (_, expr) = expression info expr in
   let logic_attr = "logic" and lemma_attr = "lemma" in
@@ -422,7 +591,7 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let is_raise = function
     | Uast.Sexp_ident {txt = Lident "raise"; _} -> true
     | _ -> false in
-  let pexp_desc = function
+  match expr_desc with
     | Uast.Sexp_ident {txt;loc} ->
         Eident (longident ~id_loc:(T.location loc) txt)
     | Uast.Sexp_constant c ->
@@ -453,8 +622,10 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
         let id_loc = T.location s.loc in
         mk_eidapp (longident ~id_loc s.txt) (List.map arg_expr arg_expr_list)
-    | Uast.Sexp_apply _ ->
-        assert false (* TODO *)
+    | Uast.Sexp_apply (expr, arg_expr_list) ->
+        let mk_app acc (_, e) = mk_expr (Eapply (acc, expression info e)) in
+        let e_acc = expression info expr in
+        (List.fold_left mk_app e_acc arg_expr_list).expr_desc (* :O *)
     | Uast.Sexp_match (expr, case_list) ->
         let reg_branch, exn_branch = case info case_list in
         mk_ematch (expression info expr) reg_branch exn_branch
@@ -546,8 +717,14 @@ let rec expression info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Sexp_extension _ ->
         assert false (* TODO *)
     | Sexp_unreachable ->
-        assert false (* TODO *) in
-  mk_expr (pexp_desc p_desc)
+        assert false (* TODO *)
+
+and expression info Uast.({spexp_desc; spexp_attributes; _} as e) =
+  let expr_loc = T.location e.spexp_loc in
+  let is_pure O.{attr_name; _} = attr_name.txt = "pure" in
+  let is_pure = List.exists is_pure in
+  if is_pure spexp_attributes then mk_expr (Epure (term info e))
+  else mk_expr (expression_desc info expr_loc spexp_desc)
 
 and mk_array info expr_list =
   let c = ref 0 in
