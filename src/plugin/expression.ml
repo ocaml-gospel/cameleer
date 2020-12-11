@@ -723,8 +723,8 @@ and expression info Uast.({spexp_desc; spexp_attributes; _} as e) =
   let expr_loc = T.location e.spexp_loc in
   let is_pure O.{attr_name; _} = attr_name.txt = "pure" in
   let is_pure = List.exists is_pure in
-  if is_pure spexp_attributes then mk_expr (Epure (term info e))
-  else mk_expr (expression_desc info expr_loc spexp_desc)
+  if is_pure spexp_attributes then mk_expr ~expr_loc (Epure (term info e))
+  else mk_expr ~expr_loc (expression_desc info expr_loc spexp_desc)
 
 and mk_array info expr_list =
   let c = ref 0 in
