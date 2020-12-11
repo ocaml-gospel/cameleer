@@ -17,7 +17,7 @@ type uf = {
           rank: int array;
   mutable rep : (int -> int) [@ghost];
   mutable dst : (int -> int) [@ghost];
-  mutable maxd: int       [@ghost];
+  mutable maxd: int          [@ghost];
 } (*@ invariant 0 <= maxd *)
   (*@ invariant length rank = length link *)
   (*@ invariant forall i. mem i link -> 0 <= link.(i) < length link *)
