@@ -43,22 +43,7 @@
   <proof prover="2"><result status="valid" time="0.08" steps="14273"/></proof>
   </goal>
   <goal name="find&#39;vc.5" expl="precondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="find&#39;vc.5.0" expl="precondition" proved="true">
-   <transf name="instantiate" proved="true" arg1="uf&#39;invariant" arg2="uf">
-    <goal name="find&#39;vc.5.0.0" expl="precondition" proved="true">
-    <transf name="destruct_rec" proved="true" arg1="Hinst">
-     <goal name="find&#39;vc.5.0.0.0" expl="precondition" proved="true">
-     <proof prover="2"><result status="valid" time="0.09" steps="14187"/></proof>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="find&#39;vc.5.1" expl="precondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.09" steps="13621"/></proof>
-   </goal>
-  </transf>
+  <proof prover="2"><result status="valid" time="0.06" steps="13778"/></proof>
   </goal>
   <goal name="find&#39;vc.6" expl="precondition" proved="true">
   <proof prover="2"><result status="valid" time="0.06" steps="12187"/></proof>
@@ -125,42 +110,7 @@
   <proof prover="2"><result status="valid" time="0.08" steps="16146"/></proof>
   </goal>
   <goal name="union&#39;vc.7" expl="type invariant" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="union&#39;vc.7.0" expl="type invariant" proved="true">
-   <transf name="case" proved="true" arg1="(i = rep_j)">
-    <goal name="union&#39;vc.7.0.0" expl="true case (type invariant)" proved="true">
-    <proof prover="0"><result status="valid" time="0.04" steps="64"/></proof>
-    </goal>
-    <goal name="union&#39;vc.7.0.1" expl="false case (type invariant)" proved="true">
-    <transf name="assert" proved="true" arg1="(forall k. 0 &lt;= k &lt; length (link uf) -&gt; k &lt;&gt; rep_j -&gt; (link uf)[rep_j &lt;- rep_i][k] = (link uf)[k])">
-     <goal name="union&#39;vc.7.0.1.0" expl="asserted formula" proved="true">
-     <proof prover="0"><result status="valid" time="0.07" steps="208"/></proof>
-     </goal>
-     <goal name="union&#39;vc.7.0.1.1" expl="false case (type invariant)" proved="true">
-     <proof prover="0"><result status="valid" time="0.32" steps="500"/></proof>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="union&#39;vc.7.1" expl="type invariant" proved="true">
-   <transf name="case" proved="true" arg1="(i = rep_j)">
-    <goal name="union&#39;vc.7.1.0" expl="true case (type invariant)" proved="true">
-    <proof prover="0"><result status="valid" time="0.06" steps="64"/></proof>
-    </goal>
-    <goal name="union&#39;vc.7.1.1" expl="false case (type invariant)" proved="true">
-    <transf name="assert" proved="true" arg1="(forall k. 0 &lt;= k &lt; length (link uf) -&gt; k &lt;&gt; rep_j -&gt; (link uf)[rep_j &lt;- rep_i][k] = (link uf)[k])">
-     <goal name="union&#39;vc.7.1.1.0" expl="asserted formula" proved="true">
-     <proof prover="0"><result status="valid" time="0.07" steps="208"/></proof>
-     </goal>
-     <goal name="union&#39;vc.7.1.1.1" expl="false case (type invariant)" proved="true">
-     <proof prover="0"><result status="valid" time="0.33" steps="500"/></proof>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
-   </goal>
-  </transf>
+  <proof prover="0" timelimit="5"><result status="valid" time="0.30" steps="618"/></proof>
   </goal>
   <goal name="union&#39;vc.8" expl="type invariant" proved="true">
   <proof prover="2"><result status="valid" time="0.10" steps="33354"/></proof>
