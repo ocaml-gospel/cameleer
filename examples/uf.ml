@@ -42,8 +42,7 @@ let rec find i uf =
       ensures  uf.dst r >= uf.dst i *)
 
 (*@ predicate equiv (i j: int) (uf: uf) =
-      0 <= i < Array.length uf.link -> 0 <= j < Array.length uf.link ->
-      uf.rep i = uf.rep j *)
+      mem i uf.link -> mem j uf.link -> uf.rep i = uf.rep j *)
 
 let union i j uf =
   let rep_i = find i uf in
