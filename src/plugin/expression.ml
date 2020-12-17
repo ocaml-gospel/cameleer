@@ -809,9 +809,9 @@ and s_value_binding info svb =
   let pexp = svb.Uast.spvb_expr in
   let expr_loc = T.location svb.Uast.spvb_expr.spexp_loc in
   let spec = function None -> empty_spec | Some s -> S.vspec s in
-  let mk_arg = function
+  let mk_arg (_, _,_, pty) = function
     | Lnone {pid_loc; pid_str; _} -> let id_loc = T.location pid_loc in
-        mk_binder id_loc (Some (T.mk_id ~id_loc pid_str)) false None
+        mk_binder id_loc (Some (T.mk_id ~id_loc pid_str)) false pty
     | _ -> assert false (* TODO *) in
   let pair_args binder_spec binder_code expr =
     let id_spec, id_code = match binder_spec, binder_code with
@@ -819,16 +819,23 @@ and s_value_binding info svb =
     | _ -> assert false in
     let e_lhs = mk_expr ~expr_loc:(id_spec.id_loc) (Eident (Qident id_spec)) in
     mk_expr ~expr_loc:(expr.expr_loc) (mk_elet_none id_code false e_lhs expr) in
-  let rec args_pos = function
-    | [] -> T.dummy_loc
-    | [(l, _, _, _)] -> l
-    | (l, _, _, _) :: r -> Loc.join l (args_pos r) in
+  let rec args_pos = function (* TODO: remove *)
+    | [] -> T.dummy_loc (* FIXME *)
+    | [Lnone      {pid_loc; _}]
+    | [Lquestion  {pid_loc; _}]
+    | [Lnamed     {pid_loc; _}]
+    | [Lghost    ({pid_loc; _}, _)] -> T.location pid_loc
+    | Lnone       {pid_loc; _} :: r
+    | Lquestion   {pid_loc; _} :: r
+    | Lnamed      {pid_loc; _} :: r
+    | Lghost     ({pid_loc; _}, _) :: r ->
+        Loc.join (T.location pid_loc) (args_pos r) in
   let subst_args_expr args expr = function
     | None -> args, expr
-    | Some {sp_hd_args; _} -> let spec_args = List.map mk_arg sp_hd_args in
-        if List.length args <> List.length spec_args then
-          Loc.errorm ~loc:(args_pos spec_args)
-            "The number of arguments in spec and in the code do not match.";
+    | Some {sp_hd_args; _} -> if List.length args <> List.length sp_hd_args then
+        Loc.errorm ~loc:(args_pos sp_hd_args)
+          "The number of arguments in spec and in the code do not match.";
+        let spec_args = List.map2 mk_arg args sp_hd_args in
         spec_args, List.fold_right2 pair_args spec_args args expr in
   let rec loop acc expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
