@@ -848,6 +848,30 @@ and s_value_binding info svb =
   let mk_svb_expr expr = match expr.Uast.spexp_desc with
     | Sexp_fun _ ->
         (* TODO? Should we ignore the spec that comes with [Sexp_fun]? *)
+        (* regarding special binders: this poses a problem when the arguments
+           are ephemeral data strctures. For the following example
+           ```
+             let f (q: 'a t) =
+               let q = q in ...
+               while ... do
+                 invariant { (old q) ... }
+                 ...
+               done
+           ```
+           Why3 will complain the `old` tag in the invariant is never used. In
+           fact, `old` only refers to the arguments of the function, hence the
+           problem when introducing the `let..in` binders. One possible solution
+           is to introduce a custom `'Old` label to mark the function
+           effectively begins after the `let..in` list. This is as follows:
+           ```
+             let f (q: 'a t) =
+               let q = q in
+               label 'Old in ...
+               while ... do
+                 invariant { (q at 'Old) ... }
+                 ...
+               done
+           ```*)
         let spec_uast = svb.Uast.spvb_vspec in
         let args, expr = loop [] expr in
         let expr_loc = expr.expr_loc in
