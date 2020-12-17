@@ -127,7 +127,8 @@ let rec term Uast.{term_desc = t_desc; term_loc} =
     | Uast.Ttuple t_list       -> Ttuple  (List.map term t_list)
     | Uast.Trecord q_t_list    -> Trecord (List.map qualid_term q_t_list)
     | Uast.Tscope (q, t)       -> Tscope  (qualid q, term t)
-    | Uast.Told t              -> Tat     (term t, mk_id Dexpr.old_label)
+    | Uast.Told t              ->
+        Tat (term t, mk_id ~id_loc:term_loc Dexpr.old_label)
     | Uast.Tupdate (t, q_t_list) ->
         Tupdate (term t, List.map qualid_term q_t_list)
     | Uast.Tquant (q, bl, tt_list, t) ->
