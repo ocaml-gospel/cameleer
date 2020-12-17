@@ -299,6 +299,39 @@ module Make (E: PRE_ORD) : S with type elt = E.t
                      size h = size param - 1 &&
                      leftist_heap h *)
 
+  let delete_one eq x h =
+    let rec aux = function
+      | E -> false, E
+      | N(_, y, l, r) as h ->
+        if eq x y then true, merge l r
+        else (
+          if E.leq y x
+          then (
+            let found_left, l1 = aux l in
+            let found, r1 = if found_left then true, r else aux r in
+            if found
+            then true, _make_node y l1 r1
+            else false, h
+          )
+          else false, h
+        )
+    (*@ (b, r) = aux param
+          requires leftist_heap param
+          variant  param
+          ensures  leftist_heap r
+          ensures  forall z. z <> x -> occ z param = occ z r
+          ensures  b <-> mem x param
+          ensures  if mem x param then occ x param = occ x r + 1
+                   else occ x param = occ x r *)
+    in
+    snd (aux h)
+  (*@ r = delete_one eq x h
+        requires leftist_heap h
+        requires forall a b. a = b <-> eq a b
+        ensures  leftist_heap r
+        ensures  forall y. y <> x -> occ y r = occ y h
+        ensures  if mem x h then occ x h = occ x r + 1 else occ x h = occ x r *)
+
   let rec delete_all eq x = function
     | E -> E
     | N (_, y, l, r) as h ->
