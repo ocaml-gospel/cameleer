@@ -12,6 +12,20 @@ module OCamlStdLib
   use export ref.Ref
   use export ref.Refint
 
+  let invalid_arg (s: string)
+    raises { Invalid_argument }
+  = raise (Invalid_argument s)
+
+  val ignore (_: 'a) : unit
+
+  let function fst (x: ('a, 'b)) : 'a =
+    let r, _ = x in r
+
+  let function snd (x: ('a, 'b)) : 'b =
+    let _, r = x in r
+
+  type result 'a 'b = Ok 'a | Error 'b
+
   use import array.Array as A
 
   type array 'a = A.array 'a
@@ -54,10 +68,6 @@ module OCamlStdLib
     axiom non_neg_max_array_length : 0 < max_array_length
 
   end
-
-  let invalid_arg (s: string)
-    raises { Invalid_argument }
-  = raise (Invalid_argument s)
 
   scope List
 
