@@ -57,7 +57,7 @@ let pop q =
       ensures x :: q.view = (old q).view *)
 
 let transfer q1 q2 =
-  let [@ghost] todo_view = ref [] in
+  let [@ghost] done_view = ref [] in
   while not (is_empty q1) do
     (*@ variant   List.length q1.view *)
     (*@ invariant q1.size = List.length q1.view /\
@@ -66,9 +66,9 @@ let transfer q1 q2 =
                   (q2.front = [] -> q2.rear = []) *)
     (*@ invariant q1.view = q1.front @ List.rev q1.rear /\
                   q2.view = q2.front @ List.rev q2.rear *)
-    (*@ invariant old q1.view = !todo_view @ q1.view *)
-    (*@ invariant q2.view = (old q2.view) @ !todo_view *)
-    todo_view := !todo_view @ [head_list q1.view];
+    (*@ invariant old q1.view = !done_view @ q1.view *)
+    (*@ invariant q2.view = (old q2.view) @ !done_view *)
+    done_view := !done_view @ [head_list q1.view];
     push (pop q1) q2
   done
 (*@ transfer q1 q2
