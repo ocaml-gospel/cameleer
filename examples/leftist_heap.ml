@@ -252,7 +252,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         ensures  forall y. x <> y -> occ y new_h = occ y h *)
 
   let add h x = insert x h
-  (*@ new_h = insert x h
+  (*@ new_h = add h x
         requires leftist_heap h
         ensures  leftist_heap new_h *)
 
