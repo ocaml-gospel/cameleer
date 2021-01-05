@@ -14,7 +14,7 @@ let [@logic] rec eval_0 = function
 (*@ eval_0 e
       variant e *)
 
-let [@logic] interpret_0 p = eval_0 p
+let interpret_0 p = eval_0 p
 
 module Stack = struct
   type opcode = OPush of int | OSub | OAdd | OMul
