@@ -21,29 +21,23 @@ module Stack = struct
     scode  : program;
   }
 
-  exception Error
+  type result = Error | Res of stack
 
-  (*@ predicate will_typed (stack: stack) (o: opcode) = match o with
-        | OSub -> (match stack with [] | _ :: [] -> true | _ -> false)
-        | _ -> true *)
+  (* @ function step (s: stack) (o: opcode) : stack *)
+  (* @ axiom step_push: forall x s. step s (OPush x) = x :: s *)
+  (* @ axiom step_sub : forall x y s. step (x :: y :: s) OSub = (x - y) :: s *)
 
-  (*@ function step (s: stack) (o: opcode) : stack *)
-  (*@ axiom step_push: forall x s. step s (OPush x) = x :: s *)
-  (*@ axiom step_sub : forall x y s. step (x :: y :: s) OSub = (x - y) :: s *)
-
-  let step stack = function
-    | OPush x -> x :: stack
+  let [@logic] step stack = function
+    | OPush x -> Res (x :: stack)
     | OSub -> match stack with
-      | x :: y :: r -> (x - y) :: r
-      | _ -> raise Error
-  (*@ r = step stack o
-        raises  Error -> will_typed stack o
-        ensures r = step stack o *)
+      | x :: y :: r -> Res ((x - y) :: r)
+      | _ -> Error
 
-  (*@ function star (s: stack) (p: program) : stack = match p with
-        | [] -> s
-        | o :: r -> let sr = step s o in
-            star sr r *)
+  let [@logic] rec star (s: stack) = function
+    | [] -> Res s
+    | o :: r -> match step s o with
+      | Res sr -> star sr r
+      | Error -> Error
 
   (* @ lemma star_append: forall p1 p2 s1 s2.
         let s' = star s1 p1 in
@@ -59,22 +53,11 @@ module Stack = struct
         | [] | [_] -> assert false
         | x :: y :: sr -> star_append r p2 ((x - y) :: sr) s2 s
   (*@ star_append p1 p2 s1 s2 s
-        requires s = star s1 p1
+        requires Res s = star s1 p1
         variant  p1
         ensures  star (s1 @ s2) (p1 @ p2) = star (s @ s2) p2 *)
 
-  let rec star stack = function
-    | [] -> stack
-    | o :: r -> let s = step stack o in
-        star s r
-  (*@ r = star stack p
-        variant p
-        raises  Error
-        ensures r = star stack p *)
-
   let prog p = star [] p
-  (*@ prog p
-        raises Error *)
 
 end
 
@@ -85,7 +68,7 @@ module Compile = struct
     | Sub (e1, e2) -> compile e2 @ compile e1 @ [OSub]
   (*@ r = compile e
         variant e
-        ensures star [] r = (eval_0 e) :: [] *)
+        ensures star [] r = Res ((eval_0 e) :: []) *)
 end
 
 let rec eval_1 e k =
