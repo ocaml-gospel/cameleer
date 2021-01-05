@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
+<path name=".."/><path name="semantics.ml"/>
+<theory name="Semantics">
+ <goal name="eval_0&#39;vc" expl="VC for eval_0" proved="true">
+ <proof prover="0"><result status="valid" time="0.09" steps="13391"/></proof>
+ </goal>
+ <goal name="Stack.step&#39;vc" expl="VC for step" proved="true">
+ <proof prover="0"><result status="valid" time="0.05" steps="15191"/></proof>
+ </goal>
+ <goal name="Stack.star_append&#39;vc" expl="VC for star_append">
+ <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="135885"/></proof>
+ <transf name="split_vc" >
+  <goal name="star_append&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="16938"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="17713"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.2" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="16947"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="17683"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.4" expl="postcondition">
+  <transf name="split_vc" >
+   <goal name="star_append&#39;vc.4.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="16182"/></proof>
+   </goal>
+   <goal name="star_append&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="21229"/></proof>
+   </goal>
+   <goal name="star_append&#39;vc.4.2" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="1.00" steps="453038"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00" steps="1473980"/></proof>
+   <proof prover="2"><result status="timeout" time="1.00"/></proof>
+   </goal>
+   <goal name="star_append&#39;vc.4.3" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="1.00" steps="421534"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00" steps="1575193"/></proof>
+   <proof prover="2"><result status="timeout" time="1.00"/></proof>
+   </goal>
+   <goal name="star_append&#39;vc.4.4" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.02" steps="197"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="Stack.star&#39;vc" expl="VC for star">
+ <proof prover="0" obsolete="true"><result status="valid" time="0.07" steps="19378"/></proof>
+ </goal>
+ <goal name="Compile.compile&#39;vc" expl="VC for compile">
+ <transf name="split_vc" >
+  <goal name="compile&#39;vc.0" expl="variant decrease">
+  <proof prover="0" obsolete="true"><result status="valid" time="0.06" steps="15230"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.1" expl="variant decrease">
+  <proof prover="0" obsolete="true"><result status="valid" time="0.06" steps="14968"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.2" expl="postcondition">
+  <transf name="split_vc" >
+   <goal name="compile&#39;vc.2.0" expl="postcondition">
+   <transf name="instantiate" arg1="star_append" arg2="result">
+    <goal name="compile&#39;vc.2.0.0" expl="postcondition">
+    <transf name="instantiate" arg1="Hinst" arg2="(result1 ++ Cons OSub (Nil: list opcode))">
+     <goal name="compile&#39;vc.2.0.0.0" expl="postcondition">
+     <transf name="instantiate" arg1="Hinst" arg2="(Nil: list int)">
+      <goal name="compile&#39;vc.2.0.0.0.0" expl="postcondition">
+      <transf name="instantiate" arg1="Hinst" arg2="(Nil: list int)">
+       <goal name="compile&#39;vc.2.0.0.0.0.0" expl="postcondition">
+       <proof prover="0" timelimit="5" obsolete="true"><result status="valid" time="3.17" steps="391310"/></proof>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="compile&#39;vc.2.1" expl="postcondition">
+   <transf name="instantiate" arg1="star_append" arg2="result">
+    <goal name="compile&#39;vc.2.1.0" expl="postcondition">
+    <transf name="instantiate" arg1="Hinst" arg2="(result1 ++ Cons OSub (Nil: list opcode))">
+     <goal name="compile&#39;vc.2.1.0.0" expl="postcondition">
+     <transf name="instantiate" arg1="Hinst" arg2="(Nil: list int)">
+      <goal name="compile&#39;vc.2.1.0.0.0" expl="postcondition">
+      <proof prover="0" obsolete="true"><result status="valid" time="0.07" steps="19329"/></proof>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="eval_1&#39;vc" expl="VC for eval_1">
+ <proof prover="1" obsolete="true"><result status="valid" time="0.04" steps="125816"/></proof>
+ </goal>
+ <goal name="interpret_1&#39;vc" expl="VC for interpret_1">
+ <proof prover="0" obsolete="true"><result status="valid" time="0.05" steps="15444"/></proof>
+ </goal>
+ <goal name="Stack.star_append">
+ <proof prover="0"><result status="timeout" time="1.00" steps="568783"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="3600055"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00"/></proof>
+ <transf name="split_vc" >
+  <goal name="star_append.0">
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
