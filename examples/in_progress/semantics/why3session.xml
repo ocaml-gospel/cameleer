@@ -8,53 +8,68 @@
 <path name=".."/><path name="semantics.ml"/>
 <theory name="Semantics" proved="true">
  <goal name="eval_0&#39;vc" expl="VC for eval_0" proved="true">
- <proof prover="0"><result status="valid" time="0.09" steps="25742"/></proof>
+ <proof prover="0"><result status="valid" time="0.31" steps="107829"/></proof>
  </goal>
  <goal name="Stack.star_append&#39;vc" expl="VC for star_append" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="star_append&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="18489"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="19480"/></proof>
   </goal>
   <goal name="star_append&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="19285"/></proof>
+  <proof prover="0"><result status="valid" time="0.08" steps="20219"/></proof>
   </goal>
   <goal name="star_append&#39;vc.2" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="15167"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="16085"/></proof>
   </goal>
   <goal name="star_append&#39;vc.3" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="16734"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="17741"/></proof>
   </goal>
   <goal name="star_append&#39;vc.4" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="18494"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="19445"/></proof>
   </goal>
   <goal name="star_append&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="19209"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="20125"/></proof>
   </goal>
   <goal name="star_append&#39;vc.6" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="15163"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="16085"/></proof>
   </goal>
   <goal name="star_append&#39;vc.7" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="16724"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="17741"/></proof>
   </goal>
   <goal name="star_append&#39;vc.8" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="18494"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="19445"/></proof>
   </goal>
   <goal name="star_append&#39;vc.9" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="19182"/></proof>
+  <proof prover="0"><result status="valid" time="0.09" steps="20098"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.10" expl="postcondition" proved="true">
+  <goal name="star_append&#39;vc.10" expl="unreachable point" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="16081"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.11" expl="unreachable point" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="17731"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.12" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="19445"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.13" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="20211"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.14" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
-   <goal name="star_append&#39;vc.10.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.07" steps="19118"/></proof>
+   <goal name="star_append&#39;vc.14.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="20109"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.10.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.09" steps="23375"/></proof>
+   <goal name="star_append&#39;vc.14.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="24397"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.10.2" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.04" steps="272"/></proof>
+   <goal name="star_append&#39;vc.14.2" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.04" steps="293"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.10.3" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.05" steps="272"/></proof>
+   <goal name="star_append&#39;vc.14.3" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.05" steps="293"/></proof>
+   </goal>
+   <goal name="star_append&#39;vc.14.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.66" steps="97283"/></proof>
    </goal>
   </transf>
   </goal>
@@ -63,81 +78,54 @@
  <goal name="Compile.compile&#39;vc" expl="VC for compile" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="compile&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="16485"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="17670"/></proof>
   </goal>
   <goal name="compile&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="16843"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="18044"/></proof>
   </goal>
   <goal name="compile&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="17296"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="18057"/></proof>
   </goal>
   <goal name="compile&#39;vc.3" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="17400"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="18161"/></proof>
   </goal>
   <goal name="compile&#39;vc.4" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="16456"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="17642"/></proof>
   </goal>
   <goal name="compile&#39;vc.5" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="16814"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="18016"/></proof>
   </goal>
-  <goal name="compile&#39;vc.6" expl="postcondition" proved="true">
+  <goal name="compile&#39;vc.6" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="18057"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="18161"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.8" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="17641"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.9" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="18010"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="18057"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="18161"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.12" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
-   <goal name="compile&#39;vc.6.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="20418"/></proof>
+   <goal name="compile&#39;vc.12.0" expl="postcondition" proved="true">
+   <proof prover="2" timelimit="5"><result status="valid" time="0.02" steps="87"/></proof>
    </goal>
-   <goal name="compile&#39;vc.6.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.36" steps="51962"/></proof>
+   <goal name="compile&#39;vc.12.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.36" steps="54536"/></proof>
    </goal>
-   <goal name="compile&#39;vc.6.2" expl="postcondition" proved="true">
-   <transf name="instantiate" proved="true" arg1="star_append" arg2="result">
-    <goal name="compile&#39;vc.6.2.0" expl="postcondition" proved="true">
-    <transf name="instantiate" proved="true" arg1="Hinst" arg2="(result1 ++ Cons OAdd (Nil: list opcode))">
-     <goal name="compile&#39;vc.6.2.0.0" expl="postcondition" proved="true">
-     <transf name="instantiate" proved="true" arg1="Hinst" arg2="(Nil: list int)">
-      <goal name="compile&#39;vc.6.2.0.0.0" expl="postcondition" proved="true">
-      <transf name="instantiate" proved="true" arg1="Hinst" arg2="(Nil: list int)">
-       <goal name="compile&#39;vc.6.2.0.0.0.0" expl="postcondition" proved="true">
-       <transf name="instantiate" proved="true" arg1="Hinst" arg2="(Cons (eval_0 x) (Nil: list int))">
-        <goal name="compile&#39;vc.6.2.0.0.0.0.0" expl="postcondition" proved="true">
-        <transf name="destruct_rec" proved="true" arg1="Hinst">
-         <goal name="compile&#39;vc.6.2.0.0.0.0.0.0" expl="destruct premise" proved="true">
-         <proof prover="0" timelimit="5"><result status="valid" time="0.05" steps="17823"/></proof>
-         </goal>
-         <goal name="compile&#39;vc.6.2.0.0.0.0.0.1" expl="postcondition" proved="true">
-         <proof prover="0" timelimit="50"><result status="valid" time="18.08" steps="1838357"/></proof>
-         <transf name="instantiate" proved="true" arg1="star_append" arg2="result1">
-          <goal name="compile&#39;vc.6.2.0.0.0.0.0.1.0" expl="postcondition" proved="true">
-          <transf name="instantiate" proved="true" arg1="Hinst" arg2="(Cons OAdd (Nil: list opcode))">
-           <goal name="compile&#39;vc.6.2.0.0.0.0.0.1.0.0" expl="postcondition" proved="true">
-           <transf name="instantiate" proved="true" arg1="Hinst" arg2="(Nil: list int)">
-            <goal name="compile&#39;vc.6.2.0.0.0.0.0.1.0.0.0" expl="postcondition" proved="true">
-            <transf name="instantiate" proved="true" arg1="Hinst" arg2="(Cons (eval_0 x) (Nil: list int))">
-             <goal name="compile&#39;vc.6.2.0.0.0.0.0.1.0.0.0.0" expl="postcondition" proved="true">
-             <transf name="instantiate" proved="true" arg1="Hinst" arg2="(Cons (eval_0 x1) (Nil: list int))">
-              <goal name="compile&#39;vc.6.2.0.0.0.0.0.1.0.0.0.0.0" expl="postcondition" proved="true">
-              <proof prover="2" timelimit="5"><result status="valid" time="0.06" steps="286"/></proof>
-              </goal>
-             </transf>
-             </goal>
-            </transf>
-            </goal>
-           </transf>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
-         </goal>
-        </transf>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
+   <goal name="compile&#39;vc.12.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.36" steps="54530"/></proof>
+   </goal>
+   <goal name="compile&#39;vc.12.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.15" steps="31310"/></proof>
    </goal>
   </transf>
   </goal>
@@ -146,34 +134,43 @@
  <goal name="eval_1&#39;vc" expl="VC for eval_1" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="eval_1&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="16553"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="17738"/></proof>
   </goal>
   <goal name="eval_1&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="16553"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="17738"/></proof>
   </goal>
   <goal name="eval_1&#39;vc.2" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="16524"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="17710"/></proof>
   </goal>
   <goal name="eval_1&#39;vc.3" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="16524"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="17710"/></proof>
   </goal>
-  <goal name="eval_1&#39;vc.4" expl="postcondition" proved="true">
+  <goal name="eval_1&#39;vc.4" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="17709"/></proof>
+  </goal>
+  <goal name="eval_1&#39;vc.5" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="17709"/></proof>
+  </goal>
+  <goal name="eval_1&#39;vc.6" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
-   <goal name="eval_1&#39;vc.4.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="15942"/></proof>
+   <goal name="eval_1&#39;vc.6.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="16860"/></proof>
    </goal>
-   <goal name="eval_1&#39;vc.4.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="17205"/></proof>
+   <goal name="eval_1&#39;vc.6.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="18196"/></proof>
    </goal>
-   <goal name="eval_1&#39;vc.4.2" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.07" steps="17184"/></proof>
+   <goal name="eval_1&#39;vc.6.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="18175"/></proof>
+   </goal>
+   <goal name="eval_1&#39;vc.6.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="18024"/></proof>
    </goal>
   </transf>
   </goal>
  </transf>
  </goal>
  <goal name="interpret_1&#39;vc" expl="VC for interpret_1" proved="true">
- <proof prover="0"><result status="valid" time="0.05" steps="16640"/></proof>
+ <proof prover="0"><result status="valid" time="0.05" steps="17558"/></proof>
  </goal>
 </theory>
 </file>
