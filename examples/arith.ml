@@ -78,6 +78,36 @@ module Stack = struct
   (*@ star_nil n st
         ensures star (VInt n :: []) [] st = Res (VInt n :: [], [], st) *)
 
+  let [@lemma] star_sub (c1: code) (c2: code) (st: store) (x1: int) (x2: int) =
+    ()
+  (*@ star_sub c1 c2 st x1 x2
+        requires star [] (c1 @ (c2 @ (OSub :: []))) st
+               = star (VInt x1 :: []) (c2 @ (OSub :: [])) st
+        requires star (VInt x1 :: []) (c2 @ (OSub :: [])) st
+               = star (VInt x2 :: (VInt x1 :: [])) (OSub :: []) st
+        ensures  star [] (c1 @ (c2 @ (OSub :: []))) st
+               = star (VInt (x2 - x1) :: []) [] st  *)
+
+  let [@lemma] star_add (c1: code) (c2: code) (st: store) (x1: int) (x2: int) =
+    ()
+  (*@ star_add c1 c2 st x1 x2
+        requires star [] (c1 @ (c2 @ (OAdd :: []))) st
+               = star (VInt x1 :: []) (c2 @ (OAdd :: [])) st
+        requires star (VInt x1 :: []) (c2 @ (OAdd :: [])) st
+               = star (VInt x2 :: (VInt x1 :: [])) (OAdd :: []) st
+        ensures  star [] (c1 @ (c2 @ (OAdd :: []))) st
+               = star (VInt (x2 + x1) :: []) [] st  *)
+
+  let [@lemma] star_mul (c1: code) (c2: code) (st: store) (x1: int) (x2: int) =
+    ()
+  (*@ star_add c1 c2 st x1 x2
+        requires star [] (c1 @ (c2 @ (OMul :: []))) st
+               = star (VInt x1 :: []) (c2 @ (OMul :: [])) st
+        requires star (VInt x1 :: []) (c2 @ (OMul :: [])) st
+               = star (VInt x2 :: (VInt x1 :: [])) (OMul :: []) st
+        ensures  star [] (c1 @ (c2 @ (OMul :: []))) st
+               = star (VInt (x2 * x1) :: []) [] st  *)
+
   let [@lemma] rec star_append (store: store)
       (p1: code) (p2: code) (s1: stack) (s2: stack) (s: state) =
     match p1 with
@@ -111,16 +141,6 @@ module Stack = struct
                  star (s1    @ s2) (p1   @ p2) store
                = star (stack @ s2) (code @ p2) store *)
 
-  let [@lemma] aux (c1: code) (c2: code) (st: store) (x1: int) (x2: int) =
-    ()
-  (*@ aux c1 c2 st x1 x2
-        requires star [] (c1 @ (c2 @ (OSub :: []))) st
-               = star (VInt x1 :: []) (c2 @ (OSub :: [])) st
-        requires star (VInt x1 :: []) (c2 @ (OSub :: [])) st
-               = star (VInt x2 :: (VInt x1 :: [])) (OSub :: []) st
-        ensures  star [] (c1 @ (c2 @ (OSub :: []))) st
-               = star (VInt (x2 - x1) :: []) [] st  *)
-
 end
 
 module Compile = struct
@@ -137,21 +157,29 @@ module Compile = struct
           ([Stack.VInt (eval_0 st e1)], [], st);
         (** TODO: implement support for intermediate assertions *)
         Stack.star_nil (eval_0 st e1 - eval_0 st e2) st;
-        Stack.aux a2 a1 st (eval_0 st e2) (eval_0 st e1);
+        Stack.star_sub a2 a1 st (eval_0 st e2) (eval_0 st e1);
         a2 @ a1 @ [OSub]
     | EAdd (e1, e2) ->
         let a2 = compile st e2 in
         let a1 = compile st e1 in
-        (* Stack.star_append st a2 (a1 @ [OAdd]) [] [] [VInt (eval_0 st e2)];
-         * Stack.star_append
-         *   st a1 [OAdd] [] [VInt (eval_0 st e2)] [VInt (eval_0 st e1)]; *)
+        Stack.star_append st a2 (a1 @ [OAdd]) [] []
+          ([Stack.VInt (eval_0 st e2)], [], st);
+        Stack.star_append st a1 [OAdd] [] [VInt (eval_0 st e2)]
+          ([Stack.VInt (eval_0 st e1)], [], st);
+        (** TODO: implement support for intermediate assertions *)
+        Stack.star_nil (eval_0 st e1 + eval_0 st e2) st;
+        Stack.star_add a2 a1 st (eval_0 st e2) (eval_0 st e1);
         a2 @ a1 @ [OAdd]
     | EMul (e1, e2) ->
         let a2 = compile st e2 in
         let a1 = compile st e1 in
-        (* Stack.star_append st a2 (a1 @ [OMul]) [] [] [VInt (eval_0 st e2)];
-         * Stack.star_append
-         *   st a1 [OMul] [] [VInt (eval_0 st e2)] [VInt (eval_0 st e1)]; *)
+        Stack.star_append st a2 (a1 @ [OMul]) [] []
+          ([Stack.VInt (eval_0 st e2)], [], st);
+        Stack.star_append st a1 [OMul] [] [VInt (eval_0 st e2)]
+          ([Stack.VInt (eval_0 st e1)], [], st);
+        (** TODO: implement support for intermediate assertions *)
+        Stack.star_nil (eval_0 st e1 * eval_0 st e2) st;
+        Stack.star_mul a2 a1 st (eval_0 st e2) (eval_0 st e1);
         a2 @ a1 @ [OMul]
     | EIf (ETrue, e1, e2) ->
         let a2 = compile st e2 in
