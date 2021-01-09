@@ -479,16 +479,13 @@ let rec term info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Uast.Sexp_construct ({txt = Lident "()"; _}, None) ->
         assert false (* TODO *)
     | Uast.Sexp_construct (id, None) ->
-        ignore (id);
-        assert false (* TODO *)
+        Tidapp (longident id.txt, [])
     | Uast.Sexp_construct (id, Some {spexp_desc = Sexp_tuple expr_list; _}) ->
-        ignore (id);
-        ignore (expr_list);
-        assert false (* TODO *)
+        let s = string_of_longident id.txt in
+        let args = construct_arith info s expr_list in
+        Tidapp (longident id.txt, args)
     | Uast.Sexp_construct (id, Some e) ->
-        ignore (id);
-        ignore (e);
-        assert false (* TODO *)
+        Tidapp (longident id.txt, [term info e])
     | Uast.Sexp_record (field_list, e) ->
         ignore (field_list);
         ignore (e);
@@ -558,6 +555,12 @@ let rec term info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Sexp_unreachable ->
         assert false (* TODO *) in
   mk_term (pexp_desc p_desc)
+
+and construct_arith info s term_list =
+  if Hashtbl.find info.Odecl.info_arith_construct s > 1 then
+    List.map (term info) term_list
+  else let ttuple = Ttuple (List.map (term info) term_list) in
+    [Uterm.mk_term ttuple]
 
 let rec expression_desc info expr_loc expr_desc =
   let mk_expr e = mk_expr ~expr_loc e in
@@ -662,6 +665,8 @@ let rec expression_desc info expr_loc expr_desc =
         mk_eif (expression info e1) (expression info e2) expr3
     | Uast.Sexp_assert {spexp_desc; _} when is_false spexp_desc ->
         Eabsurd
+    | Sexp_assert e ->
+        Eassert (Expr.Assert, term info e)
     | Sexp_fun _ ->
         assert false (* TODO *)
     | Sexp_variant _ ->
@@ -699,8 +704,6 @@ let rec expression_desc info expr_loc expr_desc =
     | Sexp_override _ ->
         assert false (* TODO *)
     | Sexp_letmodule _ ->
-        assert false (* TODO *)
-    | Sexp_assert _ ->
         assert false (* TODO *)
     | Sexp_lazy _ ->
         assert false (* TODO *)
