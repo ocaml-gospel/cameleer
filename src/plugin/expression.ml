@@ -391,6 +391,7 @@ let exception_constructor exn_construct =
 
 let rec term info Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let term_loc = T.location spexp_loc in
+  let arg_term (_, t) = term info t in
   let mk_term e = T.mk_term ~term_loc e in
   let term_expr (_, expr) = term info expr in
   let is_false = function
@@ -432,10 +433,7 @@ let rec term info Uast.{spexp_desc = p_desc; spexp_loc; _} =
     | Sexp_fun _ ->
         assert false (* TODO *)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
-        ignore (s);
-        ignore (arg1);
-        ignore (arg2);
-        assert false (* TODO *)
+        Tbinop (arg_term arg1, Why3.Dterm.DTand, arg_term arg2)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
         ignore (arg1);
         ignore (arg2);
