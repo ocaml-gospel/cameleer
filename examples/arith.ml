@@ -6,9 +6,11 @@ type expr =
   | EMul of expr * expr
   | EIf  of ebool * expr * expr
 and ebool =
-  | EAnd of ebool * ebool
   | ETrue
   | EFalse
+  | EAnd of ebool * ebool
+  | EEq  of expr  * expr
+  | ENeg of ebool
 
 type prog = expr
 
@@ -18,8 +20,12 @@ let [@logic] rec eval_b (st: store) = function
   | ETrue -> true
   | EFalse -> false
   | EAnd (b1, b2) -> eval_b st b1 && eval_b st b2
+  | ENeg b -> not (eval_b st b)
+  | EEq (a1, a2) -> eval_0 st a1 = eval_0 st a2
+(*@ eval_b st b
+      variant b *)
 
-let [@logic] rec eval_0 store = function
+and [@logic] eval_0 store = function
   | ECte n -> n
   | EVar x -> store x
   | ESub (e1, e2) -> eval_0 store e1 - eval_0 store e2
@@ -42,6 +48,8 @@ type opcode =
   | OAdd
   | OMul
   | OAnd
+  | ONeg
+  | OEq
 and code = opcode list
 
 type value = VInt of int | VBool of bool
@@ -61,6 +69,8 @@ let [@ghost] [@logic] rec opcode_size = function
   | OAdd -> 1
   | OMul -> 1
   | OAnd -> 1
+  | ONeg -> 1
+  | OEq -> 1
   | OBranch (c1, c2) -> 1 + code_size c1 + code_size c2
 and [@ghost] [@logic] code_size = function
   | [] -> 0
@@ -74,7 +84,9 @@ let [@lemma] rec opcode_size_nonneg = function
   | OSub
   | OAdd
   | OMul
-  | OAnd -> ()
+  | OAnd
+  | ONeg
+  | OEq -> ()
   | OBranch (c1, c2) -> code_size_nonneg c1; code_size_nonneg c2
 (*@ opcode_size_nonneg o
       ensures opcode_size o >= 0 *)
@@ -109,6 +121,12 @@ let [@logic] [@ghost] rec star (s: stack) (c: code) (st: store) : res =
       | _ -> Error)
   | OAnd      :: r -> (match s with
       | VBool x :: VBool y :: sr -> star (VBool (x && y) :: sr) r st
+      | _ -> Error)
+  | OEq       :: r -> (match s with
+      | VInt x :: VInt y :: sr -> star (VBool (x = y) :: sr) r st
+      | _ -> Error)
+  | ONeg      :: r -> (match s with
+      | VBool x :: sr -> star (VBool (not x) :: sr) r st
       | _ -> Error)
   | OBranch (p1, p2) :: r -> (match s with
       | VBool b :: sr -> let c = if b then p1 else p2 in
@@ -150,7 +168,7 @@ let [@ghost] star_add (c1: code) (c2: code) (st: store) (x1: int) (x2: int) =
 
 let [@ghost] star_mul (c1: code) (c2: code) (st: store) (x1: int) (x2: int) =
   ()
-(*@ star_add c1 c2 st x1 x2
+(*@ star_mul c1 c2 st x1 x2
       requires star [] (c1 @ (c2 @ (OMul :: []))) st
              = star (VInt x1 :: []) (c2 @ (OMul :: [])) st
       requires star (VInt x1 :: []) (c2 @ (OMul :: [])) st
@@ -167,6 +185,14 @@ let [@ghost] star_and (c1: code) (c2: code) (st: store) (x1: bool) (x2: bool) =
              = star (VBool x2 :: (VBool x1 :: [])) (OAnd :: []) st
       ensures  star [] (c1 @ (c2 @ (OAnd :: []))) st
              = star (VBool (x2 && x1) :: []) [] st  *)
+
+let [@ghost] star_neg (c: code) (st: store) (x: bool) =
+  ()
+(*@ star_sub c st x
+      requires star [] (c @ (ONeg :: [])) st
+             = star (VBool x :: []) (ONeg :: []) st
+      ensures  star [] (c @ (ONeg :: [])) st
+             = star (VBool (not x) :: []) [] st  *)
 
 let [@lemma] rec star_append (store: store)
     (p1: code) (p2: code) (s1: stack) (s2: stack) (s: state) =
@@ -192,6 +218,14 @@ let [@lemma] rec star_append (store: store)
       | VBool x :: VBool y :: sr ->
           star_append store r p2 (VBool (x && y) :: sr) s2 s
       | _ -> assert false end
+  | OEq      :: r -> begin match s1 with
+      | VInt x :: VInt y :: sr ->
+          star_append store r p2 (VBool (x = y) :: sr) s2 s
+      | _ -> assert false end
+  | ONeg     :: r -> begin match s1 with
+      | VBool x :: sr ->
+          star_append store r p2 (VBool (not x) :: sr) s2 s
+      | _ -> assert false end
   | OBranch (c1, c2) :: r -> begin match s1 with
       | VBool b :: sr ->
           if b then star_append store (c1 @ r) p2 sr s2 s
@@ -214,13 +248,21 @@ let rec compile_bool (st: store) = function
       star_append st a2 (a1 @ [OAnd]) [] [] ([VBool (eval_b st b2)], [], st);
       star_append st a1 [OAnd] [] [VBool (eval_b st b2)]
         ([VBool (eval_b st b1)], [], st);
-      (* assert (star ([VBool (eval_b st b1 && eval_b st b2)]) [] st
-       *        = Res ([VBool (eval_b st b1 && eval_b st b2)], [], st));
-       * assert (star [] (a2 @ (a1 @ ([OAnd]))) st
-       *       = star ([VBool (eval_b st b1 && eval_b st b2)]) [] st); *)
       star_nil_bool (eval_b st b1 && eval_b st b2) st;
-      star_and a2 a1 st (eval_b st b2) (eval_b st b1);
       a2 @ a1 @ [OAnd]
+  | EEq (e1, e2) ->
+      let a1 = compile st e1 in
+      let a2 = compile st e2 in
+      star_append st a2 (a1 @ [OEq]) [] [] ([VInt (eval_0 st e2)], [], st);
+      star_append st a1 [OEq] [] [VInt (eval_0 st e2)]
+        ([VInt (eval_0 st e1)], [], st);
+      star_nil_bool (eval_0 st e1 = eval_0 st e2) st;
+      a2 @ a1 @ [OEq]
+  | ENeg b ->
+      let a = compile_bool st b in
+      star_append st a [ONeg] [] [] ([VBool (eval_b st b)], [], st);
+      star_nil_bool (not (eval_b st b)) st;
+      a @ [ONeg]
 (*@ r = compile_bool st b
       variant b
       ensures match star [] r st with
@@ -229,7 +271,7 @@ let rec compile_bool (st: store) = function
                   stack = (VBool (eval_b st b)) :: [] && code = [] &&
                   st = store *)
 
-let rec compile (st [@ghost]) = function
+and compile (st [@ghost]) = function
   | ECte n -> [OPush n]
   | EVar n -> [OFetch n]
   | ESub (e1, e2) ->
@@ -241,8 +283,6 @@ let rec compile (st [@ghost]) = function
         ([VInt (eval_0 st e1)], [], st);
       assert (star ([VInt (eval_0 st e1 - eval_0 st e2)]) [] st
              = Res ([VInt (eval_0 st e1 - eval_0 st e2)], [], st));
-      assert (star [] (a2 @ (a1 @ ([OSub]))) st
-            = star ([VInt (eval_0 st e1 - eval_0 st e2)]) [] st);
       a2 @ a1 @ [OSub]
   | EAdd (e1, e2) ->
       let a2 = compile st e2 in
@@ -252,7 +292,6 @@ let rec compile (st [@ghost]) = function
       star_append st a1 [OAdd] [] [VInt (eval_0 st e2)]
         ([VInt (eval_0 st e1)], [], st);
       star_nil (eval_0 st e1 + eval_0 st e2) st;
-      star_add a2 a1 st (eval_0 st e2) (eval_0 st e1);
       a2 @ a1 @ [OAdd]
   | EMul (e1, e2) ->
       let a2 = compile st e2 in
