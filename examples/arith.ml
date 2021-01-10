@@ -52,6 +52,45 @@ type state = stack * code * store
 
 type res = Error | Res of state
 
+let [@ghost] [@logic] rec opcode_size = function
+  | OTrue -> 1
+  | OFalse -> 1
+  | OPush _ -> 1
+  | OFetch _ -> 1
+  | OSub -> 1
+  | OAdd -> 1
+  | OMul -> 1
+  | OAnd -> 1
+  | OBranch (c1, c2) -> 1 + code_size c1 + code_size c2
+and [@ghost] [@logic] code_size = function
+  | [] -> 0
+  | o :: r -> opcode_size o + code_size r
+
+let [@lemma] rec opcode_size_nonneg = function
+  | OTrue
+  | OFalse
+  | OPush _
+  | OFetch _
+  | OSub
+  | OAdd
+  | OMul
+  | OAnd -> ()
+  | OBranch (c1, c2) -> code_size_nonneg c1; code_size_nonneg c2
+(*@ opcode_size_nonneg o
+      ensures opcode_size o >= 0 *)
+and code_size_nonneg = function
+  | [] -> ()
+  | o :: r -> opcode_size_nonneg o; code_size_nonneg r
+(*@ code_size_nonneg p
+      ensures code_size p >= 0 *)
+
+let [@lemma] rec code_size_append (c1: code) (c2: code) =
+  match c1 with
+  | [] -> ()
+  | _ :: r -> code_size_append r c2
+(*@ code_size_append c1 c2
+      ensures code_size (c1 @ c2) = code_size c1 + code_size c2 *)
+
 let [@logic] [@ghost] rec star (s: stack) (c: code) (st: store) : res =
   match c with
   | []            -> Res (s, [], st)
@@ -72,11 +111,11 @@ let [@logic] [@ghost] rec star (s: stack) (c: code) (st: store) : res =
       | VBool x :: VBool y :: sr -> star (VBool (x && y) :: sr) r st
       | _ -> Error)
   | OBranch (p1, p2) :: r -> (match s with
-      | VBool b :: sr ->
-          if b then star sr (p1 @ r) st else star sr (p2 @ r) st
+      | VBool b :: sr -> let c = if b then p1 else p2 in
+          star sr (c @ r) st
       | _ -> Error)
 (*@ star s c st
-      variant List.length c *)
+      variant code_size c *)
 
 (** small hint lemmas *)
 let [@ghost] star_nil (n: int) (st: store) =
@@ -161,7 +200,7 @@ let [@lemma] rec star_append (store: store)
 (*@ star_append store p1 p2 s1 s2 res
       requires Res res = star s1 p1 store
       requires let _, _, st = res in st = store
-      variant  p1
+      variant  code_size p1
       ensures  let stack, code, store = res in
                star (s1    @ s2) (p1   @ p2) store
              = star (stack @ s2) (code @ p2) store *)
