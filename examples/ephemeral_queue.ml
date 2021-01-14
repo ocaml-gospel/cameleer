@@ -21,7 +21,7 @@ let [@logic] is_empty q = q.size = 0
 let push x q =
   if is_empty q then q.front <- [x] else q.rear <- x :: q.rear;
   q.size <- q.size + 1;
-  q.view <- q.view @ (x :: [])
+  q.view <- q.view @ [x]
 (*@ push x q
       ensures q.view = (old q.view) @ (x :: []) *)
 
@@ -57,18 +57,15 @@ let pop q =
       ensures x :: q.view = (old q).view *)
 
 let transfer q1 q2 =
-  let [@ghost] done_view = ref [] in
   while not (is_empty q1) do
     (*@ variant   List.length q1.view *)
-    (*@ invariant q1.size = List.length q1.view /\
+    (*@ invariant q1.size = List.length q1.view &&
                   q2.size = List.length q2.view *)
-    (*@ invariant (q1.front = [] -> q1.rear = []) /\
+    (*@ invariant (q1.front = [] -> q1.rear = []) &&
                   (q2.front = [] -> q2.rear = []) *)
-    (*@ invariant q1.view = q1.front @ List.rev q1.rear /\
+    (*@ invariant q1.view = q1.front @ List.rev q1.rear &&
                   q2.view = q2.front @ List.rev q2.rear *)
-    (*@ invariant old q1.view = !done_view @ q1.view *)
-    (*@ invariant q2.view = (old q2.view) @ !done_view *)
-    done_view := !done_view @ [head_list q1.view];
+    (*@ invariant q2.view @ q1.view = (old q2).view @ (old q1).view *)
     push (pop q1) q2
   done
 (*@ transfer q1 q2
