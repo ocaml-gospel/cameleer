@@ -7,6 +7,13 @@
 (*@ axiom gcd_uniq: forall a b d: int.
   0 <= d -> mod a d = 0 -> mod b d = 0 ->
   (forall x: int. mod a x = 0 -> mod b x = 0 -> mod d x = 0) -> d = gcd a b*)
+(*@ lemma gcd_sub: forall u v: int. 0 <= u <= v ->
+    gcd u (v-u) = gcd u v*)
+(*@ lemma gcd_sub2: forall u v: int. 0 <= v <= u ->
+    gcd (u-v) v = gcd u v*)
+(*lemma gcd_assoc: forall u v: int. gcd u v = gcd v u*)
+(*@ lemma gcd_computer_mod:
+    forall a b: int. (b > 0) -> gcd b (mod a b) = gcd a b*)
 
 (*@ predicate consistent (x:int) (y:int)=
       x>0 && y>0*)
@@ -18,6 +25,7 @@ let gcdd (x: int) (y:int): int=
   while not (!x0 = !y0) do
     (*@ variant !x0, !y0*)
     (*@ invariant consistent !x0 !y0*)
+    (*@ invariant gcd !x0 !y0 = gcd x y*)
     if !x0 < !y0 then y0 := !y0 - !x0 else x0 := !x0 - !y0
   done;
   !(x0)

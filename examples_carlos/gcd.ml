@@ -5,7 +5,7 @@ let gcdd (x: int) (y:int): int=
   let y0 = ref y in
   while not (!x0 = !y0) do
     (*@ variant !x0, !y0*)
-    (*@ invariant consistent x y*)
+    (*@ invariant consistent !x0 !y0*)
     if !x0 < !y0 then y0 := !y0 - !x0 else x0 := !x0 - !y0
   done;
   !(x0)
