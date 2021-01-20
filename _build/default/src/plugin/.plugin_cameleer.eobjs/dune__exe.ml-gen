@@ -1,0 +1,30 @@
+(** @canonical Dune__exe.Declaration *)
+module Declaration = Dune__exe__Declaration
+
+
+(** @canonical Dune__exe.Expression *)
+module Expression = Dune__exe__Expression
+
+
+(** @canonical Dune__exe.Mod_subst *)
+module Mod_subst = Dune__exe__Mod_subst
+
+
+(** @canonical Dune__exe.Odecl *)
+module Odecl = Dune__exe__Odecl
+
+
+(** @canonical Dune__exe.Plugin_cameleer *)
+module Plugin_cameleer = Dune__exe__Plugin_cameleer
+
+
+(** @canonical Dune__exe.Uterm *)
+module Uterm = Dune__exe__Uterm
+
+
+(** @canonical Dune__exe.Vspec *)
+module Vspec = Dune__exe__Vspec
+
+
+(** @canonical Dune__exe.Why3ocaml_driver *)
+module Why3ocaml_driver = Dune__exe__Why3ocaml_driver

@@ -1,0 +1,3 @@
+(lang dune 2.8)
+(name cameleer)
+(version 0.1)

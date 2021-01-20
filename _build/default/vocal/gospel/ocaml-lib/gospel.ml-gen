@@ -1,0 +1,146 @@
+(** @canonical Gospel.Arg_helper *)
+module Arg_helper = Gospel__Arg_helper
+
+
+(** @canonical Gospel.Build_path_prefix_map *)
+module Build_path_prefix_map = Gospel__Build_path_prefix_map
+
+
+(** @canonical Gospel.Coercion *)
+module Coercion = Gospel__Coercion
+
+
+(** @canonical Gospel.Dterm *)
+module Dterm = Gospel__Dterm
+
+
+(** @canonical Gospel.Gospelstdlib *)
+module Gospelstdlib = Gospel__Gospelstdlib
+
+
+(** @canonical Gospel.Identifiable *)
+module Identifiable = Gospel__Identifiable
+
+
+(** @canonical Gospel.Identifier *)
+module Identifier = Gospel__Identifier
+
+
+(** @canonical Gospel.Location *)
+module Location = Gospel__Location
+
+
+(** @canonical Gospel.Longident *)
+module Longident = Gospel__Longident
+
+
+(** @canonical Gospel.Misc *)
+module Misc = Gospel__Misc
+
+
+(** @canonical Gospel.Numbers *)
+module Numbers = Gospel__Numbers
+
+
+(** @canonical Gospel.Oast_helper *)
+module Oast_helper = Gospel__Oast_helper
+
+
+(** @canonical Gospel.Oast_iterator *)
+module Oast_iterator = Gospel__Oast_iterator
+
+
+(** @canonical Gospel.Oasttypes *)
+module Oasttypes = Gospel__Oasttypes
+
+
+(** @canonical Gospel.Odocstrings *)
+module Odocstrings = Gospel__Odocstrings
+
+
+(** @canonical Gospel.Olexer *)
+module Olexer = Gospel__Olexer
+
+
+(** @canonical Gospel.Oparser *)
+module Oparser = Gospel__Oparser
+
+
+(** @canonical Gospel.Oparsetree *)
+module Oparsetree = Gospel__Oparsetree
+
+
+(** @canonical Gospel.Opprintast *)
+module Opprintast = Gospel__Opprintast
+
+
+(** @canonical Gospel.Oprintast *)
+module Oprintast = Gospel__Oprintast
+
+
+(** @canonical Gospel.Parser_frontend *)
+module Parser_frontend = Gospel__Parser_frontend
+
+
+(** @canonical Gospel.Profile *)
+module Profile = Gospel__Profile
+
+
+(** @canonical Gospel.Syntaxerr *)
+module Syntaxerr = Gospel__Syntaxerr
+
+
+(** @canonical Gospel.Tast *)
+module Tast = Gospel__Tast
+
+
+(** @canonical Gospel.Terminfo *)
+module Terminfo = Gospel__Terminfo
+
+
+(** @canonical Gospel.Tmodule *)
+module Tmodule = Gospel__Tmodule
+
+
+(** @canonical Gospel.Tterm *)
+module Tterm = Gospel__Tterm
+
+
+(** @canonical Gospel.Ttypes *)
+module Ttypes = Gospel__Ttypes
+
+
+(** @canonical Gospel.Typing *)
+module Typing = Gospel__Typing
+
+
+(** @canonical Gospel.Uast *)
+module Uast = Gospel__Uast
+
+
+(** @canonical Gospel.Uast_utils *)
+module Uast_utils = Gospel__Uast_utils
+
+
+(** @canonical Gospel.Uattr2spec *)
+module Uattr2spec = Gospel__Uattr2spec
+
+
+(** @canonical Gospel.Ulexer *)
+module Ulexer = Gospel__Ulexer
+
+
+(** @canonical Gospel.Uparser *)
+module Uparser = Gospel__Uparser
+
+
+(** @canonical Gospel.Upretty_printer *)
+module Upretty_printer = Gospel__Upretty_printer
+
+
+(** @canonical Gospel.Utils *)
+module Utils = Gospel__Utils
+
+
+(** @canonical Gospel.Warnings *)
+module Warnings = Gospel__Warnings

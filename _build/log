@@ -1,0 +1,129 @@
+# dune build @install
+# OCAMLPARAM: unset
+# Workspace root: "/Users/neco/Desktop/ET ALL/ProjetoCameleer/cameleer"
+$ /usr/local/bin/nproc > /var/folders/fg/mjgyl4pn2kj4z8kpnnjn0tnh0000gn/T/dunee204e7.output 2> /dev/null
+# Auto-detected concurrency: 4
+# disable binary cache
+$ /Users/neco/.opam/default/bin/ocamlc.opt -config > /var/folders/fg/mjgyl4pn2kj4z8kpnnjn0tnh0000gn/T/dune7f43f0.output
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dyn
+#  ; merlin = true
+#  ; for_host = None
+#  ; fdo_target_exe = None
+#  ; build_dir = "default"
+#  ; toplevel_path = Some External "/Users/neco/.opam/default/lib/toplevel"
+#  ; ocaml_bin = External "/Users/neco/.opam/default/bin"
+#  ; ocaml = Ok External "/Users/neco/.opam/default/bin/ocaml"
+#  ; ocamlc = External "/Users/neco/.opam/default/bin/ocamlc.opt"
+#  ; ocamlopt = Ok External "/Users/neco/.opam/default/bin/ocamlopt.opt"
+#  ; ocamldep = Ok External "/Users/neco/.opam/default/bin/ocamldep.opt"
+#  ; ocamlmklib = Ok External "/Users/neco/.opam/default/bin/ocamlmklib.opt"
+#  ; env =
+#      map
+#        { "DUNE_OCAML_HARDCODED" : "/Users/neco/.opam/default/lib"
+#        ; "DUNE_OCAML_STDLIB" : "/Users/neco/.opam/default/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" :
+#            "/Users/neco/Desktop/ET ALL/ProjetoCameleer/cameleer"
+#        ; "INSIDE_DUNE" :
+#            "/Users/neco/Desktop/ET ALL/ProjetoCameleer/cameleer/_build/default"
+#        ; "MANPATH" :
+#            "/Users/neco/Desktop/ET ALL/ProjetoCameleer/cameleer/_build/install/default/bin"
+#        ; "OCAMLFIND_IGNORE_DUPS_IN" :
+#            "/Users/neco/Desktop/ET ALL/ProjetoCameleer/cameleer/_build/install/default/lib"
+#        ; "OCAMLPATH" :
+#            "/Users/neco/Desktop/ET ALL/ProjetoCameleer/cameleer/_build/install/default/lib"
+#        ; "OCAMLTOP_INCLUDE_PATH" :
+#            "/Users/neco/Desktop/ET ALL/ProjetoCameleer/cameleer/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; findlib_path = [ External "/Users/neco/.opam/default/lib" ]
+#  ; arch_sixtyfour = true
+#  ; natdynlink_supported = true
+#  ; supports_shared_libraries = true
+#  ; ocaml_config =
+#      { version = "4.11.1"
+#      ; standard_library_default = "/Users/neco/.opam/default/lib/ocaml"
+#      ; standard_library = "/Users/neco/.opam/default/lib/ocaml"
+#      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
+#      ; ccomp_type = "cc"
+#      ; c_compiler = "cc"
+#      ; ocamlc_cflags = [ "-O2"; "-fno-strict-aliasing"; "-fwrapv" ]
+#      ; ocamlc_cppflags = [ "-D_FILE_OFFSET_BITS=64"; "-D_REENTRANT" ]
+#      ; ocamlopt_cflags = [ "-O2"; "-fno-strict-aliasing"; "-fwrapv" ]
+#      ; ocamlopt_cppflags = [ "-D_FILE_OFFSET_BITS=64"; "-D_REENTRANT" ]
+#      ; bytecomp_c_compiler =
+#          [ "cc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-D_REENTRANT"
+#          ]
+#      ; bytecomp_c_libraries = [ "-lm"; "-lpthread" ]
+#      ; native_c_compiler =
+#          [ "cc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-D_REENTRANT"
+#          ]
+#      ; native_c_libraries = [ "-lm" ]
+#      ; cc_profile = []
+#      ; architecture = "amd64"
+#      ; model = "default"
+#      ; int_size = 63
+#      ; word_size = 64
+#      ; system = "macosx"
+#      ; asm = [ "clang"; "-arch"; "x86_64"; "-Wno-trigraphs"; "-c" ]
+#      ; asm_cfi_supported = true
+#      ; with_frame_pointers = false
+#      ; ext_exe = ""
+#      ; ext_obj = ".o"
+#      ; ext_asm = ".s"
+#      ; ext_lib = ".a"
+#      ; ext_dll = ".so"
+#      ; os_type = "Unix"
+#      ; default_executable_name = "a.out"
+#      ; systhread_supported = true
+#      ; host = "x86_64-apple-darwin19.6.0"
+#      ; target = "x86_64-apple-darwin19.6.0"
+#      ; profiling = false
+#      ; flambda = false
+#      ; spacetime = false
+#      ; safe_string = true
+#      ; exec_magic_number = "Caml1999X028"
+#      ; cmi_magic_number = "Caml1999I028"
+#      ; cmo_magic_number = "Caml1999O028"
+#      ; cma_magic_number = "Caml1999A028"
+#      ; cmx_magic_number = "Caml1999Y028"
+#      ; cmxa_magic_number = "Caml1999Z028"
+#      ; ast_impl_magic_number = "Caml1999M028"
+#      ; ast_intf_magic_number = "Caml1999N028"
+#      ; cmxs_magic_number = "Caml1999D028"
+#      ; cmt_magic_number = "Caml1999T028"
+#      ; natdynlink_supported = true
+#      ; supports_shared_libraries = true
+#      ; windows_unicode = false
+#      }
+#  }
+$ (cd _build/default && /Users/neco/.opam/default/bin/menhir --unused-token GREATERRBRACKET --unused-token COMMENT --unused-token DOCSTRING --unused-token EOL vocal/gospel/ocaml-lib/uparser.mly --base vocal/gospel/ocaml-lib/uparser --infer-write-query vocal/gospel/ocaml-lib/uparser__mock.ml.mock)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamldep.opt -modules -impl vocal/gospel/ocaml-lib/uparser__mock.ml.mock) > _build/default/vocal/gospel/ocaml-lib/.gospel.objs/uparser__mock.ml.mock.d
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -9-32-27 -linkall -g -I vocal/gospel/ocaml-lib/.gospel.objs/byte -open Gospel -short-paths -i -impl vocal/gospel/ocaml-lib/uparser__mock.ml.mock) > _build/default/vocal/gospel/ocaml-lib/uparser__mock.mli.inferred
+$ (cd _build/default && /Users/neco/.opam/default/bin/menhir --unused-token GREATERRBRACKET --unused-token COMMENT --unused-token DOCSTRING --unused-token EOL vocal/gospel/ocaml-lib/uparser.mly --base vocal/gospel/ocaml-lib/uparser --infer-read-reply vocal/gospel/ocaml-lib/uparser__mock.mli.inferred)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamldep.opt -modules -impl vocal/gospel/ocaml-lib/uparser.ml) > _build/default/vocal/gospel/ocaml-lib/.gospel.objs/uparser.ml.d
+$ (cd _build/default && /Users/neco/.opam/default/bin/menhir --unused-token GREATERRBRACKET --unused-token COMMENT --unused-token DOCSTRING --unused-token EOL vocal/gospel/ocaml-lib/oparser.mly --base vocal/gospel/ocaml-lib/oparser --infer-read-reply vocal/gospel/ocaml-lib/oparser__mock.mli.inferred)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -9-32-27 -linkall -g -bin-annot -I vocal/gospel/ocaml-lib/.gospel.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open Gospel -o vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Uparser.cmo -c -impl vocal/gospel/ocaml-lib/uparser.ml)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -9-32-27 -linkall -g -I vocal/gospel/ocaml-lib/.gospel.objs/byte -I vocal/gospel/ocaml-lib/.gospel.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Gospel -o vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Uparser.cmx -c -impl vocal/gospel/ocaml-lib/uparser.ml)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -9-32-27 -linkall -g -a -o vocal/gospel/ocaml-lib/gospel.cmxa vocal/gospel/ocaml-lib/.gospel.objs/native/gospel.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Misc.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Warnings.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Build_path_prefix_map.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Terminfo.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Location.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Longident.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Odocstrings.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Syntaxerr.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Oast_helper.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Opprintast.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Utils.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Identifier.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Upretty_printer.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Uast_utils.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Uparser.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Ulexer.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Oast_iterator.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Oparser.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Olexer.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Uattr2spec.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Ttypes.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Tterm.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Coercion.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Dterm.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Gospelstdlib.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Parser_frontend.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Tast.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Tmodule.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Typing.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Profile.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Oprintast.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Identifiable.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Numbers.cmx vocal/gospel/ocaml-lib/.gospel.objs/native/gospel__Arg_helper.cmx)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o src/plugin/plugin_cameleer.cmxs -shared vocal/gospel/ocaml-lib/gospel.cmxa src/plugin/.plugin_cameleer.eobjs/native/dune__exe.cmx src/plugin/.plugin_cameleer.eobjs/native/dune__exe__Mod_subst.cmx src/plugin/.plugin_cameleer.eobjs/native/dune__exe__Why3ocaml_driver.cmx src/plugin/.plugin_cameleer.eobjs/native/dune__exe__Uterm.cmx src/plugin/.plugin_cameleer.eobjs/native/dune__exe__Odecl.cmx src/plugin/.plugin_cameleer.eobjs/native/dune__exe__Vspec.cmx src/plugin/.plugin_cameleer.eobjs/native/dune__exe__Expression.cmx src/plugin/.plugin_cameleer.eobjs/native/dune__exe__Declaration.cmx src/plugin/.plugin_cameleer.eobjs/native/dune__exe__Plugin_cameleer.cmx)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o src/bin/cli.exe vocal/gospel/ocaml-lib/gospel.cmxa /Users/neco/.opam/default/lib/re/re.cmxa /Users/neco/.opam/default/lib/ocaml/unix.cmxa -I /Users/neco/.opam/default/lib/ocaml /Users/neco/.opam/default/lib/ocaml/nums.cmxa -I /Users/neco/.opam/default/lib/ocaml /Users/neco/.opam/default/lib/ocaml/dynlink.cmxa -I /Users/neco/.opam/default/lib/ocaml /Users/neco/.opam/default/lib/menhirLib/menhirLib.cmxa /Users/neco/.opam/default/lib/zip/zip.cmxa -I /Users/neco/.opam/default/lib/zip /Users/neco/.opam/default/lib/why3/why3.cmxa src/bin/.cli.eobjs/native/dune__exe__Cli.cmx)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o vocal/gospel/tools/gospelwc.exe vocal/gospel/ocaml-lib/gospel.cmxa vocal/gospel/tools/.gospelwc.eobjs/native/dune__exe__Gospelwc.cmx)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -9-32-27 -linkall -g -shared -linkall -I vocal/gospel/ocaml-lib -o vocal/gospel/ocaml-lib/gospel.cmxs vocal/gospel/ocaml-lib/gospel.cmxa)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o vocal/gospel/tools/gospel_tc.exe /Users/neco/.opam/default/lib/ocaml/compiler-libs/ocamlcommon.cmxa vocal/gospel/ocaml-lib/gospel.cmxa vocal/gospel/tools/.gospel_tc.eobjs/native/dune__exe.cmx vocal/gospel/tools/.gospel_tc.eobjs/native/dune__exe__Options.cmx vocal/gospel/tools/.gospel_tc.eobjs/native/dune__exe__Gospel_tc.cmx)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -9-32-27 -linkall -g -o vocal/why3gospel/why3gospel.cmxs -shared vocal/gospel/ocaml-lib/gospel.cmxa vocal/why3gospel/.why3gospel.eobjs/native/dune__exe.cmx vocal/why3gospel/.why3gospel.eobjs/native/dune__exe__Why3gospel_driver.cmx vocal/why3gospel/.why3gospel.eobjs/native/dune__exe__Why3gospel_trans.cmx vocal/why3gospel/.why3gospel.eobjs/native/dune__exe__Why3gospel.cmx)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -9-32-27 -linkall -g -bin-annot -I vocal/gospel/ocaml-lib/.gospel.objs/byte -intf-suffix .ml -no-alias-deps -opaque -open Gospel -o vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Oparser.cmo -c -impl vocal/gospel/ocaml-lib/oparser.ml)
+$ (cd _build/default && /Users/neco/.opam/default/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -9-32-27 -linkall -g -a -o vocal/gospel/ocaml-lib/gospel.cma vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Misc.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Warnings.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Build_path_prefix_map.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Terminfo.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Location.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Longident.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Odocstrings.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Syntaxerr.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Oast_helper.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Opprintast.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Utils.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Identifier.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Upretty_printer.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Uast_utils.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Uparser.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Ulexer.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Oast_iterator.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Oparser.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Olexer.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Uattr2spec.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Ttypes.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Tterm.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Coercion.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Dterm.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Gospelstdlib.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Parser_frontend.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Tast.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Tmodule.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Typing.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Profile.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Oprintast.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Identifiable.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Numbers.cmo vocal/gospel/ocaml-lib/.gospel.objs/byte/gospel__Arg_helper.cmo)

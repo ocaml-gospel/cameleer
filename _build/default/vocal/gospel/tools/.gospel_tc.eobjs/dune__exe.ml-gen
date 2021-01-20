@@ -1,0 +1,6 @@
+(** @canonical Dune__exe.Gospel_tc *)
+module Gospel_tc = Dune__exe__Gospel_tc
+
+
+(** @canonical Dune__exe.Options *)
+module Options = Dune__exe__Options

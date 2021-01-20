@@ -1,0 +1,1 @@
+../../../../default/vocal/gospel/ocaml-lib/parser_frontend.mli

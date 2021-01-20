@@ -1,0 +1,968 @@
+type token =
+    WITH
+  | WHILE
+  | WHEN
+  | VIRTUAL
+  | VAL
+  | UNDERSCORE
+  | UIDENT of string
+  | TYPE
+  | TRY
+  | TRUE
+  | TO
+  | TILDE
+  | THEN
+  | STRUCT
+  | STRING of (string * string option)
+  | STAR
+  | SIG
+  | SEMISEMI
+  | SEMI
+  | RPAREN
+  | REC
+  | RBRACKET
+  | RBRACE
+  | QUOTE
+  | QUESTION
+  | PRIVATE
+  | PREFIXOP of string
+  | PLUSEQ
+  | PLUSDOT
+  | PLUS
+  | PERCENT
+  | OR
+  | OPTLABEL of string
+  | OPEN
+  | OF
+  | OBJECT
+  | NONREC
+  | NEW
+  | MUTABLE
+  | MODULE
+  | MINUSGREATER
+  | MINUSDOT
+  | MINUS
+  | METHOD
+  | MATCH
+  | LPAREN
+  | LIDENT of string
+  | LET
+  | LESSMINUS
+  | LESS
+  | LBRACKETPERCENTPERCENT
+  | LBRACKETPERCENT
+  | LBRACKETLESS
+  | LBRACKETGREATER
+  | LBRACKETBAR
+  | LBRACKETATATAT
+  | LBRACKETATAT
+  | LBRACKETAT
+  | LBRACKET
+  | LBRACELESS
+  | LBRACE
+  | LAZY
+  | LABEL of string
+  | INT of (string * char option)
+  | INITIALIZER
+  | INHERIT
+  | INFIXOP4 of string
+  | INFIXOP3 of string
+  | INFIXOP2 of string
+  | INFIXOP1 of string
+  | INFIXOP0 of string
+  | INCLUDE
+  | IN
+  | IF
+  | HASHOP of string
+  | HASH
+  | GREATERRBRACKET
+  | GREATERRBRACE
+  | GREATER
+  | GOSPELSPEC of (string * Warnings.loc)
+  | GOSPEL
+  | FUNCTOR
+  | FUNCTION
+  | FUN
+  | FOR
+  | FLOAT of (string * char option)
+  | FALSE
+  | EXTERNAL
+  | EXCEPTION
+  | EQUAL
+  | EOL
+  | EOF
+  | END
+  | ELSE
+  | DOWNTO
+  | DOTOP of string
+  | DOTDOT
+  | DOT
+  | DONE
+  | DOCSTRING of Odocstrings.docstring
+  | DO
+  | CONSTRAINT
+  | COMMENT of (string * Warnings.loc)
+  | COMMA
+  | COLONGREATER
+  | COLONEQUAL
+  | COLONCOLON
+  | COLON
+  | CLASS
+  | CHAR of char
+  | BEGIN
+  | BARRBRACKET
+  | BARBAR
+  | BAR
+  | BANG
+  | BACKQUOTE
+  | ASSERT
+  | AS
+  | AND
+  | AMPERSAND
+  | AMPERAMPER
+module Pervasives = Stdlib
+val gospel : string
+val mkloc : 'a -> Warnings.loc -> 'a Oasttypes.loc
+val mknoloc : 'a -> 'a Oasttypes.loc
+val make_loc : Lexing.position * Lexing.position -> Warnings.loc
+val ghost_loc : Lexing.position * Lexing.position -> Warnings.loc
+val mktyp :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.core_type_desc -> Oparsetree.core_type
+val mkpat :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.pattern_desc -> Oparsetree.pattern
+val mkexp :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression_desc -> Oparsetree.expression
+val mkmty :
+  loc:Lexing.position * Lexing.position ->
+  ?attrs:Gospel.Oast_helper.attrs ->
+  Oparsetree.module_type_desc -> Oparsetree.module_type
+val mksig :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.signature_item_desc -> Oparsetree.signature_item
+val mkmod :
+  loc:Lexing.position * Lexing.position ->
+  ?attrs:Gospel.Oast_helper.attrs ->
+  Oparsetree.module_expr_desc -> Oparsetree.module_expr
+val mkstr :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.structure_item_desc -> Oparsetree.structure_item
+val mkclass :
+  loc:Lexing.position * Lexing.position ->
+  ?attrs:Gospel.Oast_helper.attrs ->
+  Oparsetree.class_expr_desc -> Oparsetree.class_expr
+val mkcty :
+  loc:Lexing.position * Lexing.position ->
+  ?attrs:Gospel.Oast_helper.attrs ->
+  Oparsetree.class_type_desc -> Oparsetree.class_type
+val mkctf :
+  loc:Lexing.position * Lexing.position ->
+  ?attrs:Gospel.Oast_helper.attrs ->
+  ?docs:Odocstrings.docs ->
+  Oparsetree.class_type_field_desc -> Oparsetree.class_type_field
+val mkcf :
+  loc:Lexing.position * Lexing.position ->
+  ?attrs:Gospel.Oast_helper.attrs ->
+  ?docs:Odocstrings.docs ->
+  Oparsetree.class_field_desc -> Oparsetree.class_field
+val mkrhs : 'a -> Lexing.position * Lexing.position -> 'a Oasttypes.loc
+val ghrhs : 'a -> Lexing.position * Lexing.position -> 'a Oasttypes.loc
+val push_loc : Warnings.loc -> Warnings.loc list -> Warnings.loc list
+val reloc_pat :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.pattern -> Oparsetree.pattern
+val reloc_exp :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression -> Oparsetree.expression
+val reloc_typ :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.core_type -> Oparsetree.core_type
+val mkoperator :
+  loc:Lexing.position * Lexing.position -> string -> Oparsetree.expression
+val mkpatvar :
+  loc:Lexing.position * Lexing.position -> string -> Oparsetree.pattern
+val ghexp :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression_desc -> Oparsetree.expression
+val ghpat :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.pattern_desc -> Oparsetree.pattern
+val ghtyp :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.core_type_desc -> Oparsetree.core_type
+val ghloc : loc:Lexing.position * Lexing.position -> 'a -> 'a Oasttypes.loc
+val ghstr :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.structure_item_desc -> Oparsetree.structure_item
+val ghsig :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.signature_item_desc -> Oparsetree.signature_item
+val mkinfix :
+  Oparsetree.expression ->
+  Oparsetree.expression ->
+  Oparsetree.expression -> Oparsetree.expression_desc
+val neg_string : string -> string
+val mkuminus :
+  oploc:Lexing.position * Lexing.position ->
+  string -> Oparsetree.expression -> Oparsetree.expression_desc
+val mkuplus :
+  oploc:Lexing.position * Lexing.position ->
+  string -> Oparsetree.expression -> Oparsetree.expression_desc
+val mkexp_cons_desc :
+  Lexing.position * Lexing.position ->
+  Oparsetree.expression -> Oparsetree.expression_desc
+val mkexp_cons :
+  loc:Lexing.position * Lexing.position ->
+  Lexing.position * Lexing.position ->
+  Oparsetree.expression -> Oparsetree.expression
+val mkpat_cons_desc :
+  Lexing.position * Lexing.position ->
+  Oparsetree.pattern -> Oparsetree.pattern_desc
+val mkpat_cons :
+  loc:Lexing.position * Lexing.position ->
+  Lexing.position * Lexing.position ->
+  Oparsetree.pattern -> Oparsetree.pattern
+val ghexp_cons_desc :
+  Lexing.position * Lexing.position ->
+  Oparsetree.expression -> Oparsetree.expression_desc
+val ghpat_cons_desc :
+  Lexing.position * Lexing.position ->
+  Oparsetree.pattern -> Oparsetree.pattern_desc
+val mktailexp :
+  Lexing.position * Lexing.position ->
+  Oparsetree.expression list ->
+  Oparsetree.expression_desc * (Lexing.position * Lexing.position)
+val mktailpat :
+  Lexing.position * Lexing.position ->
+  Oparsetree.pattern list ->
+  Oparsetree.pattern_desc * (Lexing.position * Lexing.position)
+val mkstrexp :
+  Oparsetree.expression -> Oparsetree.attributes -> Oparsetree.structure_item
+val mkexp_constraint :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression ->
+  Oparsetree.core_type option * Oparsetree.core_type option ->
+  Oparsetree.expression
+val mkexp_opt_constraint :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression ->
+  (Oparsetree.core_type option * Oparsetree.core_type option) option ->
+  Oparsetree.expression
+val mkpat_opt_constraint :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.pattern -> Oparsetree.core_type option -> Oparsetree.pattern
+val syntax_error : unit -> 'a
+val unclosed :
+  string ->
+  Lexing.position * Lexing.position ->
+  string -> Lexing.position * Lexing.position -> 'a
+val expecting : Lexing.position * Lexing.position -> string -> 'a
+val not_expecting : Lexing.position * Lexing.position -> string -> 'a
+val dotop_fun :
+  loc:Lexing.position * Lexing.position ->
+  Longident.t -> Oparsetree.expression
+val array_function :
+  loc:Lexing.position * Lexing.position ->
+  string -> string -> Longident.t Oasttypes.loc
+val array_get_fun :
+  loc:Lexing.position * Lexing.position -> Oparsetree.expression
+val string_get_fun :
+  loc:Lexing.position * Lexing.position -> Oparsetree.expression
+val array_set_fun :
+  loc:Lexing.position * Lexing.position -> Oparsetree.expression
+val string_set_fun :
+  loc:Lexing.position * Lexing.position -> Oparsetree.expression
+val index_get :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val index_set :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression ->
+  Oparsetree.expression ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val array_get :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val string_get :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val dotop_get :
+  loc:Lexing.position * Lexing.position ->
+  Longident.t ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val array_set :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val string_set :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val dotop_set :
+  loc:Lexing.position * Lexing.position ->
+  Longident.t ->
+  Oparsetree.expression ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val bigarray_function :
+  loc:Lexing.position * Lexing.position ->
+  string -> string -> Longident.t Oasttypes.loc
+val bigarray_untuplify : Oparsetree.expression -> Oparsetree.expression list
+val bigarray_get :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val bigarray_set :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression ->
+  Oparsetree.expression -> Oparsetree.expression -> Oparsetree.expression
+val lapply :
+  loc:Lexing.position * Lexing.position ->
+  Longident.t -> Longident.t -> Longident.t
+val exp_of_longident :
+  loc:Lexing.position * Lexing.position ->
+  Longident.t Oasttypes.loc -> Oparsetree.expression
+val exp_of_label :
+  loc:Lexing.position * Lexing.position ->
+  Longident.t Oasttypes.loc -> Oparsetree.expression
+val pat_of_label :
+  loc:Lexing.position * Lexing.position ->
+  string Oasttypes.loc -> Oparsetree.pattern
+val mk_newtypes :
+  loc:Lexing.position * Lexing.position ->
+  string Oasttypes.loc list -> Oparsetree.expression -> Oparsetree.expression
+val wrap_type_annotation :
+  loc:Lexing.position * Lexing.position ->
+  Gospel.Oast_helper.str list ->
+  Oparsetree.core_type ->
+  Oparsetree.expression -> Oparsetree.expression * Oparsetree.core_type
+val wrap_exp_attrs :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression ->
+  string Oasttypes.loc option * Oparsetree.attribute list ->
+  Oparsetree.expression
+val mkexp_attrs :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.expression_desc ->
+  string Oasttypes.loc option * Oparsetree.attribute list ->
+  Oparsetree.expression
+val wrap_typ_attrs :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.core_type ->
+  string Oasttypes.loc option * Oparsetree.attribute list ->
+  Oparsetree.core_type
+val wrap_pat_attrs :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.pattern ->
+  string Oasttypes.loc option * Oparsetree.attribute list ->
+  Oparsetree.pattern
+val mkpat_attrs :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.pattern_desc ->
+  string Oasttypes.loc option * Oparsetree.attribute list ->
+  Oparsetree.pattern
+val wrap_class_attrs :
+  loc:'a ->
+  Oparsetree.class_expr -> Oparsetree.attribute list -> Oparsetree.class_expr
+val wrap_mod_attrs :
+  loc:'a ->
+  Oparsetree.module_expr ->
+  Oparsetree.attribute list -> Oparsetree.module_expr
+val wrap_mty_attrs :
+  loc:'a ->
+  Oparsetree.module_type ->
+  Oparsetree.attribute list -> Oparsetree.module_type
+val wrap_str_ext :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.structure_item ->
+  string Oasttypes.loc option -> Oparsetree.structure_item
+val wrap_sig_ext :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.signature_item ->
+  string Oasttypes.loc option -> Oparsetree.signature_item
+val text_str : Lexing.position -> Oparsetree.structure_item list
+val text_sig : Lexing.position -> Oparsetree.signature_item list
+val text_cstr : Lexing.position -> Oparsetree.class_field list
+val text_csig : Lexing.position -> Oparsetree.class_type_field list
+val text_def : Lexing.position -> Oparsetree.toplevel_phrase list
+val extra_text :
+  Lexing.position ->
+  Lexing.position ->
+  (Gospel.Odocstrings.text -> 'a list) -> 'a list -> 'a list
+val extra_str :
+  Lexing.position ->
+  Lexing.position ->
+  Oparsetree.structure_item list -> Oparsetree.structure_item list
+val extra_sig :
+  Lexing.position ->
+  Lexing.position ->
+  Oparsetree.signature_item list -> Oparsetree.signature_item list
+val extra_cstr :
+  Lexing.position ->
+  Lexing.position ->
+  Oparsetree.class_field list -> Oparsetree.class_field list
+val extra_csig :
+  Lexing.position ->
+  Lexing.position ->
+  Oparsetree.class_type_field list -> Oparsetree.class_type_field list
+val extra_def :
+  Lexing.position ->
+  Lexing.position ->
+  Oparsetree.toplevel_phrase list -> Oparsetree.toplevel_phrase list
+val extra_rhs_core_type :
+  Oparsetree.core_type -> pos:Lexing.position -> Oparsetree.core_type
+type let_binding = {
+  lb_pattern : Oparsetree.pattern;
+  lb_expression : Oparsetree.expression;
+  lb_attributes : Oparsetree.attributes;
+  lb_docs : Odocstrings.docs lazy_t;
+  lb_text : Odocstrings.text lazy_t;
+  lb_loc : Warnings.loc;
+}
+type let_bindings = {
+  lbs_bindings : let_binding list;
+  lbs_rec : Oasttypes.rec_flag;
+  lbs_extension : string Oasttypes.loc option;
+  lbs_loc : Warnings.loc;
+}
+val mklb :
+  bool ->
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.pattern * Oparsetree.expression ->
+  Oparsetree.attributes -> let_binding
+val mklbs :
+  loc:Lexing.position * Lexing.position ->
+  string Oasttypes.loc option ->
+  Oasttypes.rec_flag -> let_binding -> let_bindings
+val addlb : let_bindings -> let_binding -> let_bindings
+val val_of_let_bindings :
+  loc:Lexing.position * Lexing.position ->
+  let_bindings -> Oparsetree.structure_item
+val expr_of_let_bindings :
+  loc:Lexing.position * Lexing.position ->
+  let_bindings -> Oparsetree.expression -> Oparsetree.expression
+val class_of_let_bindings :
+  loc:Lexing.position * Lexing.position ->
+  let_bindings -> Oparsetree.class_expr -> Oparsetree.class_expr
+val package_type_of_module_type :
+  Oparsetree.module_type ->
+  Longident.t Oasttypes.loc *
+  (Longident.t Oasttypes.loc * Oparsetree.core_type) list
+val mk_directive_arg :
+  loc:Lexing.position * Lexing.position ->
+  Oparsetree.directive_argument_desc -> Oparsetree.directive_argument
+val mk_directive :
+  loc:Lexing.position * Lexing.position ->
+  string Oasttypes.loc ->
+  Oparsetree.directive_argument option -> Oparsetree.toplevel_phrase
+val menhir_begin_marker : int
+val xv_with_type_binder : Oasttypes.private_flag
+val xv_with_constraints : Oparsetree.with_constraint list
+val xv_with_constraint : Oparsetree.with_constraint
+val xv_virtual_flag : Oasttypes.virtual_flag
+val xv_value_type :
+  string Oasttypes.loc * Oasttypes.mutable_flag * Oasttypes.virtual_flag *
+  Oparsetree.core_type
+val xv_value_description :
+  Oparsetree.value_description * string Oasttypes.loc option
+val xv_value :
+  (string Oasttypes.loc * Oasttypes.mutable_flag *
+   Oparsetree.class_field_kind) *
+  Oparsetree.attributes
+val xv_val_longident : Longident.t
+val xv_val_ident : string
+val xv_use_file_tail : Oparsetree.toplevel_phrase list
+val xv_use_file_body : Oparsetree.toplevel_phrase list
+val xv_use_file : Oparsetree.toplevel_phrase list
+val xv_typevar_list : string Oasttypes.loc list
+val xv_typevar : string Oasttypes.loc
+val xv_type_variance : Oasttypes.variance
+val xv_type_variable : Oparsetree.core_type
+val xv_type_parameter_list : (Oparsetree.core_type * Oasttypes.variance) list
+val xv_type_parameter : Oparsetree.core_type * Oasttypes.variance
+val xv_type_longident : Longident.t
+val xv_type_kind :
+  Oparsetree.type_kind * Oasttypes.private_flag * Oparsetree.core_type option
+val xv_type_declarations :
+  Oasttypes.rec_flag * Oparsetree.type_declaration list *
+  string Oasttypes.loc option
+val xv_type_declaration :
+  Oasttypes.rec_flag * Oparsetree.type_declaration *
+  string Oasttypes.loc option
+val xv_type_constraint :
+  Oparsetree.core_type option * Oparsetree.core_type option
+val xv_toplevel_phrase : Oparsetree.toplevel_phrase
+val xv_toplevel_directive_argument_ : Oparsetree.directive_argument_desc
+val xv_toplevel_directive_argument : Oparsetree.directive_argument
+val xv_toplevel_directive_ :
+  string Oasttypes.loc * Oparsetree.directive_argument option
+val xv_toplevel_directive : Oparsetree.toplevel_phrase
+val xv_top_structure_tail_nodoc : Oparsetree.structure_item list
+val xv_top_structure_nodoc : Oparsetree.structure_item list
+val xv_top_structure : Oparsetree.structure
+val xv_tag_field : Oparsetree.row_field
+val xv_subtractive : string
+val xv_structure_tail_nodoc : Oparsetree.structure_item list
+val xv_structure_nodoc : Oparsetree.structure_item list
+val xv_structure_item_with_ext :
+  Oparsetree.structure_item_desc * string Oasttypes.loc option
+val xv_structure_item : Oparsetree.structure_item
+val xv_structure : Oparsetree.structure
+val xv_strict_binding : Oparsetree.expression
+val xv_str_type_extension :
+  Oparsetree.type_extension * string Oasttypes.loc option
+val xv_str_include_statement :
+  Oparsetree.include_declaration * string Oasttypes.loc option
+val xv_str_extension_constructors : Oparsetree.extension_constructor list
+val xv_str_exception_declaration :
+  Oparsetree.type_exception * string Oasttypes.loc option
+val xv_single_attr_id : string
+val xv_simple_pattern_not_ident_ : Oparsetree.pattern_desc
+val xv_simple_pattern_not_ident : Oparsetree.pattern
+val xv_simple_pattern : Oparsetree.pattern
+val xv_simple_expr_attrs :
+  Oparsetree.expression_desc *
+  (string Oasttypes.loc option * Oparsetree.attributes)
+val xv_simple_expr_ : Oparsetree.expression_desc
+val xv_simple_expr : Oparsetree.expression
+val xv_simple_delimited_pattern : Oparsetree.pattern
+val xv_simple_core_type_or_tuple : Oparsetree.core_type
+val xv_simple_core_type2_ : Oparsetree.core_type_desc
+val xv_simple_core_type2 : Oparsetree.core_type
+val xv_simple_core_type : Oparsetree.core_type
+val xv_signed_constant : Oasttypes.constant
+val xv_signature_nodoc : Oparsetree.signature_item list
+val xv_signature_item_with_ext :
+  Oparsetree.signature_item_desc * string Oasttypes.loc option
+val xv_signature_item : Oparsetree.signature_item
+val xv_signature : Oparsetree.signature
+val xv_sig_type_extension :
+  Oparsetree.type_extension * string Oasttypes.loc option
+val xv_sig_include_statement :
+  Oparsetree.include_description * string Oasttypes.loc option
+val xv_sig_extension_constructors : Oparsetree.extension_constructor list
+val xv_sig_exception_declaration :
+  Oparsetree.type_exception * string Oasttypes.loc option
+val xv_seq_expr : Oparsetree.expression
+val xv_separated_or_terminated_nonempty_list_SEMI_pattern_ :
+  Oparsetree.pattern list
+val xv_separated_or_terminated_nonempty_list_SEMI_lbl_expr_ :
+  (Longident.t Oasttypes.loc * Oparsetree.expression) list
+val xv_separated_or_terminated_nonempty_list_SEMI_field_expr_ :
+  (string Oasttypes.loc * Oparsetree.expression) list
+val xv_separated_or_terminated_nonempty_list_SEMI_expr_ :
+  Oparsetree.expression list
+val xv_separated_nontrivial_llist_COMMA_expr_ : Oparsetree.expression list
+val xv_separated_nonempty_llist_STAR_simple_core_type_ :
+  Oparsetree.core_type list
+val xv_separated_nonempty_llist_COMMA_type_parameter_ :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_separated_nonempty_llist_COMMA_optional_type_parameter_ :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_separated_nonempty_llist_BAR_row_field_ : Oparsetree.row_field list
+val xv_separated_nonempty_llist_AMPERSAND_core_type_no_attr_ :
+  Oparsetree.core_type list
+val xv_row_field_list : Oparsetree.row_field list
+val xv_row_field : Oparsetree.row_field
+val xv_reversed_separated_nontrivial_llist_COMMA_expr_ :
+  Oparsetree.expression list
+val xv_reversed_separated_nonempty_llist_STAR_simple_core_type_ :
+  Oparsetree.core_type list
+val xv_reversed_separated_nonempty_llist_COMMA_type_parameter_ :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_reversed_separated_nonempty_llist_COMMA_optional_type_parameter_ :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_reversed_separated_nonempty_llist_COMMA_core_type_ :
+  Oparsetree.core_type list
+val xv_reversed_separated_nonempty_llist_BAR_row_field_ :
+  Oparsetree.row_field list
+val xv_reversed_separated_nonempty_llist_AMPERSAND_core_type_no_attr_ :
+  Oparsetree.core_type list
+val xv_reversed_nonempty_llist_typevar_ : string Oasttypes.loc list
+val xv_reversed_nonempty_llist_name_tag_ : string list
+val xv_reversed_nonempty_llist_labeled_simple_expr_ :
+  (Oasttypes.arg_label * Oparsetree.expression) list
+val xv_record_expr :
+  Oparsetree.expression option *
+  (Longident.t Oasttypes.loc * Oparsetree.expression) list
+val xv_rec_module_declarations :
+  Oparsetree.module_declaration list * string Oasttypes.loc option
+val xv_rec_module_declaration :
+  Oparsetree.module_declaration * string Oasttypes.loc option
+val xv_rec_module_bindings :
+  Oparsetree.module_binding list * string Oasttypes.loc option
+val xv_rec_module_binding :
+  Oparsetree.module_binding * string Oasttypes.loc option
+val xv_rec_flag : Oasttypes.rec_flag
+val xv_private_virtual_flags :
+  Oasttypes.private_flag * Oasttypes.virtual_flag
+val xv_private_flag : Oasttypes.private_flag
+val xv_primitive_declaration_body : string list
+val xv_primitive_declaration :
+  Oparsetree.value_description * string Oasttypes.loc option
+val xv_post_item_attributes : Oparsetree.attributes
+val xv_post_item_attribute : Oparsetree.attribute
+val xv_possibly_poly_core_type_no_attr_ : Oparsetree.core_type
+val xv_possibly_poly_core_type_ : Oparsetree.core_type
+val xv_poly_type_no_attr : Oparsetree.core_type
+val xv_poly_type : Oparsetree.core_type
+val xv_poly_core_type_no_attr_ : Oparsetree.core_type_desc
+val xv_poly_core_type_ : Oparsetree.core_type_desc
+val xv_payload : Oparsetree.payload
+val xv_pattern_var_ : Oparsetree.pattern_desc
+val xv_pattern_var : Oparsetree.pattern
+val xv_pattern_semi_list : Oparsetree.pattern list
+val xv_pattern_no_exn_comma_list : Oparsetree.pattern list
+val xv_pattern_no_exn_ : Oparsetree.pattern_desc
+val xv_pattern_no_exn : Oparsetree.pattern
+val xv_pattern_gen : Oparsetree.pattern
+val xv_pattern_comma_list : Oparsetree.pattern list
+val xv_pattern_ : Oparsetree.pattern_desc
+val xv_pattern : Oparsetree.pattern
+val xv_parse_pattern : Oparsetree.pattern
+val xv_parse_expression : Oparsetree.expression
+val xv_parse_core_type : Oparsetree.core_type
+val xv_parent_binder : string Oasttypes.loc option
+val xv_paren_module_expr : Oparsetree.module_expr
+val xv_package_type : Oparsetree.core_type
+val xv_override_flag : Oasttypes.override_flag
+val xv_optional_type_variable : Oparsetree.core_type
+val xv_optional_type_parameters :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_optional_type_parameter_list :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_optional_type_parameter : Oparsetree.core_type * Oasttypes.variance
+val xv_opt_type_constraint :
+  (Oparsetree.core_type option * Oparsetree.core_type option) option
+val xv_opt_semi : unit
+val xv_opt_pattern_type_constraint : Oparsetree.core_type option
+val xv_opt_default : Oparsetree.expression option
+val xv_opt_bar : unit
+val xv_opt_ampersand : bool
+val xv_operator : string
+val xv_open_statement :
+  Oparsetree.open_description * string Oasttypes.loc option
+val xv_op___anonymous_31_ : Oparsetree.expression
+val xv_op___anonymous_30_ : Oparsetree.expression
+val xv_op___anonymous_29_ : Oparsetree.expression
+val xv_op___anonymous_28_ : Oparsetree.expression
+val xv_op___anonymous_27_ : Oparsetree.expression
+val xv_op___anonymous_26_ : Oparsetree.expression
+val xv_op___anonymous_25_ : Oparsetree.expression
+val xv_op___anonymous_24_ : Oparsetree.expression
+val xv_op___anonymous_23_ : Oparsetree.expression
+val xv_op___anonymous_22_ : Oparsetree.expression
+val xv_op___anonymous_21_ : Oparsetree.expression
+val xv_op___anonymous_20_ : Oparsetree.expression
+val xv_op___anonymous_19_ : Oparsetree.expression
+val xv_op___anonymous_18_ : Oparsetree.expression
+val xv_op___anonymous_17_ : Oparsetree.expression
+val xv_op___anonymous_16_ : Oparsetree.expression
+val xv_op_PREFIXOP_ : Oparsetree.expression
+val xv_op_INFIXOP4_ : Oparsetree.expression
+val xv_op_INFIXOP3_ : Oparsetree.expression
+val xv_op_INFIXOP2_ : Oparsetree.expression
+val xv_op_INFIXOP1_ : Oparsetree.expression
+val xv_op_INFIXOP0_ : Oparsetree.expression
+val xv_op_HASHOP_ : Oparsetree.expression
+val xv_nonrec_flag : Oasttypes.rec_flag
+val xv_nonempty_llist_typevar_ : string Oasttypes.loc list
+val xv_nonempty_llist_name_tag_ : string list
+val xv_nonempty_llist_labeled_simple_expr_ :
+  (Oasttypes.arg_label * Oparsetree.expression) list
+val xv_nonempty_list_mkrhs_LIDENT__ : string Oasttypes.loc list
+val xv_name_tag_list : string list
+val xv_name_tag : string
+val xv_mutable_flag : Oasttypes.mutable_flag
+val xv_mty_longident : Longident.t
+val xv_module_type_declaration_body : Oparsetree.module_type option
+val xv_module_type_declaration :
+  Oparsetree.module_type_declaration * string Oasttypes.loc option
+val xv_module_type_ : Oparsetree.module_type_desc
+val xv_module_type : Oparsetree.module_type
+val xv_module_expr_alias : Oparsetree.module_type
+val xv_module_expr_ : Oparsetree.module_expr_desc
+val xv_module_expr : Oparsetree.module_expr
+val xv_module_declaration_body : Oparsetree.module_type
+val xv_module_declaration :
+  Oparsetree.module_declaration * string Oasttypes.loc option
+val xv_module_binding_body : Oparsetree.module_expr
+val xv_module_binding :
+  Oparsetree.module_binding * string Oasttypes.loc option
+val xv_module_alias :
+  Oparsetree.module_declaration * string Oasttypes.loc option
+val xv_mod_longident : Longident.t
+val xv_mod_ext_longident : Longident.t
+val xv_mktyp_simple_core_type2__ : Oparsetree.core_type
+val xv_mktyp_poly_core_type_no_attr__ : Oparsetree.core_type
+val xv_mktyp_poly_core_type__ : Oparsetree.core_type
+val xv_mktyp_core_type2__ : Oparsetree.core_type
+val xv_mktyp___anonymous_44_ : Oparsetree.core_type
+val xv_mktyp___anonymous_43_ : Oparsetree.core_type
+val xv_mktyp___anonymous_42_ : Oparsetree.core_type
+val xv_mktyp___anonymous_41_ : Oparsetree.core_type
+val xv_mktyp___anonymous_40_ : Oparsetree.core_type
+val xv_mktyp___anonymous_12_ : Oparsetree.core_type
+val xv_mksig___anonymous_3_ : Oparsetree.signature_item
+val xv_mkrhs_val_longident_ : Longident.t Oasttypes.loc
+val xv_mkrhs_val_ident_ : Gospel.Oast_helper.str
+val xv_mkrhs_type_longident_ : Gospel.Oast_helper.lid
+val xv_mkrhs_name_tag_ : string Oasttypes.loc
+val xv_mkrhs_mty_longident_ : Longident.t Oasttypes.loc
+val xv_mkrhs_mod_longident_ : Longident.t Oasttypes.loc
+val xv_mkrhs_mod_ext_longident_ : Longident.t Oasttypes.loc
+val xv_mkrhs_label_longident_ : Longident.t Oasttypes.loc
+val xv_mkrhs_label_ : string Oasttypes.loc
+val xv_mkrhs_ident_ : string Oasttypes.loc
+val xv_mkrhs_functor_arg_name_ : string Oasttypes.loc
+val xv_mkrhs_constr_longident_ : Gospel.Oast_helper.lid
+val xv_mkrhs_constr_ident_ : Gospel.Oast_helper.str
+val xv_mkrhs_clty_longident_ : Longident.t Oasttypes.loc
+val xv_mkrhs_class_longident_ : Longident.t Oasttypes.loc
+val xv_mkrhs___anonymous_38_ : Longident.t Oasttypes.loc
+val xv_mkrhs___anonymous_37_ : Longident.t Oasttypes.loc
+val xv_mkrhs___anonymous_33_ : Longident.t Oasttypes.loc
+val xv_mkrhs___anonymous_32_ : Longident.t Oasttypes.loc
+val xv_mkrhs___anonymous_0_ : string Oasttypes.loc
+val xv_mkrhs_UIDENT_ : string Oasttypes.loc
+val xv_mkrhs_LIDENT_ : Gospel.Oast_helper.str
+val xv_mkpat_simple_pattern_not_ident__ : Oparsetree.pattern
+val xv_mkpat_pattern_var__ : Oparsetree.pattern
+val xv_mkpat_pattern_no_exn__ : Oparsetree.pattern
+val xv_mkpat_pattern__ : Oparsetree.pattern
+val xv_mkpat___anonymous_8_ : Oparsetree.pattern
+val xv_mkpat___anonymous_39_ : Oparsetree.pattern
+val xv_mkpat___anonymous_36_ : Oparsetree.pattern
+val xv_mkpat___anonymous_35_ : Oparsetree.pattern
+val xv_mkpat___anonymous_15_ : Oparsetree.pattern
+val xv_mkmty_module_type__ : Oparsetree.module_type
+val xv_mkmty___anonymous_4_ : Oparsetree.module_type
+val xv_mkmod_module_expr__ : Oparsetree.module_expr
+val xv_mkmod___anonymous_2_ : Oparsetree.module_expr
+val xv_mkmod___anonymous_1_ : Oparsetree.module_expr
+val xv_mkloc___anonymous_45_ : string Oasttypes.loc
+val xv_mkexp_simple_expr__ : Oparsetree.expression
+val xv_mkexp_expr__ : Oparsetree.expression
+val xv_mkexp___anonymous_34_ : Oparsetree.expression
+val xv_mkexp___anonymous_14_ : Oparsetree.expression
+val xv_mkcty___anonymous_11_ : Oparsetree.class_type
+val xv_mkcty___anonymous_10_ : Oparsetree.class_type
+val xv_mkctf___anonymous_13_ : Oparsetree.class_type_field
+val xv_mkclass_class_fun_def_desc_ : Oparsetree.class_expr
+val xv_mkclass___anonymous_7_ : Oparsetree.class_expr
+val xv_mkclass___anonymous_6_ : Oparsetree.class_expr
+val xv_mkclass___anonymous_5_ : Oparsetree.class_expr
+val xv_mkcf___anonymous_9_ : Oparsetree.class_field
+val xv_method_ :
+  (string Oasttypes.loc * Oasttypes.private_flag *
+   Oparsetree.class_field_kind) *
+  Oparsetree.attributes
+val xv_meth_list : Oparsetree.object_field list * Oasttypes.closed_flag
+val xv_match_cases : Oparsetree.case list
+val xv_match_case : Oparsetree.case
+val xv_list_rev_reversed_separated_nontrivial_llist_COMMA_expr__ :
+  Oparsetree.expression list
+val xv_list_rev_reversed_separated_nonempty_llist_STAR_simple_core_type__ :
+  Oparsetree.core_type list
+val xv_list_rev_reversed_separated_nonempty_llist_COMMA_type_parameter__ :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_list_rev_reversed_separated_nonempty_llist_COMMA_optional_type_parameter__ :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_list_rev_reversed_separated_nonempty_llist_BAR_row_field__ :
+  Oparsetree.row_field list
+val xv_list_rev_reversed_separated_nonempty_llist_AMPERSAND_core_type_no_attr__ :
+  Oparsetree.core_type list
+val xv_list_rev_reversed_nonempty_llist_typevar__ : string Oasttypes.loc list
+val xv_list_rev_reversed_nonempty_llist_name_tag__ : string list
+val xv_list_rev_reversed_nonempty_llist_labeled_simple_expr__ :
+  (Oasttypes.arg_label * Oparsetree.expression) list
+val xv_list_GOSPELSPEC_ : (string * Warnings.loc) list
+val xv_lident_list : string Oasttypes.loc list
+val xv_let_pattern : Oparsetree.pattern
+val xv_let_ident : Oparsetree.pattern
+val xv_let_exception_declaration : Oparsetree.extension_constructor
+val xv_let_bindings : let_bindings
+val xv_let_binding_body : Oparsetree.pattern * Oparsetree.expression
+val xv_let_binding : let_bindings
+val xv_lbl_pattern_list :
+  (Longident.t Oasttypes.loc * Oparsetree.pattern) list *
+  Oasttypes.closed_flag
+val xv_lbl_pattern : Longident.t Oasttypes.loc * Oparsetree.pattern
+val xv_lbl_expr_list :
+  (Longident.t Oasttypes.loc * Oparsetree.expression) list
+val xv_lbl_expr : Longident.t Oasttypes.loc * Oparsetree.expression
+val xv_labeled_simple_pattern :
+  Oasttypes.arg_label * Oparsetree.expression option * Oparsetree.pattern
+val xv_labeled_simple_expr : Oasttypes.arg_label * Oparsetree.expression
+val xv_label_var : string * Oparsetree.pattern
+val xv_label_longident : Longident.t
+val xv_label_let_pattern : string * Oparsetree.pattern
+val xv_label_ident : string * Oparsetree.expression
+val xv_label_expr : Oasttypes.arg_label * Oparsetree.expression
+val xv_label_declarations : Oparsetree.label_declaration list
+val xv_label_declaration_semi : Oparsetree.label_declaration
+val xv_label_declaration : Oparsetree.label_declaration
+val xv_label : string
+val xv_item_extension : Oparsetree.extension
+val xv_ioption_SEMI_ : unit option
+val xv_interface : Oparsetree.signature
+val xv_inline_reversed_separated_nonempty_llist_STAR_simple_core_type_ :
+  Oparsetree.core_type list
+val xv_inline_reversed_separated_nonempty_llist_COMMA_type_parameter_ :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_inline_reversed_separated_nonempty_llist_COMMA_optional_type_parameter_ :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_inline_reversed_separated_nonempty_llist_COMMA_core_type_ :
+  Oparsetree.core_type list
+val xv_inline_reversed_separated_nonempty_llist_BAR_row_field_ :
+  Oparsetree.row_field list
+val xv_inline_reversed_separated_nonempty_llist_AMPERSAND_core_type_no_attr_ :
+  Oparsetree.core_type list
+val xv_inline_core_type_comma_list : Oparsetree.core_type list
+val xv_inherit_field_semi : Oparsetree.object_field
+val xv_implementation : Oparsetree.structure
+val xv_ident : string
+val xv_generalized_constructor_arguments :
+  Oparsetree.constructor_arguments * Oparsetree.core_type option
+val xv_functor_args :
+  (string Oasttypes.loc * Oparsetree.module_type option) list
+val xv_functor_arg_name : string
+val xv_functor_arg : string Oasttypes.loc * Oparsetree.module_type option
+val xv_fun_def : Oparsetree.expression
+val xv_fun_binding : Oparsetree.expression
+val xv_floating_attribute : Oparsetree.attribute
+val xv_field_semi : Oparsetree.object_field
+val xv_field_expr_list : (string Oasttypes.loc * Oparsetree.expression) list
+val xv_field_expr : string Oasttypes.loc * Oparsetree.expression
+val xv_field : Oparsetree.object_field
+val xv_extra_str_top_structure_nodoc_ : Oparsetree.structure
+val xv_extra_str_structure_nodoc_ : Oparsetree.structure
+val xv_extra_sig_signature_nodoc_ : Oparsetree.signature
+val xv_extra_def_use_file_body_ : Oparsetree.toplevel_phrase list
+val xv_extra_cstr_class_fields_ : Oparsetree.class_field list
+val xv_extra_csig_class_sig_fields_ : Oparsetree.class_type_field list
+val xv_extra_core_type2 : Oparsetree.core_type
+val xv_extension_constructor_rebind : Oparsetree.extension_constructor
+val xv_extension_constructor_declaration : Oparsetree.extension_constructor
+val xv_extension : Oparsetree.extension
+val xv_ext_attributes : string Oasttypes.loc option * Oparsetree.attributes
+val xv_expr_semi_list : Oparsetree.expression list
+val xv_expr_op : Oparsetree.expression_desc
+val xv_expr_comma_list : Oparsetree.expression list
+val xv_expr_attrs :
+  Oparsetree.expression_desc *
+  (string Oasttypes.loc option * Oparsetree.attributes)
+val xv_expr_ : Oparsetree.expression_desc
+val xv_expr : Oparsetree.expression
+val xv_direction_flag : Oasttypes.direction_flag
+val xv_core_type_no_attr : Oparsetree.core_type
+val xv_core_type_list : Oparsetree.core_type list
+val xv_core_type_comma_list : Oparsetree.core_type list
+val xv_core_type2_ : Oparsetree.core_type_desc
+val xv_core_type2 : Oparsetree.core_type
+val xv_core_type : Oparsetree.core_type
+val xv_constructor_declarations : Oparsetree.constructor_declaration list
+val xv_constructor_declaration : Oparsetree.constructor_declaration
+val xv_constructor_arguments : Oparsetree.constructor_arguments
+val xv_constraints :
+  (Oparsetree.core_type * Oparsetree.core_type * Warnings.loc) list
+val xv_constrain_field : Oparsetree.core_type * Oparsetree.core_type
+val xv_constrain : Oparsetree.core_type * Oparsetree.core_type * Warnings.loc
+val xv_constr_longident : Longident.t
+val xv_constr_ident : string
+val xv_constant : Oasttypes.constant
+val xv_clty_longident : Longident.t
+val xv_class_type_parameters :
+  (Oparsetree.core_type * Oasttypes.variance) list
+val xv_class_type_declarations :
+  Oparsetree.class_type_declaration list * string Oasttypes.loc option
+val xv_class_type_declaration :
+  Oparsetree.class_type_declaration * string Oasttypes.loc option
+val xv_class_type : Oparsetree.class_type
+val xv_class_structure : Oparsetree.class_structure
+val xv_class_simple_expr : Oparsetree.class_expr
+val xv_class_signature : Oparsetree.class_type
+val xv_class_sig_fields : Oparsetree.class_type_field list
+val xv_class_sig_field : Oparsetree.class_type_field
+val xv_class_sig_body : Oparsetree.class_signature
+val xv_class_self_type : Oparsetree.core_type
+val xv_class_self_pattern : Oparsetree.pattern
+val xv_class_longident : Longident.t
+val xv_class_fun_def_desc : Oparsetree.class_expr_desc
+val xv_class_fun_def : Oparsetree.class_expr
+val xv_class_fun_binding : Oparsetree.class_expr
+val xv_class_fields : Oparsetree.class_field list
+val xv_class_field : Oparsetree.class_field
+val xv_class_expr : Oparsetree.class_expr
+val xv_class_descriptions :
+  Oparsetree.class_description list * string Oasttypes.loc option
+val xv_class_description :
+  Oparsetree.class_description * string Oasttypes.loc option
+val xv_class_declarations :
+  Oparsetree.class_declaration list * string Oasttypes.loc option
+val xv_class_declaration :
+  Oparsetree.class_declaration * string Oasttypes.loc option
+val xv_bar_extension_constructor_rebind : Oparsetree.extension_constructor
+val xv_bar_extension_constructor_declaration :
+  Oparsetree.extension_constructor
+val xv_bar_constructor_declaration : Oparsetree.constructor_declaration
+val xv_attributes : Oparsetree.attributes
+val xv_attribute : Oparsetree.attribute
+val xv_attr_id : string Oasttypes.loc
+val xv_and_type_declaration : Oparsetree.type_declaration
+val xv_and_module_declaration : Oparsetree.module_declaration
+val xv_and_module_binding : Oparsetree.module_binding
+val xv_and_let_binding : let_binding
+val xv_and_class_type_declaration : Oparsetree.class_type_declaration
+val xv_and_class_description : Oparsetree.class_description
+val xv_and_class_declaration : Oparsetree.class_declaration
+val xv_amper_type_list : Oparsetree.core_type list
+val xv_additive : string
+val xv___anonymous_9 : Oparsetree.class_field_desc
+val xv___anonymous_8 : Oparsetree.pattern_desc
+val xv___anonymous_7 : Oparsetree.class_expr_desc
+val xv___anonymous_6 : Oparsetree.class_expr_desc
+val xv___anonymous_5 : Oparsetree.class_expr_desc
+val xv___anonymous_45 : string
+val xv___anonymous_44 : Oparsetree.core_type_desc
+val xv___anonymous_43 : Oparsetree.core_type_desc
+val xv___anonymous_42 : Oparsetree.core_type_desc
+val xv___anonymous_41 : Oparsetree.core_type_desc
+val xv___anonymous_40 : Oparsetree.core_type_desc
+val xv___anonymous_4 : Oparsetree.module_type_desc
+val xv___anonymous_39 : Oparsetree.pattern_desc
+val xv___anonymous_38 : Longident.t
+val xv___anonymous_37 : Longident.t
+val xv___anonymous_36 : Oparsetree.pattern_desc
+val xv___anonymous_35 : Oparsetree.pattern_desc
+val xv___anonymous_34 : Oparsetree.expression_desc
+val xv___anonymous_33 : Longident.t
+val xv___anonymous_32 : Longident.t
+val xv___anonymous_31 : string
+val xv___anonymous_30 : string
+val xv___anonymous_3 : Oparsetree.signature_item_desc
+val xv___anonymous_29 : string
+val xv___anonymous_28 : string
+val xv___anonymous_27 : string
+val xv___anonymous_26 : string
+val xv___anonymous_25 : string
+val xv___anonymous_24 : string
+val xv___anonymous_23 : string
+val xv___anonymous_22 : string
+val xv___anonymous_21 : string
+val xv___anonymous_20 : string
+val xv___anonymous_2 : Oparsetree.module_expr_desc
+val xv___anonymous_19 : string
+val xv___anonymous_18 : string
+val xv___anonymous_17 : string
+val xv___anonymous_16 : string
+val xv___anonymous_15 : Oparsetree.pattern_desc
+val xv___anonymous_14 : Oparsetree.expression_desc
+val xv___anonymous_13 : Oparsetree.class_type_field_desc
+val xv___anonymous_12 : Oparsetree.core_type_desc
+val xv___anonymous_11 : Oparsetree.class_type_desc
+val xv___anonymous_10 : Oparsetree.class_type_desc
+val xv___anonymous_1 : Oparsetree.module_expr_desc
+val xv___anonymous_0 : string
+val menhir_end_marker : int

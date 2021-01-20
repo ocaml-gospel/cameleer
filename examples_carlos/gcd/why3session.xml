@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Z3" version="4.8.6" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Eprover" version="2.5" timelimit="5" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
+<path name=".."/><path name="gcd.ml"/>
+<theory name="Gcd">
+ <goal name="gcdd&#39;vc" expl="VC for gcdd">
+ <transf name="split_vc" >
+  <goal name="gcdd&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="8"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.1" expl="loop variant decrease">
+  <proof prover="1"><result status="timeout" time="5.00"/></proof>
+  <proof prover="2"><result status="timeout" time="5.00" steps="6446589"/></proof>
+  <proof prover="3"><result status="timeout" time="5.00"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.2" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.3" expl="loop variant decrease">
+  <proof prover="1"><result status="timeout" time="5.00"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.4" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.5" expl="postcondition">
+  <proof prover="1"><result status="timeout" time="5.00"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
