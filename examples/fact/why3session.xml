@@ -6,11 +6,11 @@
 <file format="ocaml" proved="true">
 <path name=".."/><path name="fact.ml"/>
 <theory name="Fact" proved="true">
- <goal name="fact_rec&#39;vc" expl="VC for fact_rec" proved="true">
- <proof prover="0"><result status="valid" time="0.05" steps="5473"/></proof>
+ <goal name="fact&#39;vc" expl="VC for fact" proved="true">
+ <proof prover="0"><result status="valid" time="0.05" steps="11538"/></proof>
  </goal>
  <goal name="fact_imp&#39;vc" expl="VC for fact_imp" proved="true">
- <proof prover="0"><result status="valid" time="0.06" steps="6053"/></proof>
+ <proof prover="0"><result status="valid" time="0.06" steps="13528"/></proof>
  </goal>
 </theory>
 </file>

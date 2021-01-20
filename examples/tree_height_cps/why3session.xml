@@ -3,25 +3,14 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="tree_height_cps.ml"/>
 <theory name="Tree_height_cps" proved="true">
  <goal name="height_cps&#39;vc" expl="VC for height_cps" proved="true">
- <transf name="split_vc" proved="true" >
-  <goal name="height_cps&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="12989"/></proof>
-  </goal>
-  <goal name="height_cps&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="12989"/></proof>
-  </goal>
-  <goal name="height_cps&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.11" steps="793"/></proof>
-  </goal>
- </transf>
+ <proof prover="0"><result status="valid" time="0.09" steps="22788"/></proof>
  </goal>
  <goal name="height_tree&#39;vc" expl="VC for height_tree" proved="true">
- <proof prover="0"><result status="valid" time="0.05" steps="12667"/></proof>
+ <proof prover="0"><result status="valid" time="0.05" steps="14218"/></proof>
  </goal>
 </theory>
 </file>

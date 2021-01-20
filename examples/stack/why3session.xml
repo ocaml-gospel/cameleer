@@ -8,37 +8,39 @@
 <path name=".."/><path name="stack.ml"/>
 <theory name="Stack" proved="true">
  <goal name="t&#39;vc" expl="VC for t" proved="true">
- <proof prover="1"><result status="valid" time="0.05" steps="9970"/></proof>
+ <proof prover="1"><result status="valid" time="0.05" steps="11499"/></proof>
  </goal>
  <goal name="create&#39;vc" expl="VC for create" proved="true">
- <proof prover="1"><result status="valid" time="0.05" steps="11269"/></proof>
+ <proof prover="1"><result status="valid" time="0.05" steps="12798"/></proof>
  </goal>
  <goal name="clear&#39;vc" expl="VC for clear" proved="true">
- <proof prover="1"><result status="valid" time="0.06" steps="11886"/></proof>
+ <proof prover="1"><result status="valid" time="0.06" steps="13415"/></proof>
  </goal>
  <goal name="copy&#39;vc" expl="VC for copy" proved="true">
- <proof prover="1"><result status="valid" time="0.04" steps="11184"/></proof>
+ <proof prover="1"><result status="valid" time="0.04" steps="12735"/></proof>
  </goal>
  <goal name="push&#39;vc" expl="VC for push" proved="true">
- <proof prover="1"><result status="valid" time="0.08" steps="15555"/></proof>
+ <proof prover="1"><result status="valid" time="0.08" steps="17124"/></proof>
  </goal>
  <goal name="pop&#39;vc" expl="VC for pop" proved="true">
  <proof prover="0"><result status="valid" time="0.02" steps="78"/></proof>
+ <proof prover="1"><result status="valid" time="0.06" steps="17951"/></proof>
  </goal>
  <goal name="pop_opt&#39;vc" expl="VC for pop_opt" proved="true">
  <proof prover="0"><result status="valid" time="0.02" steps="99"/></proof>
+ <proof prover="1"><result status="valid" time="0.07" steps="19133"/></proof>
  </goal>
  <goal name="top&#39;vc" expl="VC for top" proved="true">
- <proof prover="1"><result status="valid" time="0.09" steps="14064"/></proof>
+ <proof prover="1"><result status="valid" time="0.09" steps="15615"/></proof>
  </goal>
  <goal name="top_opt&#39;vc" expl="VC for top_opt" proved="true">
- <proof prover="1"><result status="valid" time="0.08" steps="14698"/></proof>
+ <proof prover="1"><result status="valid" time="0.08" steps="16249"/></proof>
  </goal>
  <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
- <proof prover="1"><result status="valid" time="0.06" steps="13864"/></proof>
+ <proof prover="1"><result status="valid" time="0.06" steps="15415"/></proof>
  </goal>
  <goal name="length&#39;vc" expl="VC for length" proved="true">
- <proof prover="1"><result status="valid" time="0.04" steps="10972"/></proof>
+ <proof prover="1"><result status="valid" time="0.04" steps="12523"/></proof>
  </goal>
 </theory>
 </file>

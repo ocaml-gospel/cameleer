@@ -2,45 +2,16 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.8.6" timelimit="5" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<file format="ocaml">
+<file format="ocaml" proved="true">
 <path name=".."/><path name="binary_search.ml"/>
-<theory name="Binary_search">
- <goal name="binary_search&#39;vc" expl="VC for binary_search">
- <proof prover="0" timelimit="5" obsolete="true"><result status="valid" time="0.26" steps="279"/></proof>
- <transf name="split_vc" >
-  <goal name="binary_search&#39;vc.0" expl="check division by zero" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="7231"/></proof>
-  </goal>
-  <goal name="binary_search&#39;vc.1" expl="precondition">
-  <proof prover="0"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1"><result status="highfailure" time="0.66" steps="556432"/></proof>
-  <proof prover="2"><result status="unknown" time="0.37" steps="15601"/></proof>
-  </goal>
-  <goal name="binary_search&#39;vc.2" expl="loop variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.14" steps="8786"/></proof>
-  </goal>
-  <goal name="binary_search&#39;vc.3" expl="precondition">
-  <proof prover="0"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1"><result status="highfailure" time="0.76" steps="666628"/></proof>
-  <proof prover="2"><result status="timeout" time="1.00" steps="91177"/></proof>
-  </goal>
-  <goal name="binary_search&#39;vc.4" expl="loop variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.15" steps="8819"/></proof>
-  </goal>
-  <goal name="binary_search&#39;vc.5" expl="postcondition">
-  <proof prover="0"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1"><result status="highfailure" time="0.65" steps="465289"/></proof>
-  <proof prover="2"><result status="timeout" time="1.00" steps="248223"/></proof>
-  </goal>
-  <goal name="binary_search&#39;vc.6" expl="exceptional postcondition">
-  <proof prover="0"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1"><result status="timeout" time="1.00" steps="892805"/></proof>
-  <proof prover="2"><result status="timeout" time="1.00" steps="131999"/></proof>
-  </goal>
- </transf>
+<theory name="Binary_search" proved="true">
+ <goal name="binary_search&#39;vc" expl="VC for binary_search" proved="true">
+ <proof prover="0"><result status="valid" time="0.13" steps="215"/></proof>
+ <proof prover="1"><result status="valid" time="0.17" steps="369314"/></proof>
+ <proof prover="2"><result status="valid" time="0.13" steps="19031"/></proof>
  </goal>
 </theory>
 </file>

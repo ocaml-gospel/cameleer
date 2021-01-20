@@ -1,6 +1,3 @@
-let [@ghost] [@logic] set (f: 'a -> 'b) (x: 'a) (v: 'b) : 'a -> 'b =
-  fun y -> if (y = x) [@pure] then v else f y
-
 (*@ open Array *)
 
 (** The following is used to prove validity of the [uf] type invariant. *)
@@ -43,6 +40,9 @@ let rec find i uf =
 
 (*@ predicate equiv (i j: int) (uf: uf) =
       mem i uf.link -> mem j uf.link -> uf.rep i = uf.rep j *)
+
+let [@ghost] [@logic] set (f: 'a -> 'b) (x: 'a) (v: 'b) : 'a -> 'b =
+  fun y -> if (y = x) [@pure] then v else f y
 
 let union i j uf =
   let rep_i = find i uf in

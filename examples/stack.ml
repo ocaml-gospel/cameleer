@@ -1,4 +1,4 @@
-type 'a t = { mutable c : 'a list; mutable len : int;
+type 'a t = { mutable   c : 'a list; mutable len : int;
               mutable view: 'a list [@ghost]; }
 (*@ invariant List.length view = len /\ c = view *)
 

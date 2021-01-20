@@ -82,7 +82,7 @@ module Make (E: PRE_ORD) = struct
   and [@lemma] size_tree_nonneg = function T (_, l) -> size_tree_list_nonneg l
   (*@ size_tree_nonneg param
         variant param
-        ensures size_tree param >= 0 *)
+        ensures size_tree param >= 1 *)
   and [@lemma] size_tree_list_nonneg = function
     | [] -> ()
     | t :: r -> size_tree_nonneg t; size_tree_list_nonneg r

@@ -9,7 +9,7 @@ let binary_search a v =
   try while !l <= !u do
       (*@ variant   !u - !l *)
       (*@ invariant 0 <= !l && !u < Array.length a *)
-      (*@ invariant forall i. 0 <= i < Array.length a -> a[i] = v ->
+      (*@ invariant forall i. 0 <= i < Array.length a -> a.(i) = v ->
             !l <= i <= !u *)
       let m = !l + (!u - !l) / 2 in
       if a.(m) < v then
@@ -23,5 +23,5 @@ let binary_search a v =
   with Found i -> i
 (*@ i = binary_search a v
       requires is_sorted a
-      raises   Not_found -> forall i. 0 <= i < Array.length a -> a[i] <> v
-      ensures  0 <= i < Array.length a && a[i] = v *)
+      raises   Not_found -> forall i. 0 <= i < Array.length a -> a.(i) <> v
+      ensures  0 <= i < Array.length a && a.(i) = v *)

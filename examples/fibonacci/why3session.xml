@@ -2,95 +2,18 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="2" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
-<file format="ocaml">
+<prover id="1" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
 <path name=".."/><path name="fibonacci.ml"/>
-<theory name="Fibonacci">
+<theory name="Fibonacci" proved="true">
  <goal name="fib&#39;vc" expl="VC for fib" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.01" steps="8"/></proof>
+ <proof prover="1"><result status="valid" time="0.01" steps="10"/></proof>
  </goal>
  <goal name="fibonacci&#39;vc" expl="VC for fibonacci" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.08" steps="81"/></proof>
- </goal>
- <goal name="fib_aux&#39;vc" expl="VC for fib_aux" proved="true">
- <proof prover="0"><result status="valid" time="0.23" steps="36596"/></proof>
+ <proof prover="1"><result status="valid" time="0.08" steps="83"/></proof>
  </goal>
  <goal name="fib_main&#39;vc" expl="VC for fib_main" proved="true">
- <proof prover="1" timelimit="5"><result status="valid" time="0.01" steps="81"/></proof>
- </goal>
- <goal name="LogFib.M.power_0">
- <proof prover="0" obsolete="true"><result status="unknown" time="0.12" steps="13864"/></proof>
- <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
- <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="1665595"/></proof>
- </goal>
- <goal name="LogFib.M.power_s">
- <proof prover="0" obsolete="true"><result status="unknown" time="0.13" steps="15875"/></proof>
- <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
- <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="1469890"/></proof>
- </goal>
- <goal name="LogFib.logfib&#39;vc" expl="VC for logfib">
- <transf name="split_vc" >
-  <goal name="logfib&#39;vc.0" expl="check division by zero" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="8403"/></proof>
-  </goal>
-  <goal name="logfib&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="10114"/></proof>
-  </goal>
-  <goal name="logfib&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="9769"/></proof>
-  </goal>
-  <goal name="logfib&#39;vc.3" expl="check modulo by zero" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="8463"/></proof>
-  </goal>
-  <goal name="logfib&#39;vc.4" expl="postcondition">
-  <transf name="split_vc" >
-   <goal name="logfib&#39;vc.4.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="9142"/></proof>
-   </goal>
-   <goal name="logfib&#39;vc.4.1" expl="postcondition">
-   <transf name="assert" arg1="(0 &lt;= div n 2)">
-    <goal name="logfib&#39;vc.4.1.0" expl="asserted formula" proved="true">
-    <proof prover="0"><result status="valid" time="0.09" steps="10508"/></proof>
-    </goal>
-    <goal name="logfib&#39;vc.4.1.1" expl="postcondition">
-    <transf name="eliminate_let_fmla" >
-     <goal name="logfib&#39;vc.4.1.1.0" expl="postcondition">
-     <transf name="destruct" arg1="H">
-      <goal name="logfib&#39;vc.4.1.1.0.0" expl="postcondition">
-      <transf name="assert" arg1="(2 * (div n 2) + 1 = (div n 2) + (div n 2) + 1)">
-       <goal name="logfib&#39;vc.4.1.1.0.0.0" expl="asserted formula" proved="true">
-       <proof prover="0"><result status="valid" time="0.05" steps="8582"/></proof>
-       </goal>
-       <goal name="logfib&#39;vc.4.1.1.0.0.1" expl="postcondition">
-       </goal>
-      </transf>
-      </goal>
-      <goal name="logfib&#39;vc.4.1.1.0.1" expl="postcondition">
-      <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="99567"/></proof>
-      <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
-      <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="1165221"/></proof>
-      <transf name="assert" arg1="(2 * (div n 2) = (div n 2) + (div n 2) )">
-       <goal name="logfib&#39;vc.4.1.1.0.1.0" expl="asserted formula" proved="true">
-       <proof prover="0"><result status="valid" time="0.05" steps="8574"/></proof>
-       </goal>
-       <goal name="logfib&#39;vc.4.1.1.0.1.1" expl="postcondition">
-       <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="72722"/></proof>
-       <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
-       <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="871811"/></proof>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
-   </goal>
-  </transf>
-  </goal>
- </transf>
+ <proof prover="1"><result status="valid" time="0.01" steps="83"/></proof>
  </goal>
 </theory>
 </file>

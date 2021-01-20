@@ -7,10 +7,10 @@
 <path name=".."/><path name="even_odd.ml"/>
 <theory name="Even_odd" proved="true">
  <goal name="even&#39;vc" expl="VC for even" proved="true">
- <proof prover="0"><result status="valid" time="0.09" steps="11513"/></proof>
+ <proof prover="0"><result status="valid" time="0.09" steps="13478"/></proof>
  </goal>
  <goal name="odd&#39;vc" expl="VC for odd" proved="true">
- <proof prover="0"><result status="valid" time="0.08" steps="11623"/></proof>
+ <proof prover="0"><result status="valid" time="0.08" steps="13588"/></proof>
  </goal>
 </theory>
 </file>

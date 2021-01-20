@@ -3,14 +3,20 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<file format="ocaml" proved="true">
+<prover id="1" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
 <path name=".."/><path name="vector.ml"/>
-<theory name="Vector" proved="true">
+<theory name="Vector">
  <goal name="make&#39;vc" expl="VC for make" proved="true">
- <proof prover="0"><result status="valid" time="0.07" steps="9982"/></proof>
+ <proof prover="0"><result status="valid" time="0.07" steps="37696"/></proof>
+ <proof prover="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="3722794"/></proof>
  </goal>
- <goal name="create&#39;vc" expl="VC for create" proved="true">
- <proof prover="0"><result status="valid" time="0.03" steps="9268"/></proof>
+ <goal name="init&#39;vc" expl="VC for init">
+ <proof prover="0"><result status="unknown" time="0.18" steps="45304"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="1806197"/></proof>
  </goal>
 </theory>
 </file>

@@ -1,16 +1,10 @@
 (** Two implementations of factorial. *)
 
-(*@ function fact (n: integer) : integer *)
-
-(*@ axiom fact_0: fact 0 = 1 *)
-(*@ axiom fact_n: forall n. n > 0 -> fact n = n * fact (n - 1) *)
-
-let rec fact_rec x =
-  if x = 0 then 1 else x * fact_rec (x - 1)
+let [@logic] rec fact x =
+  if x = 0 then 1 else x * fact (x - 1)
 (*@ r = fact_rec x
       requires x >= 0
-      variant  x
-      ensures  r = fact x *)
+      variant  x *)
 
 let fact_imp x =
   let y = ref 0 in

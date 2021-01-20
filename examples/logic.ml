@@ -72,14 +72,14 @@ let[@logic] rec eval_disj (v: valuation) (f: disj) : bool
   | FOr_cnf  (f1, f2) -> eval_disj v f1 || eval_disj v f2
   | FNeg_cnf literal  -> not (eval_literal v literal)
   | L_cnf    literal  -> eval_literal v literal
-(*@ r = eval_disj
+(*@ r = eval_disj v f
       variant f *)
 
 let[@logic] rec eval_cnf (v: valuation) (f: formula_cnf) : bool
   = match f with
   | FAnd_cnf (f1, f2) -> eval_cnf v f1 && eval_cnf v f2
   | D        disj     -> eval_disj v disj
-(*@ r = eval_cnf
+(*@ r = eval_cnf v f
       variant f *)
 
 (*@ function size (phi: formula_wi) : integer

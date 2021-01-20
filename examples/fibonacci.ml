@@ -1,7 +1,8 @@
 let [@logic] [@ghost] rec fib n =
   if n <= 1 then n else fib (n-1) + fib (n-2)
-(*@ requires n >= 0
-    variant  n *)
+(*@ r = fib n
+      requires n >= 0
+      variant  n *)
 
 let fibonacci n =
   let y = ref 0 in
@@ -17,23 +18,6 @@ let fibonacci n =
       requires n >= 0
       ensures  r = fib n *)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let fib_main k =
   let rec fib_rec_aux (n [@ghost]) a b k =
     if k = 0 then a else fib_rec_aux (n + 1) b (a + b) (k - 1)
@@ -47,56 +31,7 @@ let fib_main k =
       requires k >= 0
       ensures  r = fib k *)
 
-(* module type Monoid = sig
- *   type t
- *
- *   (\*@ function op (x y: t) : t *\)
- *   (\*@ axiom assoc: forall x y z. op (op x y) z = op x (op y z) *\)
- *
- *   (\*@ function unit : t *\)
- *
- *   (\*@ axiom unit_def_l: forall x: t. op unit x = x *\)
- *   (\*@ axiom unit_def_r: forall x: t. op x unit = x *\)
- * end
- *
- * module type Exponentiation = sig
- *   type t
- *
- *   (\*@ function one: t *\)
- *
- *   (\*@ function ( * ) (x y: t) : t *\)
- *
- *   include Monoid
- *     with type t := t (\* For now, this only works for types with the same name *\)
- * (\*@ with function unit = one and function op := ( * ) *\)
- *
- *   (\*@ function power (t: t) (x: integer) : t *\)
- *
- *   (\*@ axiom power_0 : forall x: t. power x 0 = one *\)
- *
- *   (\*@ axiom power_s :
- *         forall x: t, n: integer. n >= 0 -> power x (n+1) = x * power x n *\)
- *
- *   (\*@ lemma power_s_alt:
- *         forall x: t, n: int. n > 0 -> power x n = x * power x (n-1) *\)
- *
- *   (\*@ lemma power_1 : forall x : t. power x 1 = x *\)
- *
- *   (\*@ lemma power_sum : forall x: t, n m: int. 0 <= n -> 0 <= m ->
- *         power x (n+m) = power x n * power x m *\)
- *
- *   (\*@ lemma power_mult : forall x:t, n m : int. 0 <= n -> 0 <= m ->
- *         power x (Int.( * ) n m) = power (power x n) m *\)
- *
- *   (\*@ lemma power_comm1 : forall x y: t. x * y = y * x ->
- *         forall n:int. 0 <= n ->
- *         power x n * y = y * power x n *\)
- *
- *   (\*@ lemma power_comm2 : forall x y: t. x * y = y * x ->
- *         forall n:int. 0 <= n ->
- *         power (x * y) n = power x n * power y n *\)
- * end
- *
+ (*
  * module type Mat22 = sig
  *
  *   (\* TODO: this does not need to be a "real" type *\)

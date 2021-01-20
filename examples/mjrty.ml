@@ -1,41 +1,4 @@
-let [@logic] [@ghost] rec numof_int p a b =
-  if b <= a then 0 else
-  if p (b - 1) then 1 + numof_int p a (b - 1)
-               else     numof_int p a (b - 1)
-(*@ x = numof_int p a b
-      variant b - a *)
-
-let [@lemma] rec numof_bounds (p: int -> bool) (a: int) (b: int) =
-  if a < b - 1 then numof_bounds p a (b - 1)
-(*@ numof_bounds p a b
-      requires a < b
-      variant  b - a
-      ensures  0 <= numof_int p a b <= b - a *)
-
-let [@lemma] rec numof_append (p : int -> bool) (a: int) (b: int) (c : int) =
-  if b >= c then ()
-  else numof_append p a b (c - 1)
-(*@ numof_append p a b c
-      requires a <= b <= c
-      variant  c - b
-      ensures  numof_int p a c = numof_int p a b + numof_int p b c *)
-
-let [@lemma] numof_left_no_add (p : int -> bool) (a: int) (b : int) =
-  ()
-(*@ numof_left_no_add p a b
-      requires a < b
-      requires not p a
-      ensures  numof_int p a b = numof_int p (a+1) b *)
-
-let [@lemma] numof_left_add (p : int -> bool) (a: int) (b : int) =
-  ()
-(*@ numof_left_add p a b
-      requires a < b
-      requires p a
-      ensures  numof_int p a b = 1 + numof_int p (a+1) b *)
-
-(*@ function numof (a: 'a array) (v: 'a) (l u: integer) : integer =
-  numof_int (fun i -> a.(i) = v) l u *)
+(*@ open Numof *)
 
 module type EQUAL = sig
   type t

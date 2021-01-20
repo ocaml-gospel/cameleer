@@ -5,6 +5,7 @@ type expr =
   | EAdd of expr * expr
   | EMul of expr * expr
   | EIf  of ebool * expr * expr
+  | ELet of int * expr * expr
 and ebool =
   | ETrue
   | EFalse
@@ -16,6 +17,9 @@ and ebool =
 type prog = expr
 
 type store = int -> int
+
+let [@logic] update_store (st: store) x v =
+  fun y -> if y = x then v else st x
 
 let [@logic] rec eval_b (st: store) = function
   | ETrue -> true
@@ -35,6 +39,9 @@ and [@logic] eval_0 store = function
   | EMul (e1, e2) -> eval_0 store e1 * eval_0 store e2
   | EIf (b, e1, e2) ->
       if eval_b store b then eval_0 store e1 else eval_0 store e2
+  | ELet (x, e1, e2) ->
+      let v = eval_0 store e1 in
+      eval_0 (update_store store x v) e2
 (*@ eval_0 store e
       variant e *)
 
@@ -45,6 +52,7 @@ type opcode =
   | OFalse
   | OPush   of int
   | OFetch  of int
+  | OStore  of int
   | OBranch of code * code
   | OSub
   | OAdd
@@ -68,6 +76,7 @@ let [@ghost] [@logic] rec opcode_size = function
   | OFalse -> 1
   | OPush _ -> 1
   | OFetch _ -> 1
+  | OStore _ -> 1
   | OSub -> 1
   | OAdd -> 1
   | OMul -> 1
@@ -85,6 +94,7 @@ let [@lemma] rec opcode_size_nonneg = function
   | OFalse
   | OPush _
   | OFetch _
+  | OStore _
   | OSub
   | OAdd
   | OMul
@@ -115,6 +125,9 @@ let [@logic] [@ghost] rec star (s: stack) (c: code) (st: store) : res =
   | OFalse   :: r -> star (VBool false :: s) r st
   | OPush n  :: r -> star (VInt n :: s) r st
   | OFetch x :: r -> star (VInt (st x) :: s) r st
+  | OStore x :: r -> (match s with
+      | VInt v :: sr -> star sr r (update_store st x v)
+      | _ -> Error)
   | OSub     :: r -> (match s with
       | VInt x :: VInt y :: sr -> star (VInt (x - y) :: sr) r st
       | _ -> Error)
@@ -210,6 +223,10 @@ let [@lemma] rec star_append (store: store)
   | OFalse   :: r -> star_append store r p2 (VBool false :: s1) s2 s
   | OPush  n :: r -> star_append store r p2 (VInt n :: s1) s2 s
   | OFetch x :: r -> star_append store r p2 (VInt (store x) :: s1) s2 s
+  | OStore x :: r -> begin match s1 with
+      | VInt v :: sr ->
+          star_append (update_store store x v) r p2 sr s2 s
+      | _ -> assert false end
   | OSub     :: r -> begin match s1 with
       | VInt x :: VInt y :: sr ->
           star_append store r p2 (VInt (x - y) :: sr) s2 s
@@ -245,7 +262,7 @@ let [@lemma] rec star_append (store: store)
       | _ -> assert false end
 (*@ star_append store p1 p2 s1 s2 res
       requires Res res = star s1 p1 store
-      requires let _, _, st = res in st = store
+      (* requires let _, _, st = res in st = store *)
       variant  code_size p1
       ensures  let stack, code, store = res in
                star (s1    @ s2) (p1   @ p2) store
@@ -330,10 +347,13 @@ and compile (st [@ghost]) = function
       star_append st ba [OBranch (a1, a2)] [] []
         ([VBool (eval_b st b)], [], st);
       ba @ [OBranch (a1, a2)]
+  | ELet (x, e1, e2) ->
+      let a1 = compile st e1 in
+      let a2 = compile st e2 in
+      a1 @ [OStore x] @ a2
 (*@ r = compile store e
       variant e
       ensures match star [] r store with
               | Error -> false
-              | Res (stack, code, st) ->
-                  stack = (VInt (eval_0 store e) :: []) /\ code = [] /\
-                  st = store *)
+              | Res (stack, code, _) ->
+                  stack = (VInt (eval_0 store e) :: []) /\ code = [] *)

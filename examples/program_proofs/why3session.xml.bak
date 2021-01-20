@@ -2,317 +2,176 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Alt-Ergo" version="2.3.1" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="0" name="Z3" version="4.8.6" timelimit="5" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml">
 <path name=".."/><path name="program_proofs.ml"/>
 <theory name="Program_proofs">
- <goal name="Mult.mult&#39;vc" expl="VC for mult">
+ <goal name="Mult.mult&#39;vc" expl="VC for mult" proved="true">
+ <proof prover="2"><result status="valid" time="0.04" steps="11882"/></proof>
  </goal>
- <goal name="Mult.mult_commutative&#39;vc" expl="VC for mult_commutative">
+ <goal name="Mult.mult_commutative&#39;vc" expl="VC for mult_commutative" proved="true">
+ <proof prover="0" timelimit="1" obsolete="true"><result status="timeout" time="1.00" steps="2190296"/></proof>
+ <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="168549"/></proof>
+ <proof prover="3" timelimit="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="mult_commutative&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11132"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11081"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="11671"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.3" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11150"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11113"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="11116"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.6" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11168"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="11117"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11714"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.9" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="11212"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="11759"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="11790"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.12" expl="variant decrease" proved="true">
+  <proof prover="0" timelimit="1" obsolete="true"><result status="timeout" time="1.00" steps="2274158"/></proof>
+  <proof prover="2" obsolete="true"><result status="unknown" time="0.07" steps="16750"/></proof>
+  <proof prover="3" timelimit="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
+  <transf name="left" proved="true" >
+   <goal name="mult_commutative&#39;vc.12.0" expl="left case" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="mult_commutative&#39;vc.12.0.0" expl="left case" proved="true">
+    <proof prover="2"><result status="valid" time="0.04" steps="11181"/></proof>
+    </goal>
+    <goal name="mult_commutative&#39;vc.12.0.1" expl="left case" proved="true">
+    <proof prover="0" timelimit="1" obsolete="true"><result status="timeout" time="1.00" steps="2294835"/></proof>
+    <proof prover="2"><result status="valid" time="0.03" steps="11190"/></proof>
+    <proof prover="3" timelimit="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="mult_commutative&#39;vc.13" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11805"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.14" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="11192"/></proof>
+  </goal>
+  <goal name="mult_commutative&#39;vc.15" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="12932"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="Mirror.mirror_involutive&#39;vc" expl="VC for mirror_involutive" proved="true">
- <proof prover="2"><result status="valid" time="0.09"/></proof>
+ <proof prover="2"><result status="valid" time="0.09" steps="17707"/></proof>
  </goal>
  <goal name="Mirror.mirror_size&#39;vc" expl="VC for mirror_size" proved="true">
- <proof prover="0" timelimit="5" obsolete="true"><result status="timeout" time="5.00"/></proof>
- <proof prover="1" obsolete="true"><result status="timeout" time="5.00"/></proof>
- <proof prover="2"><result status="valid" time="0.11"/></proof>
+ <proof prover="2"><result status="valid" time="0.11" steps="30357"/></proof>
  </goal>
- <goal name="AST.eval&#39;vc" expl="VC for eval">
- <proof prover="2" obsolete="true"><result status="valid" time="0.07"/></proof>
+ <goal name="AST.eval&#39;vc" expl="VC for eval" proved="true">
+ <proof prover="2"><result status="valid" time="0.07" steps="15643"/></proof>
  </goal>
- <goal name="AST.eval_list&#39;vc" expl="VC for eval_list">
- <transf name="split_vc" >
-  <goal name="eval_list&#39;vc.0" expl="variant decrease">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.07"/></proof>
+ <goal name="AST.eval_list&#39;vc" expl="VC for eval_list" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="eval_list&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="17597"/></proof>
   </goal>
-  <goal name="eval_list&#39;vc.1" expl="variant decrease">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.08"/></proof>
-  </goal>
-  <goal name="eval_list&#39;vc.2" expl="integer overflow">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1" timelimit="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="2" obsolete="true"><result status="unknown" time="0.14"/></proof>
-  </goal>
-  <goal name="eval_list&#39;vc.3" expl="integer overflow">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1" timelimit="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="2" obsolete="true"><result status="unknown" time="0.14"/></proof>
+  <goal name="eval_list&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="17597"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="AST.shorten&#39;vc" expl="VC for shorten">
  <transf name="split_vc" >
-  <goal name="shorten&#39;vc.0" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.06"/></proof>
+  <goal name="shorten&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="16569"/></proof>
   </goal>
   <goal name="shorten&#39;vc.1" expl="postcondition">
-  <transf name="unfold" arg1="eval">
+  <transf name="destruct_term" arg1="r">
    <goal name="shorten&#39;vc.1.0" expl="postcondition">
-   <transf name="compile_match" >
-    <goal name="shorten&#39;vc.1.0.0" expl="postcondition">
-    <transf name="destruct_term" arg1="r">
-     <goal name="shorten&#39;vc.1.0.0.0" expl="postcondition">
-     <transf name="subst_all" >
-      <goal name="shorten&#39;vc.1.0.0.0.0" expl="postcondition">
-      <transf name="compile_match" >
-       <goal name="shorten&#39;vc.1.0.0.0.0.0" expl="postcondition">
-       <transf name="instantiate" arg1="eval_list&#39;def" arg2="op">
-        <goal name="shorten&#39;vc.1.0.0.0.0.0.0" expl="postcondition">
-        <proof prover="1" obsolete="true"><result status="valid" time="1.28" steps="976"/></proof>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-     <goal name="shorten&#39;vc.1.0.0.1" expl="postcondition">
-     <transf name="subst_all" >
-      <goal name="shorten&#39;vc.1.0.0.1.0" expl="postcondition">
-      <transf name="compile_match" >
-       <goal name="shorten&#39;vc.1.0.0.1.0.0" expl="postcondition">
-       <transf name="destruct_term" arg1="(env @ x)">
-        <goal name="shorten&#39;vc.1.0.0.1.0.0.0" expl="postcondition">
-        <transf name="replace" arg1="(env @ x1)" arg2="(Some x)">
-         <goal name="shorten&#39;vc.1.0.0.1.0.0.0.0" expl="postcondition">
-         <transf name="compile_match" >
-          <goal name="shorten&#39;vc.1.0.0.1.0.0.0.0.0" expl="postcondition">
-          <transf name="instantiate" arg1="eval_list&#39;def" arg2="op">
-           <goal name="shorten&#39;vc.1.0.0.1.0.0.0.0.0.0" expl="postcondition">
-           <proof prover="1" obsolete="true"><result status="valid" time="0.70" steps="969"/></proof>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
-         </goal>
-         <goal name="shorten&#39;vc.1.0.0.1.0.0.0.1" expl="equality hypothesis">
-         <proof prover="2" obsolete="true"><result status="valid" time="0.05"/></proof>
-         </goal>
-        </transf>
-        </goal>
-        <goal name="shorten&#39;vc.1.0.0.1.0.0.1" expl="postcondition">
-        <proof prover="2" obsolete="true"><result status="valid" time="0.15"/></proof>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-     <goal name="shorten&#39;vc.1.0.0.2" expl="postcondition">
-     <transf name="subst_all" >
-      <goal name="shorten&#39;vc.1.0.0.2.0" expl="postcondition">
-      <transf name="compile_match" >
-       <goal name="shorten&#39;vc.1.0.0.2.0.0" expl="postcondition">
-       <transf name="instantiate" arg1="eval_list&#39;def" arg2="op">
-        <goal name="shorten&#39;vc.1.0.0.2.0.0.0" expl="postcondition">
-        <proof prover="1" obsolete="true"><result status="valid" time="1.15" steps="972"/></proof>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
+   <proof prover="0"><result status="timeout" time="5.00" steps="7028268"/></proof>
+   <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="2807099"/></proof>
+   <proof prover="3"><result status="timeout" time="5.00"/></proof>
+   </goal>
+   <goal name="shorten&#39;vc.1.1" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="5.00" steps="6115025"/></proof>
+   <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="3738727"/></proof>
+   <proof prover="3"><result status="timeout" time="5.00"/></proof>
+   </goal>
+   <goal name="shorten&#39;vc.1.2" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="5.00" steps="6917366"/></proof>
+   <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="2806268"/></proof>
+   <proof prover="3"><result status="timeout" time="5.00"/></proof>
+   <transf name="assert" arg1="(eval r env = x)">
+    <goal name="shorten&#39;vc.1.2.0" expl="asserted formula" proved="true">
+    <proof prover="2"><result status="valid" time="0.05" steps="15376"/></proof>
+    </goal>
+    <goal name="shorten&#39;vc.1.2.1" expl="postcondition">
+    <proof prover="0"><result status="timeout" time="5.00" steps="7026981"/></proof>
+    <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="2806446"/></proof>
+    <proof prover="3"><undone/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
-  <goal name="shorten&#39;vc.2" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.07"/></proof>
+  <goal name="shorten&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="14540"/></proof>
   </goal>
  </transf>
  </goal>
- <goal name="AST.optimize&#39;vc" expl="VC for optimize">
- <proof prover="2" obsolete="true"><result status="valid" time="0.10"/></proof>
+ <goal name="AST.optimize&#39;vc" expl="VC for optimize" proved="true">
+ <proof prover="2"><result status="valid" time="0.08" steps="20589"/></proof>
  </goal>
  <goal name="AST.optimize_and_filter&#39;vc" expl="VC for optimize_and_filter">
  <transf name="split_vc" >
-  <goal name="optimize_and_filter&#39;vc.0" expl="variant decrease">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.11"/></proof>
+  <goal name="optimize_and_filter&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="19350"/></proof>
   </goal>
-  <goal name="optimize_and_filter&#39;vc.1" expl="variant decrease">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.09"/></proof>
+  <goal name="optimize_and_filter&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.11" steps="19401"/></proof>
   </goal>
   <goal name="optimize_and_filter&#39;vc.2" expl="postcondition">
   <transf name="split_vc" >
-   <goal name="optimize_and_filter&#39;vc.2.0" expl="postcondition">
-   <proof prover="2" obsolete="true"><result status="valid" time="0.04"/></proof>
+   <goal name="optimize_and_filter&#39;vc.2.0" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.04" steps="14951"/></proof>
    </goal>
    <goal name="optimize_and_filter&#39;vc.2.1" expl="postcondition">
-   <transf name="destruct_term" arg1="e">
+   <transf name="split_vc" >
     <goal name="optimize_and_filter&#39;vc.2.1.0" expl="postcondition">
-    <transf name="subst" arg1="e">
-     <goal name="optimize_and_filter&#39;vc.2.1.0.0" expl="postcondition">
-     <transf name="compile_match" >
-      <goal name="optimize_and_filter&#39;vc.2.1.0.0.0" expl="postcondition">
-      <transf name="unfold" arg1="eval">
-       <goal name="optimize_and_filter&#39;vc.2.1.0.0.0.0" expl="postcondition">
-       <transf name="compile_match" >
-        <goal name="optimize_and_filter&#39;vc.2.1.0.0.0.0.0" expl="postcondition">
-        <transf name="instantiate" arg1="H2" arg2="op,env">
-         <goal name="optimize_and_filter&#39;vc.2.1.0.0.0.0.0.0" expl="postcondition">
-         <transf name="destruct" arg1="Hinst">
-          <goal name="optimize_and_filter&#39;vc.2.1.0.0.0.0.0.0.0" expl="destruct premise">
-          <proof prover="2" obsolete="true"><result status="valid" time="0.03"/></proof>
-          </goal>
-          <goal name="optimize_and_filter&#39;vc.2.1.0.0.0.0.0.0.1" expl="postcondition">
-          <transf name="instantiate" arg1="eval_list&#39;def" arg2="op,r,env">
-           <goal name="optimize_and_filter&#39;vc.2.1.0.0.0.0.0.0.1.0" expl="postcondition">
-           <transf name="instantiate" arg1="eval_list&#39;def" arg2="op,args,env">
-            <goal name="optimize_and_filter&#39;vc.2.1.0.0.0.0.0.0.1.0.0" expl="postcondition">
-            <proof prover="1" timelimit="1" obsolete="true"><result status="valid" time="0.03" steps="140"/></proof>
-            </goal>
-           </transf>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
-         </goal>
-        </transf>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
+    <proof prover="0"><result status="timeout" time="5.00" steps="8941311"/></proof>
+    <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="3872293"/></proof>
+    <proof prover="3"><result status="timeout" time="5.00"/></proof>
     </goal>
     <goal name="optimize_and_filter&#39;vc.2.1.1" expl="postcondition">
-    <transf name="subst" arg1="e">
-     <goal name="optimize_and_filter&#39;vc.2.1.1.0" expl="postcondition">
-     <transf name="compile_match" >
-      <goal name="optimize_and_filter&#39;vc.2.1.1.0.0" expl="postcondition">
-      <transf name="unfold" arg1="eval">
-       <goal name="optimize_and_filter&#39;vc.2.1.1.0.0.0" expl="postcondition">
-       <transf name="compile_match" >
-        <goal name="optimize_and_filter&#39;vc.2.1.1.0.0.0.0" expl="postcondition">
-        <transf name="instantiate" arg1="H2" arg2="op,env">
-         <goal name="optimize_and_filter&#39;vc.2.1.1.0.0.0.0.0" expl="postcondition">
-         <transf name="destruct" arg1="Hinst">
-          <goal name="optimize_and_filter&#39;vc.2.1.1.0.0.0.0.0.0" expl="destruct premise">
-          <transf name="instantiate" arg1="eval_list&#39;def" arg2="op,r,env">
-           <goal name="optimize_and_filter&#39;vc.2.1.1.0.0.0.0.0.0.0" expl="destruct premise">
-           <transf name="instantiate" arg1="eval_list&#39;def" arg2="op,args,env">
-            <goal name="optimize_and_filter&#39;vc.2.1.1.0.0.0.0.0.0.0.0" expl="destruct premise">
-            <proof prover="1" timelimit="1" obsolete="true"><result status="valid" time="0.04" steps="137"/></proof>
-            </goal>
-           </transf>
-           </goal>
-          </transf>
-          </goal>
-          <goal name="optimize_and_filter&#39;vc.2.1.1.0.0.0.0.0.1" expl="postcondition">
-          <proof prover="2" obsolete="true"><result status="valid" time="0.04"/></proof>
-          </goal>
-         </transf>
-         </goal>
-        </transf>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
+    <proof prover="0"><result status="timeout" time="5.00" steps="6424779"/></proof>
+    <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="3120812"/></proof>
+    <proof prover="3"><result status="timeout" time="5.00"/></proof>
     </goal>
     <goal name="optimize_and_filter&#39;vc.2.1.2" expl="postcondition">
-    <transf name="subst" arg1="e">
-     <goal name="optimize_and_filter&#39;vc.2.1.2.0" expl="postcondition">
-     <transf name="compile_match" >
-      <goal name="optimize_and_filter&#39;vc.2.1.2.0.0" expl="postcondition">
-      <transf name="eliminate_let_fmla" >
-       <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0" expl="postcondition">
-       <transf name="split_vc" >
-        <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0" expl="postcondition">
-        <transf name="unfold" arg1="eval">
-         <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.0" expl="postcondition">
-         <transf name="compile_match" >
-          <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.0.0" expl="postcondition">
-          <transf name="instantiate" arg1="H3" arg2="op,env">
-           <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.1.0.0.0" expl="postcondition">
-           <transf name="destruct" arg1="Hinst">
-            <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.1.0.0.0.0" expl="destruct premise">
-            <proof prover="2"><result status="valid" time="0.04"/></proof>
-            </goal>
-            <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.1.0.0.0.1" expl="postcondition">
-            <transf name="instantiate" arg1="eval_list&#39;def" arg2="op,r,env">
-             <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.1.0.0.0.1.0" expl="postcondition">
-             <transf name="instantiate" arg1="eval_list&#39;def" arg2="op,args,env">
-              <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.1.0.0.0.1.0.0" expl="postcondition">
-              <proof prover="1"><result status="valid" time="0.10" steps="161"/></proof>
-              </goal>
-             </transf>
-             </goal>
-            </transf>
-            </goal>
-           </transf>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
-         </goal>
-        </transf>
-        </goal>
-        <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.1" expl="postcondition">
-        <transf name="destruct" arg1="Ensures">
-         <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.1.0" expl="destruct premise">
-         <transf name="instantiate" arg1="H3" arg2="env">
-          <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0" expl="postcondition">
-          <transf name="unfold" arg1="eval">
-           <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0.0" expl="postcondition">
-           <transf name="compile_match" >
-            <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0.0.0" expl="postcondition">
-            <transf name="instantiate" arg1="H2" arg2="op,env">
-             <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0.0.0.0" expl="postcondition">
-             <transf name="destruct" arg1="Hinst">
-              <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0.0.0.0.0" expl="destruct premise">
-              <proof prover="2"><result status="valid" time="0.03"/></proof>
-              </goal>
-              <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0.0.0.0.1" expl="postcondition">
-              <transf name="instantiate" arg1="eval_list&#39;def" arg2="op,r,env">
-               <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0.0.0.0.1.0" expl="postcondition">
-               <transf name="instantiate" arg1="eval_list&#39;def" arg2="op,args,env">
-                <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0.0.0.0.1.0.0" expl="postcondition">
-                <proof prover="2" timelimit="5"><result status="valid" time="4.39"/></proof>
-                <transf name="remove" arg1="zero1,one1,(-),(&gt;),(&lt;=),(&gt;=),abs,int63&#39;maxInt,int63&#39;minInt,min_int63,max_int63,to_int,in_bounds,zero,one,is_nil,length,mem,is_none,(++),mirror,size,shorten,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,to_int_in_bounds,max_int&#39;def,min_int&#39;def,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,mirror_involutive,mirror_size,eval_list&#39;def,shorten&#39;spec,H3,H2,Ensures1,Hinst1">
-                 <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.0.1.0.0.0.0.1.0.0.0" expl="postcondition">
-                 <proof prover="2"><result status="valid" time="0.10"/></proof>
-                 </goal>
-                </transf>
-                </goal>
-               </transf>
-               </goal>
-              </transf>
-              </goal>
-             </transf>
-             </goal>
-            </transf>
-            </goal>
-           </transf>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
-         </goal>
-         <goal name="optimize_and_filter&#39;vc.2.1.2.0.0.0.1.1" expl="postcondition">
-         <proof prover="2" obsolete="true"><result status="valid" time="0.06"/></proof>
-         </goal>
-        </transf>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
+    <proof prover="0"><result status="timeout" time="5.00" steps="6437975"/></proof>
+    <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="2327723"/></proof>
+    <proof prover="3"><result status="timeout" time="5.00"/></proof>
     </goal>
    </transf>
    </goal>
@@ -320,53 +179,47 @@
   </goal>
  </transf>
  </goal>
- <goal name="PeanoNumbers.to_int&#39;vc" expl="VC for to_int">
- <transf name="split_vc" >
-  <goal name="to_int&#39;vc.0" expl="integer overflow">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1" timelimit="1" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  </goal>
-  <goal name="to_int&#39;vc.1" expl="postcondition">
-  <transf name="split_vc" >
-   <goal name="to_int&#39;vc.1.0" expl="postcondition">
-   <transf name="split_vc" >
-    <goal name="to_int&#39;vc.1.0.0" expl="postcondition">
-    <proof prover="2" obsolete="true"><result status="valid" time="0.05"/></proof>
-    </goal>
-    <goal name="to_int&#39;vc.1.0.1" expl="postcondition">
-    <proof prover="2" obsolete="true"><result status="valid" time="0.05"/></proof>
+ <goal name="PeanoNumbers.to_int&#39;vc" expl="VC for to_int" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="to_int&#39;vc.0" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="to_int&#39;vc.0.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="to_int&#39;vc.0.0.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.06" steps="16331"/></proof>
     </goal>
    </transf>
    </goal>
-   <goal name="to_int&#39;vc.1.1" expl="postcondition">
-   <transf name="split_vc" >
-    <goal name="to_int&#39;vc.1.1.0" expl="postcondition">
-    <proof prover="2" obsolete="true"><result status="valid" time="0.06"/></proof>
-    </goal>
-    <goal name="to_int&#39;vc.1.1.1" expl="postcondition">
-    <proof prover="2" obsolete="true"><result status="valid" time="0.06"/></proof>
+   <goal name="to_int&#39;vc.0.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="to_int&#39;vc.0.1.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.05" steps="17314"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
+  <goal name="to_int&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.09" steps="18354"/></proof>
+  </goal>
  </transf>
  </goal>
- <goal name="PeanoNumbers.of_int&#39;vc" expl="VC for of_int">
- <proof prover="1" obsolete="true"><result status="valid" time="0.02" steps="138"/></proof>
+ <goal name="PeanoNumbers.of_int&#39;vc" expl="VC for of_int" proved="true">
+ <proof prover="2"><result status="valid" time="0.12" steps="18746"/></proof>
+ <proof prover="3"><result status="valid" time="0.02" steps="34"/></proof>
  </goal>
- <goal name="PeanoNumbers.to_int_of_int&#39;vc" expl="VC for to_int_of_int">
- <proof prover="1" timelimit="1" obsolete="true"><result status="valid" time="0.02" steps="129"/></proof>
+ <goal name="PeanoNumbers.to_int_of_int&#39;vc" expl="VC for to_int_of_int" proved="true">
+ <proof prover="2"><result status="valid" time="0.13" steps="19411"/></proof>
+ <proof prover="3" timelimit="1"><result status="valid" time="0.02" steps="37"/></proof>
  </goal>
- <goal name="PeanoNumbers.of_int_to_int&#39;vc" expl="VC for of_int_to_int">
- <proof prover="2" obsolete="true"><result status="valid" time="0.15"/></proof>
+ <goal name="PeanoNumbers.of_int_to_int&#39;vc" expl="VC for of_int_to_int" proved="true">
+ <proof prover="2"><result status="valid" time="0.15" steps="21556"/></proof>
  </goal>
- <goal name="PeanoNumbers.less_transitive&#39;vc" expl="VC for less_transitive">
- <proof prover="2" obsolete="true"><result status="valid" time="0.16"/></proof>
+ <goal name="PeanoNumbers.less_transitive&#39;vc" expl="VC for less_transitive" proved="true">
+ <proof prover="2"><result status="valid" time="0.16" steps="24473"/></proof>
  </goal>
- <goal name="PeanoNumbers.add&#39;vc" expl="VC for add">
- <proof prover="2" obsolete="true"><result status="valid" time="0.08"/></proof>
+ <goal name="PeanoNumbers.add&#39;vc" expl="VC for add" proved="true">
+ <proof prover="2"><result status="valid" time="0.08" steps="20667"/></proof>
  </goal>
 </theory>
 </file>

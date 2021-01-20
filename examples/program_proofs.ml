@@ -4,9 +4,10 @@ module Mult = struct
     if y = 0 then 0 else x + mult x (y - 1)
   (*@ r = mult x y
         requires y >= 0
-        variant  y *)
+        variant  y
+        ensures  r = x * y *)
 
-  let rec mult_commutative (x: int) (y: int) =
+  let [@lemma] rec mult_commutative (x: int) (y: int) =
     if x = y then ()
     else if x = 0 then mult_commutative x (y-1)
     else if y < x then mult_commutative y x
@@ -14,13 +15,13 @@ module Mult = struct
       mult_commutative x (y-1);
       mult_commutative (x-1) (y-1);
       mult_commutative (x-1) y
-    end
+      end
+
   (*@ mult_commutative x y
         requires x >= 0
         requires y >= 0
-        variant  x + y
+        variant  x, y
         ensures  mult x y = mult y x *)
-
 end
 
 module Mirror = struct
@@ -61,7 +62,7 @@ module AST = struct
   type expr =
     | Const of int
     | Var of string
-    | Node of op * (expr list)
+    | Node of op * expr list
 
   type env = string -> int option
 
