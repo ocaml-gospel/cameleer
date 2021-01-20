@@ -1,3 +1,6 @@
 *.bak
 *~
 .merlin
+
+_build/
+dune-project

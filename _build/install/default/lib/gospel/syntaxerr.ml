@@ -1,1 +1,0 @@
-../../../../default/vocal/gospel/ocaml-lib/syntaxerr.ml

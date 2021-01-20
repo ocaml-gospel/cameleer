@@ -1,7 +1,0 @@
-version = "0.1"
-description = ""
-requires = ""
-archive(byte) = "vocal.cma"
-archive(native) = "vocal.cmxa"
-plugin(byte) = "vocal.cma"
-plugin(native) = "vocal.cmxs"

@@ -1,7 +1,0 @@
-version = "0.1"
-description = ""
-requires = ""
-archive(byte) = "gospel.cma"
-archive(native) = "gospel.cmxa"
-plugin(byte) = "gospel.cma"
-plugin(native) = "gospel.cmxs"
