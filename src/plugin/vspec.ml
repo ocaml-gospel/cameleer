@@ -27,18 +27,18 @@ let sp_post sp_hd_ret sp_post =
   let pat = match pvar_of_lb_arg_list sp_hd_ret with
     | [p] -> p
     | pl  -> T.mk_pattern (Ptuple pl) ~pat_loc:term_loc in
-  term_loc, [pat, T.term sp_post]
+  term_loc, [pat, T.term true sp_post]
 
 let sp_post_no_ret sp_post =
   let term_loc = T.location sp_post.Uast.term_loc in
   let id_result = T.mk_id "result" in
-  term_loc, [T.mk_pattern (Pvar id_result), T.term sp_post]
+  term_loc, [T.mk_pattern (Pvar id_result), T.term true sp_post]
 
 (** Converts a GOSPEL exception postcondition into a Why3's Ptree [xpost]. The
     two data types have the same structure, hence this is a morphism. *)
 let sp_xpost (loc, q_pat_t_option_list) =
   let loc = T.location loc in
-  let pat_term (q, t) = T.pattern q, T.term t in
+  let pat_term (q, t) = T.pattern q, T.term true t in
   let qualid_pat_term_opt (q, pt_opt) = T.qualid q, Opt.map pat_term pt_opt in
   loc, List.map qualid_pat_term_opt q_pat_t_option_list
 
@@ -56,28 +56,28 @@ let empty_spec = {
 }
 
 let vspec spec =
-  let sp_writes  = List.map T.term spec.Uast.sp_writes in
+  let sp_writes  = List.map (T.term false) spec.Uast.sp_writes in
   let sp_checkrw = match sp_writes with [] -> false |  _ -> true in {
-  sp_pre     = List.map (fun (t, _) -> T.term t) spec.Uast.sp_pre;
+  sp_pre     = List.map (fun (t, _) -> T.term false t) spec.Uast.sp_pre;
   sp_post    = List.map (sp_post spec.Uast.sp_hd_ret) spec.Uast.sp_post;
   sp_xpost   = List.map sp_xpost spec.sp_xpost;
   sp_reads   = [];
   sp_writes;
   sp_alias   = [];
-  sp_variant = List.map (fun t -> T.term t, None) spec.sp_variant;
+  sp_variant = List.map (fun t -> T.term false t, None) spec.sp_variant;
   sp_checkrw;
   sp_diverge = spec.sp_diverge;
   sp_partial = false;
 }
 
 let fun_spec spec = {
-  sp_pre     = List.map T.term spec.Uast.fun_req;
+  sp_pre     = List.map (T.term false) spec.Uast.fun_req;
   sp_post    = List.map sp_post_no_ret spec.fun_ens;
   sp_xpost   = [] (* TODO: cannot be done with [fun_spec] argument *);
   sp_reads   = [];
   sp_writes  = [];
   sp_alias   = [];
-  sp_variant = List.map (fun t -> T.term t, None) spec.fun_variant;
+  sp_variant = List.map (fun t -> T.term false t, None) spec.fun_variant;
   sp_checkrw = false;
   sp_diverge = false;
   sp_partial = false;

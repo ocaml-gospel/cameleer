@@ -676,8 +676,8 @@ let rec expression_desc info expr_loc expr_desc =
     | Sexp_array expr_list ->
         mk_array info expr_list
     | Sexp_while (e_test, e_body, loop_annotation) ->
-        let mk_variant t = (T.term t, None) in
-        let inv = List.map T.term loop_annotation.loop_invariant in
+        let mk_variant t = (T.term false t, None) in
+        let inv = List.map (T.term false) loop_annotation.loop_invariant in
         let var = List.map mk_variant loop_annotation.loop_variant in
         mk_ewhile (expression info e_test) inv var (expression info e_body)
     | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, loop_annot) ->
@@ -686,7 +686,7 @@ let rec expression_desc info expr_loc expr_desc =
         let expr_upper = expression info expr_upper in
         let flag = direction_flag flag in
         let expr_body = expression info expr_body in
-        let invariant = List.map T.term loop_annot.loop_invariant in
+        let invariant = List.map (T.term false) loop_annot.loop_invariant in
         mk_efor id expr_lower flag expr_upper invariant expr_body
     | Sexp_letexception (exn_constructor, expr) ->
         let id, pty, mask = exception_constructor exn_constructor in
@@ -811,7 +811,9 @@ and s_value_binding info svb =
   let expr_loc = T.location svb.Uast.spvb_expr.spexp_loc in
   let spec = function None -> empty_spec | Some s -> S.vspec s in
   let mk_arg (_, _,_, pty) = function
-    | Lnone {pid_loc; pid_str; _} -> let id_loc = T.location pid_loc in
+    | Lnone      {pid_loc; pid_str; _}
+    | Lnamed     {pid_loc; pid_str; _}
+    | Lquestion  {pid_loc; pid_str; _} -> let id_loc = T.location pid_loc in
         mk_binder id_loc (Some (T.mk_id ~id_loc pid_str)) false pty
     | _ -> assert false (* TODO *) in
   let pair_args binder_spec binder_code expr =
@@ -821,7 +823,7 @@ and s_value_binding info svb =
     let e_lhs = mk_expr ~expr_loc:(id_spec.id_loc) (Eident (Qident id_spec)) in
     mk_expr ~expr_loc:(expr.expr_loc) (mk_elet_none id_code false e_lhs expr) in
   let rec args_pos = function (* TODO: remove *)
-    | [] -> T.dummy_loc (* FIXME *)
+    | [] -> T.location svb.spvb_loc
     | [Lnone      {pid_loc; _}]
     | [Lquestion  {pid_loc; _}]
     | [Lnamed     {pid_loc; _}]
@@ -883,6 +885,8 @@ and s_value_binding info svb =
         let spec_uast = svb.Uast.spvb_vspec in
         let args, expr = loop [] expr in
         let expr_loc = expr.expr_loc in
+        let old_id = T.mk_id "'Old" in
+        let expr = mk_expr ~expr_loc:expr_loc (Elabel (old_id, expr)) in
         let args, expr = subst_args_expr args expr spec_uast in
         let ret = T.mk_pattern Pwild in
         let spec = spec svb.Uast.spvb_vspec in

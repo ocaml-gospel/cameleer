@@ -3,7 +3,7 @@ open Ptree
 open Gospel
 open Parser_frontend
 
-let debug = ref true
+let debug = ref false
 
 open Why3.Typing
 open Wstdlib
@@ -133,7 +133,7 @@ let read_channel env path file c =
     | Odecl.Omodule (_loc, id, dl) ->
         Format.eprintf "@[<hv 2>scope %s@\n%a@]@\nend@." id.id_str
           (pp_list pp_decl) dl in
-  pp_list pp_decl (Format.err_formatter) f;
+  if !debug then pp_list pp_decl (Format.err_formatter) f;
   List.iter add_decl f;
   close_module Loc.dummy_position; (* Closes the top module *)
   mk_refine_modules info mod_name;

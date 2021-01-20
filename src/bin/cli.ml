@@ -1,6 +1,7 @@
 open Format
 
 let fname = ref None
+let debug = ref false
 
 let path = Queue.create ()
 
@@ -8,6 +9,8 @@ let version = "0.1~dev"
 
 let spec = [ "-L", Arg.String (fun s -> Queue.add s path),
              "add <dir> to the search path";
+             "--debug", Arg.Unit (fun () -> debug := true),
+             "print debug information";
              "--version",
              Arg.Unit (fun () -> printf "Cameleer %s@." version; exit 0),
              " print version information" ]
@@ -25,8 +28,9 @@ let set_file f = match !fname with
 let () = Arg.parse spec set_file usage_msg
 
 let fname = match !fname with None -> usage () | Some f -> f
+let debug = if !debug then "--debug=print_modules" else ""
 
 let path = Queue.fold (fun acc s -> sprintf "-L %s %s" s acc) "" path
 
 let _ =
-  exit (Sys.command (sprintf "why3 ide %s %s" fname path))
+  exit (Sys.command (sprintf "why3 ide %s %s %s" fname path debug))

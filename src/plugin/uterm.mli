@@ -26,4 +26,4 @@ val ty  : Ttypes.ty -> Ptree.pty
 
 val pattern : Uast.pattern -> Ptree.pattern
 
-val term : Uast.term -> Ptree.term
+val term : bool -> Uast.term -> Ptree.term

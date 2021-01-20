@@ -91,7 +91,7 @@ let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) = {
   td_params = List.map td_params td.tparams;
   td_vis    = td_private tmanifest td.tprivate tkind;
   td_mut    = tspec.ty_ephemeral;
-  td_inv    = List.map Uterm.term tspec.ty_invariant;
+  td_inv    = List.map (Uterm.term false) tspec.ty_invariant;
   td_wit    = [];
   td_def    = td_def info tspec tmanifest tkind
 }
@@ -198,7 +198,7 @@ let function_ f =
   let ld_ident = T.preid f.fun_name in
   let ld_params = List.map param f.fun_params in
   let ld_type = Opt.map T.pty f.fun_type in
-  let ld_def = Opt.map T.term f.fun_def in
+  let ld_def = Opt.map (T.term false) f.fun_def in
   let fun_spec = f.fun_spec in
   let coercion = if fun_spec.fun_coer then Some (Qident ld_ident) else None in
   { ld_loc; ld_ident; ld_params; ld_type; ld_def }, coercion
@@ -206,7 +206,7 @@ let function_ f =
 let prop p =
   let kind = match p.Uast.prop_kind with
     Uast.Plemma -> Decl.Plemma | _ -> Decl.Paxiom in
-  T.preid p.Uast.prop_name, T.term p.prop_term, kind
+  T.preid p.Uast.prop_name, T.term false p.prop_term, kind
 
 let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
@@ -313,10 +313,10 @@ let s_structure, s_signature =
         | Mod_signature _ -> assert false (* TODO *)
         | Mod_functor _ -> assert false (* TODO *)
         | Mod_with ({mdesc = Mod_ident s; mloc; _}, constraint_list) ->
-            let subst = subst info constraint_list in
+             let subst = subst info constraint_list in
             (* let od_list = s_module_type info mod_type in *)
             (* let mk_subst acc od = clone_subst subst od :: acc in *)
-            let cl_subst = clone_subst subst in
+             let cl_subst = clone_subst subst in
             (* let od_list = List.fold_left mk_subst [] od_list in
              * List.rev (List.flatten od_list) *)
             let id = E.longident ~id_loc:(T.location s.loc) s.txt in

@@ -21,7 +21,6 @@ let mk_term ?(term_loc=dummy_loc) term_desc =
 let mk_pattern ?(pat_loc=dummy_loc) pat_desc =
   { pat_desc; pat_loc }
 
-(* TO BE USED : *)
 let ident_of_tvsymbol Ty.{tv_name = name} =
   mk_id name.id_str ~id_loc:(location name.id_loc)
 
@@ -96,7 +95,7 @@ let rec pattern Uast.{pat_desc = p_desc; pat_loc} =
 let binder (id, ty) =
   (location id.pid_loc, Some (preid id), false, Opt.map pty ty)
 
-let rec term Uast.{term_desc = t_desc; term_loc} =
+let rec term in_post Uast.{term_desc = t_desc; term_loc} =
   let term_loc = location term_loc in
   let mk_term t = mk_term ~term_loc t in
   let binop = function
@@ -107,32 +106,38 @@ let rec term Uast.{term_desc = t_desc; term_loc} =
     | Uast.Timplies  -> D.DTimplies
     | Uast.Tiff      -> D.DTiff in
   let attr a = ATstr (Ident.create_attribute a) in
-  let pat_term (pat, t) = pattern pat, term t in
-  let qualid_term (q, t) = qualid q, term t in
+  let pat_term (pat, t) = pattern pat, term in_post t in
+  let qualid_term (q, t) = qualid q, term in_post t in
   let term_desc = function
     | Uast.Ttrue               -> Ttrue
     | Uast.Tfalse              -> Tfalse
     | Uast.Tconst c            -> Tconst  (constant c)
     | Uast.Tpreid id           -> Tident  (qualid id)
-    | Uast.Tidapp (q, tl)      -> Tidapp  (qualid q, List.map term tl)
-    | Uast.Tapply (t1, t2)     -> Tapply  (term t1, term t2)
-    | Uast.Tinfix (t1, id, t2) -> Tinfix  (term t1, preid id, term t2)
-    | Uast.Tbinop (t1, op, t2) -> Tbinop  (term t1, binop op, term t2)
-    | Uast.Tnot t              -> Tnot    (term t)
-    | Uast.Tif (t1, t2, t3)    -> Tif     (term t1, term t2, term t3)
-    | Uast.Tattr (a, t)        -> Tattr   (attr a, term t)
-    | Uast.Tlet (id, t1, t2)   -> Tlet    (preid id, term t1, term t2)
-    | Uast.Tcase (t, pt_list)  -> Tcase   (term t, List.map pat_term pt_list)
-    | Uast.Tcast (t, ty)       -> Tcast   (term t, pty ty)
-    | Uast.Ttuple t_list       -> Ttuple  (List.map term t_list)
+    | Uast.Tidapp (q, tl)      -> Tidapp  (qualid q, List.map (term in_post) tl)
+    | Uast.Tapply (t1, t2)     -> Tapply  (term in_post t1, term in_post t2)
+    | Uast.Tnot t              -> Tnot    (term in_post t)
+    | Uast.Tattr (a, t)        -> Tattr   (attr a, term in_post t)
+    | Uast.Tcast (t, ty)       -> Tcast   (term in_post t, pty ty)
+    | Uast.Ttuple t_list       -> Ttuple  (List.map (term in_post) t_list)
     | Uast.Trecord q_t_list    -> Trecord (List.map qualid_term q_t_list)
-    | Uast.Tscope (q, t)       -> Tscope  (qualid q, term t)
+    | Uast.Tscope (q, t)       -> Tscope  (qualid q, term in_post t)
+    | Uast.Tcase (t, pt_list)  ->
+        Tcase (term in_post t, List.map pat_term pt_list)
+    | Uast.Tlet (id, t1, t2)   ->
+        Tlet (preid id, term in_post t1, term in_post t2)
+    | Uast.Tinfix (t1, id, t2) ->
+        Tinfix (term in_post t1, preid id, term in_post t2)
+    | Uast.Tbinop (t1, op, t2) ->
+        Tbinop (term in_post t1, binop op, term in_post t2)
     | Uast.Told t              ->
-        Tat (term t, mk_id ~id_loc:term_loc Dexpr.old_label)
+        let lbl = if in_post then Dexpr.old_label else "'Old" in
+        Tat (term in_post t, mk_id ~id_loc:term_loc lbl)
+    | Uast.Tif (t1, t2, t3)    ->
+        Tif (term in_post t1, term in_post t2, term in_post t3)
     | Uast.Tupdate (t, q_t_list) ->
-        Tupdate (term t, List.map qualid_term q_t_list)
+        Tupdate (term in_post t, List.map qualid_term q_t_list)
     | Uast.Tquant (q, bl, tt_list, t) ->
-        let mk_term_list t_list = List.map term t_list in
+        let mk_term_list t_list = List.map (term in_post) t_list in
         let tt_list = List.map mk_term_list tt_list in
-        Tquant (quant q, List.map binder bl, tt_list, term t) in
+        Tquant (quant q, List.map binder bl, tt_list, term in_post t) in
   mk_term (term_desc t_desc)
