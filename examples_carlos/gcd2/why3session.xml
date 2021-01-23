@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<<<<<<< HEAD
+<prover id="0" name="Alt-Ergo" version="2.3.3" timelimit="5" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
+<path name=".."/><path name="gcd2.ml"/>
+<theory name="Gcd2">
+ <goal name="gcd_0_pos">
+ <proof prover="0"><result status="timeout" time="5.00"/></proof>
+ </goal>
+ <goal name="gcd_euclid">
+ <proof prover="0"><result status="timeout" time="5.00"/></proof>
+ </goal>
+ <goal name="gcd_opp">
+ <proof prover="0"><result status="timeout" time="5.00"/></proof>
+ </goal>
+ <goal name="gcd_computer_mod">
+ <proof prover="0"><result status="timeout" time="5.00"/></proof>
+ </goal>
+ <goal name="gcd_sub">
+ <proof prover="0"><result status="timeout" time="5.00"/></proof>
+ </goal>
+ <goal name="gcdd&#39;vc" expl="VC for gcdd" proved="true">
+ <proof prover="0" obsolete="true"><result status="valid" time="0.24" steps="587"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="gcdd&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="8"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="8"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.2" expl="loop variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="28"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.3" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.4" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="20"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.5" expl="loop variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="28"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.6" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.7" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="52"/></proof>
+  </goal>
+  <goal name="gcdd&#39;vc.8" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="36"/></proof>
+  </goal>
+ </transf>
+=======
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
+<path name=".."/><path name="gcd2.ml"/>
+<theory name="Gcd2">
+ <goal name="gcd_sub">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="2118091"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="142735"/></proof>
+ </goal>
+ <goal name="gcd_sub2">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="3511518"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="156528"/></proof>
+ </goal>
+ <goal name="gcd_computer_mod">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="1237592"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="168777"/></proof>
+ </goal>
+ <goal name="gcd_comm">
+ <proof prover="0"><result status="timeout" time="1.00"/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="2528386"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="132372"/></proof>
+ </goal>
+ <goal name="gcd_euclid">
+ <proof prover="0"><undone/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="1432111"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="213764"/></proof>
+ </goal>
+ <goal name="gcd_0_pos">
+ <proof prover="0"><undone/></proof>
+ <proof prover="1"><result status="timeout" time="1.00" steps="1137737"/></proof>
+ <proof prover="2"><result status="timeout" time="1.00" steps="158631"/></proof>
+ </goal>
+ <goal name="gcdd&#39;vc" expl="VC for gcdd" proved="true">
+ <proof prover="2"><result status="valid" time="0.13" steps="37774"/></proof>
+>>>>>>> d2f754e145ac460c7ca81d17d9fc0fb16305f805
+ </goal>
+ <goal name="gcd_sub2">
+ <proof prover="0"><result status="valid" time="0.02" steps="26"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
