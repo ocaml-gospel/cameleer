@@ -9,8 +9,6 @@ let [@lemma] rec occ_nonneg (x: int) (t: int tree) =
   match t with
   |Empty -> ()
   |Tree (Empty, _, Empty) -> ()
-  |Tree (l, _, Empty) -> occ_nonneg x l
-  |Tree (Empty, _, r) -> occ_nonneg x r
   |Tree (l, _, r) -> occ_nonneg x l; occ_nonneg x r
 (*@ occ_nonneg x t
       ensures 0 <= (occ x t) *)

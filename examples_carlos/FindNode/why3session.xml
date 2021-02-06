@@ -15,13 +15,10 @@
   <proof prover="0"><result status="valid" time="0.01" steps="23"/></proof>
   </goal>
   <goal name="occ_nonneg&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="40"/></proof>
+  <proof prover="0"><result status="valid" time="0.01" steps="34"/></proof>
   </goal>
   <goal name="occ_nonneg&#39;vc.3" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="40"/></proof>
-  </goal>
-  <goal name="occ_nonneg&#39;vc.4" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="40"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="30"/></proof>
   </goal>
  </transf>
  </goal>
