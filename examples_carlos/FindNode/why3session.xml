@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.3.3" timelimit="5" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="FindNode.ml"/>
+<theory name="FindNode" proved="true">
+ <goal name="occ_nonneg&#39;vc" expl="VC for occ_nonneg" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="occ_nonneg&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="6"/></proof>
+  </goal>
+  <goal name="occ_nonneg&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="23"/></proof>
+  </goal>
+  <goal name="occ_nonneg&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="40"/></proof>
+  </goal>
+  <goal name="occ_nonneg&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="40"/></proof>
+  </goal>
+  <goal name="occ_nonneg&#39;vc.4" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="40"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="mem&#39;vc" expl="VC for mem" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="mem&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="61"/></proof>
+  </goal>
+  <goal name="mem&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="24"/></proof>
+  </goal>
+  <goal name="mem&#39;vc.2" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="mem&#39;vc.2.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.22" steps="943"/></proof>
+   </goal>
+   <goal name="mem&#39;vc.2.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="mem&#39;vc.2.1.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
+    </goal>
+    <goal name="mem&#39;vc.2.1.1" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.01" steps="12"/></proof>
+    </goal>
+    <goal name="mem&#39;vc.2.1.2" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="mem&#39;vc.2.1.2.0" expl="postcondition" proved="true">
+     <proof prover="0"><result status="valid" time="0.35" steps="575"/></proof>
+     </goal>
+     <goal name="mem&#39;vc.2.1.2.1" expl="postcondition" proved="true">
+     <proof prover="0"><result status="valid" time="0.42" steps="628"/></proof>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
