@@ -1,15 +1,3 @@
-module type Monoid = sig
-  type t
-
-  (*@ function op (x y: t) : t *)
-  (*@ axiom assoc: forall x y z. op (op x y) z = op x (op y z) *)
-
-  (*@ function unit : t *)
-
-  (*@ axiom unit_def_l: forall x: t. op unit x = x *)
-  (*@ axiom unit_def_r: forall x: t. op x unit = x *)
-end
-
 module type Exponentiation = sig
   type t
 
@@ -17,9 +5,10 @@ module type Exponentiation = sig
 
   (*@ function mul (x y: t) : t *)
 
-  include Monoid
-    with type t := t (* For now, this only works for types with the same name *)
-(*@ with function unit := one and function op := mul *)
+  (*@ axiom assoc: forall x y z. mul (mul x y) z = mul x (mul y z) *)
+
+  (*@ axiom unit_def_l: forall x: t. mul one x = x *)
+  (*@ axiom unit_def_r: forall x: t. mul x one = x *)
 
   (*@ function power (t: t) (x: integer) : t *)
 
@@ -49,21 +38,42 @@ module type Exponentiation = sig
 end
 
 module type Power = sig
+  type t = int
+
   val [@logic] power : int -> int -> int
 
   (*@ function one : int = 1 *)
 
-  include Exponentiation
-    with type t = int
-(*@ with function one   := one   and
-         function power := power and
-         function mul   := ( * ) and
-         (* function ( * ) := ( * ) and UNDERSTAND WHY I CANNOT DO LIKE THIS *)
-         goal     assoc          and
-         goal     unit_def_l     and
-         goal     unit_def_r     and
-         axiom    power_0        and
-         axiom    power_s *)
+  (*@ function mul (x y: t) : t = x * y *)
+
+  (*@ axiom assoc: forall x y z. mul (mul x y) z = mul x (mul y z) *)
+
+  (*@ axiom unit_def_l: forall x: t. mul one x = x *)
+  (*@ axiom unit_def_r: forall x: t. mul x one = x *)
+
+  (*@ axiom power_0 : forall x: t. power x 0 = one *)
+
+  (*@ axiom power_s : forall x: t, n: integer. n >= 0 ->
+        power x (n+1) = mul x (power x n) *)
+
+  (*@ lemma power_s_alt: forall x: t, n: int. n > 0 ->
+        power x n = mul x (power x (n-1)) *)
+
+  (*@ lemma power_1 : forall x : t. power x 1 = x *)
+
+  (*@ lemma power_sum : forall x: t, n m: int. 0 <= n -> 0 <= m ->
+        power x (n+m) = mul (power x n) (power x m) *)
+
+  (*@ lemma power_mult : forall x:t, n m : int. 0 <= n -> 0 <= m ->
+        power x (n * m) = power (power x n) m *)
+
+  (*@ lemma power_comm1 : forall x y: t. mul x y = mul y x ->
+        forall n:int. 0 <= n ->
+        mul (power x n) y = mul y (power x n) *)
+
+  (*@ lemma power_comm2 : forall x y: t. mul x y = mul y x ->
+        forall n:int. 0 <= n ->
+        power (mul x y) n = mul (power x n) (power y n) *)
 
   (*@ lemma power_non_neg:
         forall x y. x >= 0 /\ y >= 0 -> power x y >= 0 *)
