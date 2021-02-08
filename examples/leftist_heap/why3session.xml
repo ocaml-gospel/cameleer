@@ -161,7 +161,7 @@
  </transf>
  </goal>
  <goal name="Make.insert&#39;vc" expl="VC for insert" proved="true">
- <proof prover="1"><result status="valid" time="0.07" steps="18264"/></proof>
+ <proof prover="1"><result status="valid" time="0.09" steps="18264"/></proof>
  </goal>
  <goal name="Make.add&#39;vc" expl="VC for add" proved="true">
  <proof prover="1"><result status="valid" time="0.03" steps="13668"/></proof>

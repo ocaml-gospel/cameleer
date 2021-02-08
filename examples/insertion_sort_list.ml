@@ -1,65 +1,4 @@
-(*@ predicate mem (x: 'a) (l: 'a list) = match l with
-      | []     -> false
-      | y :: r -> x = y || mem x r *)
-
-(*@ lemma mem_decomp:
-      forall x: 'a, l: 'a list.
-      mem x l -> exists l1 l2: 'a list. l = l1 ++ Cons x l2 *)
-
-(*@ function num_occ (x: 'a) (l: 'a list) : integer =
-      match l with
-      | [] -> 0
-      | y :: r -> (if x = y then 1 else 0) + num_occ x r *)
-
-(*@ lemma num_occ_positive: forall x: 'a, l: 'a list.
-      num_occ x l >= 0 *)
-
-(*@ lemma mem_num_occ :
-    forall x: 'a, l: 'a list. mem x l <-> num_occ x l > 0 *)
-
-(*@ lemma append_num_occ :
-      forall x: 'a, l1 [@induction] l2: 'a list.
-      num_occ x (l1 ++ l2) = num_occ x l1 + num_occ x l2 *)
-
-(*@ predicate permut (l1 l2: 'a list) =
-      forall x: 'a. num_occ x l1 = num_occ x l2 *)
-
-(*@ lemma permut_refl: forall l: 'a list. permut l l *)
-
-(*@ lemma permut_sym: forall l1 l2: 'a list. permut l1 l2 -> permut l2 l1 *)
-
-(*@ lemma permut_trans:
-      forall l1 l2 l3: 'a list. permut l1 l2 -> permut l2 l3 -> permut l1 l3 *)
-
-(*@ lemma permut_cons:
-      forall x: 'a, l1 l2: 'a list.
-      permut l1 l2 -> permut (x :: l1) (x :: l2) *)
-
-(*@ lemma permut_swap:
-      forall x y: 'a, l: 'a list. permut (x :: y :: l) (y :: x :: l) *)
-
-(*@ lemma permut_cons_append:
-      forall x : 'a, l1 l2 : 'a list.
-      permut ((x :: l1) ++ l2) (l1 ++ (x :: l2)) *)
-
-(*@ lemma permut_assoc:
-      forall l1 l2 l3: 'a list.
-      permut ((l1 ++ l2) ++ l3) (l1 ++ (l2 ++ l3)) *)
-
-(*@ lemma permut_append:
-      forall l1 l2 k1 k2 : 'a list.
-      permut l1 k1 -> permut l2 k2 -> permut (l1 ++ l2) (k1 ++ k2) *)
-
-(*@ lemma permut_append_swap:
-      forall l1 l2 : 'a list.
-      permut (l1 ++ l2) (l2 ++ l1) *)
-
-(*@ lemma permut_mem:
-      forall x: 'a, l1 l2: 'a list. permut l1 l2 -> mem x l1 -> mem x l2 *)
-
-(*@ lemma permut_length:
-      forall l1 [@induction] l2: 'a list. permut l1 l2 ->
-      length l1 = length l2 *)
+(*@ open Permut *)
 
 module type PRE_ORD = sig
   type t
@@ -73,10 +12,7 @@ module type PRE_ORD = sig
 
   (*@ axiom is_total_preorder: total_preorder le *)
 
-  (*@ axiom trans: forall x y z. le x y -> le y z -> le x z *)
-
   val leq : t -> t -> bool
-  (** [leq x y] shall return [true] iff [x] is lower or equal to [y]. *)
   (*@ b = leq x y
         ensures b <-> le x y *)
 
@@ -86,8 +22,6 @@ module type PRE_ORD = sig
   (*@ axiom sorted_cons: forall x y l.
         le x y -> sorted_list (y :: l) -> sorted_list (x :: (y :: l)) *)
 
-  (** in order to properly simulate an induction predicate, I shall provide
-      the following inversion axiom: *)
   (*@ axiom sorted_list_inversion:
         forall l. sorted_list l ->
           (l = []) \/ (exists x. l = x :: []) \/

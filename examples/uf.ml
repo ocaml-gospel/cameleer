@@ -2,7 +2,7 @@
 
 (** The following is used to prove validity of the [uf] type invariant. *)
 let [@logic] [@ghost] init () =
-  Array.init 0 (fun _ -> 0)
+  Array.init 0 (fun x -> x)
 (*@ a = init ()
       ensures length a = 0 *)
 
@@ -23,7 +23,8 @@ type uf = {
   (*@ invariant forall i. mem i link -> link.(i) <> i -> rep i = rep link.(i) *)
   (*@ invariant forall i. mem i link -> (link.(i) = i <-> rep i = i) *)
   (*@ invariant forall i. mem i link -> 0 <= dst i <= maxd *)
-  (*@ invariant forall i. mem i link -> link.(i) <> i -> dst i < dst link.(i) *)
+(*@ invariant forall i. mem i link -> link.(i) <> i -> dst i < dst link.(i) *)
+  by { }
 
 let rec find i uf =
   let p = uf.link.(i) in
@@ -41,7 +42,7 @@ let rec find i uf =
 (*@ predicate equiv (i j: int) (uf: uf) =
       mem i uf.link -> mem j uf.link -> uf.rep i = uf.rep j *)
 
-let [@ghost] [@logic] set (f: 'a -> 'b) (x: 'a) (v: 'b) : 'a -> 'b =
+let [@ghost] set (f: 'a -> 'b) (x: 'a) (v: 'b) : 'a -> 'b =
   fun y -> if (y = x) [@pure] then v else f y
 
 let union i j uf =
@@ -51,7 +52,7 @@ let union i j uf =
     if uf.rank.(rep_i) > uf.rank.(rep_j) then begin
       uf.link.(rep_j) <- rep_i;
       uf.rep  <-
-        (fun k -> if uf.rep k = uf.rep rep_j then rep_i else uf.rep k) [@pure];
+        (fun k -> if (uf.rep k = uf.rep rep_j) then rep_i else uf.rep k) [@pure];
       uf.maxd <- uf.maxd + 1;
       uf.dst  <- set uf.dst rep_i (1 + max (uf.dst rep_i) (uf.dst rep_j)) end
     else begin

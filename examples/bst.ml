@@ -1,26 +1,8 @@
 module type OrderedType = sig
   type t
 
-  (*@ function cmp : t -> t -> integer *)
-
-  (*@ predicate is_pre_order (cmp: 'a -> 'a -> int) =
-        (forall x. cmp x x = 0) /\
-        (forall x y. cmp x y = 0 <-> cmp y x = 0) /\
-        (forall x y. cmp x y < 0 <-> cmp y x > 0) /\
-        (forall x y z.
-          (cmp x y = 0 -> cmp y z = 0 -> cmp x z = 0) /\
-          (cmp x y = 0 -> cmp y z < 0 -> cmp x z < 0) /\
-          (cmp x y < 0 -> cmp y z = 0 -> cmp x z < 0) /\
-          (cmp x y < 0 -> cmp y z < 0 -> cmp x z < 0)) *)
-
-  (*@ predicate equal (cmp: 'a -> 'a -> int) =
-        forall x y: 'a. cmp x y = 0 -> x = y *)
-
-  (*@ axiom is_pre_order: is_pre_order cmp && equal cmp *)
-
-  val compare : t -> t -> int
-  (*@ r = compare x y
-        ensures r = cmp x y *)
+  val[@logic] compare : t -> t -> int
+  (*@ axiom is_pre_order: is_pre_order compare *)
 end
 
 
@@ -31,7 +13,8 @@ module Make (Ord: OrderedType) = struct
 
   (*@ function occ (x: elt) (t: t) : integer = match t with
         | E -> 0
-        | T l v r -> occ x l + occ x r + (if Ord.cmp x v = 0 then 1 else 0) *)
+        | T l v r ->
+            occ x l + occ x r + (if Ord.compare x v = 0 then 1 else 0) *)
 
   (*@ lemma occ_nonneg: forall x: elt, t: t. occ x t >= 0 *)
 
@@ -40,8 +23,8 @@ module Make (Ord: OrderedType) = struct
   (*@ predicate bst (t: t) = match t with
         | E -> true
         | T l v r ->
-            (forall lv. mem lv l -> Ord.cmp lv v < 0) &&
-            (forall rv. mem rv r -> Ord.cmp rv v > 0) &&
+            (forall lv. mem lv l -> Ord.compare lv v < 0) &&
+            (forall rv. mem rv r -> Ord.compare rv v > 0) &&
             bst l && bst r *)
 
   let empty = E

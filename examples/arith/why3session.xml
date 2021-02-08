@@ -3,425 +3,430 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<file format="ocaml">
+<file format="ocaml" proved="true">
 <path name=".."/><path name="arith.ml"/>
-<theory name="Arith">
+<theory name="Arith" proved="true">
  <goal name="eval_b&#39;vc" expl="VC for eval_b" proved="true">
- <proof prover="0"><result status="valid" time="0.27" steps="89490"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="eval_b&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.08" steps="15775"/></proof>
+  </goal>
+  <goal name="eval_b&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="15775"/></proof>
+  </goal>
+  <goal name="eval_b&#39;vc.2" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="15765"/></proof>
+  </goal>
+  <goal name="eval_b&#39;vc.3" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="15804"/></proof>
+  </goal>
+  <goal name="eval_b&#39;vc.4" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="15804"/></proof>
+  </goal>
+  <goal name="eval_b&#39;vc.5" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="15804"/></proof>
+  </goal>
+  <goal name="eval_b&#39;vc.6" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="15804"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="eval_0&#39;vc" expl="VC for eval_0" proved="true">
- <proof prover="1"><result status="valid" time="0.04" steps="148895"/></proof>
- <transf name="split_vc" >
-  <goal name="eval_0&#39;vc.0" expl="variant decrease">
+ <transf name="split_vc" proved="true" >
+  <goal name="eval_0&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="16126"/></proof>
   </goal>
   <goal name="eval_0&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="17093"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="16126"/></proof>
   </goal>
   <goal name="eval_0&#39;vc.2" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="17093"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="16126"/></proof>
   </goal>
   <goal name="eval_0&#39;vc.3" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="17093"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="16126"/></proof>
   </goal>
   <goal name="eval_0&#39;vc.4" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="17093"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="16126"/></proof>
   </goal>
   <goal name="eval_0&#39;vc.5" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="17093"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="16126"/></proof>
   </goal>
   <goal name="eval_0&#39;vc.6" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="16798"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="15906"/></proof>
   </goal>
   <goal name="eval_0&#39;vc.7" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="17111"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="16148"/></proof>
   </goal>
-  <goal name="eval_0&#39;vc.8" expl="variant decrease">
-  </goal>
-  <goal name="eval_0&#39;vc.9" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="17120"/></proof>
-  </goal>
-  <goal name="eval_0&#39;vc.10" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="17120"/></proof>
+  <goal name="eval_0&#39;vc.8" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="16162"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="opcode_size_nonneg&#39;vc" expl="VC for opcode_size_nonneg" proved="true">
- <proof prover="0"><result status="valid" time="0.08" steps="25938"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="opcode_size_nonneg&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="20522"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.3" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="20522"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.4" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.5" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.6" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.7" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.8" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.9" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.10" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="20449"/></proof>
+  </goal>
+  <goal name="opcode_size_nonneg&#39;vc.11" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="23059"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="code_size_nonneg&#39;vc" expl="VC for code_size_nonneg" proved="true">
- <proof prover="0"><result status="valid" time="0.08" steps="26497"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="code_size_nonneg&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="19150"/></proof>
+  </goal>
+  <goal name="code_size_nonneg&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.08" steps="22759"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="code_size_append&#39;vc" expl="VC for code_size_append" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="code_size_append&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="23499"/></proof>
+  <proof prover="0"><result status="valid" time="0.09" steps="21858"/></proof>
   </goal>
   <goal name="code_size_append&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="28000"/></proof>
+  <proof prover="0"><result status="valid" time="0.09" steps="26267"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="star&#39;vc" expl="VC for star" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="star&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="24745"/></proof>
+  <proof prover="0"><result status="valid" time="0.08" steps="23012"/></proof>
   </goal>
   <goal name="star&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="24745"/></proof>
+  <proof prover="0"><result status="valid" time="0.08" steps="23012"/></proof>
   </goal>
   <goal name="star&#39;vc.2" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="24812"/></proof>
+  <proof prover="0"><result status="valid" time="0.08" steps="23079"/></proof>
   </goal>
   <goal name="star&#39;vc.3" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="24812"/></proof>
+  <proof prover="0"><result status="valid" time="0.08" steps="23079"/></proof>
   </goal>
   <goal name="star&#39;vc.4" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="25052"/></proof>
+  <proof prover="0"><result status="valid" time="0.09" steps="23271"/></proof>
   </goal>
   <goal name="star&#39;vc.5" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="25004"/></proof>
+  <proof prover="0"><result status="valid" time="0.08" steps="23271"/></proof>
   </goal>
   <goal name="star&#39;vc.6" expl="variant decrease" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="star&#39;vc.6.0" expl="variant decrease" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="24897"/></proof>
-   </goal>
-   <goal name="star&#39;vc.6.1" expl="variant decrease" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="24939"/></proof>
-   </goal>
-  </transf>
+  <proof prover="0"><result status="valid" time="0.08" steps="23271"/></proof>
   </goal>
   <goal name="star&#39;vc.7" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="25004"/></proof>
+  <proof prover="0"><result status="valid" time="0.08" steps="23271"/></proof>
   </goal>
   <goal name="star&#39;vc.8" expl="variant decrease" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="star&#39;vc.8.0" expl="variant decrease" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="24897"/></proof>
-   </goal>
-   <goal name="star&#39;vc.8.1" expl="variant decrease" proved="true">
-   <proof prover="0"><result status="valid" time="0.07" steps="24939"/></proof>
-   </goal>
-  </transf>
+  <proof prover="0"><result status="valid" time="0.08" steps="23271"/></proof>
   </goal>
   <goal name="star&#39;vc.9" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="25004"/></proof>
+  <proof prover="0"><result status="valid" time="0.08" steps="23271"/></proof>
   </goal>
   <goal name="star&#39;vc.10" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="25004"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="23252"/></proof>
   </goal>
   <goal name="star&#39;vc.11" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="24985"/></proof>
-  </goal>
-  <goal name="star&#39;vc.12" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="27770"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="26037"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="star_nil&#39;vc" expl="VC for star_nil" proved="true">
- <proof prover="0"><result status="valid" time="0.11" steps="38880"/></proof>
+ <proof prover="0"><result status="valid" time="0.11" steps="36721"/></proof>
  </goal>
  <goal name="star_nil_bool&#39;vc" expl="VC for star_nil_bool" proved="true">
- <proof prover="0"><result status="valid" time="0.08" steps="38918"/></proof>
- </goal>
- <goal name="star_sub&#39;vc" expl="VC for star_sub" proved="true">
- <proof prover="2"><result status="valid" time="0.04" steps="368"/></proof>
- </goal>
- <goal name="star_add&#39;vc" expl="VC for star_add" proved="true">
- <proof prover="0"><result status="valid" time="0.91" steps="144916"/></proof>
+ <proof prover="0"><result status="valid" time="0.08" steps="36759"/></proof>
  </goal>
  <goal name="star_mul&#39;vc" expl="VC for star_mul" proved="true">
- <proof prover="0"><result status="valid" time="0.13" steps="46394"/></proof>
+ <proof prover="0"><result status="valid" time="0.13" steps="44157"/></proof>
  </goal>
- <goal name="star_and&#39;vc" expl="VC for star_and" proved="true">
- <proof prover="0"><result status="valid" time="0.33" steps="74536"/></proof>
- </goal>
- <goal name="star_neg&#39;vc" expl="VC for star_neg" proved="true">
- <proof prover="0"><result status="valid" time="0.15" steps="42769"/></proof>
- </goal>
- <goal name="star_append&#39;vc" expl="VC for star_append">
- <transf name="split_vc" >
+ <goal name="star_append&#39;vc" expl="VC for star_append" proved="true">
+ <transf name="split_vc" proved="true" >
   <goal name="star_append&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.13" steps="36892"/></proof>
+  <proof prover="0"><result status="valid" time="0.12" steps="35742"/></proof>
   </goal>
   <goal name="star_append&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="39768"/></proof>
+  <proof prover="0"><result status="valid" time="0.11" steps="38851"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.2" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="36892"/></proof>
+  <goal name="star_append&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="32552"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.3" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.13" steps="39768"/></proof>
+  <goal name="star_append&#39;vc.3" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.12" steps="35742"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.4" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.13" steps="36938"/></proof>
+  <goal name="star_append&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.13" steps="38851"/></proof>
   </goal>
   <goal name="star_append&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="38342"/></proof>
+  <proof prover="0"><result status="valid" time="0.09" steps="32552"/></proof>
   </goal>
   <goal name="star_append&#39;vc.6" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="36952"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="35793"/></proof>
   </goal>
   <goal name="star_append&#39;vc.7" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="38349"/></proof>
+  <proof prover="0"><result status="valid" time="0.11" steps="36209"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.8" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="37242"/></proof>
+  <goal name="star_append&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="32567"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.9" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="37176"/></proof>
+  <goal name="star_append&#39;vc.9" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="35805"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.10" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="35635"/></proof>
+  <goal name="star_append&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="36226"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.11" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="52"/></proof>
+  <goal name="star_append&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32574"/></proof>
   </goal>
   <goal name="star_append&#39;vc.12" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="37264"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="34798"/></proof>
   </goal>
   <goal name="star_append&#39;vc.13" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="239"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="241"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.14" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="210"/></proof>
+  <goal name="star_append&#39;vc.14" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32625"/></proof>
   </goal>
   <goal name="star_append&#39;vc.15" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="139"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="212"/></proof>
   </goal>
   <goal name="star_append&#39;vc.16" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="96"/></proof>
+  <proof prover="2"><result status="valid" time="0.02" steps="141"/></proof>
   </goal>
   <goal name="star_append&#39;vc.17" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="52"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="98"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.18" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="37264"/></proof>
+  <goal name="star_append&#39;vc.18" expl="unreachable point" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="33198"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.19" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="1.16" steps="153878"/></proof>
+  <goal name="star_append&#39;vc.19" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="34798"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.20" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="210"/></proof>
+  <goal name="star_append&#39;vc.20" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="1.16" steps="151400"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.21" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="139"/></proof>
+  <goal name="star_append&#39;vc.21" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32621"/></proof>
   </goal>
   <goal name="star_append&#39;vc.22" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="96"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="212"/></proof>
   </goal>
   <goal name="star_append&#39;vc.23" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="52"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="141"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.24" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="37264"/></proof>
+  <goal name="star_append&#39;vc.24" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="98"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.25" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.13" steps="43587"/></proof>
+  <goal name="star_append&#39;vc.25" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="54"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.26" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="210"/></proof>
+  <goal name="star_append&#39;vc.26" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="34798"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.27" expl="unreachable point" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="395258"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1826523"/></proof>
-  <proof prover="2"><result status="valid" time="0.03" steps="139"/></proof>
+  <goal name="star_append&#39;vc.27" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.13" steps="41322"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.28" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="96"/></proof>
+  <goal name="star_append&#39;vc.28" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.08" steps="32621"/></proof>
   </goal>
   <goal name="star_append&#39;vc.29" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="52"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="212"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.30" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.12" steps="37309"/></proof>
+  <goal name="star_append&#39;vc.30" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="141"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.31" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.38" steps="75508"/></proof>
+  <goal name="star_append&#39;vc.31" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="98"/></proof>
   </goal>
   <goal name="star_append&#39;vc.32" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="218"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="54"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.33" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="137"/></proof>
+  <goal name="star_append&#39;vc.33" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="36267"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.34" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="96"/></proof>
+  <goal name="star_append&#39;vc.34" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.38" steps="73161"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.35" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="52"/></proof>
+  <goal name="star_append&#39;vc.35" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="32627"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.36" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="37264"/></proof>
+  <goal name="star_append&#39;vc.36" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="220"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.37" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.12" steps="40251"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.38" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="210"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.39" expl="unreachable point" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="394578"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1821124"/></proof>
-  <proof prover="2"><result status="valid" time="0.04" steps="139"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.40" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="96"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.41" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="52"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.42" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="37264"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.43" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.16" steps="40244"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.44" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="210"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.45" expl="unreachable point" proved="true">
+  <goal name="star_append&#39;vc.37" expl="unreachable point" proved="true">
   <proof prover="2"><result status="valid" time="0.02" steps="139"/></proof>
   </goal>
+  <goal name="star_append&#39;vc.38" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="98"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.39" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="54"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.40" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="34798"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.41" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.12" steps="39388"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.42" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32625"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.43" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="212"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.44" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="141"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.45" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="98"/></proof>
+  </goal>
   <goal name="star_append&#39;vc.46" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="96"/></proof>
+  <proof prover="2"><result status="valid" time="0.02" steps="54"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.47" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="52"/></proof>
+  <goal name="star_append&#39;vc.47" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="34798"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.48" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.12" steps="37189"/></proof>
+  <goal name="star_append&#39;vc.48" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.16" steps="39379"/></proof>
   </goal>
   <goal name="star_append&#39;vc.49" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.13" steps="40102"/></proof>
+  <proof prover="0"><result status="valid" time="0.06" steps="32625"/></proof>
   </goal>
   <goal name="star_append&#39;vc.50" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="96"/></proof>
+  <proof prover="2"><result status="valid" time="0.02" steps="212"/></proof>
   </goal>
   <goal name="star_append&#39;vc.51" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="52"/></proof>
+  <proof prover="2"><result status="valid" time="0.02" steps="141"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.52" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="40747"/></proof>
+  <goal name="star_append&#39;vc.52" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="98"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.53" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="110"/></proof>
+  <goal name="star_append&#39;vc.53" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="54"/></proof>
   </goal>
   <goal name="star_append&#39;vc.54" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="40777"/></proof>
+  <proof prover="0"><result status="valid" time="0.13" steps="36100"/></proof>
   </goal>
   <goal name="star_append&#39;vc.55" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="112"/></proof>
+  <proof prover="0"><result status="valid" time="0.13" steps="39198"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.56" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="35594"/></proof>
+  <goal name="star_append&#39;vc.56" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.13" steps="32604"/></proof>
   </goal>
   <goal name="star_append&#39;vc.57" expl="unreachable point" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="52"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="98"/></proof>
   </goal>
-  <goal name="star_append&#39;vc.58" expl="postcondition">
-  <transf name="split_vc" >
-   <goal name="star_append&#39;vc.58.0" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.13" steps="403"/></proof>
+  <goal name="star_append&#39;vc.58" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="54"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.59" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="39687"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.60" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="112"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.61" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="56"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.62" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="39717"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.63" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="114"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.64" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="32613"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.65" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="106"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.66" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="54"/></proof>
+  </goal>
+  <goal name="star_append&#39;vc.67" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="star_append&#39;vc.67.0" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.12" steps="405"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.1" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.13" steps="120"/></proof>
+   <goal name="star_append&#39;vc.67.1" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.13" steps="122"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.2" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.12" steps="120"/></proof>
+   <goal name="star_append&#39;vc.67.2" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.11" steps="122"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.3" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.04" steps="126"/></proof>
+   <goal name="star_append&#39;vc.67.3" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.03" steps="128"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.4" expl="postcondition">
-   <proof prover="2"><result status="timeout" time="1.00"/></proof>
+   <goal name="star_append&#39;vc.67.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.13" steps="40455"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.5" expl="postcondition">
-   <proof prover="0"><result status="timeout" time="2.00" steps="1448653"/></proof>
+   <goal name="star_append&#39;vc.67.5" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.08" steps="444"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.6" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.07" steps="442"/></proof>
+   <goal name="star_append&#39;vc.67.6" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.06" steps="444"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.7" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.07" steps="442"/></proof>
+   <goal name="star_append&#39;vc.67.7" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.07" steps="444"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.8" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.06" steps="442"/></proof>
+   <goal name="star_append&#39;vc.67.8" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.95" steps="136640"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.9" expl="postcondition">
-   <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="340803"/></proof>
-   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1584502"/></proof>
-   <proof prover="2" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <goal name="star_append&#39;vc.67.9" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.06" steps="770"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.10" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.07" steps="768"/></proof>
+   <goal name="star_append&#39;vc.67.10" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.07" steps="770"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.11" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="1.49" steps="438751"/></proof>
+   <goal name="star_append&#39;vc.67.11" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.15" steps="45395"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.12" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.13" steps="46117"/></proof>
+   <goal name="star_append&#39;vc.67.12" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.17" steps="44568"/></proof>
    </goal>
-   <goal name="star_append&#39;vc.58.13" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.03" steps="291"/></proof>
-   </goal>
-   <goal name="star_append&#39;vc.58.14" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.11" steps="301"/></proof>
+   <goal name="star_append&#39;vc.67.13" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.04" steps="303"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="star_append&#39;vc.69" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.07" steps="34676"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.66" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.05" steps="34656"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.61" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34667"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.40" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.09" steps="34690"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.54" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34688"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.47" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.08" steps="34688"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.33" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.05" steps="34684"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.26" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.08" steps="34684"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.19" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34688"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.11" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34637"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.8" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34630"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.5" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34615"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.2" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.09" steps="34615"/></proof>
-  </goal>
-  <goal name="star_append&#39;vc.14" expl="precondition">
-  <proof prover="0"><result status="timeout" time="1.00" steps="460872"/></proof>
-  <proof prover="1"><result status="timeout" time="1.00" steps="1606399"/></proof>
-  <proof prover="2"><result status="timeout" time="1.00"/></proof>
-  </goal>
  </transf>
  </goal>
- <goal name="compile_bool&#39;vc" expl="VC for compile_bool">
- <transf name="split_vc" >
+ <goal name="compile_bool&#39;vc" expl="VC for compile_bool" proved="true">
+ <transf name="split_vc" proved="true" >
   <goal name="compile_bool&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="38504"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="36236"/></proof>
   </goal>
   <goal name="compile_bool&#39;vc.1" expl="variant decrease" proved="true">
   <proof prover="2"><result status="valid" time="0.04" steps="151"/></proof>
@@ -429,449 +434,420 @@
   <goal name="compile_bool&#39;vc.2" expl="precondition" proved="true">
   <transf name="destruct" proved="true" arg1="H">
    <goal name="compile_bool&#39;vc.2.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="37237"/></proof>
+   <proof prover="0"><result status="valid" time="0.07" steps="35366"/></proof>
    </goal>
    <goal name="compile_bool&#39;vc.2.1" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.07" steps="39930"/></proof>
+   <proof prover="0"><result status="valid" time="0.06" steps="37912"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="compile_bool&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32624"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.4" expl="precondition" proved="true">
   <transf name="destruct" proved="true" arg1="H2">
-   <goal name="compile_bool&#39;vc.3.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.05" steps="37357"/></proof>
+   <goal name="compile_bool&#39;vc.4.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="35486"/></proof>
    </goal>
-   <goal name="compile_bool&#39;vc.3.1" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.09" steps="40150"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="compile_bool&#39;vc.4" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="38533"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.5" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.13" steps="38961"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.6" expl="precondition">
-  <transf name="destruct" arg1="H">
-   <goal name="compile_bool&#39;vc.6.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="37215"/></proof>
-   </goal>
-   <goal name="compile_bool&#39;vc.6.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="161849"/></proof>
+   <goal name="compile_bool&#39;vc.4.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.05" steps="38132"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="compile_bool&#39;vc.7" expl="precondition">
-  <transf name="destruct" arg1="H2">
-   <goal name="compile_bool&#39;vc.7.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.07" steps="37335"/></proof>
+  <goal name="compile_bool&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="32741"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.6" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.12" steps="36265"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.7" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.13" steps="36719"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.8" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H">
+   <goal name="compile_bool&#39;vc.8.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="35370"/></proof>
    </goal>
-   <goal name="compile_bool&#39;vc.7.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="241807"/></proof>
+   <goal name="compile_bool&#39;vc.8.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.10" steps="37883"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="compile_bool&#39;vc.8" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.12" steps="38533"/></proof>
+  <goal name="compile_bool&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32632"/></proof>
   </goal>
-  <goal name="compile_bool&#39;vc.9" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="38961"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.10" expl="precondition">
-  <transf name="destruct" arg1="H">
+  <goal name="compile_bool&#39;vc.10" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H2">
    <goal name="compile_bool&#39;vc.10.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="37215"/></proof>
+   <proof prover="0"><result status="valid" time="0.06" steps="35490"/></proof>
    </goal>
-   <goal name="compile_bool&#39;vc.10.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="173745"/></proof>
+   <goal name="compile_bool&#39;vc.10.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="38065"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="compile_bool&#39;vc.11" expl="precondition">
-  <transf name="destruct" arg1="H2">
-   <goal name="compile_bool&#39;vc.11.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.10" steps="37335"/></proof>
-   </goal>
-   <goal name="compile_bool&#39;vc.11.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="241811"/></proof>
-   </goal>
-  </transf>
+  <goal name="compile_bool&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="32749"/></proof>
   </goal>
   <goal name="compile_bool&#39;vc.12" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="38502"/></proof>
+  <proof prover="0"><result status="valid" time="0.11" steps="36265"/></proof>
   </goal>
-  <goal name="compile_bool&#39;vc.13" expl="precondition" proved="true">
+  <goal name="compile_bool&#39;vc.13" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="36719"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.14" expl="precondition" proved="true">
   <transf name="destruct" proved="true" arg1="H">
-   <goal name="compile_bool&#39;vc.13.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.09" steps="36956"/></proof>
+   <goal name="compile_bool&#39;vc.14.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="35370"/></proof>
    </goal>
-   <goal name="compile_bool&#39;vc.13.1" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="39551"/></proof>
+   <goal name="compile_bool&#39;vc.14.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="37883"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="compile_bool&#39;vc.14" expl="postcondition" proved="true">
+  <goal name="compile_bool&#39;vc.15" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="32632"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.16" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H2">
+   <goal name="compile_bool&#39;vc.16.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="35490"/></proof>
+   </goal>
+   <goal name="compile_bool&#39;vc.16.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.10" steps="38065"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="compile_bool&#39;vc.17" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="32749"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.18" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="36234"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.19" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H">
+   <goal name="compile_bool&#39;vc.19.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="35085"/></proof>
+   </goal>
+   <goal name="compile_bool&#39;vc.19.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="37533"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="compile_bool&#39;vc.20" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="32293"/></proof>
+  </goal>
+  <goal name="compile_bool&#39;vc.21" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
-   <goal name="compile_bool&#39;vc.14.0" expl="postcondition" proved="true">
+   <goal name="compile_bool&#39;vc.21.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
-    <goal name="compile_bool&#39;vc.14.0.0" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.23" steps="44427"/></proof>
+    <goal name="compile_bool&#39;vc.21.0.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.17" steps="42297"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.0.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.15" steps="44445"/></proof>
+    <goal name="compile_bool&#39;vc.21.0.1" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.14" steps="42315"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.0.2" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.68" steps="105892"/></proof>
+    <goal name="compile_bool&#39;vc.21.0.2" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.65" steps="103649"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.0.3" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.17" steps="56232"/></proof>
+    <goal name="compile_bool&#39;vc.21.0.3" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.23" steps="54771"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.0.4" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.24" steps="56175"/></proof>
+    <goal name="compile_bool&#39;vc.21.0.4" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.24" steps="54714"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.0.5" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.12" steps="45944"/></proof>
+    <goal name="compile_bool&#39;vc.21.0.5" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.24" steps="43825"/></proof>
     </goal>
    </transf>
    </goal>
-   <goal name="compile_bool&#39;vc.14.1" expl="postcondition" proved="true">
+   <goal name="compile_bool&#39;vc.21.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
-    <goal name="compile_bool&#39;vc.14.1.0" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.1.0" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.51" steps="1418"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.1.1" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.1.1" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.51" steps="1418"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.1.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.31" steps="2168"/></proof>
+    <goal name="compile_bool&#39;vc.21.1.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.31" steps="2137"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.1.3" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.1.3" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.13" steps="1074"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.1.4" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.1.4" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.12" steps="1074"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.1.5" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.1.5" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.04" steps="178"/></proof>
     </goal>
    </transf>
    </goal>
-   <goal name="compile_bool&#39;vc.14.2" expl="postcondition" proved="true">
+   <goal name="compile_bool&#39;vc.21.2" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
-    <goal name="compile_bool&#39;vc.14.2.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.70" steps="1643"/></proof>
-    </goal>
-    <goal name="compile_bool&#39;vc.14.2.1" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.2.0" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.74" steps="1643"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.2.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.31" steps="2181"/></proof>
+    <goal name="compile_bool&#39;vc.21.2.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.70" steps="1643"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.2.3" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.2.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.31" steps="2150"/></proof>
+    </goal>
+    <goal name="compile_bool&#39;vc.21.2.3" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.11" steps="1074"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.2.4" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.2.4" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.12" steps="1074"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.2.5" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.2.5" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.03" steps="174"/></proof>
     </goal>
    </transf>
    </goal>
-   <goal name="compile_bool&#39;vc.14.3" expl="postcondition" proved="true">
+   <goal name="compile_bool&#39;vc.21.3" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
-    <goal name="compile_bool&#39;vc.14.3.0" expl="postcondition" proved="true">
-    <proof prover="2" timelimit="5"><result status="valid" time="1.60" steps="1816"/></proof>
-    </goal>
-    <goal name="compile_bool&#39;vc.14.3.1" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.3.0" expl="postcondition" proved="true">
     <proof prover="2" timelimit="5"><result status="valid" time="1.43" steps="1816"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.3.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.35" steps="2349"/></proof>
+    <goal name="compile_bool&#39;vc.21.3.1" expl="postcondition" proved="true">
+    <proof prover="2" timelimit="5"><result status="valid" time="1.60" steps="1816"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.3.3" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.3.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.35" steps="2263"/></proof>
+    </goal>
+    <goal name="compile_bool&#39;vc.21.3.3" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.14" steps="1110"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.3.4" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.3.4" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.13" steps="1110"/></proof>
     </goal>
-    <goal name="compile_bool&#39;vc.14.3.5" expl="postcondition" proved="true">
+    <goal name="compile_bool&#39;vc.21.3.5" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.04" steps="180"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
-  <goal name="compile_bool&#39;vc.20" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.05" steps="34497"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.17" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.07" steps="34953"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.15" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34836"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.11" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34953"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.9" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.05" steps="34836"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.5" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.07" steps="34945"/></proof>
-  </goal>
-  <goal name="compile_bool&#39;vc.3" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.07" steps="34828"/></proof>
-  </goal>
  </transf>
  </goal>
- <goal name="compile&#39;vc" expl="VC for compile">
- <transf name="split_vc" >
+ <goal name="compile&#39;vc" expl="VC for compile" proved="true">
+ <transf name="split_vc" proved="true" >
   <goal name="compile&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.16" steps="39070"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="36587"/></proof>
   </goal>
   <goal name="compile&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="39504"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="37041"/></proof>
   </goal>
-  <goal name="compile&#39;vc.2" expl="precondition">
-  <transf name="destruct" arg1="H1">
+  <goal name="compile&#39;vc.2" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H1">
    <goal name="compile&#39;vc.2.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="37215"/></proof>
+   <proof prover="0"><result status="valid" time="0.06" steps="35370"/></proof>
    </goal>
-   <goal name="compile&#39;vc.2.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="203896"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="compile&#39;vc.3" expl="precondition">
-  <transf name="destruct" arg1="H1">
-   <goal name="compile&#39;vc.3.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.05" steps="37335"/></proof>
-   </goal>
-   <goal name="compile&#39;vc.3.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="143218"/></proof>
+   <goal name="compile&#39;vc.2.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.10" steps="37884"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="compile&#39;vc.4" expl="assertion" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="40007"/></proof>
+  <goal name="compile&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32632"/></proof>
   </goal>
-  <goal name="compile&#39;vc.5" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.16" steps="39070"/></proof>
+  <goal name="compile&#39;vc.4" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H1">
+   <goal name="compile&#39;vc.4.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="35490"/></proof>
+   </goal>
+   <goal name="compile&#39;vc.4.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.10" steps="38064"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="compile&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="32749"/></proof>
   </goal>
   <goal name="compile&#39;vc.6" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="39504"/></proof>
+  <proof prover="0"><result status="valid" time="0.09" steps="36587"/></proof>
   </goal>
-  <goal name="compile&#39;vc.7" expl="precondition">
-  <transf name="destruct" arg1="H1">
-   <goal name="compile&#39;vc.7.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.05" steps="37215"/></proof>
-   </goal>
-   <goal name="compile&#39;vc.7.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="205395"/></proof>
-   </goal>
-  </transf>
+  <goal name="compile&#39;vc.7" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="37041"/></proof>
   </goal>
-  <goal name="compile&#39;vc.8" expl="precondition">
-  <transf name="destruct" arg1="H1">
+  <goal name="compile&#39;vc.8" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H1">
    <goal name="compile&#39;vc.8.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.05" steps="37335"/></proof>
+   <proof prover="0"><result status="valid" time="0.07" steps="35370"/></proof>
    </goal>
-   <goal name="compile&#39;vc.8.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="143224"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="compile&#39;vc.9" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="39070"/></proof>
-  </goal>
-  <goal name="compile&#39;vc.10" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="39504"/></proof>
-  </goal>
-  <goal name="compile&#39;vc.11" expl="precondition">
-  <transf name="destruct" arg1="H1">
-   <goal name="compile&#39;vc.11.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="37215"/></proof>
-   </goal>
-   <goal name="compile&#39;vc.11.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="203654"/></proof>
+   <goal name="compile&#39;vc.8.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="37884"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="compile&#39;vc.12" expl="precondition">
-  <transf name="destruct" arg1="H1">
-   <goal name="compile&#39;vc.12.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.05" steps="37335"/></proof>
+  <goal name="compile&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32632"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.10" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H1">
+   <goal name="compile&#39;vc.10.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="35490"/></proof>
    </goal>
-   <goal name="compile&#39;vc.12.1" expl="precondition">
-   <proof prover="0"><result status="timeout" time="1.00" steps="143175"/></proof>
+   <goal name="compile&#39;vc.10.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.10" steps="38064"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="compile&#39;vc.13" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="40772"/></proof>
+  <goal name="compile&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="32749"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.12" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.16" steps="36587"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.13" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="37041"/></proof>
   </goal>
   <goal name="compile&#39;vc.14" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="40922"/></proof>
+  <transf name="destruct" proved="true" arg1="H1">
+   <goal name="compile&#39;vc.14.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="35370"/></proof>
+   </goal>
+   <goal name="compile&#39;vc.14.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="37884"/></proof>
+   </goal>
+  </transf>
   </goal>
-  <goal name="compile&#39;vc.15" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="38775"/></proof>
+  <goal name="compile&#39;vc.15" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="32632"/></proof>
   </goal>
-  <goal name="compile&#39;vc.16" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="39544"/></proof>
+  <goal name="compile&#39;vc.16" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H1">
+   <goal name="compile&#39;vc.16.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="35490"/></proof>
+   </goal>
+   <goal name="compile&#39;vc.16.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.10" steps="38064"/></proof>
+   </goal>
+  </transf>
   </goal>
-  <goal name="compile&#39;vc.17" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="39898"/></proof>
+  <goal name="compile&#39;vc.17" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="32749"/></proof>
   </goal>
   <goal name="compile&#39;vc.18" expl="precondition" proved="true">
-  <transf name="destruct" proved="true" arg1="H2">
-   <goal name="compile&#39;vc.18.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="37474"/></proof>
-   </goal>
-   <goal name="compile&#39;vc.18.1" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="40251"/></proof>
-   </goal>
-  </transf>
+  <proof prover="0"><result status="valid" time="0.10" steps="38863"/></proof>
   </goal>
-  <goal name="compile&#39;vc.19" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="39105"/></proof>
+  <goal name="compile&#39;vc.19" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="39013"/></proof>
   </goal>
   <goal name="compile&#39;vc.20" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.11" steps="39545"/></proof>
+  <proof prover="0"><result status="valid" time="0.11" steps="36375"/></proof>
   </goal>
-  <goal name="compile&#39;vc.21" expl="postcondition">
-  <transf name="split_vc" >
-   <goal name="compile&#39;vc.21.0" expl="postcondition">
-   <transf name="split_vc" >
-    <goal name="compile&#39;vc.21.0.0" expl="postcondition" proved="true">
+  <goal name="compile&#39;vc.21" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="37073"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.22" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="37453"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.23" expl="precondition" proved="true">
+  <transf name="destruct" proved="true" arg1="H2">
+   <goal name="compile&#39;vc.23.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="35655"/></proof>
+   </goal>
+   <goal name="compile&#39;vc.23.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="38301"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="compile&#39;vc.24" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.16" steps="32963"/></proof>
+  </goal>
+  <goal name="compile&#39;vc.25" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="compile&#39;vc.25.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="compile&#39;vc.25.0.0" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.02" steps="143"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.0.1" expl="postcondition" proved="true">
+    <goal name="compile&#39;vc.25.0.1" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.02" steps="177"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.0.2" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.58" steps="88909"/></proof>
+    <goal name="compile&#39;vc.25.0.2" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.58" steps="88139"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.0.3" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.96" steps="135233"/></proof>
+    <goal name="compile&#39;vc.25.0.3" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.96" steps="132023"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.0.4" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.13" steps="40735"/></proof>
+    <goal name="compile&#39;vc.25.0.4" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.13" steps="38759"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.0.5" expl="postcondition" proved="true">
+    <goal name="compile&#39;vc.25.0.5" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.15" steps="720"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.0.6" expl="postcondition">
-    <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="186904"/></proof>
-    <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1468280"/></proof>
-    <proof prover="2" obsolete="true"><result status="timeout" time="1.00"/></proof>
-    </goal>
    </transf>
    </goal>
-   <goal name="compile&#39;vc.21.1" expl="postcondition">
-   <transf name="split_vc" >
-    <goal name="compile&#39;vc.21.1.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.03" steps="165"/></proof>
+   <goal name="compile&#39;vc.25.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="compile&#39;vc.25.1.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.04" steps="165"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.1.1" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.04" steps="197"/></proof>
+    <goal name="compile&#39;vc.25.1.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.03" steps="197"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.1.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.73" steps="1074"/></proof>
+    <goal name="compile&#39;vc.25.1.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.73" steps="1072"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.1.3" expl="postcondition" proved="true">
+    <goal name="compile&#39;vc.25.1.3" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.61" steps="1072"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.1.4" expl="postcondition" proved="true">
+    <goal name="compile&#39;vc.25.1.4" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.03" steps="74"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.1.5" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.16" steps="1044"/></proof>
-    </goal>
-    <goal name="compile&#39;vc.21.1.6" expl="postcondition">
-    <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="226300"/></proof>
-    <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="2011304"/></proof>
-    <proof prover="2" obsolete="true"><result status="timeout" time="1.00"/></proof>
+    <goal name="compile&#39;vc.25.1.5" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.16" steps="1043"/></proof>
     </goal>
    </transf>
    </goal>
-   <goal name="compile&#39;vc.21.2" expl="postcondition">
-   <transf name="split_vc" >
-    <goal name="compile&#39;vc.21.2.0" expl="postcondition" proved="true">
+   <goal name="compile&#39;vc.25.2" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="compile&#39;vc.25.2.0" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.04" steps="151"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.2.1" expl="postcondition" proved="true">
+    <goal name="compile&#39;vc.25.2.1" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.04" steps="185"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.2.2" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.68" steps="1042"/></proof>
+    <goal name="compile&#39;vc.25.2.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.68" steps="1044"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.2.3" expl="postcondition" proved="true">
+    <goal name="compile&#39;vc.25.2.3" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.72" steps="1044"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.2.4" expl="postcondition" proved="true">
+    <goal name="compile&#39;vc.25.2.4" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.05" steps="74"/></proof>
     </goal>
-    <goal name="compile&#39;vc.21.2.5" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.13" steps="42319"/></proof>
-    </goal>
-    <goal name="compile&#39;vc.21.2.6" expl="postcondition">
-    <proof prover="0" obsolete="true"><result status="timeout" time="1.00" steps="254675"/></proof>
-    <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="2026726"/></proof>
-    <proof prover="2" obsolete="true"><result status="timeout" time="1.00"/></proof>
+    <goal name="compile&#39;vc.25.2.5" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.13" steps="40137"/></proof>
     </goal>
    </transf>
    </goal>
-   <goal name="compile&#39;vc.28.3" expl="postcondition">
-   <transf name="split_vc" >
-    <goal name="compile&#39;vc.28.3.0" expl="postcondition">
-    <proof prover="2"><result status="valid" time="0.04" steps="159"/></proof>
+   <goal name="compile&#39;vc.25.3" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="compile&#39;vc.25.3.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.04" steps="161"/></proof>
     </goal>
-    <goal name="compile&#39;vc.28.3.1" expl="postcondition">
-    <proof prover="2"><result status="valid" time="0.04" steps="193"/></proof>
+    <goal name="compile&#39;vc.25.3.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.04" steps="195"/></proof>
     </goal>
-    <goal name="compile&#39;vc.28.3.2" expl="postcondition">
-    <proof prover="2"><result status="valid" time="0.70" steps="1050"/></proof>
+    <goal name="compile&#39;vc.25.3.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.64" steps="1054"/></proof>
     </goal>
-    <goal name="compile&#39;vc.28.3.3" expl="postcondition">
-    <proof prover="2"><result status="valid" time="0.67" steps="1052"/></proof>
+    <goal name="compile&#39;vc.25.3.3" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.64" steps="1054"/></proof>
     </goal>
-    <goal name="compile&#39;vc.28.3.4" expl="postcondition">
+    <goal name="compile&#39;vc.25.3.4" expl="postcondition" proved="true">
     <proof prover="2"><result status="valid" time="0.04" steps="74"/></proof>
     </goal>
-    <goal name="compile&#39;vc.28.3.5" expl="postcondition">
-    <proof prover="2"><result status="valid" time="0.11" steps="980"/></proof>
-    </goal>
-    <goal name="compile&#39;vc.28.3.6" expl="postcondition">
-    <proof prover="0"><result status="timeout" time="1.00" steps="290395"/></proof>
-    <proof prover="1"><result status="timeout" time="1.00" steps="1643035"/></proof>
-    <proof prover="2"><result status="timeout" time="1.00"/></proof>
+    <goal name="compile&#39;vc.25.3.5" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.15" steps="982"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
-  </goal>
-  <goal name="compile&#39;vc.25" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="35167"/></proof>
-  </goal>
-  <goal name="compile&#39;vc.18" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.09" steps="34953"/></proof>
-  </goal>
-  <goal name="compile&#39;vc.16" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34836"/></proof>
-  </goal>
-  <goal name="compile&#39;vc.12" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34953"/></proof>
-  </goal>
-  <goal name="compile&#39;vc.10" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.06" steps="34836"/></proof>
-  </goal>
-  <goal name="compile&#39;vc.5" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.07" steps="34953"/></proof>
-  </goal>
-  <goal name="compile&#39;vc.3" expl="precondition">
-  <proof prover="0"><result status="valid" time="0.07" steps="34836"/></proof>
   </goal>
  </transf>
  </goal>

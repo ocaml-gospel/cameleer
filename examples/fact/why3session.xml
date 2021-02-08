@@ -7,10 +7,36 @@
 <path name=".."/><path name="fact.ml"/>
 <theory name="Fact" proved="true">
  <goal name="fact&#39;vc" expl="VC for fact" proved="true">
- <proof prover="0"><result status="valid" time="0.05" steps="11538"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="fact&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="10875"/></proof>
+  </goal>
+  <goal name="fact&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="11408"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="fact_imp&#39;vc" expl="VC for fact_imp" proved="true">
- <proof prover="0"><result status="valid" time="0.06" steps="13528"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="fact_imp&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="10970"/></proof>
+  </goal>
+  <goal name="fact_imp&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="12005"/></proof>
+  </goal>
+  <goal name="fact_imp&#39;vc.2" expl="loop variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="11119"/></proof>
+  </goal>
+  <goal name="fact_imp&#39;vc.3" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="11672"/></proof>
+  </goal>
+  <goal name="fact_imp&#39;vc.4" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="12429"/></proof>
+  </goal>
+  <goal name="fact_imp&#39;vc.5" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="11604"/></proof>
+  </goal>
+ </transf>
  </goal>
 </theory>
 </file>

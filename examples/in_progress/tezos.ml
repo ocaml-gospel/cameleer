@@ -65,12 +65,13 @@ let sum_until_negative_1 a =
     iteration, the generated VC features as premise `finished = true`. So, it
     never really flips. The next version of `sum_until_negative` fixes the
     specification and the code, providing a provably correct implementation. *)
-let sum_until_negative2 a =
+let sum_until_negative_2 a =
   let iter = { i = 0 ; sum = 0} in
   let finished = ref false in
   while !finished do
     (*@ variant   Array.length a - iter.i + !finished *)
-    (*@ invariant exists j. 0 <= j < Array.length a && a.(j) < 0 && iter.i <= j *)
+    (*@ invariant exists j. 0 <= j < Array.length a && a.(j) < 0 &&
+                            0 <= iter.i <= j *)
     (*@ invariant 0 <= iter.i *)
     let element = a.(iter.i) in
     if element < 0 then
@@ -118,46 +119,46 @@ let sum_until_negative2 a =
 
 let [@lemma] rec shift_left (f: int -> int) (g: int -> int) a b c (d: int) =
   if a < b then shift_left f g (a+1) b (c+1) d
-(*@ requires b - a = d - c
+(*@ shift_left f g a b c d
+    requires b - a = d - c
     requires forall i. a <= i < b -> f i  = g (c + i - a)
     variant  b - a
     ensures  logic_sum f a b = logic_sum g c d *)
 
-(*@ predicate negative_array (a: int array) =
-      (forall i. 0 <= i < Array.length a -> a.(i) >= 0) \/
-      (exists i. 0 <= i < Array.length a &&
-        (forall j. 0 <= j < i -> a.(j) >= 0) &&
-        (forall j. i <= j < Array.length a -> a.(j) < 0)) *)
+(*@ predicate negative_array (a: int array) (l: int) (u: int) =
+      (forall i. l <= i < u -> a.(i) >= 0) \/
+      (exists i. l <= i < u &&
+        (forall j. l <= j < i -> a.(j) >= 0) &&
+        (forall k. i <= k < u -> a.(k) < 0)) *)
 
 (** As it is very frequently the case, while proving the `sum_until_negative`
     function correct, we came up with a small optimization with respect to the
     original code. Instead of using the `finished` flag, we use a much more
     OCaml idiomatic style and raise an exception. We immediately catch `Finish`
     and take its argument as the function return value. *)
-let sum_until_negative3 a =
+let sum_until_negative_3 a =
   let iter = { i = 0 ; sum = 0} in
   let exception Finish of int in
   try while iter.i < Array.length a  do
-      (*@ variant   Array.length a - iter.i *)
-      (*@ invariant 0 <= iter.i <= Array.length a *)
-      (*@ invariant forall j. 0 <= j < iter.i -> a.(j) >= 0 *)
-      (*@ invariant iter.sum =
-            logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 iter.i *)
-      let element = a.(iter.i) in
-      if element < 0 then
-        raise (Finish iter.sum)
-      else
-        (iter.i <- iter.i + 1 ; iter.sum <- iter.sum + element)
-    done;
-    iter.sum
+    (*@ variant   Array.length a - iter.i *)
+    (*@ invariant 0 <= iter.i <= Array.length a *)
+    (*@ invariant forall j. 0 <= j < iter.i -> a.(j) >= 0 *)
+    (*@ invariant iter.sum =
+          logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 iter.i *)
+    if a.(iter.i) < 0 then
+      raise (Finish iter.sum)
+    else
+      (iter.sum <- iter.sum + a.(iter.i) ; iter.i <- iter.i + 1)
+  done;
+  iter.sum
   with Finish i -> i
 (*@ r = sum_until_negative_3 a
-      requires negative_array a
+      requires negative_array a 0 (Array.length a)
       ensures  r =
        logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 (Array.length a) *)
 
 let main () =
-  sum_until_negative3 [| 1 ; 2 ; 3 ; 4 ; -5 ; -6; -7; -8; |]
+  sum_until_negative_3 [| 1 ; 2 ; 3 ; 4 ; -5 ; -6; -7; -8; |]
 (*@ r = main ()
       ensures r = 10 *)
 

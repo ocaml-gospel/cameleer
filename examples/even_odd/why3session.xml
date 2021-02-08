@@ -7,10 +7,30 @@
 <path name=".."/><path name="even_odd.ml"/>
 <theory name="Even_odd" proved="true">
  <goal name="even&#39;vc" expl="VC for even" proved="true">
- <proof prover="0"><result status="valid" time="0.09" steps="13478"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="even&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="10875"/></proof>
+  </goal>
+  <goal name="even&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="11408"/></proof>
+  </goal>
+  <goal name="even&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="13363"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="odd&#39;vc" expl="VC for odd" proved="true">
- <proof prover="0"><result status="valid" time="0.08" steps="13588"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="odd&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="10875"/></proof>
+  </goal>
+  <goal name="odd&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="11408"/></proof>
+  </goal>
+  <goal name="odd&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="13340"/></proof>
+  </goal>
+ </transf>
  </goal>
 </theory>
 </file>

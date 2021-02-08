@@ -16,7 +16,6 @@ module Mult = struct
       mult_commutative (x-1) (y-1);
       mult_commutative (x-1) y
       end
-
   (*@ mult_commutative x y
         requires x >= 0
         requires y >= 0

@@ -8,13 +8,64 @@
 <path name=".."/><path name="checking_a_large_routine.ml"/>
 <theory name="Checking_a_large_routine" proved="true">
  <goal name="fact&#39;vc" expl="VC for fact" proved="true">
- <proof prover="0"><result status="valid" time="0.03" steps="11538"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="fact&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="10875"/></proof>
+  </goal>
+  <goal name="fact&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="11408"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="routine&#39;vc" expl="VC for routine" proved="true">
- <proof prover="2"><result status="valid" time="0.57" steps="4614040"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="routine&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="12014"/></proof>
+  </goal>
+  <goal name="routine&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="11061"/></proof>
+  </goal>
+  <goal name="routine&#39;vc.2" expl="loop variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="11189"/></proof>
+  </goal>
+  <goal name="routine&#39;vc.3" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="11804"/></proof>
+  </goal>
+  <goal name="routine&#39;vc.4" expl="loop variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="11170"/></proof>
+  </goal>
+  <goal name="routine&#39;vc.5" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="153189"/></proof>
+  </goal>
+  <goal name="routine&#39;vc.6" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="11604"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="routine2&#39;vc" expl="VC for routine2" proved="true">
- <proof prover="0"><result status="valid" time="0.04" steps="13122"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="routine2&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="12012"/></proof>
+  </goal>
+  <goal name="routine2&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="11043"/></proof>
+  </goal>
+  <goal name="routine2&#39;vc.2" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="11135"/></proof>
+  </goal>
+  <goal name="routine2&#39;vc.3" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.05" steps="12433"/></proof>
+  </goal>
+  <goal name="routine2&#39;vc.4" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="11046"/></proof>
+  </goal>
+  <goal name="routine2&#39;vc.5" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.03" steps="11003"/></proof>
+  </goal>
+  <goal name="routine2&#39;vc.6" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="10989"/></proof>
+  </goal>
+ </transf>
  </goal>
 </theory>
 </file>

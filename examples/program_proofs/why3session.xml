@@ -49,18 +49,7 @@
   <proof prover="2"><result status="valid" time="0.04" steps="11790"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.12" expl="variant decrease" proved="true">
-  <transf name="left" proved="true" >
-   <goal name="mult_commutative&#39;vc.12.0" expl="left case" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="mult_commutative&#39;vc.12.0.0" expl="left case" proved="true">
-    <proof prover="2"><result status="valid" time="0.04" steps="11181"/></proof>
-    </goal>
-    <goal name="mult_commutative&#39;vc.12.0.1" expl="left case" proved="true">
-    <proof prover="2"><result status="valid" time="0.03" steps="11190"/></proof>
-    </goal>
-   </transf>
-   </goal>
-  </transf>
+  <proof prover="2" timelimit="5"><result status="valid" time="0.05" steps="11237"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.13" expl="precondition" proved="true">
   <proof prover="2"><result status="valid" time="0.03" steps="11805"/></proof>
@@ -216,21 +205,63 @@
  </transf>
  </goal>
  <goal name="PeanoNumbers.of_int&#39;vc" expl="VC for of_int" proved="true">
- <proof prover="2"><result status="valid" time="0.12" steps="18746"/></proof>
- <proof prover="3" timelimit="5"><result status="valid" time="0.02" steps="34"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="of_int&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="16571"/></proof>
+  </goal>
+  <goal name="of_int&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="17646"/></proof>
+  </goal>
+  <goal name="of_int&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="18441"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="PeanoNumbers.to_int_of_int&#39;vc" expl="VC for to_int_of_int" proved="true">
- <proof prover="2"><result status="valid" time="0.13" steps="19411"/></proof>
- <proof prover="3"><result status="valid" time="0.02" steps="37"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="to_int_of_int&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="16754"/></proof>
+  </goal>
+  <goal name="to_int_of_int&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="16740"/></proof>
+  </goal>
+  <goal name="to_int_of_int&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="19226"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="PeanoNumbers.of_int_to_int&#39;vc" expl="VC for of_int_to_int" proved="true">
- <proof prover="2"><result status="valid" time="0.15" steps="21556"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="of_int_to_int&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="17862"/></proof>
+  </goal>
+  <goal name="of_int_to_int&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="20076"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="PeanoNumbers.less_transitive&#39;vc" expl="VC for less_transitive" proved="true">
- <proof prover="2"><result status="valid" time="0.16" steps="24473"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="less_transitive&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="19970"/></proof>
+  </goal>
+  <goal name="less_transitive&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="19765"/></proof>
+  </goal>
+  <goal name="less_transitive&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="19637"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="PeanoNumbers.add&#39;vc" expl="VC for add" proved="true">
- <proof prover="2"><result status="valid" time="0.08" steps="20667"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="add&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="18157"/></proof>
+  </goal>
+  <goal name="add&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="20088"/></proof>
+  </goal>
+ </transf>
  </goal>
 </theory>
 </file>

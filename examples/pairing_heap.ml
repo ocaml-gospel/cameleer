@@ -36,16 +36,12 @@ module Make (E: PRE_ORD) = struct
         | [] -> occ_list x l = 0
         | t :: r -> occ_list x l = occ x t + occ_list x r *)
 
-  (* @ lemma occ_nonneg: forall x t. occ x t >= 0 *)
-
-  (* @ lemma occ_list_nonneg: forall x l. occ_list x l >= 0 *)
-
-  let [@lemma] rec occ_nonneg = function
+  let[@lemma] rec occ_nonneg = function
     | T (_, l) -> occ_list_nonneg l
   (*@ occ_nonneg param
         variant param
         ensures forall x. occ x param >= 0 *)
-  and occ_list_nonneg = function
+  and[@lemma] occ_list_nonneg = function
     | [] -> ()
     | t :: r -> occ_nonneg t; occ_list_nonneg r
   (*@ occ_list_nonneg param

@@ -2,7 +2,7 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="1" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="bst.ml"/>
@@ -14,10 +14,10 @@
    <goal name="occ_nonneg.0.0" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="occ_nonneg.0.0.0" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+    <proof prover="1"><result status="valid" time="0.08" steps="13137"/></proof>
     </goal>
     <goal name="occ_nonneg.0.0.1" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="48"/></proof>
+    <proof prover="1"><result status="valid" time="0.07" steps="14148"/></proof>
     </goal>
    </transf>
    </goal>
@@ -26,13 +26,108 @@
  </transf>
  </goal>
  <goal name="Make.empty&#39;vc" expl="VC for empty" proved="true">
- <proof prover="1"><result status="valid" time="0.09" steps="17125"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="empty&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.06" steps="13466"/></proof>
+  </goal>
+  <goal name="empty&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.04" steps="12687"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="Make.insert&#39;vc" expl="VC for insert" proved="true">
- <proof prover="1"><result status="valid" time="0.86" steps="86987"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="insert&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="1"><result status="valid" time="0.06" steps="14746"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.06" steps="14400"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.2" expl="variant decrease" proved="true">
+  <proof prover="1"><result status="valid" time="0.06" steps="14734"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.06" steps="14388"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.4" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="insert&#39;vc.4.0" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.07" steps="15699"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.07" steps="12805"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.4.2" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.04" steps="15514"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.4.3" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.06" steps="15536"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="insert&#39;vc.5" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="insert&#39;vc.5.0" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.08" steps="14972"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.5.1" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.05" steps="12886"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.5.2" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.06" steps="15572"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.5.3" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.07" steps="15574"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="insert&#39;vc.6" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="insert&#39;vc.6.0" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.18" steps="16115"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.6.1" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.11" steps="13662"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.6.2" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.05" steps="16642"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.6.3" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.06" steps="16661"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
  </goal>
  <goal name="Make.mem&#39;vc" expl="VC for mem" proved="true">
- <proof prover="1"><result status="valid" time="0.28" steps="34733"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="mem&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="1"><result status="valid" time="0.06" steps="14809"/></proof>
+  </goal>
+  <goal name="mem&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.07" steps="14476"/></proof>
+  </goal>
+  <goal name="mem&#39;vc.2" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="mem&#39;vc.2.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.19" steps="1172"/></proof>
+   </goal>
+   <goal name="mem&#39;vc.2.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="mem&#39;vc.2.1.0" expl="postcondition" proved="true">
+    <proof prover="1"><result status="valid" time="0.03" steps="14264"/></proof>
+    </goal>
+    <goal name="mem&#39;vc.2.1.1" expl="postcondition" proved="true">
+    <proof prover="1"><result status="valid" time="0.05" steps="12771"/></proof>
+    </goal>
+    <goal name="mem&#39;vc.2.1.2" expl="postcondition" proved="true">
+    <proof prover="1"><result status="valid" time="0.06" steps="17427"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
  </goal>
 </theory>
 </file>

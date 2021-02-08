@@ -15,13 +15,12 @@ module Mjrty (Eq: EQUAL) = struct
 
   type candidate = Eq.t
 
-  exception Found of candidate
-
-  let mjrty a
-  = let n = Array.length a in
+  let mjrty a =
+    let exception Found of candidate in
+    let n = Array.length a in
     let cand = ref a.(0) in
     let k = ref 0 in
-    for i = 0 to n - 1 do (* could start at 1 with k initialized to 1 *)
+    try for i = 0 to n - 1 do (* could start at 1 with k initialized to 1 *)
       (*@ invariant 0 <= !k <= numof a !cand 0 i
           invariant 2 * (numof a !cand 0 i - !k) <= i - !k
           invariant forall c. c <> !cand -> 2 * numof a c 0 i <= i - !k *)
@@ -43,10 +42,11 @@ module Mjrty (Eq: EQUAL) = struct
         if 2 * !k > n then raise (Found !cand)
       end
     done;
-    raise Not_found
-(*@ mjrty a
+      raise Not_found
+    with Found c -> c
+(*@ c = mjrty a
       requires 1 <= Array.length a
-      raises   Found c -> 2 * numof a c 0 (Array.length a) > Array.length a
+      ensures  2 * numof a c 0 (Array.length a) > Array.length a
       raises   Not_found ->
                  forall x. 2 * numof a x 0 (Array.length a) <= Array.length a *)
 

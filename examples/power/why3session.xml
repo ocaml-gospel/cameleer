@@ -10,16 +10,16 @@
  <goal name="fast_exp&#39;vc" expl="VC for fast_exp" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="fast_exp&#39;vc.0" expl="check division by zero" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="11772"/></proof>
+  <proof prover="2"><result status="valid" time="0.06" steps="13183"/></proof>
   </goal>
   <goal name="fast_exp&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.09" steps="13709"/></proof>
+  <proof prover="2"><result status="valid" time="0.09" steps="15121"/></proof>
   </goal>
   <goal name="fast_exp&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.09" steps="13341"/></proof>
+  <proof prover="2"><result status="valid" time="0.09" steps="14753"/></proof>
   </goal>
-  <goal name="fast_exp&#39;vc.3" expl="check modulo by zero" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="11772"/></proof>
+  <goal name="fast_exp&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="13183"/></proof>
   </goal>
   <goal name="fast_exp&#39;vc.4" expl="postcondition" proved="true">
   <proof prover="0"><result status="valid" time="0.15" steps="44"/></proof>

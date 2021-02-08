@@ -25,7 +25,6 @@ module type S = sig
   (*@ predicate leftist (h: t) *)
 
   val [@logic] size : t -> int
-  (** Number of elements (linear complexity). *)
   (*@ r = size t
         ensures 0 <= r *)
 
@@ -49,13 +48,11 @@ module type S = sig
   (*@ predicate leftist_heap (h: t) *)
 
   val [@logic] empty : t
-  (** Empty heap. *)
   (*@ r = empty
         ensures size r = 0
         ensures forall x. occ x r = 0 *)
 
   val [@logic] is_empty : t -> bool
-  (** Is the heap empty? *)
   (*@ b = is_empty t
         requires leftist_heap t
         ensures  b <-> size t = 0 *)
@@ -63,7 +60,6 @@ module type S = sig
   exception Empty
 
   val merge : t -> t -> t
-  (** Merge two heaps. *)
   (*@ r = merge h1 h2
         requires leftist_heap h1 && leftist_heap h2
         ensures  leftist_heap r
@@ -71,7 +67,6 @@ module type S = sig
         ensures  size r = size h1 + size h2 *)
 
   val insert : elt -> t -> t
-  (** Insert a value in the heap. *)
   (*@ r = insert x t
         requires leftist_heap t
         ensures  leftist_heap r
@@ -80,8 +75,6 @@ module type S = sig
         ensures  size r = size t + 1 *)
 
   val filter :  (elt -> bool) -> t -> t
-  (** Filter values, only retaining the ones that satisfy the predicate.
-      Linear time at least. *)
   (*@ r = filter p t
         requires leftist_heap t
         ensures  leftist_heap r
@@ -89,7 +82,6 @@ module type S = sig
         ensures  forall x. p x -> occ x r = occ x t *)
 
   val find_min : t -> elt option
-  (** Find minimal element. *)
   (*@ r = find_min t
         requires leftist_heap t
         ensures match r with
@@ -97,20 +89,12 @@ module type S = sig
                 | Some x -> x = minimum t *)
 
   val find_min_exn : t -> elt
-  (** Like {!find_min} but can fail.
-      @raise Empty if the heap is empty. *)
   (*@ r = find_min_exn t
         requires leftist_heap t
         raises   Empty -> is_empty t
         ensures  r = minimum t *)
 
   val delete_all : (elt -> elt -> bool) -> elt -> t -> t
-  (** Delete all occurrences of a value in the heap.
-      [delete_all eq x h], use [eq] to find all [x] in [h] and delete them.
-      If [h] do not contain [x] then it return [h].
-      The difference with {!filter} is that [delete_all] stops as soon as
-      it enters a subtree whose root is bigger than the element.
-      @since 2.0 *)
   (*@ r = delete_all eq x t
         requires forall a b. a = b <-> eq a b
         requires leftist_heap t
