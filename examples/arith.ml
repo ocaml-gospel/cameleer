@@ -213,7 +213,7 @@ let [@lemma] rec star_append (store: store)
                star (s1    @ s2) (p1   @ p2) store
              = star (stack @ s2) (code @ p2) store *)
 
-let rec compile_bool (st: store) = function
+let rec compile_bool ((st: store) [@ghost]) = function
   | ETrue  -> [OTrue]
   | EFalse -> [OFalse]
   | EAnd (b1, b2) ->
@@ -253,7 +253,7 @@ let rec compile_bool (st: store) = function
                   stack = (VBool (eval_b st b)) :: [] && code = [] &&
                   st = store *)
 
-and compile (st [@ghost]) = function
+and compile ((st: store) [@ghost]) = function
   | ECte n -> [OPush n]
   | EVar n -> [OFetch n]
   | ESub (e1, e2) ->

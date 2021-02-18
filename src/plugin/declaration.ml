@@ -356,8 +356,7 @@ let s_structure, s_signature =
     let is_ghost_let svb_list =
       List.exists is_ghost_svb svb_list in
     let id_expr_rs_kind_of_svb svb_list =
-      let s_value svb = E.s_value_binding info svb in
-      rs_kind svb_list, List.map s_value svb_list in
+      rs_kind svb_list, List.map (E.s_value_binding info) svb_list in
     match str_item_desc with
     | Uast.Str_value (Nonrecursive, svb_list) ->
         begin match id_expr_rs_kind_of_svb svb_list with

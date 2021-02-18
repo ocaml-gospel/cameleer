@@ -810,19 +810,19 @@ and s_value_binding info svb =
   let pexp = svb.Uast.spvb_expr in
   let expr_loc = T.location svb.Uast.spvb_expr.spexp_loc in
   let spec = function None -> empty_spec | Some s -> S.vspec s in
-  let mk_arg (_, _,ghost, pty) = function
+  let mk_arg (_, _, ghost, pty) = function
     | Lnone      {pid_loc; pid_str; _}
     | Lnamed     {pid_loc; pid_str; _}
     | Lquestion  {pid_loc; pid_str; _} -> let id_loc = T.location pid_loc in
         mk_binder id_loc (Some (T.mk_id ~id_loc pid_str)) ghost pty
     | _ -> assert false (* TODO *) in
   let pair_args binder_spec binder_code expr =
-    let id_spec, id_code = match binder_spec, binder_code with
-    | (_, Some id_spec, _g1, _), (_, Some id_code, _g2, _) ->
-        id_spec, id_code
+    let id_spec, id_code, ghost = match binder_spec, binder_code with
+    | (_, Some id_spec, g1, _), (_, Some id_code, g2, _) ->
+        id_spec, id_code, g1 || g2
     | _ -> assert false in
     let e_lhs = mk_expr ~expr_loc:(id_spec.id_loc) (Eident (Qident id_spec)) in
-    mk_expr ~expr_loc:(expr.expr_loc) (mk_elet_none id_code false e_lhs expr) in
+    mk_expr ~expr_loc:(expr.expr_loc) (mk_elet_none id_code ghost e_lhs expr) in
   let rec args_pos = function (* TODO: remove *)
     | [] -> T.location svb.spvb_loc
     | [Lnone      {pid_loc; _}]

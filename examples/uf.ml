@@ -23,8 +23,7 @@ type uf = {
   (*@ invariant forall i. mem i link -> link.(i) <> i -> rep i = rep link.(i) *)
   (*@ invariant forall i. mem i link -> (link.(i) = i <-> rep i = i) *)
   (*@ invariant forall i. mem i link -> 0 <= dst i <= maxd *)
-(*@ invariant forall i. mem i link -> link.(i) <> i -> dst i < dst link.(i) *)
-  by { }
+  (*@ invariant forall i. mem i link -> link.(i) <> i -> dst i < dst link.(i) *)
 
 let rec find i uf =
   let p = uf.link.(i) in
