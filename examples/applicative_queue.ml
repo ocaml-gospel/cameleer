@@ -1,7 +1,7 @@
 
 type 'a t = {
   self : 'a list * 'a list;
-  view : 'a list [@ghost]
+  view : 'a list [@ghost];
 } (*@ invariant let (prefix, xiffus) = self in
                 (prefix=[] -> xiffus=[]) && view = prefix @ List.rev xiffus *)
 

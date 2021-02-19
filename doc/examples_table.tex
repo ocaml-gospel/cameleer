@@ -25,6 +25,8 @@
 % \newcommand{\why}{\textsf{Why3}\xspace}
 \newcommand{\GOSPEL}{{\textsf{GOSPEL}}\xspace}
 
+\newcommand{\todo}[1]{\textbf{TODO:}#1}
+
 \definecolor{thegray}{rgb}{0.849,0.849,0.849}
 
 \title{\cameleer\xspace -- Case Studies}
@@ -233,5 +235,139 @@ contract:
         ensures match param.view with [] -> false | y :: _ -> x = y *)
 \end{gospel}
 %
+It is worth noting that this case study is issued from the OCamlGraph library
+source code
+\footnote{\scriptsize\url{https://github.com/backtracking/ocamlgraph/blob/master/src/lib/persistentQueue.ml}}.
+Interestingly, the type invariant is provide as an informal comment in the
+library code.
+
+\subsection{Arithmetic Compiler}
+\label{sec:arithmetic-compiler}
+
+A simple compiler from arithmetic expressions into a stack machine. This case
+study is loosely inspired by the Nielsons' textbook ``Semantics with
+Applications: an Appetizer''.
+
+\todo
+
+\subsection{Binary Multiplication}
+\label{sec:binary-mult}
+
+\todo
+
+\subsection{Binary Search}
+\label{sec:binary-search}
+
+\todo
+
+\subsection{Binary Search Tree}
+\label{sec:binary-search-tree}
+
+
+
+\subsection{Checking a Large Routine}
+\label{sec:check-large-rout}
+
+\todo
+
+\subsection{CNF Conversion}
+\label{sec:cnf-conversion}
+
+\todo
+
+\subsection{Duplicates in an Array}
+\label{sec:duplicates-an-array}
+
+\todo
+
+\subsection{Ephemeral Queue}
+\label{sec:ephemeral-queue}
+
+\todo
+
+\subsection{Even-odd Test}
+\label{sec:even-odd-test}
+
+\todo
+
+\subsection{Factorial}
+\label{sec:factorial}
+
+\todo
+
+\subsection{Fast Exponentiation}
+\label{sec:fast-exponentiation}
+
+\todo
+
+\subsection{Fibonacci}
+\label{sec:fibonacci}
+
+\todo
+
+\subsection{FIND Routine}
+\label{sec:find-routine}
+
+\todo
+
+\subsection{Insertion Sort}
+\label{sec:insertion-sort}
+
+\todo
+
+\subsection{Integer Square Root}
+\label{sec:integer-square-root}
+
+\todo
+
+\subsection{Leftist Heap}
+\label{sec:leftist-heap}
+
+\todo
+
+\subsection{Mjrty Algorithm}
+\label{sec:mjrty-algorithm}
+
+\todo
+
+\subsection{\ocaml List.fold\_left}
+\label{sec:ocaml-list.fold_left}
+
+\todo
+
+\subsection{\ocaml Stack}
+\label{sec:ocaml-stack}
+
+\todo
+
+\subsection{Pairing Heap}
+\label{sec:pairing-heap}
+
+\todo
+
+\subsection{Program Proofs}
+\label{sec:program-proofs}
+
+\todo
+
+\subsection{Same Fringe}
+\label{sec:same-fringe}
+
+\todo
+
+\subsection{Small-step Iterators}
+\label{sec:small-step-iterators}
+
+\todo
+
+\subsection{Tree Height in CPS}
+\label{sec:tree-height-cps}
+
+\todo
+
+\subsection{Union Find}
+\label{sec:union-find}
+
+\todo
 
 \end{document}
