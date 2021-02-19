@@ -1,0 +1,181 @@
+\newcommand{\ity}[9]{#1\cdot#2\cdot#3\cdot#4\vdash #5:#6\cdot#7\cdot#8\cdot#9}
+
+\newcommand{\whyml}{\textsf{WhyML}\xspace}
+\newcommand{\kidml}{\textsf{KidML}\xspace}
+\newcommand{\ocaml}{\textsf{OCaml}\xspace}
+\newcommand{\dafny}{\textsf{Dafny}\xspace}
+\newcommand{\mixins}{{Mixins}\xspace}
+\newcommand{\coq}{\textsf{Coq}\xspace}
+\newcommand{\clang}{{C}\xspace}
+\newcommand{\cfml}{\textsf{CFML}\xspace}
+\newcommand{\vocal}{\textsf{VOCaL}\xspace}
+\newcommand{\osl}{\textsf{OSL}\xspace}
+\newcommand{\why}{\textsf{Why3}\xspace}
+\newcommand{\focalize}{\textsf{FoCaLiZe}\xspace}
+\newcommand{\viper}{\textsf{Viper}\xspace}
+
+\definecolor{thegray}{rgb}{0.9,0.9,0.9}
+\definecolor{colorspec}{rgb}{0,0,0.797}
+\definecolor{thered}{rgb}{0.797,0,0}
+\definecolor{darkgreen}{rgb}{0.797,0,0}
+\definecolor{theblue}{rgb}{0,0,0.797}
+%\definecolor{thegray}{rgb}{0.949,0.949,0.949}
+\definecolor{darkgray}{rgb}{0.8477,0.8477,0.8477}
+\definecolor{ocaml-bg}{rgb}{0.9,0.9,0.9}
+\definecolor{thegraygray}{rgb}{0.5,0.5,0.5}
+
+% \DeclareCaptionFormat{listing}{\hfill#3}
+% \captionsetup[lstlisting]{format=listing,singlelinecheck=false, margin=0pt,
+%   font={sf,it,footnotesize},labelsep=space,labelfont=bf,belowskip=-1pt}
+
+\newenvironment{judge}[2][c]
+{\begin{minipage}[#1]{#2}
+\hrule height2pt
+\centerline{\vrule width2pt height 5pt\hfill \vrule width2pt height 5pt}
+\begin{minipage}{\dimexpr\textwidth-4pt-1em}}
+{\end{minipage}
+\centerline{\vrule width2pt height 5pt\hfill \vrule width2pt height 5pt}
+\hrule height2pt
+\end{minipage}}
+
+\newcommand{\todoi}[1]{\todo[inline]{#1}}
+
+%%% syntax %%%
+\newcommand{\taubar}{\overline{\tau}}
+\newcommand{\btau}{\beta\tau}
+\newcommand{\betaxbar}{\overline{\beta x}}
+\newcommand{\betapxbar}{\overline{\beta' x}}
+\newcommand{\btaubar}{\overline{\btau}}
+\newcommand{\bitaubar}[1]{\overline{\beta_{#1}\tau}}
+\newcommand{\bitauibar}[2]{\overline{\beta_{#1}\tau_{#2}}}
+\newcommand{\bibar}[1]{\overline{\beta_{#1}}}
+\newcommand{\bibarp}[1]{\overline{\beta_{#1}'}}
+\newcommand{\bibarpp}[1]{\overline{\beta_{#1}''}}
+\newcommand{\btaubarp}{\overline{\btau'}}
+\newcommand{\bptaubar}{\overline{\beta'\tau}}
+\newcommand{\bpptaubar}{\overline{\beta''\tau}}
+\newcommand{\betabar}{\overline{\beta}}
+\newcommand{\betabarp}{\overline{\beta'}}
+\newcommand{\betabarpp}{\overline{\beta''}}
+\newcommand{\betaibar}{\overline{\beta_i}}
+\newcommand{\bitau}{\overline{\beta_i\tau_i}}
+\newcommand{\bitaup}{\overline{\beta_i'\tau_i}}
+\newcommand{\pibar}{\overline{\pi}}
+\newcommand{\xbar}{\bar{x}}
+\newcommand{\pibari}[1]{\overline{\pi_{#1}}}
+\newcommand{\xbart}[1]{\overline{x:#1}}
+\newcommand{\xpibar}{\overline{x:\pi}}
+\newcommand{\pebar}{\overline{\bar{p}\Rightarrow e}}
+\newcommand{\pbare}{\bar{p}\Rightarrow e}
+\newcommand{\eebar}{\overline{E\Rightarrow e}}
+\newcommand{\eepbar}{\overline{E'\abar\Rightarrow e'}}
+\newcommand{\eabar}{\overline{E\abar\Rightarrow e'}}
+\newcommand{\exbar}{\overline{E\xbar\Rightarrow e}}
+\newcommand{\exbarp}{\overline{E\xbar\Rightarrow e'}}
+\newcommand{\abar}{\bar{a}}
+\newcommand{\expbar}{\bar{e}}
+\newcommand{\pbar}{\bar{p}}
+\newcommand{\vbar}{\bar{\nu}}
+\newcommand{\ebar}{\overline{E}}
+\newcommand{\nubar}{\bar{\nu}}
+\newcommand{\alabel}[1]{\quad\text{#1}}
+\newcommand{\sep}{\;\mid\;}
+\newcommand{\record}[2]{
+  \{\:\beta#1: #2\; ;\;\ldots\;;\; \beta#1: #2\:\}_{\overline{\alpha}}}
+\newcommand{\alphabar}{\overline{\alpha}}
+\newcommand{\canbeta}[1]{\betabar\:\lozenge\:#1}
+\newcommand{\fun}[3]{\lambda x:#1\:#2.\: #3}
+\newcommand{\funreg}{\fun{\reg}{\tau}{e}}
+\newcommand{\funghost}{\fun{\ghost}{\tau}{e}}
+
+%%% semantics %%%
+\newcommand{\state}{\delta\cdot\mu}
+\newcommand{\statep}{\mu'}
+\newcommand{\statepp}{\mu''}
+\newcommand{\stated}[1]{\delta[#1]\cdot\mu}
+\newcommand{\murule}[1]{\state\cdot #1}
+\newcommand{\muprule}[1]{\statep\cdot #1}
+\newcommand{\mupprule}[1]{\statepp\cdot #1}
+\newcommand{\trans}[2]{#1\Downarrow #2}
+\newcommand{\transco}[2]{#1\Downarrow^{\textsf{co}} #2}
+\newcommand{\cxt}[2]{\trans{\murule{#1}}{\muprule{#2}}}
+\newcommand{\cxtp}[2]{\trans{\murule{#1}}{\mupprule{#2}}}
+\newcommand{\cxtco}[2]{\transco{\murule{#1}}{\muprule{#2}}}
+\newcommand{\cxtcop}[2]{\transco{\murule{#1}}{\mupprule{#2}}}
+\newcommand{\cxtcod}[1]{\transco{\murule{#1}}{\diverges}}
+\newcommand{\cxtcodp}[1]{\transco{\muprule{#1}}{\diverges}}
+\newcommand{\abort}{\texttt{abort}}
+
+%%% progress %%%
+\newcommand{\progdeltamu}[1]{#1\downarrow}
+\newcommand{\prog}[1]{\progdeltamu{#1}}
+\newcommand{\progrule}[2]{\inferrule*[Right=(#1)]{ }{\prog{#2}}}
+
+%%% typing %%%
+\newcommand{\dgste}[5]{#1\cdot #2\cdot #3\vdash #4 : #5}
+\newcommand{\dgte}[4]{\dgste{#1}{#2}{\Sigma}{#3}{#4}}
+\newcommand{\gte}[3]{\dgste{\Delta}{#1}{\Sigma}{#2}{#3}}
+\newcommand{\nogte}[2]{\dgste{\Delta}{\emptyset}{\Sigma}{#1}{#2}}
+\newcommand{\nogste}[3]{\dgste{\Delta}{\emptyset}{#1}{#2}{#3}}
+\newcommand{\gste}[4]{\dgste{\Delta}{#1}{#2}{#3}{#4}}
+\newcommand{\dte}[3]{\dgste{#1}{\Gamma}{\Sigma}{#2}{#3}}
+\newcommand{\te}[2]{\dgte{\Delta}{\Gamma}{#1}{#2}}
+\newcommand{\tp}[2]{\vdash #1 : #2}
+\newcommand{\ori}[2]{\underset{#1}{\bigsqcup}#2}
+\newcommand{\disji}[2]{\underset{#1}{\bigcup}#2}
+\renewcommand{\sup}[2]{#1\sqcup#2}
+\newcommand{\reg}{\texttt{reg}}
+\newcommand{\ghost}{\texttt{ghost}}
+\newcommand{\absurd}{\mathtt{absurd}}
+\newcommand{\raises}{{\tt raises}}
+\newcommand{\unit}{{\tt Unit}}
+\newcommand{\bool}{{\tt Bool}}
+\newcommand{\diverges}{{\tt div}}
+\newcommand{\try}{{\tt try}}
+\newcommand{\with}{{\tt with}}
+\newcommand{\qqquad}{\qquad\qquad\quad}
+\newcommand{\poly}{\langle\alphabar\rangle}
+% \newcommand{\inst}{\langle\taubar\rangle}
+
+%%% extraction %%%
+\newcommand{\extarg}[2]{\mathcal{E}_{#1}(#2)}
+\newcommand{\extbeta}[1]{\extarg{\betabar}{#1}}
+\newcommand{\extkappa}[1]{\extarg{\kappa}{#1}}
+\newcommand{\extsigma}[1]{\extarg{\sigma}{#1}}
+\newcommand{\extkappap}[1]{\extarg{\kappa'}{#1}}
+\newcommand{\ext}[1]{\extarg{}{#1}}
+\newcommand{\extghost}[1]{\extarg{\ghost}{#1}}
+\newcommand{\extreg}[1]{\extarg{\reg}{#1}}
+\newcommand{\masksub}[2]{#1\sqsubseteq#2}
+\newcommand{\notmasksub}[2]{#1\not\sqsubseteq#2}
+\newcommand{\masklt}[2]{#1\sqsubset#2} \newcommand{\exttry}[1]{
+  \overline{E\xbar_{\restriction{#1}}\Rightarrow\extbeta{e'}}}
+\newcommand{\extp}{\overline{\ext{\pbar}\Rightarrow\extsigma{e}}}
+\newcommand{\extrec}[2]{\ext{ \{\:\beta_1#1_1: #2_1\; ;\;\ldots\;;\;
+    \beta_n#1_n: #2_n\:\}}} \newcommand{\extrecreg}[2]{ \{\:\overline{{\tt
+      reg}\:#1_i : #2_i}\:\}_{\alphabar}} \newcommand{\mask}[1]{\mathcal{M}(#1)}
+\newcommand{\exttyp}[1]{
+  \dgste{\mathcal{E}(\Delta)}{\mathcal{E}(\Gamma)}{\Sigma}
+  {\mathcal{E}_{\betabar}(e)}{\mathcal{E}_{\betabar}(#1)}}
+\renewcommand{\restriction}[1]{\mathord{\upharpoonright}#1}
+\newcommand{\extenv}{\ext{\Delta\cdot\Gamma\cdot\Sigma}}
+\newcommand{\extte}[2]{\extenv\vdash #1 : #2}
+\newcommand{\extdgste}[5]{\ext{#1}\cdot\ext{#2}\cdot\ext{#3}\vdash #4 : #5}
+\newcommand{\cxtext}[2]{\ext{\delta}\cdot\ext{\mu}\cdot #1\Downarrow #2}
+\newcommand{\cxtpext}[2]{\ext{\delta}\cdot\ext{\mu'}\cdot #1\Downarrow #2}
+\newcommand{\cxtppext}[2]{\ext{\delta}\cdot\ext{\mu''}\cdot #1\Downarrow #2}
+\newcommand{\cxtcodext}[1]{\ext{\delta}\cdot\ext{\mu}\cdot
+  #1\Downarrow^{\textsf{co}}\diverges}
+\newcommand{\cxtcodextp}[1]{\ext{\delta}\cdot\ext{\mu'}\cdot
+  #1\Downarrow^{\textsf{co}}\diverges}
+
+%%% defs & theorems %%%
+% \newtheorem{theorem}{Theorem}[section]
+% \newtheorem{lemma}[theorem]{Lemma}
+% \newtheorem{prop}[theorem]{Property}
+% \newtheorem{corollary}{Corollary}[theorem]
+% \theoremstyle{definition}
+% \newtheorem{definition}{Definition}[section]
+
+% \newcommand{\case}[1]{\paragraph{case \color{blue}{(\textsc{#1}).}}}
+% \newcommand{\rulename}[1]{{\color{blue}{\textsc{(\textbf{#1})}}}}

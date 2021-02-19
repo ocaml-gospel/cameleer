@@ -1,0 +1,1049 @@
+\documentclass{easychair}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xspace}
+\usepackage{stmaryrd}
+\usepackage{./why3lang}
+\usepackage{./gospel}
+\usepackage{ifthen}
+\usepackage[nomath,not1,notext]{stix}
+
+\usepackage{hyperref}
+
+\input{./mymacros.tex}
+\usepackage{./mathpartir}
+
+\newboolean{longversion}
+\setboolean{longversion}{false} % toggle to show or hide comments
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, shapes.misc, positioning}
+\tikzset{>=stealth'}
+
+\definecolor{thegray}{rgb}{0.9,0.9,0.9}
+\definecolor{colorspec}{rgb}{0,0,0.797}
+\definecolor{thered}{rgb}{0.797,0,0}
+\definecolor{darkgreen}{rgb}{0.797,0,0}
+\definecolor{theblue}{rgb}{0,0,0.797}
+%\definecolor{thegray}{rgb}{0.949,0.949,0.949}
+\definecolor{darkgray}{rgb}{0.8477,0.8477,0.8477}
+\definecolor{ocaml-bg}{rgb}{0.9,0.9,0.9}
+\definecolor{thegraygray}{rgb}{0.5,0.5,0.5}
+
+\newcommand{\cameleer}{\textsf{Cameleer}\xspace}
+% \newcommand{\why}{{Why3}\xspace}
+% \newcommand{\whyml}{{WhyML}\xspace}
+% \newcommand{\ocaml}{{OCaml}\xspace}
+% \newcommand{\vocal}{{VOCaL}\xspace}
+% \newcommand{\dafny}{{Dafny}\xspace}
+% \newcommand{\mixins}{{Mixins}\xspace}
+% \newcommand{\coq}{{Coq}\xspace}
+% \newcommand{\clang}{{C}\xspace}
+% \newcommand{\cfml}{{CFML}\xspace}
+\newcommand{\GOSPEL}{{\textsf{GOSPEL}}\xspace}
+\newcommand{\pre}{precondition\xspace}
+\newcommand{\post}{postcondition\xspace}
+\newcommand{\spec}{\mathcal{S}}
+\newcommand{\loops}{\mathcal{I}}
+\newcommand{\atts}{\mathcal{A}}
+\newcommand{\kind}{\mathcal{K}}
+
+\usepackage{mathtools}
+\usepackage{tikz-cd}
+\usetikzlibrary{decorations.pathmorphing}
+
+% code from Gonzalo
+\newcommand\xrsquigarrow[1]{%
+  \mathrel{%
+    \begin{tikzpicture}[%
+      baseline={(current bounding box.south)}
+      ]
+      \node[%
+      ,inner sep=.44ex
+      ,align=center
+      ] (tmp) {$\scriptstyle #1$};
+      \path[%
+      ,draw,<-
+      ,decorate,decoration={%
+        ,zigzag
+        ,amplitude=0.7pt
+        ,segment length=1.2mm,pre length=3.5pt
+      }
+      ]
+      (tmp.south east) -- (tmp.south west);
+    \end{tikzpicture}
+  }
+}
+\newcommand\xlsquigarrow[1]{%
+  \mathrel{%
+    \begin{tikzpicture}[%
+      ,baseline={(current bounding box.south)}
+      ]
+      \node[%
+      ,inner sep=.44ex
+      ,align=center
+      ] (tmp) {$\scriptstyle #1$};
+      \path[%
+      ,draw,<-
+      ,decorate,decoration={%
+        ,zigzag
+        ,amplitude=0.7pt
+        ,segment length=1.2mm,pre length=3.5pt
+      }
+      ]
+      (tmp.south west) -- (tmp.south east);
+    \end{tikzpicture}
+  }
+}
+
+\newcommand{\translate}[3]
+{#1\xrsquigarrow{#2}#3}
+
+\newcommand{\nbnote}[3]{
+  % \fbox{\bfseries\sffamily\scriptsize#1}
+  \fcolorbox{gray}{yellow}{\bfseries\sffamily\scriptsize#1}
+  {\color{#2} \sffamily\small$\blacktriangleright$\textit{#3}$\blacktriangleleft$}
+  % {\color{#2} \sffamily\small$\textit{#3}$}
+  % \marginpar{\fbox{\bfseries\sffamily#1}}
+}
+
+\newcommand{\mario}[1]{\nbnote{Mario}{red}{#1}}
+% \newcommand{\mario}[1]{}
+\newcommand{\antonio}[1]{\nbnote{Antonio}{blue}{#1}} %
+
+\newcommand{\myparagraph}[1]{\vspace{-12.5pt}\paragraph{#1}}
+\newcommand{\mysection}[1]{\vspace{-2pt}\section{#1}}
+
+\title{Draft: Translation from \ocaml to \whyml}
+
+\author{}
+
+\date{Working version of \today}
+
+\institute{}
+
+\pagenumbering{gobble}
+
+\begin{document}
+
+\maketitle
+
+All the auxiliary functions and predicates are total
+definitions. Fig.~\ref{fig:core-ocaml} and Fig.~\ref{fig:whyml} present the
+definition of the selected \ocaml and \whyml subsets, respectively. On the
+\whyml side, definition of~$t$ which stands for the logical subset of \whyml.
+\cameleer will report a dedicated error message if a user tries to translate an
+\ocaml program that syntactically falls out of the supported fragment.
+
+\ifthenelse{\boolean{longversion}}
+{
+  These definitions are very close to the ASTs issued by the \ocaml
+  and \whyml parsers. The \whyml formalization is also strongly inspired by the
+  \kidml language, presented in Pereira's PhD
+  thesis~\cite{parreirapereira:tel-01980343}.
+}
+
+\begin{figure}
+  \centering
+  % \begin{judge}[b]{\textwidth}
+\[
+  \begin{array}{llr}
+    e & ::= \; x \sep \nu
+        \sep \mathtt{if}\: e\: \mathtt{then}\: e\: \mathtt{else}\: e
+        \sep \mathtt{match}\; e\; \mathtt{with}\;
+        \overline{\talloblong\,p\Rightarrow e}
+    & \alabel{Expressions}\\
+      & \sep \mathtt{let} \: \atts \; x = e \; \atts \; \mathtt{in} \; e \\
+      &  \sep \mathtt{let} \: \atts \; \mathtt{rec} \: f = e \; \atts \;
+        \overline{\mathtt{and}\;f = e \; \atts} \; \mathtt{in} \; e
+        \sep f\,\expbar \\
+      & \sep \{ \overline{f = e} \} \sep e.f \sep e.f \leftarrow e \\
+      & \sep \mathtt{raise} \; E\expbar
+        \sep \mathtt{try} \; e \; \mathtt{with} \; \exbar \\
+      & \sep \mathtt{while} \: e \: \mathtt{do} \: \atts \: e \: \mathtt{done}
+        \sep \mathtt{assert\;false} \\[.5em]
+
+    p & ::= \; \_ \sep x \sep \overline{p} \sep C (p)
+        \sep p\: \talloblong\: p \sep p\;\mathtt{as}\;x \sep p : \tau
+        \sep \mathtt{exception}\;p & \alabel{Patterns}\\[.5em]
+
+    \nu & ::= \; n \sep \mathtt{true} \sep \mathtt{false} \sep
+          \mathtt{fun}\:\atts\:(x\beta) \rightarrow e & \alabel{Values}\\[.5em]
+
+    \beta & ::= \; \texttt{reg} \sep \texttt{ghost} & \alabel{Ghost attribute}
+    \\[.5em]
+
+    \tau & ::= \; \alpha \sep \tau\rightarrow\tau \sep \overline{\tau}
+           \sep \overline{\tau}\:C & \alabel{Type expression} \\[.5em]
+
+    \pi & ::= \; \beta\tau & \hspace{-40pt}
+                             \alabel{Type with ghost status}\\[.5em]
+
+    d & ::= \; \texttt{exception}\: E : \pibar
+        \sep \texttt{type} \; td  \; \overline{\texttt{and}\; td}
+    & \alabel{Top-level declarations} \\
+      & \sep \mathtt{let}\: \atts \; f = e \: \atts
+        \sep \mathtt{let}\: \atts \; \texttt{rec}\; f = e \: \atts\;
+        \overline{\mathtt{and}\;f = e \; \atts}\\
+      & \sep \texttt{module}\:\mathcal{M} = m\\[.5em]
+
+    td & ::= \; \alphabar \: T
+         \sep \alphabar \: T = \tau
+         \sep \alphabar \: T = \{\: \overline{f : \pi}\:\}\: \atts
+         \sep \alphabar \: T =
+         \overline{\talloblong\,C\,\texttt{of}\,\overline{\tau}}
+    & \alabel{Type definition}\\[.5em]
+
+    m & ::= \; \texttt{struct}~~\overline{d}~~\texttt{end}
+        \sep \texttt{functor}(\mathcal{X}: mt) \rightarrow m
+            & \alabel{Modules} \\[.5em]
+
+    mt & ::= \; \texttt{sig}\;\overline{s}\;\texttt{end} & \alabel{Module
+                                                           types}\\[.5em]
+
+    s & ::= \; \texttt{val}\:\atts\;f : \pi \: \atts
+        \sep \texttt{type}\: td \; \overline{\texttt{and}\; td}
+    & \alabel{Signatures}\\[.5em]
+
+    p & ::= \; \overline{d} & \alabel{Program}
+  \end{array}
+\]
+% \end{judge}
+\caption{Syntax of core \ocaml.}
+\label{fig:core-ocaml}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  % \begin{judge}[b]{\textwidth}
+\[
+  \begin{array}{llr}
+    e & ::= \; x \sep \nu
+        \sep \mathtt{if}\: e\: \mathtt{then}\: e\: \mathtt{else}\: e
+        \sep \mathtt{match}\; e\; \mathtt{with}\;
+        \overline{\talloblong\,p\Rightarrow e} \;
+        \mathtt{end}
+    & \alabel{Expressions}\\
+      & \sep \mathtt{let} \; \kind\; \beta x = e \; \mathtt{in} \; e \\
+      & \sep \mathtt{rec}\;\kind\;f(\overline{\beta x})\;\spec = e \;
+        \overline{\mathtt{with}\;\kind\;f (\overline{\beta x}) = e \; \spec} \;
+        \mathtt{in} \; e
+        \sep f\,\expbar \\
+      & \sep \{ \overline{f = e} \} \sep e.f \sep e.f \leftarrow e \\
+      & \sep \mathtt{raise} \; E\expbar
+        \sep \mathtt{try} \; e \; \mathtt{with} \; \exbar \; \mathtt{end} \\
+      & \sep \mathtt{while} \: e \: \mathtt{do} \: \loops \: e \: \mathtt{done}
+        \sep \mathtt{absurd}
+        \sep \mathtt{ghost} \; e\\[.5em]
+
+    p & ::= \; \_ \sep x \sep \overline{p} \sep C p
+        \sep p\: \talloblong\: p \sep p\;\mathtt{as}\;x \sep p : \tau
+        \sep \mathtt{exception}\;p & \alabel{Patterns}\\[.5em]
+
+    \nu & ::= \; n \sep \mathtt{true} \sep \mathtt{false}
+          \sep \mathtt{fun}\;\kind\; (\overline{\beta x}) \; \spec \rightarrow
+          e & \alabel{Values} \\[.5em]
+
+    \beta & ::= \; \texttt{reg} \sep \texttt{ghost} & \alabel{Ghost status}
+    \\[.5em]
+
+    \tau & ::= \; \alpha \sep \tau\rightarrow\tau \sep \overline{\tau}
+           \sep C\,\overline{\tau} & \alabel{Type expression} \\[.5em]
+
+    \pi & ::= \;\beta\tau & \hspace{-4pt}\alabel{Type with ghost status}\\[.5em]
+
+    \kind & ::= \;\texttt{reg} \sep \texttt{logic} & \alabel{Function
+                                                          kind}\\[.5em]
+
+    \spec & ::= \; \texttt{requires}\; \overline{t}~~
+             \texttt{ensures}\; \overline{t}~~
+            \texttt{variant}\; \overline{t}
+    & \alabel{Function specification} \\[.5em]
+
+    \loops & ::= \; \texttt{invariant}\; \overline{t}~~\texttt{variant}\;
+             \overline{t} & \alabel{Loop specification} \\[.5em]
+
+    d & ::= \; \texttt{exception}\: E : \pibar
+        \sep \texttt{type}\: td \; \overline{\texttt{with}\:td}~~~~~
+                                  & \alabel{Top-level declarations} \\
+      & \sep \mathtt{let} \; \mathcal{K} \; f = e \\
+      & \sep \mathtt{let} \; \texttt{rec} \; \mathcal{K} \; f(\overline{\beta x})
+        \:\spec = e \;
+        \overline{\mathtt{with}\;\kind\;f (\overline{\beta x})\:\spec = e}\\
+      & \sep \mathtt{val}\;\mathcal{K}\;\beta f(\overline{x:\pi})\:\spec : \pi
+        \sep \texttt{scope} \;\mathcal{M}\;\overline{d} \; \texttt{end} \\[.5em]
+
+    td & ::= \; T\alphabar
+         \sep T\alphabar = \tau
+         \sep
+         T\alphabar = \{\: \overline{f : \pi}\:\}\:\texttt{invariant}\:\bar{t}
+         \sep T\alphabar = \overline{\talloblong\,C\,\overline{\tau}}
+    & \alabel{Type definition}\\[.5em]
+
+    p & ::= \; \texttt{module}\;\mathcal{M}\;\overline{d}\;\texttt{end}
+    & \alabel{Program}
+  \end{array}
+\]
+% \end{judge}
+\caption{Syntax of core \whyml.}
+\label{fig:whyml}
+\end{figure}
+
+\paragraph{Expressions.} Selected \ocaml expressions include variables ($x$
+ranges over program variables, while~$f$ is used for function names), the
+conditional \texttt{if..then..else}, local bindings of (possibly recursive)
+expressions, function application, records manipulation, treatment of
+exceptions, loop construction, and finally the \texttt{assert false}
+expression. Values include numerical and Boolean constants, as well as anonymous
+functions where arguments are annotated with a ghost status. Recursive
+definitions are limited to functions and application is limited to the
+application of a function name to a list of arguments. The latter is just to
+ease presentation; the former is due to recursive definitions in \whyml being
+limited to functions. Finally, $\atts$ notation stands for a (possibly empty)
+placeholder of \ocaml attributes, representing the original place in the
+expression where \GOSPEL elements are introduced. Fig~\ref{fig:expressions}
+presents the complete set of translation rules from \ocaml expressions into
+\whyml.
+
+% \mario{Não esquecer de referir o que significa o $\bar{t}$ $\Longrightarrow$
+%   linguagem lógica de primeira ordem com extensões como polimorfismo, tipos
+%   inductivos, ou ``suporte'' para elementos de ordem superior; no fundo, o
+%   fragmento de especificação do \whyml.}
+
+\begin{figure}
+  \centering
+\begin{judge}[b]{\textwidth}\footnotesize
+  \[
+    \begin{array}{c}
+      \inferrule*[Left=(EAbsurd)]
+      { }
+      {\translate{\mathtt{assert\;false}}{expression}{\mathtt{absurd}}} \\[1em]
+
+      \inferrule*[Left=(EFun)]
+      {\mathtt{ghost}(\atts) = \beta \\
+        \translate{\atts}{\textit{function spec}}{\mathcal{S}} \\
+        \translate{e}{expression}{e'}}
+      {\translate{\mathtt{fun}\;\atts\;x\rightarrow e}{expression}
+      {\mathtt{fun}\;(\beta x)\;\mathcal{S} = e'}}\qquad
+
+      \inferrule*[Right=(EApp)]
+      {\translate{\overline{e}}{expression}{\overline{e'}}}
+      {\translate{f\,\expbar}{expression}{f\,\overline{e'}}}\\[1em]
+
+      \inferrule*[Lab=(ERec)]
+      {
+       \neg\textit{is\_ghost}(\atts_0) \\
+       \mathit{kind}(\atts_0) = \kind \\
+       \translate{\atts_1}{\textit{function spec}}{\spec_1} \\
+       \translate{e_0}{function}{\overline{x\beta},e_0'} \\\\
+       \translate{\overline{e_1}}{function}{\overline{\beta y},\overline{e_1'}} \\
+       \translate{\overline{\atts_2}}{\textit{function spec}}{\overline{\spec_2}} \\
+       \translate{e_2}{expression}{e_2'}}
+      {\translate{\mathtt{let} \: \atts_0 \; \mathtt{rec} \: f_0 = e_0 \;
+       \atts_1 \; \overline{\mathtt{and}\;f_1 = e_1 \; \atts_2} \;
+       \mathtt{in} \; e_2}{expression}
+       {\mathtt{rec}\;\kind\;f(\overline{\beta x})\;\spec_1 = e_0' \;
+        \overline{\mathtt{with}\;\kind\;f_1 (\overline{\beta y}) = e_1' \;
+        \spec_2}\;\mathtt{in} \; e_2'}}\\[1em]
+
+      \inferrule*[Lab=(ERecGhost)]
+      {\textit{is\_ghost}(\atts_0) \\
+       \mathit{kind}(\atts_0) = \kind \\
+       \translate{\atts_1}{\textit{function spec}}{\spec_1} \\
+       \translate{e_0}{function}{\overline{x\beta},e_0'} \\\\
+       \translate{\overline{e_1}}{function}{\overline{\beta y},\overline{e_1'}} \\
+       \translate{\overline{\atts_2}}{\textit{function spec}}{\overline{\spec_2}} \\
+       \translate{e_2}{expression}{e_2'}}
+      {\translate{\mathtt{let} \: \atts_0 \; \mathtt{rec} \: f_0 = e_0 \;
+       \atts_1 \; \overline{\mathtt{and}\;f_1 = e_1 \; \atts_2} \;
+       \mathtt{in} \; e_2}{expression}
+       {\mathtt{rec}\;\kind\;f(\overline{\beta x})\;\spec_1 = \texttt{ghost}\:e_0'
+      \;\overline{\mathtt{with}\;\kind\;f_1 (\overline{\beta y}) = e_1' \;
+        \spec_2}\;\mathtt{in} \; e_2'}}\\[1em]
+
+      % \inferrule*[Left=(ERecGhost)]
+      % { \textit{is\_ghost}(\atts) \\
+      % \translate{\atts}{\textit{function spec}}{\spec} \\
+      % \mathit{kind}(\atts) = \kind \\\\
+      % \translate{e_0}{function}{\betaxbar,e_0'} \\
+      % \translate{e_1}{expressions}{e_1'}}
+      % {\translate{\mathtt{let}\:\atts\;\mathtt{rec}\:f = e_0\;\atts'\;
+      % \mathtt{in} \; e_1}{expression}
+      % {\mathtt{rec}\:\kind\:f(\betaxbar) \;\spec = \mathtt{ghost}\:e_0'\;
+      % \mathtt{in} \;e_1'}} \\[1em]
+
+      \inferrule*[Left=(ELet)]
+      {\neg\textit{is\_ghost}(\atts) \\ \mathtt{kind}(\atts) = \kind \\
+      \neg\textit{is\_functional}(e_0) \\\\
+      \translate{e_0}{expression}{e_0'} \\ \translate{e_1}{expression}{e_1'}}
+      {\translate{\mathtt{let}\:\atts\:x = e_0\;\atts'\;\mathtt{in}\;e_1}
+      {expression}{\mathtt{let}\: \kind \: x = e_0'\;\mathtt{in} \;e_1'}}\\[1em]
+
+      \inferrule*[Left=(ELetGhost)]
+      { \textit{is\_ghost}(\atts) \\ \mathtt{kind}(\atts) = \kind \\
+      \neg\textit{is\_functional}(e_0) \\\\
+      \translate{e_0}{expression}{e_0'} \\ \translate{e_1}{expression}{e_1'}}
+      {\translate{\mathtt{let}\:\atts\:x = e_0\;\atts'\;\mathtt{in}\;e_1}
+      {expression}{\mathtt{let}\: \kind \: x = \mathtt{ghost}\:e_0'\;
+      \mathtt{in} \;e_1'}} \\[1em]
+
+      \inferrule*[Left=(ELetGhostFun)]
+      { \textit{is\_ghost}(\atts) \\ \textit{kind}(\atts) = \kind \\
+      \textit{is\_functional}(e_0) \\\\
+      \translate{\atts'}{\textit{function spec}}{\spec} \\
+      \translate{e_0}{function}{\betaxbar, e_0'} \\
+      \translate{e_1}{expression}{e_1'}}
+      {\translate{\mathtt{let}\:\atts\:f = e_0\;\atts'\;\mathtt{in}\;e_1}
+      {expression}{\mathtt{let}\;\kind\;f =
+      \mathtt{fun}(\betaxbar)\:\spec\rightarrow
+      \mathtt{ghost}\:e_0'\;\mathtt{in} \;e_1'}} \\[1em]
+
+      \inferrule*[Left=(ELetFun)]
+      { \neg\textit{is\_ghost}(\atts) \\ \textit{kind}(\atts) = \kind \\
+      \textit{is\_functional}(e_0) \\\\
+      \translate{\atts'}{\textit{function spec}}{\spec} \\
+      \translate{e_0}{function}{\overline{x\beta}, e_0'} \\
+      \translate{e_1}{expression}{e_1'}}
+      {\translate{\mathtt{let}\:\atts\:f = e_0\;\atts'\;\mathtt{in}\;e_1}
+      {expression}{\mathtt{let}\;\kind\;f =
+      \mathtt{fun}(\overline{\beta x})\:\spec\rightarrow e_0'\;\mathtt{in} \;e_1'}
+      }\\[1em]
+
+      \inferrule*[Left=(EWhile)]
+      {\translate{\atts}{\textit{loop annotation}}{\loops} \\
+      \translate{e_0}{expression}{e_0'} \\ \translate{e_1}{expression}{e_1'}}
+      {\translate{\mathtt{while} \: e_0 \: \mathtt{do} \: \atts \: e_1 \:
+      \mathtt{done}}{expression}
+      {\mathtt{while} \: e_0' \: \mathtt{do} \: \loops \: e_1' \:
+      \mathtt{done}}} \\[1em]
+
+      \inferrule*[Left=(EIf)]
+      {\translate{e_0}{expression}{e_0'} \\ \translate{e_1}{expression}{e_1'} \\
+      \translate{e_2}{expression}{e_2'}}
+      {\translate{\mathtt{if}\: e_0\: \mathtt{then}\: e_1\: \mathtt{else}\: e_2}
+      {expression}
+      {\mathtt{if}\: e_0'\: \mathtt{then}\: e_1'\: \mathtt{else}\: e_2'}}
+      \\[1em]
+
+      \inferrule*[Left=(EMatch)]
+      {\translate{e_0}{expression}{e_0'} \\
+      \translate{\overline{e_1}}{expression}{\overline{e_1'}}}
+      {\translate{\mathtt{match}\; e_0\;
+      \mathtt{with}\;\overline{\talloblong\,p\Rightarrow e_1}}
+      {expression}
+      {\mathtt{match}\; e_0'\;
+      \mathtt{with}\;\overline{\talloblong\,p\Rightarrow e_1'}\,\texttt{end}}}
+
+      \\[1em]
+
+      \inferrule*[Left=(ERaise)]
+      {\translate{\expbar}{expression}{\expbar'}}
+      {\translate{\mathtt{raise} \; E\expbar}{expression}{\mathtt{raise} \;
+        E\expbar'}}\qquad
+
+      \inferrule*[Right=(ETry)]
+      {\translate{e}{expression}{e'} \\ \translate{\exbar}{expression}{\exbar'}}
+      {\translate{\mathtt{try} \; e \; \mathtt{with} \; \exbar}{expression}
+      {\mathtt{try} \; e' \; \mathtt{with} \; \exbar'}\texttt{end}}
+    \end{array}
+  \]
+\end{judge}
+  \caption{Translation of \ocaml expressions into \whyml.}
+  \label{fig:expressions}
+\end{figure}
+
+\paragraph{Top-level declarations.} Selected top-level declarations include
+exceptions and type declaration, (mutually-recursive) function definition, and
+introduction of sub-modules. An exception takes a list of~$\pi$ values, types
+annotated with a ghost status, to account for the possibility of ghost
+arguments. In \why vocabulary, this is the \emph{mask} of an exception. % The
+% complete set of translation rules for top-level declarations and type
+% definitions is given in Appendix~\ref{sec:transl-top-level}. We highlight here
+% the cases of record type definition and sub-modules.
+The attribute~$\atts$ after a record type definition is used to express in
+\GOSPEL a \emph{type invariant}, \emph{i.e.}, a predicate that every inhabitant
+of such type must satisfy. Type invariants are readily supported by \why.
+%
+% \[
+%   \inferrule*[Left=(TDRecord)]
+%   {\translate{\atts}{\textit{type invariant}}{\bar{t}}}
+%   {\translate{\alphabar\:T = \{\: \overline{f : \pi}\:\}\:\atts}
+%     {declaration}
+%     {T\alphabar = \{\:\overline{f:\pi}\:\}\:\mathtt{invariant}\:\bar{t}}}
+% \]
+%
+Each field of the record type is also annotated with a ghost
+status. Fig~\ref{fig:top-level} and Fig.~\ref{fig:type-def} present,
+respectively, translation rules for \ocaml top-level declarations and type
+definitions.
+
+\begin{figure}[h!]
+  \centering
+  \begin{judge}[b]{\textwidth}\footnotesize
+    \[
+      \begin{array}{c}
+        \inferrule*[Left=(DModule)]
+        {\translate{m}{module}{\overline{d}}}
+        {\translate{\mathtt{module}\:\mathcal{M} = m}{declaration}
+        {\mathtt{scope}\:\mathcal{M}\;\overline{d}\;\mathtt{end}}} \\[1em]
+
+        \inferrule*[Left=(DLetGhost)]
+        {\mathit{is\_ghost}(\atts) \\ \textit{kind}(\atts') = \mathcal{K} \\
+        \textit{is\_functional}(e)\\\\
+        \translate{\atts}{\textit{function spec}}{\mathcal{S}} \\
+        \translate{e}{function}{\betaxbar, e'}}
+        {\translate{\mathtt{let}\: \atts \; f = e \: \atts'}{declaration}
+        {\mathtt{let}\:f\:\mathcal{K} =
+        \mathtt{fun}(\betaxbar)\:\mathcal{S}\rightarrow
+        \mathtt{ghost}\;e'}}\\[1em]
+
+        \inferrule*[Left=(DLet)]
+        {\neg\mathit{is\_ghost}(\atts) \\ \textit{kind}(\atts') = \mathcal{K} \\
+        \textit{is\_functional}(e)\\\\
+        \translate{\atts}{\textit{function spec}}{\mathcal{S}} \\
+        \translate{e}{function}{\betaxbar, e'}
+        }
+        {\translate{\mathtt{let}\: \atts \; f = e \: \atts'}{declaration}
+        {\mathtt{let}\:f\:\mathcal{K} =
+        \mathtt{fun}(\betaxbar)\:\mathcal{S}\rightarrow\;e'}} \\[1em]
+
+      \inferrule*[Lab=(DRec)]
+      {
+       \neg\textit{is\_ghost}(\atts_0) \\
+       \mathit{kind}(\atts_0) = \kind \\
+       \translate{\atts_1}{\textit{function spec}}{\spec_1} \\
+       \translate{e_0}{function}{\overline{x\beta},e_0'} \\\\
+       \translate{\overline{e_1}}{function}{\overline{y:\pi},\overline{e_1'}} \\
+       \translate{\overline{\atts_2}}{\textit{function spec}}{\overline{\spec_2}}}
+      {\translate{\mathtt{let} \: \atts_0 \; \mathtt{rec} \: f_0 = e_0 \;
+       \atts_1 \; \overline{\mathtt{and}\;f_1 = e_1 \; \atts_2}}{declaration}
+       {\mathtt{rec}\;\kind\;f(\overline{\beta x})\;\spec_1 = e_0' \;
+        \overline{\mathtt{with}\;\kind\;f_1 (\overline{y:\pi}) = e_1' \;
+        \spec_2}}}\\[1em]
+
+      \inferrule*[Lab=(DRecGhost)]
+      {\textit{is\_ghost}(\atts_0) \\
+       \mathit{kind}(\atts_0) = \kind \\
+       \translate{\atts_1}{\textit{function spec}}{\spec_1} \\
+       \translate{e_0}{function}{\overline{x\beta},e_0'} \\\\
+       \translate{\overline{e_1}}{function}{\overline{y:\pi},\overline{e_1'}} \\
+       \translate{\overline{\atts_2}}{\textit{function spec}}{\overline{\spec_2}}}
+      {\translate{\mathtt{let} \: \atts_0 \; \mathtt{rec} \: f_0 = e_0 \;
+       \atts_1 \; \overline{\mathtt{and}\;f_1 = e_1 \; \atts_2}}{declaration}
+       {\mathtt{rec}\;\kind\;f(\overline{\beta x})\;\spec_1 = \texttt{ghost}\:e_0'
+      \;\overline{\mathtt{with}\;\kind\;f_1 (\overline{y:\pi}) = e_1' \;
+        \spec_2}}}\\[1em]
+
+        % \inferrule*[Left=(DRec)]
+        % {\neg\mathit{is\_ghost}(\atts) \\ \textit{kind}(\atts) = \mathcal{K}
+        % \\\\
+        % \translate{\atts'}{\textit{function spec}}{\mathcal{S}} \\
+        % \translate{e}{function}{\betaxbar, e'}
+        % }
+        % {\translate{\mathtt{let}\: \atts \; \mathtt{rec}\; f = e \:
+        % \atts'}{declaration}
+        % {\mathtt{let}\:\mathtt{rec}\:\mathcal{K}\:f(\betaxbar)\:\mathcal{S} =
+        % e'}}\\[1em]
+
+        % \inferrule*[Left=(DRecGhost)]
+        % {\mathit{is\_ghost}(\atts) \\ \textit{kind}(\atts) = \mathcal{K} \\\\
+        % \translate{\atts}{\textit{function spec}}{\mathcal{S}} \\
+        % \translate{e}{function}{\betaxbar, e'}
+        % }
+        % {\translate{\mathtt{let}\: \atts \; \mathtt{rec}\; f = e \:
+        % \atts'}{declaration}
+        % {\mathtt{let}\:\mathtt{rec}\:\mathcal{K}\:f(\betaxbar)\:\mathcal{S} =
+        % \mathtt{ghost}\;e'}} \\[1em]
+
+        \inferrule*[Left=(DType)]
+        {\translate{td_0}{\textit{type definition}}{td_0'} \\
+         \translate{\overline{td_1}}
+         {\textit{type definition}}{\overline{td_1'}}}
+        {\translate{\texttt{type} \; td_0  \; \overline{\texttt{and}\; td_1}}
+         {declaration}
+         {\texttt{type}\: td_0' \; \overline{\texttt{with}\:td_1'}}}\\[1em]
+
+        \inferrule*[Left=(DExn)]
+        { }
+        {\translate{\texttt{exception}\: E : \pibar}{declaration}{
+        \texttt{exception}\: E : \pibar}}
+      \end{array}
+    \]
+  \end{judge}
+  \caption{Translation of \ocaml top-level declarations into \whyml.}
+  \label{fig:top-level}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{judge}[b]{\textwidth}\small
+    \[
+      \begin{array}{c}
+        \inferrule*[Left=(TDAbstract)]
+        { }
+        {\translate{\alphabar\:T}{\textit{type definition}}{T\alphabar}}\qquad~
+
+        \inferrule*[Right=(TDAlias)]
+        { }
+        {\translate{\alphabar\:T = \tau}{\textit{type definition}}
+         {T\alphabar = \tau}}\\[1em]
+
+        \inferrule*[Left=(TDRecord)]
+        {\translate{\atts}{\textit{type invariant}}{\bar{t}}}
+        {\translate{\alphabar\:T = \{\: \overline{f : \pi}\:\}\:\atts}
+        {declaration}
+        {T\alphabar = \{\:\overline{f:\pi}\:\}\:\mathtt{invariant}\:\bar{t}}}
+        \\[1em]
+
+        \inferrule*[Left=(TDVariant)]
+        { }
+        {\translate{\alphabar\:T =
+         \overline{\talloblong\,C\,\texttt{of}\,\overline{\tau}}}
+         {\textit{type definition}}
+         {T\alphabar = \overline{\talloblong\,C\,\overline{\tau}}}} \\[1em]
+      \end{array}
+    \]
+  \end{judge}
+  \caption{Translation of \ocaml type definitions into \whyml.}
+  \label{fig:type-def}
+\end{figure}
+
+\paragraph{Modules.} Fig.~\ref{fig:mod} presents translation rules for \ocaml
+module expressions and module types.
+
+\begin{figure}[h!]
+  \centering
+  \begin{judge}[b]{\textwidth}\small
+  \[
+    \begin{array}{c}
+      \inferrule*[Left=(MStruct)]
+      {\translate{\overline{d}}{declaration}{\overline{d'}}}
+      {\translate{\mathtt{struct}\:\overline{d}\:\mathtt{end}}{\textit{module}}
+      {\overline{d'}}} \\[1em]
+
+      \inferrule*[Left=(MFunctor)]
+      {\translate{mt}{\textit{module type}}{\overline{d}} \\
+      \translate{m}{module}{\overline{d'}}}
+      {\translate{\mathtt{functor}(\mathcal{X}: mt)\rightarrow m}
+      {\mathit{module}}
+      {\mathtt{scope}\:\mathcal{X}\;\overline{d}\;\mathtt{end}\;\overline{d'}}}
+      \\[1em]
+
+      \inferrule*[Left=(MTSig)]
+      {\translate{\overline{s}}{signature}{\overline{d}}}
+      {\translate{\mathtt{sig}\:s\:\mathtt{end}}{\textit{module type}}
+      {\overline{d}}}
+    \end{array}
+  \]
+  \end{judge}
+  \caption{Translation of \ocaml module expressions and module types into
+    \whyml.}
+  \label{fig:mod}
+\end{figure}
+
+\paragraph{Signatures.} Fig.~\ref{fig:sigs} presents translation rules for
+\ocaml signatures.
+
+\begin{figure}[h!]
+  \centering
+  \begin{judge}[b]{\textwidth}\small
+  \[
+    \begin{array}{c}
+      \inferrule*[Left=(SVal)]
+      {\neg\textit{is\_ghost}(\atts) \\ \textit{kind}(\atts) = \kind \\\\
+      \translate{\atts'}{\textit{function spec}}{\spec} \\
+      \translate{\pi,\atts'}{\textit{function args}}{\overline{x:\pi'},\pi_{res}}}
+      {\translate{\mathtt{val}\: \atts \: f : \pi \: \atts'}{signature}
+      {\mathtt{val}\:\kind\: f (\overline{x:\pi})\:\spec : \pi_{res}}}\\[1em]
+
+      \inferrule*[Left=(SValGhost)]
+      {\neg\textit{is\_ghost}(\atts) \\ \textit{kind}(\atts) = \kind \\\\
+      \translate{\atts'}{\textit{function spec}}{\spec} \\
+      \translate{\pi,\atts'}{\textit{function args}}{\overline{x:\pi'},\pi_{res}}}
+      {\translate{\mathtt{val}\: \atts \: f : \pi \: \atts'}{signature}
+      {\mathtt{val}\:\kind\:\ghost f (\overline{x:\pi})\:\spec : \pi_{res}}}\\[1em]
+
+      \inferrule*[Left=(SType)]
+      {\translate{td_0}{\textit{type definition}}{td_0'} \\
+      \translate{\overline{td_1}}
+      {\textit{type definition}}{\overline{td_1'}}}
+      {\translate{\texttt{type} \; td_0  \; \overline{\texttt{and}\; td_1}}
+      {signature}
+      {\texttt{type}\: td_0' \; \overline{\texttt{with}\:td_1'}}}
+    \end{array}
+  \]
+  \end{judge}
+  \caption{Translation of \ocaml signatures into \whyml.}
+  \label{fig:sigs}
+\end{figure}
+
+\paragraph{Programs.} An \ocaml program is simply a list of top-level
+declarations. These are translated into a \whyml module, as follows:
+%
+\[
+  \inferrule*[Left=(Program)]
+  {\translate{\overline{d}}{declaration}{\overline{d'}}}
+  {\translate{\overline{d}}{program}
+    {\mathtt{module}\,\mathcal{M}\;\overline{d'}\;\mathtt{end}}}
+\]
+%
+The name~$\mathcal{M}$ of the generated module is issued from the \ocaml file
+that contains the original program. If file \texttt{foo.ml} contains the
+program~$p$, it gets translated into \texttt{module\:Foo\;$p$\;end}. In summary,
+a generated \whyml program contains a single module, which represents the
+top-level module of an \ocaml file. In turn, each sub-module is translated into
+a \whyml scope.
+
+% \bibliographystyle{plain}
+% \bibliography{local}
+
+\end{document}
+
+\section{Verified implementations of queue data structures}
+\label{sec:verif-impl-prior}
+
+\begin{figure}
+  \centering
+  \begin{gospel}
+  type 'a t = {
+    self : 'a list * 'a list;
+    view : 'a list [@ghost];
+  } (*@ invariant let (prefix, xiffus) = self in (prefix=[] -> xiffus=[]) &&
+          view = prefix @ List.rev xiffus *)
+
+  let empty = { self = [], []; view = [] }
+  (*@ t = empty ensures t.view = [] *)
+
+  let [@logic] is_empty (q: 'a t) = match q.self with
+    | [], _ -> true
+    | _ -> false
+  (*@ b = is_empty q ensures b <-> q.view = [] *)
+
+  let add queue elt = match queue.self with
+    | [], [] ->
+        { self = [elt], []; view = [elt] }
+    | prefix, xiffus ->
+        { self = prefix, elt :: xiffus; view = queue.view @ [elt] }
+  (*@ r = add queue elt ensures r.view = queue.view @ (elt :: []) *)
+
+  let head (param: 'a t) = match param.self with
+    | head :: _, _-> head
+    | [], _ -> raise Not_found
+  (*@ x = head param
+        raises  Not_found -> is_empty param
+        ensures match param.view with [] -> false | y :: _ -> x = y *)
+
+  let [@logic] [@ghost] tail_list = function
+    | [] -> assert false
+    | _ :: l -> l
+  (*@ r = tail_list param
+        requires param <> []
+        ensures  match param with [] -> false | _ :: l -> r = l *)
+
+  let tail t = match t.self with
+    | [_], xiffus ->
+        { self = List.rev xiffus, []; view = tail_list t.view }
+    | _ :: prefix, xiffus ->
+        { self = prefix, xiffus; view = prefix @ List.rev xiffus }
+    | [], _ -> raise Not_found
+  (*@ r = tail t
+        raises  Not_found -> is_empty t
+        ensures r.view = tail_list t.view *)
+  \end{gospel}
+  \caption{Verified implementation of a purely applicative queue data
+    structure.}
+  \label{fig:app-queue}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{gospel}
+  type 'a t = {
+    mutable front: 'a list;
+    mutable rear : 'a list;
+    mutable view : 'a list [@ghost];
+  } (*@ invariant (front = [] -> rear = []) && view = front ++ List.rev rear *)
+
+  let create () = { front = []; rear  = []; view  = []; }
+  (*@ q = create () ensures q.view = [] *)
+
+  let [@logic] is_empty q = match q.front with
+    | [] -> true
+    | _ -> false
+  (*@ b = is_empty q ensures b <-> q.view = [] *)
+
+  let push x q =
+    if is_empty q then q.front <- [x] else q.rear <- x :: q.rear;
+    q.view <- q.view @ (x :: [])
+  (*@ push x q ensures q.view = (old q.view) @ (x :: []) *)
+
+  let [@ghost] head_list = function
+    | [] -> assert false
+    | x :: _ -> x
+  (*@ r = head_list param
+        requires param <> []
+        ensures  match param with [] -> false | y :: _ -> r = y *)
+
+  let [@ghost] tail_list = function
+    | [] -> assert false
+    | _ :: l -> l
+  (*@ r = tail_list param
+        requires param <> []
+        ensures  match param with [] -> false | _ :: l -> r = l *)
+
+  let pop q = match q.front with
+    | [] -> raise Not_found
+    | [x] ->
+        q.front <- List.rev q.rear; q.rear  <- []; q.view  <- tail_list q.view;
+        x
+    | x :: f ->
+        q.front <- f; q.view  <- tail_list q.view;
+        x
+  (*@ x = pop q
+        raises  Not_found -> is_empty (old q)
+        ensures x :: q.view = (old q).view *)
+
+  let transfer q1 q2 =
+    let [@ghost] done_view = ref [] in
+    while not (is_empty q1) do
+      (*@ variant   q1.view *)
+      (*@ invariant (q1.front = [] -> q1.rear = []) /\
+                    (q2.front = [] -> q2.rear = []) *)
+      (*@ invariant q1.view = q1.front @ List.rev q1.rear /\
+                    q2.view = q2.front @ List.rev q2.rear *)
+      (*@ invariant old q1.view = !done_view @ q1.view *)
+      (*@ invariant q2.view = (old q2.view) @ !done_view *)
+      done_view := !done_view @ (head_list q1.view :: []);
+      push (pop q1) q2
+    done
+  (*@ transfer q1 q2
+        raises   Not_found -> false
+        ensures  q1.view = []
+        ensures  q2.view = (old q2.view) @ (old q1.view) *)
+  \end{gospel}
+  \caption{Ephemeral queue data structure.}
+  \label{fig:mut-queue}
+\end{figure}
+
+\section{Formally verified Leftist Heaps}
+\label{sec:form-verif-left}
+
+\begin{gospel}
+module type TOTAL_PRE_ORD = sig
+  type t
+
+  (*@ function le : t -> t -> bool *)
+
+  (*@ axiom reflexive : forall x. le x x *)
+  (*@ axiom total     : forall x y. le x y \/ le y x *)
+  (*@ axiom transitive: forall x y z. le x y -> le y z -> le x z *)
+
+  val leq : t -> t -> bool
+  (*@ b = leq x y
+        ensures b <-> le x y *)
+end
+
+module Make(E : TOTAL_PRE_ORD) = struct
+  type elt = E.t
+
+  type t =
+    | E
+    | N of int * elt * t * t
+
+  (*@ function rank (h: t) : integer = match h with
+        | E -> 0
+        | N _ _ l r -> 1 + min (rank l) (rank r) *)
+
+  (*@ predicate leftist (h: t) = match h with
+        | E -> true
+        | N n _ l r ->
+            n = rank h && leftist l && leftist r && rank l >= rank r *)
+
+  let[@logic] rec size = function
+    | E -> 0
+    | N (_,_,l,r) -> 1 + size l + size r
+  (*@ r = size param
+        ensures 0 <= r
+        ensures r = 0 <-> param = E *)
+
+  (*@ function occ (x: elt) (h: t) : integer = match h with
+        | E -> 0
+        | N _ e l r -> let occ_lr = occ x l + occ x r in
+            if x = e then 1 + occ_lr else occ_lr *)
+
+  let [@lemma] rec occ_nonneg (y: elt) = function
+    | E -> ()
+    | N (_, _, l, r) -> occ_nonneg y l; occ_nonneg y r
+  (*@ occ_nonneg y param
+        ensures 0 <= occ y param *)
+
+  (*@ predicate mem_heap (x: elt) (h: t) =
+        0 < occ x h *)
+
+  (*@ predicate le_root (e: elt) (h: t) = match h with
+        | E -> true
+        | N _ x _ _ -> E.le e x *)
+
+  let [@lemma] le_root_trans (x: elt) (y: elt) = function
+    | E -> ()
+    | N (_, _, _, _) -> ()
+  (*@ le_root_trans x y param
+        requires E.le x y
+        requires le_root y param
+        ensures  le_root x param *)
+
+  (*@ predicate is_heap (h: t) = match h with
+        | E -> true
+        | N _ x l r -> le_root x l && is_heap l && le_root x r && is_heap r *)
+
+  (*@ function minimum (h: t) : elt *)
+  (*@ axiom minimum_def: forall l x r n. minimum (N n x l r) = x *)
+
+  (*@ predicate is_minimum (x: elt) (h: t) =
+        mem_heap x h && forall e. mem_heap e h -> le x e *)
+
+  let [@lemma] rec root_is_miminum = function
+    | E -> assert false
+    | N (_, _, l, r) ->
+        begin match l with E -> () | _ -> root_is_miminum l end;
+        match r with E -> () | _ -> root_is_miminum r
+  (*@ is_minimum param
+       requires is_heap param && 0 < size param
+       ensures  is_minimum (minimum param) param
+       variant  param *)
+
+  (*@ predicate leftist_heap (h: t) =
+        is_heap h && leftist h *)
+
+  let empty = E
+  (*@ r = empty
+        ensures r = E *)
+
+  let[@logic] is_empty = function
+    | E -> true
+    | N (_, _, _, _) -> false
+  (*@ b = is_empty param
+        ensures b <-> param = E *)
+
+  exception Empty
+
+  (* Rank of the tree *)
+  let _rank = function
+    | E -> 0
+    | N (r, _, _, _) -> r
+  (*@ r = _rank param
+        requires leftist_heap param
+        ensures  r = rank param *)
+
+  let _make_node x a b =
+    if _rank a >= _rank b
+    then N (_rank b + 1, x, a, b)
+    else N (_rank a + 1, x, b, a)
+  (*@ h = _make_node x a b
+        requires leftist_heap a && leftist_heap b
+        requires le_root x a && le_root x b
+        ensures  leftist_heap h
+        ensures  minimum h = x
+        ensures  size h = 1 + size a + size b
+        ensures  occ x h = 1 + occ x a + occ x b
+        ensures  forall y. x <> y -> occ y h = occ y a + occ y b *)
+
+  let rec merge t1 t2 =
+    match t1, t2 with
+      | t, E -> t
+      | E, t -> t
+      | N (_, x, a1, b1), N (_, y, a2, b2) ->
+        if E.leq x y
+        then _make_node x a1 (merge b1 t2)
+        else _make_node y a2 (merge t1 b2)
+  (*@ h = merge t1 t2
+        requires leftist_heap t1 && leftist_heap t2
+        ensures  size h = size t1 + size t2
+        ensures  forall x. occ x h = occ x t1 + occ x t2
+        ensures  leftist_heap h
+        variant  size t1 + size t2 *)
+
+  let insert x h =
+    merge (N(1,x,E,E)) h
+  (*@ new_h = insert x h
+        requires leftist_heap h
+        ensures  leftist_heap new_h *)
+
+  let add h x = insert x h
+  (*@ new_h = insert x h
+        requires leftist_heap h
+        ensures  leftist_heap new_h *)
+
+  let rec filter p = function
+    | E -> E
+    | N (_, x, l, r) ->
+        if p x then _make_node x (filter p l) (filter p r)
+        else merge (filter p l) (filter p r)
+  (*@ h = filter p param
+        requires leftist_heap param
+        variant  param
+        ensures  leftist_heap h
+        ensures  forall x. not (p x) -> occ x h = 0
+        ensures  forall x. p x -> occ x h = occ x param *)
+
+  let find_min_exn = function
+    | E -> raise Empty
+    | N (_, x, _, _) -> x
+  (*@ r = find_min_exn param
+        requires leftist_heap param
+        raises   Empty -> is_empty param
+        ensures  r = minimum param *)
+
+  let find_min = function
+    | E -> None
+    | N (_, x, _, _) -> Some x
+  (*@ r = find_min param
+        requires leftist_heap param
+        ensures  match r with
+                 | None -> is_empty param
+                 | Some x -> is_minimum x param *)
+
+  let take = function
+    | E -> None
+    | N (_, x, l, r) -> Some (merge l r, x)
+  (*@ r = take param
+        requires leftist_heap param
+        ensures  match r with
+                 | None -> is_empty param
+                 | Some (h, x) ->
+                     is_minimum x param && (* minimum element *)
+                     occ (minimum param) h = occ (minimum param) param - 1 &&
+                     forall y. y <> minimum param -> occ y param = occ y h &&
+                     size h = size param - 1 &&
+                     leftist_heap h *)
+
+  let rec delete_all eq x = function
+    | E -> E
+    | N (_, y, l, r) as h ->
+        if eq x y then merge (delete_all eq x l) (delete_all eq x r)
+        else if E.leq y x then
+          _make_node y (delete_all eq x l) (delete_all eq x r)
+        else h
+  (*@ h = delete_all eq x param
+        requires leftist_heap param
+        requires forall a b. a = b <-> eq a b
+        variant  param
+        ensures  leftist_heap h
+        ensures  occ x h = 0
+        ensures  forall y. x <> y -> occ y h = occ y param
+        ensures  size h = size param - occ x param *)
+end
+\end{gospel}
+
+\end{document}
+
+
+Heap operations:
+* _make_node
+* merge
+* insert (uma linha e chama o merge) X
+* find_min_exn                       X
+* filter
+
+(juntar frase que descreve rapidamente o comportamento do insert e do find_min)

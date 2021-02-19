@@ -1,0 +1,935 @@
+@inproceedings{DBLP:conf/fm/ChargueraudFLP19,
+  author    = {Arthur Chargu{\'{e}}raud and
+               Jean{-}Christophe Filli{\^{a}}tre and
+               Cl{\'{a}}udio Louren{\c{c}}o and
+               M{\'{a}}rio Pereira},
+  editor    = {Maurice H. ter Beek and
+               Annabelle McIver and
+               Jos{\'{e}} N. Oliveira},
+  title     = {{{GOSPEL} --- Providing OCaml with a Formal Specification Language}},
+  booktitle = {Formal Methods - The Next 30 Years - Third World Congress, {FM} 2019,
+               Porto, Portugal, October 7-11, 2019, Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {11800},
+  pages     = {484--501},
+  publisher = {Springer},
+  year      = {2019},
+  url       = {https://doi.org/10.1007/978-3-030-30942-8\_29},
+  doi       = {10.1007/978-3-030-30942-8\_29},
+  timestamp = {Fri, 27 Dec 2019 21:27:45 +0100},
+  biburl    = {https://dblp.org/rec/conf/fm/ChargueraudFLP19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{filliatre20jfla,
+  topics = {team},
+  author = {Jean-Christophe Filli\^atre},
+  title = {Mesurer la hauteur d'un arbre},
+  crossref = {jfla20},
+  topics = {team},
+  note = {\url{https://www.lri.fr/~filliatr/hauteur/}},
+  x-slides = {https://www.lri.fr/~filliatr/hauteur/pres-hauteur.pdf},
+  hal = {https://hal.inria.fr/hal-02315541}
+}
+
+@proceedings{jfla20,
+  title = {Trente-et-uni\`emes Journ\'ees Francophones des Langages Applicatifs},
+  booktitle = {Trente-et-uni\`emes Journ{\'e}es Francophones des Langages Applicatifs},
+  address = {Gruissan, France},
+  year = 2020,
+  month = jan,
+  editor = {Dargaye, Zaynah and R\'egis-Gianas, Yann}
+}
+
+@article{dijkstra1975guarded,
+  title={Guarded commands, nondeterminacy and formal derivation of programs},
+  author={Dijkstra, Edsger W},
+  journal={Communications of the ACM},
+  volume={18},
+  number={8},
+  pages={453--457},
+  year={1975},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{gondelman16fmsd,
+  author = {Jean-Christophe Filli\^atre and L\'eon
+            Gondelman and Andrei Paskevich},
+  title = {The Spirit of Ghost Code},
+  journal = {Formal Methods in System Design},
+  publisher = {Springer},
+  year = 2016,
+  volume = 48,
+  number = 3,
+  pages = {152--174},
+  issn = {1572-8102},
+  doi = {10.1007/s10703-016-0243-x},
+  topics = {team},
+  hal = {https://hal.archives-ouvertes.fr/hal-01396864v1},
+  keywords = {Why3},
+  type_publi = {irevcomlec},
+  x-international-audience = {yes},
+  x-proceedings = {yes},
+  x-type = {article},
+  x-support = {revue},
+  x-editorial-board = {yes},
+  abstract = {
+  In the context of deductive program verification, ghost code is part
+  of the program that is added for the purpose of specification.
+  Ghost code must not interfere with regular code, in the sense that
+  it can be erased without observable difference in the program outcome.
+  In particular, ghost data cannot participate in regular
+  computations and ghost code cannot mutate regular data or diverge.
+  The idea exists in the folklore since the early notion of auxiliary
+  variables and is implemented in many state-of-the-art program
+  verification tools. However, a rigorous definition and treatment of
+  ghost code is surprisingly subtle and few formalizations exist.
+
+  In this article, we describe a simple ML-style programming language
+  with mutable state and ghost code.  Non-interference is ensured by a
+  type system with effects, which allows, notably, the same data types
+  and functions to be used in both regular and ghost code.
+  We define the procedure of ghost code erasure and we prove its
+  safety using bisimulation.
+  A similar type system, with numerous extensions which we briefly discuss,
+  is implemented in the program verification environment Why3.
+  }
+}
+
+@phdthesis{parreirapereira:tel-01980343,
+  TITLE = {{Tools and Techniques for the Verification of Modular Stateful Code}},
+  AUTHOR = {Parreira Pereira, M{\'a}rio Jos{\'e}},
+  URL = {https://tel.archives-ouvertes.fr/tel-01980343},
+  NUMBER = {2018SACLS605},
+  SCHOOL = {{Universit{\'e} Paris Saclay (COmUE)}},
+  YEAR = {2018},
+  MONTH = Dec,
+  KEYWORDS = {Modularity ; OCaml ; OCaml library ; Efects ; Why3 ; Deductive verification ; Modulaire ; OCaml ; V{\'e}rification d{\'e}ductive ; Why3 ; Effets ; Biblioth{\`e}que OCaml},
+  TYPE = {Theses},
+  PDF = {https://tel.archives-ouvertes.fr/tel-01980343/file/76794_PARREIRA_PEREIRA_2018_archivage.pdf},
+  HAL_ID = {tel-01980343},
+  HAL_VERSION = {v1},
+}
+
+@manual{why3manual,
+  title = {The Why3 platform, version 1.3.3},
+  author = {The Why3 Development Team},
+  organization = {LRI, CNRS \& Univ. Paris-Sud \& INRIA Saclay},
+  edition = {version 1.3.3},
+  month = sep,
+  year = 2020,
+  topics = {team},
+  x-type = {diffusion},
+  x-support = {manuel},
+  x-equipes = {demons TOCCATA},
+  pdf = {http://why3.lri.fr/manual.pdf},
+  note = {\url{http://why3.lri.fr/manual.pdf}},
+  hal = {}
+}
+
+@inproceedings{dailler2018,
+  topics = {team},
+  hal = {https://hal.inria.fr/hal-01936302},
+  author = {Dailler, Sylvain and March{\'e}, Claude and Moy, Yannick},
+  title = {Lightweight Interactive Proving inside an Automatic Program
+                  Verifier},
+  booktitle = {Proceedings of the Fourth Workshop on Formal Integrated
+                  Development Environment, F-IDE, Oxford, UK,
+                  July 14, 2018},
+  year = {2018}
+}
+
+@techreport{gondelman16reg,
+  topics = {team},
+  author = {Jean-Christophe Filli\^atre and L\'eon
+            Gondelman and Andrei Paskevich},
+  title = {A Pragmatic Type System for Deductive Verification},
+  type = {Research Report},
+  institution = {Universit\'e Paris Sud},
+  year = 2016,
+  abstract = { In the context of deductive verication, it is customary
+                  today to handle programs with pointers using either
+                  separation logic, dynamic frames, or explicit memory
+                  models. Yet we can observe that in numerous
+                  programs, a large amount of code ts within the scope
+                  of Hoare logic, provided we can statically control
+                  aliasing. When this is the case, the code
+                  correctness can be reduced to simpler verication
+                  conditions which do not require any explicit memory
+                  model. This makes verication conditions more
+                  amenable both to automated theorem proving and to
+                  manual inspection and debugging. In this paper, we
+                  devise a method of such static aliasing control for
+                  a programming language featuring nested data
+                  structures with mutable components. Our solution is
+                  based on a type system with singleton regions and
+                  eects, which we prove to be sound.},
+  hal = {https://hal.archives-ouvertes.fr/hal-01256434v3},
+  note = {\url{https://hal.archives-ouvertes.fr/hal-01256434v3}}
+}
+
+@inproceedings{fpds18jfla,
+  topics = {team},
+  crossref = {jfla18},
+  title = {V{\'e}rification de programmes fortement imp{\'e}ratifs avec {W}hy3},
+  author = {Jean-Christophe Filli{\^a}tre and M{\'a}rio Pereira and
+  Sim{\~a}o Melo de Sousa},
+  hal = {https://hal.inria.fr/hal-01649989},
+  pdf = {https://hal.inria.fr/hal-01649989/file/main.pdf},
+  hal_id = {hal-01649989},
+  hal_version = {v2}
+}
+
+@inproceedings{10.5555/645683.664578,
+author = {Reynolds, John C.},
+title = {Separation Logic: A Logic for Shared Mutable Data Structures},
+year = {2002},
+isbn = {0769514839},
+publisher = {IEEE Computer Society},
+address = {USA},
+abstract = {In joint work with Peter O'Hearn and others, based on early ideas of
+                  Burstall, we have developed an extension of Hoare logic that
+                  permits reasoning about low-level imperativeprograms that use
+                  shared mutable data structure.The simple imperative
+                  programming language is extended with commands (not
+                  expressions) for accessing and modifying shared structures,
+                  and for explicit allocation and deallocation of
+                  storage. Assertions are extended by introducing a "separating
+                  conjunction" that asserts that its sub-formulas hold for
+                  disjoint parts of the heap, and a closely related "separating
+                  implication". Coupled with the inductive definition of
+                  predicates on abstract data structures, this extension permits
+                  the concise and flexible description of structures with
+                  controlled sharing.In this paper, we will survey the current
+                  development of this program logic, including extensions that
+                  permit unrestricted address arithmetic, dynamically allocated
+                  arrays, and recursive procedures. We will also discuss
+                  promising future directions.},
+booktitle = {Proceedings of the 17th Annual IEEE Symposium on Logic in Computer Science},
+pages = {55–74},
+numpages = {20},
+series = {LICS '02}
+}
+
+@inproceedings{smans2009implicit,
+  title={Implicit dynamic frames: Combining dynamic frames and separation logic},
+  author={Smans, Jan and Jacobs, Bart and Piessens, Frank},
+  booktitle={European Conference on Object-Oriented Programming},
+  pages={148--172},
+  year={2009},
+  organization={Springer}
+}
+
+@proceedings{jfla18,
+  topics = {team},
+  title = {Vingt-neuvi\`emes Journ\'ees Francophones des Langages Applicatifs},
+  booktitle = {Vingt-neuvi\`emes Journ{\'e}es Francophones des Langages Applicatifs},
+  address = {Banyuls-sur-mer, France},
+  year = 2018,
+  month = jan,
+  editor = {Boldo, Sylvie and Magaud, Nicolas},
+  hal = {https://hal.inria.fr/hal-01707376}
+}
+
+@book{okasaki_1998,
+place={Cambridge},
+title={Purely Functional Data Structures},
+DOI={10.1017/CBO9780511530104},
+                  publisher={Cambridge University Press},
+                  author={Okasaki, Chris},
+                  year={1998}
+                  }
+
+@article{10.1145/3408998,
+author = {Chargu\'{e}raud, Arthur},
+title = {Separation Logic for Sequential Programs (Functional Pearl)},
+year = {2020},
+issue_date = {August 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {4},
+number = {ICFP},
+url = {https://doi.org/10.1145/3408998},
+doi = {10.1145/3408998},
+abstract = {This paper presents a simple mechanized formalization of Separation
+                  Logic for sequential programs. This formalization is aimed for
+                  teaching the ideas of Separation Logic, including its
+                  soundness proof and its recent enhancements. The formalization
+                  serves as support for a course that follows the style of the
+                  successful Software Foundations series, with all the statement
+                  and proofs formalized in Coq. This course only assumes basic
+                  knowledge of lambda-calculus, semantics and logics, and
+                  therefore should be accessible to a broad audience.},
+journal = {Proc. ACM Program. Lang.},
+month = aug,
+articleno = {116},
+numpages = {34},
+keywords = {Separation Logic, Coq, Program verification}
+}
+
+@phdthesis{10.5555/906397,
+author = {Crane, Clark Allan},
+title = {Linear Lists and Priority Queues as Balanced Binary Trees},
+year = {1972},
+publisher = {Stanford University},
+address = {Stanford, CA, USA},
+note = {AAI7220697}
+}
+
+@book{knuth1998art,
+  title={The art of computer programming: Volume 3: Sorting and Searching},
+  author={Knuth, Donald E},
+  year={1998},
+  publisher={Addison-Wesley Professional}
+}
+
+@inproceedings{DBLP:conf/itp/Leino13,
+  author    = {K. Rustan M. Leino},
+  editor    = {Sandrine Blazy and
+               Christine Paulin{-}Mohring and
+               David Pichardie},
+  title     = {Automating Theorem Proving with {SMT}},
+  booktitle = {Interactive Theorem Proving - 4th International Conference, {ITP}
+               2013, Rennes, France, July 22-26, 2013. Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {7998},
+  pages     = {2--16},
+  publisher = {Springer},
+  year      = {2013},
+  url       = {https://doi.org/10.1007/978-3-642-39634-2\_2},
+  doi       = {10.1007/978-3-642-39634-2\_2},
+  timestamp = {Wed, 25 Sep 2019 18:17:56 +0200},
+  biburl    = {https://dblp.org/rec/conf/itp/Leino13.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{DBLP:conf/cav/FilliatreM07,
+  author    = {Jean{-}Christophe Filli{\^{a}}tre and
+               Claude March{\'{e}}},
+  editor    = {Werner Damm and
+               Holger Hermanns},
+  title     = {The Why/Krakatoa/Caduceus Platform for Deductive Program Verification},
+  booktitle = {Computer Aided Verification, 19th International Conference, {CAV}
+               2007, Berlin, Germany, July 3-7, 2007, Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {4590},
+  pages     = {173--177},
+  publisher = {Springer},
+  year      = {2007},
+  url       = {https://doi.org/10.1007/978-3-540-73368-3\_21},
+  doi       = {10.1007/978-3-540-73368-3\_21},
+  timestamp = {Tue, 14 May 2019 10:00:43 +0200},
+  biburl    = {https://dblp.org/rec/conf/cav/FilliatreM07.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{Jacobs_2015,
+   title={Featherweight VeriFast},
+   volume={11},
+   ISSN={1860-5974},
+   url={http://dx.doi.org/10.2168/LMCS-11(3:19)2015},
+   DOI={10.2168/lmcs-11(3:19)2015},
+   number={3},
+   journal={Logical Methods in Computer Science},
+   publisher={Logical Methods in Computer Science e.V.},
+   author={Jacobs, Bart and Vogels, Frédéric and Piessens, Frank},
+   editor={Nipkow, TobiasEditor},
+   year={2015},
+   month={Sep}
+}
+
+@inproceedings{DBLP:conf/popl/JourdanLBLP15,
+  author    = {Jacques{-}Henri Jourdan and
+               Vincent Laporte and
+               Sandrine Blazy and
+               Xavier Leroy and
+               David Pichardie},
+  editor    = {Sriram K. Rajamani and
+               David Walker},
+  title     = {A Formally-Verified {C} Static Analyzer},
+  booktitle = {Proceedings of the 42nd Annual {ACM} {SIGPLAN-SIGACT} Symposium on
+               Principles of Programming Languages, {POPL} 2015, Mumbai, India, January
+               15-17, 2015},
+  pages     = {247--259},
+  publisher = {{ACM}},
+  year      = {2015},
+  url       = {https://doi.org/10.1145/2676726.2676966},
+  doi       = {10.1145/2676726.2676966},
+  timestamp = {Wed, 25 Sep 2019 18:04:49 +0200},
+  biburl    = {https://dblp.org/rec/conf/popl/JourdanLBLP15.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{sel4,
+author = {Klein, Gerwin and Elphinstone, Kevin and Heiser, Gernot and Andronick, June and Cock, David and Derrin, Philip and Elkaduwe, Dhammika and Engelhardt, Kai and Kolanski, Rafal and Norrish, Michael and Sewell, Thomas and Tuch, Harvey and Winwood, Simon},
+title = {SeL4: Formal Verification of an OS Kernel},
+year = {2009},
+isbn = {9781605587523},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1629575.1629596},
+doi = {10.1145/1629575.1629596},
+abstract = {Complete formal verification is the only known way to guarantee that
+                  a system is free of programming errors.We present our
+                  experience in performing the formal, machine-checked
+                  verification of the seL4 microkernel from an abstract
+                  specification down to its C implementation. We assume
+                  correctness of compiler, assembly code, and hardware, and we
+                  used a unique design approach that fuses formal and operating
+                  systems techniques. To our knowledge, this is the first formal
+                  proof of functional correctness of a complete, general-purpose
+                  operating-system kernel. Functional correctness means here
+                  that the implementation always strictly follows our high-level
+                  abstract specification of kernel behaviour. This encompasses
+                  traditional design and implementation safety properties such
+                  as the kernel will never crash, and it will never perform an
+                  unsafe operation. It also proves much more: we can predict
+                  precisely how the kernel will behave in every possible
+                  situation.seL4, a third-generation microkernel of L4
+                  provenance, comprises 8,700 lines of C code and 600 lines of
+                  assembler. Its performance is comparable to other
+                  high-performance L4 kernels.},
+booktitle = {Proceedings of the ACM SIGOPS 22nd Symposium on Operating Systems Principles},
+pages = {207–220},
+numpages = {14},
+keywords = {sel4, isabelle/hol, microkernel, l4},
+location = {Big Sky, Montana, USA},
+series = {SOSP '09}
+}
+
+@book{nipkow2002isabelle,
+  title={Isabelle/HOL: a proof assistant for higher-order logic},
+  author={Nipkow, Tobias and Paulson, Lawrence C and Wenzel, Markus},
+  volume={2283},
+  year={2002},
+  publisher={Springer Science \& Business Media}
+}
+
+@article{leroy2009formal,
+  title={Formal verification of a realistic compiler},
+  author={Leroy, Xavier},
+  journal={Communications of the ACM},
+  volume={52},
+  number={7},
+  pages={107--115},
+  year={2009},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{DBLP:journals/jfp/TanMKFON19,
+  author    = {Yong Kiam Tan and
+               Magnus O. Myreen and
+               Ramana Kumar and
+               Anthony C. J. Fox and
+               Scott Owens and
+               Michael Norrish},
+  title     = {The verified CakeML compiler backend},
+  journal   = {J. Funct. Program.},
+  volume    = {29},
+  pages     = {e2},
+  year      = {2019},
+  url       = {https://doi.org/10.1017/S0956796818000229},
+  doi       = {10.1017/S0956796818000229},
+  timestamp = {Fri, 27 Mar 2020 08:41:35 +0100},
+  biburl    = {https://dblp.org/rec/journals/jfp/TanMKFON19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{BeckertMoskal2010,
+  author    = {Bernhard Beckert and Micha{\l} Moskal},
+  title     = {Deductive Verification of System Software in the
+               {Verisoft XT} Project},
+  journal   = {KI},
+  volume    = {24},
+  number    = {1},
+  pages     = {57-61},
+  year      = {2010},
+  month     = feb
+}
+
+@InProceedings{vcc,
+author="Cohen, Ernie
+and Dahlweid, Markus
+and Hillebrand, Mark
+and Leinenbach, Dirk
+and Moskal, Micha{\l}
+and Santen, Thomas
+and Schulte, Wolfram
+and Tobies, Stephan",
+editor="Berghofer, Stefan
+and Nipkow, Tobias
+and Urban, Christian
+and Wenzel, Makarius",
+title="VCC: A Practical System for Verifying Concurrent C",
+booktitle="Theorem Proving in Higher Order Logics",
+year="2009",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="23--42",
+abstract="VCC is an industrial-strength verification environment for low-level
+                  concurrent system code written in C. VCC takes a program
+                  (annotated with function contracts, state assertions, and type
+                  invariants) and attempts to prove the correctness of these
+                  annotations. It includes tools for monitoring proof attempts
+                  and constructing partial counterexample executions for failed
+                  proofs. This paper motivates VCC, describes our verification
+                  methodology, describes the architecture of VCC, and reports on
+                  our experience using VCC to verify the Microsoft Hyper-V
+                  hypervisor.",
+isbn="978-3-642-03359-9"
+}
+
+@article{10.1145/3371070,
+author = {Clochard, Martin and March\'{e}, Claude and Paskevich, Andrei},
+title = {Deductive Verification with Ghost Monitors},
+year = {2019},
+issue_date = {January 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {4},
+number = {POPL},
+url = {https://doi.org/10.1145/3371070},
+doi = {10.1145/3371070},
+abstract = {We present a new approach to deductive program verification based on
+                  auxiliary programs called ghost monitors. This technique is
+                  useful when the syntactic structure of the target program is
+                  not well suited for verification, for example, when an
+                  essentially recursive algorithm is implemented in an iterative
+                  fashion. Our approach consists in implementing, specifying,
+                  and verifying an auxiliary program that monitors the execution
+                  of the target program, in such a way that the correctness of
+                  the monitor entails the correctness of the target. The ghost
+                  monitor maintains the necessary data and invariants to
+                  facilitate the proof. It can be implemented and verified in
+                  any suitable framework, which does not have to be related to
+                  the language of the target programs. This technique is also
+                  applicable when we want to establish relational properties
+                  between two target programs written in different languages and
+                  having different syntactic structure. We then show how ghost
+                  monitors can be used to specify and prove fine-grained
+                  properties about the infinite behaviors of target
+                  programs. Since this cannot be easily done using existing
+                  verification frameworks, we introduce a dedicated language for
+                  ghost monitors, with an original construction to catch and
+                  handle divergent executions. The soundness of the underlying
+                  program logic is established using a particular flavor of
+                  transfinite games. This language and its soundness are
+                  formalized and mechanically checked.},
+journal = {Proc. ACM Program. Lang.},
+month = dec,
+articleno = {2},
+numpages = {26},
+keywords = {Infinite behaviors, Floyd-Hoare logic, Games, Predicate transformers, Deductive program verification, Unstructured programs, Ghost code}
+}
+
+@InProceedings{z3,
+author="de Moura, Leonardo
+and Bj{\o}rner, Nikolaj",
+editor="Ramakrishnan, C. R.
+and Rehof, Jakob",
+title="Z3: An Efficient SMT Solver",
+booktitle="Tools and Algorithms for the Construction and Analysis of Systems",
+year="2008",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="337--340",
+abstract="Satisfiability Modulo Theories (SMT) problem is a decision problem for
+                  logical first order formulas with respect to combinations of
+                  background theories such as: arithmetic, bit-vectors, arrays,
+                  and uninterpreted functions. Z3 is a new and efficient SMT
+                  Solver freely available from Microsoft Research. It is used in
+                  various software verification and analysis applications.",
+isbn="978-3-540-78800-3"
+}
+
+@inproceedings{DBLP:conf/vstte/BeckerM19,
+  author    = {Benedikt F. H. Becker and
+               Claude March{\'{e}}},
+  editor    = {Supratik Chakraborty and
+               Jorge A. Navas},
+  title     = {Ghost Code in Action: Automated Verification of a Symbolic Interpreter},
+  booktitle = {Verified Software. Theories, Tools, and Experiments - 11th International
+               Conference, {VSTTE} 2019, New York City, NY, USA, July 13-14, 2019,
+               Revised Selected Papers},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {12031},
+  pages     = {107--123},
+  publisher = {Springer},
+  year      = {2019},
+  url       = {https://doi.org/10.1007/978-3-030-41600-3\_8},
+  doi       = {10.1007/978-3-030-41600-3\_8},
+  timestamp = {Wed, 12 Aug 2020 17:59:00 +0200},
+  biburl    = {https://dblp.org/rec/conf/vstte/BeckerM19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{dm4free,
+  author = {Danel Ahman and
+            Catalin Hritcu and
+            Kenji Maillard and
+            Guido Mart\'inez and
+            Gordon Plotkin and
+            Jonathan Protzenko and
+            Aseem Rastogi and
+            Nikhil Swamy},
+  title = {Dijkstra Monads for Free},
+  booktitle = {44th ACM SIGPLAN Symposium on Principles of Programming
+               Languages (POPL)},
+  shortbooktitle = {POPL},
+  year = {2017},
+  month = jan,
+  ee = {https://dl.acm.org/citation.cfm?id=3009878},
+  doi = {10.1145/3009837.3009878},
+  url = {https://www.fstar-lang.org/papers/dm4free/},
+  pages = {515-529},
+  publisher = {ACM},
+}
+
+@InProceedings{10.1007/978-3-642-17511-4_20,
+author="Leino, K. Rustan M.",
+editor="Clarke, Edmund M.
+and Voronkov, Andrei",
+title="Dafny: An Automatic Program Verifier for Functional Correctness",
+booktitle="Logic for Programming, Artificial Intelligence, and Reasoning",
+year="2010",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="348--370",
+abstract="Traditionally, the full verification of a program's functional
+                  correctness has been obtained with pen and paper or with
+                  interactive proof assistants, whereas only reduced
+                  verification tasks, such as extended static checking, have
+                  enjoyed the automation offered by
+                  satisfiability-modulo-theories (SMT) solvers. More recently,
+                  powerful SMT solvers and well-designed program verifiers are
+                  starting to break that tradition, thus reducing the effort
+                  involved in doing full verification.",
+isbn="978-3-642-17511-4"
+}
+
+@inproceedings{DBLP:conf/vmcai/0001SS16,
+  author    = {Peter M{\"{u}}ller and
+               Malte Schwerhoff and
+               Alexander J. Summers},
+  editor    = {Barbara Jobstmann and K. Rustan M. Leino},
+  title     = {Viper: {A} Verification Infrastructure for Permission-Based Reasoning},
+  booktitle = {Verification, Model Checking, and Abstract Interpretation - 17th International
+               Conference, {VMCAI} 2016, St. Petersburg, FL, USA, January 17-19,
+               2016. Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {9583},
+  pages     = {41--62},
+  publisher = {Springer},
+  year      = {2016},
+  url       = {https://doi.org/10.1007/978-3-662-49122-5\_2},
+  doi       = {10.1007/978-3-662-49122-5\_2},
+  timestamp = {Tue, 14 May 2019 10:00:43 +0200},
+  biburl    = {https://dblp.org/rec/conf/vmcai/0001SS16.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{DBLP:journals/fac/KirchnerKPSY15,
+  author    = {Florent Kirchner and
+               Nikolai Kosmatov and
+               Virgile Prevosto and
+               Julien Signoles and
+               Boris Yakobowski},
+  title     = {Frama-C: {A} software analysis perspective},
+  journal   = {Formal Aspects Comput.},
+  volume    = {27},
+  number    = {3},
+  pages     = {573--609},
+  year      = {2015},
+  url       = {https://doi.org/10.1007/s00165-014-0326-7},
+  doi       = {10.1007/s00165-014-0326-7},
+  timestamp = {Tue, 25 Aug 2020 16:45:52 +0200},
+  biburl    = {https://dblp.org/rec/journals/fac/KirchnerKPSY15.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{DBLP:conf/nfm/JacobsSPVPP11,
+  author    = {Bart Jacobs and
+               Jan Smans and
+               Pieter Philippaerts and
+               Fr{\'{e}}d{\'{e}}ric Vogels and
+               Willem Penninckx and
+               Frank Piessens},
+  editor    = {Mihaela Gheorghiu Bobaru and
+               Klaus Havelund and
+               Gerard J. Holzmann and
+               Rajeev Joshi},
+  title     = {VeriFast: {A} Powerful, Sound, Predictable, Fast Verifier for {C}
+                  and Java},
+  booktitle = {{NASA} Formal Methods - Third International Symposium, {NFM}
+                  2011, Pasadena, CA, USA, April 18-20, 2011. Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {6617},
+  pages     = {41--55},
+  publisher = {Springer},
+  year      = {2011},
+  url       = {https://doi.org/10.1007/978-3-642-20398-5\_4},
+  doi       = {10.1007/978-3-642-20398-5\_4},
+  timestamp = {Tue, 14 May 2019 10:00:53 +0200},
+  biburl    = {https://dblp.org/rec/conf/nfm/JacobsSPVPP11.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{chargueraud2011characteristic,
+  title={Characteristic formulae for the verification of imperative programs},
+  author={Chargu{\'e}raud, Arthur},
+  booktitle={Proceedings of the 16th ACM SIGPLAN international conference on
+                  Functional programming},
+  pages={418--430},
+  year={2011}
+}
+
+@article{chargueraud2019verifying,
+  title={Verifying the correctness and amortized complexity of a union-find
+                  implementation in separation logic with time credits},
+  author={Chargu{\'e}raud, Arthur and Pottier, Fran{\c{c}}ois},
+  journal={Journal of Automated Reasoning},
+  volume={62},
+  number={3},
+  pages={331--365},
+  year={2019},
+  publisher={Springer}
+}
+
+@inproceedings{DBLP:conf/itp/GueneauJCP19,
+  author    = {Arma{\"{e}}l Gu{\'{e}}neau and
+               Jacques{-}Henri Jourdan and
+               Arthur Chargu{\'{e}}raud and
+               Fran{\c{c}}ois Pottier},
+  editor    = {John Harrison and
+               John O'Leary and
+               Andrew Tolmach},
+  title     = {Formal Proof and Analysis of an Incremental Cycle Detection
+                  Algorithm},
+  booktitle = {10th International Conference on Interactive Theorem Proving,
+                  {ITP} 2019, September 9-12, 2019, Portland, OR, {USA}},
+  series    = {LIPIcs},
+  volume    = {141},
+  pages     = {18:1--18:20},
+  publisher = {Schloss Dagstuhl - Leibniz-Zentrum f{\"{u}}r Informatik},
+  year      = {2019},
+  url       = {https://doi.org/10.4230/LIPIcs.ITP.2019.18},
+  doi       = {10.4230/LIPIcs.ITP.2019.18},
+  timestamp = {Sat, 07 Sep 2019 02:31:13 +0200},
+  biburl    = {https://dblp.org/rec/conf/itp/GueneauJCP19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@misc{chargueraud:hal-01561094,
+  TITLE = {{VOCAL -- A Verified OCAml Library}},
+  AUTHOR = {Chargu{\'e}raud, Arthur and Filli{\^a}tre, Jean-Christophe and
+                  Pereira, M{\'a}rio and Pottier, Fran{\c c}ois},
+  URL = {https://hal.inria.fr/hal-01561094},
+  NOTE = {ML Family Workshop 2017},
+  YEAR = {2017},
+  MONTH = Sep,
+  PDF = {https://hal.inria.fr/hal-01561094/file/main.pdf},
+  HAL_ID = {hal-01561094},
+  HAL_VERSION = {v1},
+}
+
+@unpublished{filliatre:hal-01783851,
+  TITLE = {{A Toolchain to Produce Verified OCaml Libraries}},
+  AUTHOR = {Filli{\^a}tre, Jean-Christophe and Gondelman, L{\'e}on and Louren{\c
+                  c}o, Cl{\'a}udio and Paskevich, Andrei and Pereira, M{\'a}rio
+                  and Melo De Sousa, Sim{\~a}o and Walch, Aymeric},
+  URL = {https://hal.archives-ouvertes.fr/hal-01783851},
+  NOTE = {working paper or preprint},
+  YEAR = {2020},
+  MONTH = Jan,
+  PDF = {https://hal.archives-ouvertes.fr/hal-01783851v2/file/main.pdf},
+  HAL_ID = {hal-01783851},
+  HAL_VERSION = {v2},
+}
+
+@inproceedings{conchon:hal-01960203,
+  TITLE = {{Alt-Ergo 2.2}},
+  AUTHOR = {Conchon, Sylvain and Coquereau, Albin and  Iguernlala, Mohamed and Mebsout, Alain},
+  URL = {https://hal.inria.fr/hal-01960203},
+  BOOKTITLE = {{SMT Workshop: International Workshop on Satisfiability Modulo Theories}},
+  ADDRESS = {Oxford, United Kingdom},
+  YEAR = {2018},
+  MONTH = Jul,
+  PDF = {https://hal.inria.fr/hal-01960203/file/Alt-Ergo-2.2--SMT-Workshop-2018.pdf},
+  HAL_ID = {hal-01960203},
+  HAL_VERSION = {v1},
+}
+
+@inproceedings{BCD+11,
+  url       = "http://www.cs.stanford.edu/~barrett/pubs/BCD+11.pdf",
+  author    = "Clark Barrett and Christopher L. Conway and Morgan Deters and
+               Liana Hadarean and Dejan Jovanovi{'{c}} and Tim King and
+               Andrew Reynolds and Cesare Tinelli",
+  title     = "{CVC4}",
+  booktitle = "Proceedings of the 23rd International Conference on Computer
+                  Aided Verification (CAV '11)",
+  series    = "Lecture Notes in Computer Science",
+  volume    = 6806,
+  publisher = "Springer",
+  editor    = "Ganesh Gopalakrishnan and Shaz Qadeer",
+  pages     = "171--177",
+  month     = jul,
+  year      = 2011,
+  note      = "Snowbird, Utah",
+  category  = "Conference Publications"
+}
+
+@inproceedings{DBLP:conf/esop/FilliatreP13,
+  author    = {Jean{-}Christophe Filli{\^{a}}tre and
+               Andrei Paskevich},
+  editor    = {Matthias Felleisen and
+               Philippa Gardner},
+  title     = {Why3 - Where Programs Meet Provers},
+  booktitle = {Programming Languages and Systems - 22nd European Symposium on Programming,
+               {ESOP} 2013, Held as Part of the European Joint Conferences on Theory
+               and Practice of Software, {ETAPS} 2013, Rome, Italy, March 16-24,
+               2013. Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {7792},
+  pages     = {125--128},
+  publisher = {Springer},
+  year      = {2013},
+  url       = {https://doi.org/10.1007/978-3-642-37036-6\_8},
+  doi       = {10.1007/978-3-642-37036-6\_8},
+  timestamp = {Tue, 14 May 2019 10:00:41 +0200},
+  biburl    = {https://dblp.org/rec/conf/esop/FilliatreP13.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{filliatre11sttt,
+  author = {Jean-Christophe Filli\^atre},
+  title = {Deductive Software Verification},
+  journal = {International Journal on Software Tools for Technology Transfer (STTT)},
+  month = aug,
+  year = 2011,
+  publisher = {Springer Berlin / Heidelberg},
+  volume = 13,
+  number = 5,
+  pages = {397-403},
+  issn = {1433-2779},
+  x-type = {article},
+  x-support = {revue},
+  x-equipes = {demons PROVAL},
+  x-cle-support = {STTT},
+  doi = {10.1007/s10009-011-0211-0},
+  url = {http://proval.lri.fr/publications/filliatre11sttt.pdf},
+  abstract = {Deductive software verification, also known as program proving,
+  expresses the correctness of a program as a set
+  of mathematical statements, called verification conditions. They are
+  then discharged using either automated or interactive theorem
+  provers. We briefly review this research area, with an emphasis on
+  tools.},
+  topics = {team},
+  x-equipes = {demons PROVAL},
+  x-international-audience = {yes},
+  x-editorial-board = {yes}
+}
+
+@inproceedings{DBLP:conf/tacas/BeckerJMRST20,
+  author    = {Benedikt F. H. Becker and
+               Nicolas Jeannerod and
+               Claude March{\'{e}} and
+               Yann R{\'{e}}gis{-}Gianas and
+               Mihaela Sighireanu and
+               Ralf Treinen},
+  editor    = {Armin Biere and
+               David Parker},
+  title     = {Analysing installation scenarios of Debian packages},
+  booktitle = {Tools and Algorithms for the Construction and Analysis of Systems
+                  - 26th International Conference, {TACAS} 2020, Held as Part of
+                  the European Joint Conferences on Theory and Practice of
+                  Software, {ETAPS} 2020, Dublin, Ireland, April 25-30, 2020,
+                  Proceedings, Part {II}},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {12079},
+  pages     = {235--253},
+  publisher = {Springer},
+  year      = {2020},
+  url       = {https://doi.org/10.1007/978-3-030-45237-7\_14},
+  doi       = {10.1007/978-3-030-45237-7\_14},
+  timestamp = {Wed, 12 Aug 2020 17:59:01 +0200},
+  biburl    = {https://dblp.org/rec/conf/tacas/BeckerJMRST20.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{DBLP:conf/cpp/Chargueraud16,
+  author    = {Arthur Chargu{\'{e}}raud},
+  editor    = {Jeremy Avigad and
+               Adam Chlipala},
+  title     = {Higher-order representation predicates in separation logic},
+  booktitle = {Proceedings of the 5th {ACM} {SIGPLAN} Conference on Certified Programs
+               and Proofs, Saint Petersburg, FL, USA, January 20-22, 2016},
+  pages     = {3--14},
+  publisher = {{ACM}},
+  year      = {2016},
+  url       = {https://doi.org/10.1145/2854065.2854068},
+  doi       = {10.1145/2854065.2854068},
+  timestamp = {Tue, 06 Nov 2018 16:59:23 +0100},
+  biburl    = {https://dblp.org/rec/conf/cpp/Chargueraud16.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{DBLP:conf/mpc/Regis-GianasP08,
+  author    = {Yann R{\'{e}}gis{-}Gianas and
+               Fran{\c{c}}ois Pottier},
+  editor    = {Philippe Audebaud and
+               Christine Paulin{-}Mohring},
+  title     = {A Hoare Logic for Call-by-Value Functional Programs},
+  booktitle = {Mathematics of Program Construction, 9th International Conference,
+               {MPC} 2008, Marseille, France, July 15-18, 2008. Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {5133},
+  pages     = {305--335},
+  publisher = {Springer},
+  year      = {2008},
+  url       = {https://doi.org/10.1007/978-3-540-70594-9\_17},
+  doi       = {10.1007/978-3-540-70594-9\_17},
+  timestamp = {Tue, 14 May 2019 10:00:46 +0200},
+  biburl    = {https://dblp.org/rec/conf/mpc/Regis-GianasP08.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{paskevich20isola,
+  author = {Jean-Christophe Filli\^atre and Andrei Paskevich},
+  title = {Abstraction and Genericity in Why3},
+  booktitle = {9th International Symposium On Leveraging Applications of Formal Methods, Verification and Validation (ISoLA)},
+  month = oct,
+  year = 2020,
+  publisher = {Springer},
+  series = {Lecture Notes in Computer Science},
+  volume = 12476,
+  editor = {Tiziana Margaria and Bernhard Steffen},
+  address = {Rhodes, Greece},
+  topics = {team},
+  note = {\url{http://why3.lri.fr/isola-2020/}},
+  hal = {https://hal.inria.fr/hal-02696246}
+}
+
+@inproceedings{pereira17jfla,
+  topics = {team},
+  title = {{D{\'e}fonctionnaliser pour prouver}},
+  author = {Pereira, M{\'a}rio},
+  hal = {https://hal.inria.fr/hal-01378068},
+  crossref = {jfla17}
+}
+
+@proceedings{jfla17,
+  topics = {team},
+  hal = {https://hal.inria.fr/hal-01662072},
+  title = {Journ\'ees Francophones des Langages Applicatifs},
+  editor = {Boldo, Sylvie and Signoles, Julien},
+  year = 2017,
+  booktitle = {Vingt-huiti\`emes Journ\'ees Francophones des Langages Applicatifs},
+  month = jan,
+  address = {Gourette, France},
+  x-international-audience = {no},
+  x-editorial-board = {yes},
+  x-proceedings = {yes},
+  x-type = {article},
+  x-support = {actes_aux},
+  x-cle-support = {JFLA}
+}
