@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.3.3" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.8.6" timelimit="5" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="BinTreeModule.ml"/>
+<theory name="BinTreeModule" proved="true">
+ <goal name="BinTree.occ_nonneg&#39;vc" expl="VC for occ_nonneg" proved="true">
+ <proof prover="0"><result status="valid" time="0.02" steps="101"/></proof>
+ </goal>
+ <goal name="BinTree.occ_uniq2&#39;vc" expl="VC for occ_uniq2" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="occ_uniq2&#39;vc.0" expl="assertion" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="67"/></proof>
+  </goal>
+  <goal name="occ_uniq2&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  </goal>
+  <goal name="occ_uniq2&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  </goal>
+  <goal name="occ_uniq2&#39;vc.3" expl="assertion" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="69"/></proof>
+  </goal>
+  <goal name="occ_uniq2&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  </goal>
+  <goal name="occ_uniq2&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
+  </goal>
+  <goal name="occ_uniq2&#39;vc.6" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="occ_uniq2&#39;vc.6.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
+   </goal>
+   <goal name="occ_uniq2&#39;vc.6.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="55"/></proof>
+   </goal>
+   <goal name="occ_uniq2&#39;vc.6.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="93"/></proof>
+   </goal>
+   <goal name="occ_uniq2&#39;vc.6.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="88"/></proof>
+   </goal>
+   <goal name="occ_uniq2&#39;vc.6.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="93"/></proof>
+   </goal>
+   <goal name="occ_uniq2&#39;vc.6.5" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.03" steps="154"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.find&#39;vc" expl="VC for find" proved="true">
+ <proof prover="0"><result status="valid" time="0.07" steps="540"/></proof>
+ </goal>
+ <goal name="BinTree.insert&#39;vc" expl="VC for insert" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="insert&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="67"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.2" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="69"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
+  </goal>
+  <goal name="insert&#39;vc.4" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="insert&#39;vc.4.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="20"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="90"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.4.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="92"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.4.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.03" steps="22"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="insert&#39;vc.5" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="insert&#39;vc.5.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.5.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="56"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.5.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="58"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.5.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="20"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="insert&#39;vc.6" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="insert&#39;vc.6.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.03" steps="93"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.6.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.03" steps="196"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.6.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="195"/></proof>
+   </goal>
+   <goal name="insert&#39;vc.6.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="21"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.min_tree&#39;vc" expl="VC for min_tree" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="min_tree&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+  </goal>
+  <goal name="min_tree&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="24"/></proof>
+  </goal>
+  <goal name="min_tree&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="19"/></proof>
+  </goal>
+  <goal name="min_tree&#39;vc.3" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="min_tree&#39;vc.3.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="143"/></proof>
+   </goal>
+   <goal name="min_tree&#39;vc.3.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.03" steps="303"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.is_minimum_min&#39;vc" expl="VC for is_minimum_min" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="is_minimum_min&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+  </goal>
+  <goal name="is_minimum_min&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="24"/></proof>
+  </goal>
+  <goal name="is_minimum_min&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="18"/></proof>
+  </goal>
+  <goal name="is_minimum_min&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
+  </goal>
+  <goal name="is_minimum_min&#39;vc.4" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="is_minimum_min&#39;vc.4.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+   </goal>
+   <goal name="is_minimum_min&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="20"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.find_min&#39;vc" expl="VC for find_min" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="find_min&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+  </goal>
+  <goal name="find_min&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="24"/></proof>
+  </goal>
+  <goal name="find_min&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  </goal>
+  <goal name="find_min&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="20"/></proof>
+  </goal>
+  <goal name="find_min&#39;vc.4" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="find_min&#39;vc.4.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+   </goal>
+   <goal name="find_min&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.04" steps="185"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="find_min&#39;vc.5" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="find_min&#39;vc.5.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="63"/></proof>
+   </goal>
+   <goal name="find_min&#39;vc.5.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="119"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="find_min&#39;vc.6" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="find_min&#39;vc.6.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="61"/></proof>
+   </goal>
+   <goal name="find_min&#39;vc.6.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.04" steps="30"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="find_min&#39;vc.7" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="find_min&#39;vc.7.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.47" steps="626"/></proof>
+   </goal>
+   <goal name="find_min&#39;vc.7.1" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.21" steps="323405"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.delete&#39;vc" expl="VC for delete" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="delete&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="67"/></proof>
+  </goal>
+  <goal name="delete&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  </goal>
+  <goal name="delete&#39;vc.2" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="69"/></proof>
+  </goal>
+  <goal name="delete&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
+  </goal>
+  <goal name="delete&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
+  </goal>
+  <goal name="delete&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="22"/></proof>
+  </goal>
+  <goal name="delete&#39;vc.6" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="delete&#39;vc.6.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.03" steps="18"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.6.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="93"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.6.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="95"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.6.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="82"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.6.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="131"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.6.5" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="131"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.6.6" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="207"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="delete&#39;vc.7" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="delete&#39;vc.7.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="22"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.7.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="194"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.7.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="196"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.7.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.04" steps="55"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.7.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="140"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.7.5" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.03" steps="140"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.7.6" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.04" steps="283"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="delete&#39;vc.8" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="delete&#39;vc.8.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.05" steps="18"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.8.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="202"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.8.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="201"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.8.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="26"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.8.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="30"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.8.5" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.01" steps="30"/></proof>
+   </goal>
+   <goal name="delete&#39;vc.8.6" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.19" steps="716"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
