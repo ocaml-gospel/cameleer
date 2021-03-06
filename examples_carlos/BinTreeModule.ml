@@ -200,9 +200,8 @@ module BinTree (TreeNode : Comparable) =
       match tree with
         |Empty -> Empty
         |Node (l,a,r) -> let z = TreeNode.compare x a in
-                        if z < 0 then create (remove l x) a r else
-                        if z > 0 then create l a (remove r x) else 
-                        begin assert (x = a);merge l r end
+                        if z = 0 then merge l r else
+                        if z < 0 then create (remove l x) a r else create l a (remove r x)
     (*@ r = remove t x
       requires binsearchtree t
       variant t
