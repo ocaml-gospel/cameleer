@@ -19,11 +19,11 @@ module OCamlStdLib
 
   predicate same_location 'a 'a
 
-  axiom same_location_eq: forall x y.
-    same_location x y -> x = y
+  axiom same_location_eq: forall x y: 'a.
+    same_location x y <-> x = y
 
   val (==) (x y: 'a) : bool
-    ensures { b <-> same_location_eq x y }
+    ensures { result <-> same_location x y }
 
   val ignore (_: 'a) : unit
 
