@@ -20,7 +20,7 @@ module OCamlStdLib
   predicate same_location 'a 'a
 
   axiom same_location_eq: forall x y: 'a.
-    same_location x y <-> x = y
+    same_location x y -> x = y
 
   val (==) (x y: 'a) : bool
     ensures { result <-> same_location x y }
