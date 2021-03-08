@@ -14,7 +14,16 @@ module OCamlStdLib
 
   let invalid_arg (s: string)
     raises { Invalid_argument }
+    returns { _ -> false }
   = raise (Invalid_argument s)
+
+  predicate same_location 'a 'a
+
+  axiom same_location_eq: forall x y.
+    same_location x y -> x = y
+
+  val (==) (x y: 'a) : bool
+    ensures { b <-> same_location_eq x y }
 
   val ignore (_: 'a) : unit
 
