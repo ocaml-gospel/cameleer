@@ -20,10 +20,16 @@ end
 module BinTree (Ord: OrderedType) = struct
   type elt = Ord.t
   type t = Empty | Node of t * elt * t
+  type t2 = Empty2 | Node2 of t2 * elt * t2 * int
 
   (*@ function occ (x: elt) (t: t) : int = match t with
         | Empty -> 0
         | Node l v r -> (if x = v then 1 else 0) + occ x l + occ x r*)
+        
+  (*@ function occ2 (x:elt) (t: t2) : int = match t with
+        | Empty2 -> 0
+        | Node2 l v r h -> (if x = v then 1 else 0) + occ2 x l + occ2 x r*)
+        
 
   let [@lemma] rec occ_nonneg (x: elt) (t: t) =
     match t with
@@ -52,6 +58,10 @@ module BinTree (Ord: OrderedType) = struct
         variant t
         requires binsearchtree t
         ensures  occ x t <= 1 *)
+        
+  (*let height = function
+    Empty -> 0
+    |Node{h} -> h*)
 
   let create l v r =
     (*let hl = match l with Empty -> 0 | Node {h} -> h in
@@ -68,6 +78,36 @@ module BinTree (Ord: OrderedType) = struct
       ensures binsearchtree res
       ensures forall z: elt. mem2 z l || mem2 z r || Ord.compare z v = 0 -> mem2 z res
       ensures forall w: elt. if w <> v then occ w res = occ w l + occ w r else mem2 v res*)
+      
+  (*let bal l v r = 
+    let hl = match l with Empty -> 0 |Node {h} -> h in
+    let hr = match r with Empty -> 0 |Node {h} -> h in
+    if hl > hr +2 then begin 
+      match l with
+        Empty -> assert false
+        |Node {l = ll; v = lv; r = lr} ->
+          if height ll <= height lr then
+            create ll lv (create lr v r)
+          else begin
+            match lr with
+              Empty -> assert false
+              |Node {l = lrl; v = lrv; r =lrr} ->
+                create (create ll lv lrl) lrv (create lrr v r)
+          end
+    end  else if hr > hl +2 then begin 
+      match r with
+        Empty -> assert false
+        |Node {l = rl; v = rv; r =rr} ->
+          if height rr <= height rl then
+            create (create l v rl) rv rr
+          else begin
+            match rl with
+              Empty -> assert false 
+              |Node {l = rll; v = rlv; r = rlr} ->
+                create (create l v rll) rlv (create rlr rv rr)
+          end
+    end else
+      Node {l;v;r; h=(if hl >= hr then hl +1 else hr + 1)}*)
 
   let rec mem x tree =
     match tree with
@@ -183,9 +223,11 @@ module BinTree (Ord: OrderedType) = struct
 
   let rec remove x = function
     | Empty -> Empty
-    | Node (l,a,r) -> let z = Ord.compare x a in
+    | Node (l,a,r) as t -> let z = Ord.compare x a in
         if z = 0 then merge l r else
-        if z < 0 then create (remove x l) a r else create l a (remove x r)
+        if z < 0 then let ll = remove x l in 
+                      if l == ll then t else create ll a r else let rr = remove x r in
+                      if r == rr then t else create l a rr
         (*@ r = remove x t
           requires binsearchtree t
           variant t
