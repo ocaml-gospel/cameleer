@@ -1,5 +1,0 @@
-# dune ocaml-merlin --no-print-directory
-# OCAMLPARAM: unset
-# Workspace root: "/Users/neco/Desktop/Et Al/ProjetoCameleer/cameleer"
-$ /usr/local/bin/nproc > /var/folders/fg/mjgyl4pn2kj4z8kpnnjn0tnh0000gn/T/dune0329e9.output 2> /dev/null
-# Auto-detected concurrency: 4

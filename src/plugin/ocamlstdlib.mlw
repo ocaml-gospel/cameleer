@@ -13,7 +13,7 @@ module OCamlStdLib
   use export ref.Refint
 
 
-  exception Invalid_argument string
+  (* exception Invalid_argument string *)
   let invalid_arg (s: string)
     raises { Invalid_argument }
     returns { _ -> false }
