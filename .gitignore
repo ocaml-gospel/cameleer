@@ -4,3 +4,4 @@
 
 _build/
 dune-project
+_build/log
