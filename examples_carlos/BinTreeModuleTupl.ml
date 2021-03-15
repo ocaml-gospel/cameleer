@@ -156,7 +156,7 @@ module BinTree (Ord: OrderedType) = struct
       match l with
         Empty -> assert false
         |Node (ll, lv, lr, _) ->
-          if height ll <= height lr then
+          if height ll >= height lr then
             create ll lv (create lr v r)
           else begin
             match lr with
@@ -168,7 +168,7 @@ module BinTree (Ord: OrderedType) = struct
       match r with
         Empty -> assert false
         |Node (rl, rv, rr, _) ->
-          if height rr <= height rl then
+          if height rr >= height rl then
             create (create l v rl) rv rr
           else begin
             match rl with
@@ -182,7 +182,7 @@ module BinTree (Ord: OrderedType) = struct
       requires bst l && bst r
       requires abs ((height l) - (height r)) <= 3
       requires forall y: elt. mem2 y l -> Ord.compare y v < 0
-      requires forall x: elt. mem2 x r -> Ord.compare x v > 0
+      requires forall x: elt. mem2 x r -> Ord.compare v x < 0
       ensures bst res
       ensures forall w: elt. w <> v -> occ w res = occ w l + occ w r 
       ensures occ v res = 1*)
