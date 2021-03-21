@@ -17,6 +17,14 @@ module OCamlStdLib
     raises { Invalid_argument }
   = raise (Invalid_argument s)
 
+  predicate same_location 'a 'a
+
+  axiom same_location_eq: forall x y: 'a.
+    same_location x y -> x = y
+
+  val (==) (x y: 'a) : bool
+    ensures { result <-> same_location x y }
+
   val ignore (_: 'a) : unit
 
   let function fst (x: ('a, 'b)) : 'a =
@@ -87,6 +95,13 @@ module OCamlStdLib
 
     let function rev_append (s t: list 'a) : list 'a =
       RA.rev_append s t
+
+    val mem (x: 'a) (l: list 'a) : bool
+      ensures { result <-> mem x l }
+
+    val filter (p: 'a -> bool) (l: list 'a) : list 'a
+      ensures { forall x. mem x result -> mem x l /\ p x }
+      ensures { forall x. not (p x) -> not (mem x result) }
 
   end
 
