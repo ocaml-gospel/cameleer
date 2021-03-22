@@ -3,7 +3,7 @@ all:
 
 install:
 	dune build @install && dune install
-	why3 config --install-plugin=$(OPAM_SWITCH_PREFIX)/lib/why3/plugins/plugin_cameleer.cmxs
+	# why3 config --install-plugin=$(OPAM_SWITCH_PREFIX)/lib/why3/plugins/plugin_cameleer.cmxs
 
 clean:
 	dune clean

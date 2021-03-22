@@ -75,6 +75,7 @@ module OCamlStdLib
     use export list.List
     use export list.Length
     use export list.Mem
+    use export list.NumOcc
     use import list.Append    as A
     use import list.Reverse   as R
     use import list.RevAppend as RA
@@ -87,6 +88,21 @@ module OCamlStdLib
 
     let function rev_append (s t: list 'a) : list 'a =
       RA.rev_append s t
+
+    val mem (x: 'a) (l: list 'a) : bool
+      ensures { result <-> mem x l }
+
+    val filter (p: 'a -> bool) (l: list 'a) : list 'a
+      ensures { forall x. mem x result <-> p x && mem x l }
+      ensures { forall x. mem x result -> num_occ x result = num_occ x l }
+
+    let find_all (p: 'a -> bool) (l: list 'a)
+      ensures { forall x. mem x result -> p x && mem x l }
+      ensures { forall x. mem x result -> num_occ x result = num_occ x l }
+    = filter p l
+
+    val list_exists (p: 'a -> bool) (l: list 'a) : bool
+      ensures { result <-> exists x. mem x l /\ p x }
 
   end
 
