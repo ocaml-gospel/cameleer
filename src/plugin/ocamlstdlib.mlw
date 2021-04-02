@@ -27,28 +27,7 @@ module OCamlStdLib
 
   type result 'a 'b = Ok 'a | Error 'b
 
-  use import array.Array as A
-
-  type array 'a = A.array 'a
-
   function (%) (x y: int) : int = mod x y
-
-  scope import Array
-
-    use export array.Init
-
-    function get (a: array 'a) (i: int) : 'a = a[i]
-
-    val get (a: array 'a) (i: int) : 'a
-      requires { [@expl:index in array bounds] 0 <= i < length a }
-      ensures  { result = get a i }
-
-    val set (a: array 'a) (i: int) (v: 'a) : unit
-      writes   { a }
-      requires { 0 <= i < length a }
-      ensures  { a.elts = Map.set (old a).elts i v }
-      ensures  { a = (old a)[i <- v] }
-  end
 
   predicate is_pre_order (cmp: 'a -> 'a -> int) =
     (forall x. cmp x x = 0) /\
@@ -62,6 +41,81 @@ module OCamlStdLib
 
   lemma cmp_eq: forall x y: 'a, cmp: 'a -> 'a -> int.
     is_pre_order cmp -> (cmp x y = 0 <-> x = y)
+
+  val function compare (x y: 'a) : int
+  axiom compare_pre_order : is_pre_order (fun (x: 'a) (y: 'a) -> compare x y)
+
+  use import seq.Seq as Seq
+
+  scope import Array
+
+    type my_array 'a = private {
+      mutable ghost elts : seq 'a;
+                  length : int;
+    } invariant { 0 <= length = Seq.length elts }
+
+    function get (a: my_array 'a) (i: int) : 'a = a.elts[i]
+
+    val get (a: my_array 'a) (i: int) : 'a
+      requires { [@expl:index in array bounds] 0 <= i < length a }
+      ensures  { result = get a i }
+
+    val set (a: my_array 'a) (i: int) (v: 'a) : unit
+      writes   { a }
+      requires { 0 <= i < length a }
+      ensures  { a.elts = (old a.elts)[i <- v] }
+
+    meta coercion function elts
+
+    val ([]) (a: my_array 'a) (i: int) : 'a
+      requires { [@expl:index in array bounds] 0 <= i < a.length }
+      ensures  { result = a[i] }
+
+    val ([]<-) (a: my_array 'a) (i: int) (v: 'a) : unit writes {a}
+      requires { [@expl:index in array bounds] 0 <= i < a.length }
+      ensures  { a.elts = (old a.elts)[i <- v] }
+
+    val make (n: int) (v: 'a) : my_array 'a
+      requires { [@expl:array creation size] n >= 0 }
+      ensures  { forall i. 0 <= i < n -> result[i] = v }
+      ensures  { result.length = n }
+
+    let init (n: int) (f: int -> 'a) : my_array 'a
+      requires { [@expl:array creation size] n >= 0 }
+      ensures  { forall i. 0 <= i < n -> result[i] = f i }
+      ensures  { length result = n }
+    = let a = make n (f 0) in
+      for i = 1 to n - 1 do
+        invariant { forall j. 0 <= j < i -> a[j] = f j }
+        a[i] <- f i
+      done;
+      a
+
+    val sort (cmp: 'a -> 'a -> int) (a: my_array 'a) : unit
+      requires { is_pre_order cmp }
+      ensures  { forall i j. 0 <= i <= j < length a -> cmp a[i] a[j] <= 0 }
+
+    let rec function to_list_range (a: my_array 'a) (l u: int) : list 'a
+      requires { l >= 0 /\ u <= a.length }
+      variant  { u - l }
+    = if u <= l then Nil else Cons a[l] (to_list_range a (l+1) u)
+
+    use list.Append
+
+    let rec lemma to_list_append (a: my_array 'a) (l m u: int)
+      requires { 0 <= l <= m <= u <= a.length }
+      variant  { m - l }
+      ensures  { to_list_range a l m ++ to_list_range a m u =
+                 to_list_range a l u }
+    = if l < m then to_list_append a (l+1) m u
+
+    let to_list (a: my_array 'a) : list 'a
+      ensures { result = to_list_range a 0 (length a) }
+    = to_list_range a 0 (length a)
+
+  end
+
+  type array 'a = my_array 'a
 
   scope Sys
 
@@ -110,17 +164,36 @@ end
 
 module Array
   use int.Int
-  use export array.Init
+  use seq.Seq
 
-  function get (a: array 'a) (i: int) : 'a = a[i]
+  type array 'a = private {
+    mutable ghost elts : seq 'a;
+                length : int;
+  } invariant { 0 <= length = Seq.length elts }
+
+  meta coercion function elts
+
+  (* function get (a: array 'a) (i: int) : 'a = a[i] *)
 
   val get (a: array 'a) (i: int) : 'a
     requires { [@expl:index in array bounds] 0 <= i < length a }
-    ensures  { result = get a i }
+    ensures  { result = a[i] }
 
   val set (a: array 'a) (i: int) (v: 'a) : unit
     writes   { a }
     requires { 0 <= i < length a }
-    ensures  { a.elts = Map.set (old a).elts i v }
-    ensures  { a = (old a)[i <- v] }
+    ensures  { a.elts = (old a.elts)[i <- v] }
+
+end
+
+module Seq
+
+  use export seq.Seq
+
+end
+
+module SeqPermut
+
+  use export seq.Permut
+
 end

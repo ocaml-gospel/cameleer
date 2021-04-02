@@ -1,6 +1,7 @@
+open Ppxlib
 open Gospel
-open Oasttypes
-open Oparsetree
+open Asttypes
+open Parsetree
 open Why3
 open Ptree
 open Vspec
@@ -32,10 +33,10 @@ let param (loc, pre_id, ty) =
 (** Visibility of type declarations. An alias type cannot be private, so we
     check whether or not the GOSPEL type manifest is [None]. *)
 let td_private manifest private_ tkind = match manifest, private_, tkind with
-  | Some _ , _, _           -> Ptree.Public
-  | _, _, Ptype_abstract    -> Ptree.Abstract (* ???? Ptree.Private *)
-  | _, Oasttypes.Private, _ -> Ptree.Private
-  | _, Oasttypes.Public, _  -> Ptree.Public
+  | Some _ , _, _          -> Ptree.Public
+  | _, _, Ptype_abstract   -> Ptree.Abstract (* ???? Ptree.Private *)
+  | _, Asttypes.Private, _ -> Ptree.Private
+  | _, Asttypes.Public, _  -> Ptree.Public
 
 let param_of_cty cty =
   let loc = T.location cty.ptyp_loc in
@@ -54,7 +55,7 @@ let constructor_declaration info {pcd_loc; pcd_name; pcd_args; _} =
 
 (** Convert a [Uast] type definition into a Why3's Ptree [type_def]. We
     follow the manifest-kind logic defined in the OCaml [Parsetree]. *)
-let td_def info td_spec td_manifest td_kind =
+let td_def info spec_fields td_manifest td_kind =
   let is_ghost attributes =
     List.exists (fun {attr_name; _} -> attr_name.txt = "ghost") attributes in
   let field Uast.{f_preid; f_pty; f_mutable; _} =
@@ -74,27 +75,31 @@ let td_def info td_spec td_manifest td_kind =
   let add_reg_field lbl acc = field_of_label_decl lbl :: acc in
   match td_manifest, td_kind with
   | None, Ptype_abstract ->
-      TDrecord (List.map field td_spec.Uast.ty_field)
+      TDrecord (List.map field spec_fields)
   | Some cty, Ptype_abstract ->
       TDalias (E.core_type cty)
   | None, Ptype_variant constr_decl_list ->
       TDalgebraic (List.map (constructor_declaration info) constr_decl_list)
   | None, Ptype_record lbl_list ->
-      let model_fields = List.map field td_spec.Uast.ty_field in
+      let model_fields = List.map field spec_fields in
       let all_fields = List.fold_right add_reg_field lbl_list model_fields in
       TDrecord all_fields
   | _ -> assert false (* TODO *)
 
-let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) = {
-  td_loc    = T.location td.tloc;
-  td_ident  = T.(mk_id tname.txt ~id_loc:(location tname.loc));
-  td_params = List.map td_params td.tparams;
-  td_vis    = td_private tmanifest td.tprivate tkind;
-  td_mut    = tspec.ty_ephemeral;
-  td_inv    = List.map (Uterm.term false) tspec.ty_invariant;
-  td_wit    = [];
-  td_def    = td_def info tspec tmanifest tkind
-}
+let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) =
+  let ephemeral, invariant, spec_fields = match tspec with
+    | None -> false, [], []
+    | Some s -> s.ty_ephemeral, s.ty_invariant, s.ty_field in
+  {
+    td_loc    = T.location td.tloc;
+    td_ident  = T.(mk_id tname.txt ~id_loc:(location tname.loc));
+    td_params = List.map td_params td.tparams;
+    td_vis    = td_private tmanifest td.tprivate tkind;
+    td_mut    = ephemeral;
+    td_inv    = List.map (Uterm.term false) invariant;
+    td_wit    = [];
+    td_def    = td_def info spec_fields tmanifest tkind
+  }
 
 let mk_type_decl info loc type_decl_list =
   let td_list = List.map (type_decl info) type_decl_list in
@@ -127,14 +132,15 @@ let val_decl loc vd g =
     let id_loc = id.id_loc in
     let pty = E.core_type ct in
     let id, ghost, pty = match lb_arg with
+      | Lunit          -> id, false, pty
       | Lnone _        -> id, false, pty
       | Lghost (_, ty) -> id, true,  T.pty ty
       | Lnamed _       -> add_at_id Ocaml.Print.named_arg id, false, pty
-      | Lquestion _    -> let id = add_at_id Ocaml.Print.optional_arg id in
+      | Loptional _    -> let id = add_at_id Ocaml.Print.optional_arg id in
           id, false, PTtyapp (Qident (T.mk_id "option" ~id_loc), [pty]) in
     id_loc, Some id, ghost, pty in
   let mk_ghost_param = function
-    | Uast.Lnone _ | Lnamed _ | Lquestion _ -> assert false
+    | Uast.Lnone _ | Lnamed _ | Loptional _ | Lunit -> assert false
     | Uast.Lghost (id, ty) ->
         let id = T.preid id in
         let id_loc = id.id_loc in
@@ -177,7 +183,7 @@ let val_decl loc vd g =
           let mk_pat lb = let pat_loc = loc_of_lb_arg lb in
             Uterm.mk_pattern (Pvar (ident_of_lb_arg lb)) ~pat_loc in
           let mk_mask = function
-            | Uast.Lnone  _ | Lquestion _ | Lnamed _ -> Ity.MaskVisible
+            | Uast.Lnone  _ | Loptional _ | Lnamed _ | Lunit -> Ity.MaskVisible
             | Uast.Lghost _ -> Ity.MaskGhost in
           let lb_list = s.Uast.sp_hd_ret in
           let pat_list  = List.map mk_pat lb_list in
@@ -200,13 +206,19 @@ let function_ f =
   let ld_type = Opt.map T.pty f.fun_type in
   let ld_def = Opt.map (T.term false) f.fun_def in
   let fun_spec = f.fun_spec in
-  let coercion = if fun_spec.fun_coer then Some (Qident ld_ident) else None in
+  let coercion = match fun_spec with
+    | None -> None
+    | Some f -> if f.fun_coer then Some (Qident ld_ident) else None in
   { ld_loc; ld_ident; ld_params; ld_type; ld_def }, coercion
 
 let prop p =
   let kind = match p.Uast.prop_kind with
     Uast.Plemma -> Decl.Plemma | _ -> Decl.Paxiom in
   T.preid p.Uast.prop_name, T.term false p.prop_term, kind
+
+let mk_axiom loc a =
+  let prop_name, prop_term = T.preid a.Uast.ax_name, T.term false a.ax_term in
+  O.mk_dprop loc Decl.Paxiom prop_name prop_term
 
 let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
@@ -238,32 +250,33 @@ open Mod_subst
  *   sloq [] q *)
 
 let subst info ctr_list =
+  ignore (info); (* TODO *)
   let mk_subst subst = function
-    | Uast.Wtype (id, s_type_decl) ->
-        let td = type_decl info s_type_decl in
-        let id_txt = E.string_of_longident id.txt in
-        add_ts_subst id_txt td subst
-    | Wtypesubst (id, s_type_decl) ->
-        let td = type_decl info s_type_decl in
-        let id_txt = E.string_of_longident id.txt in
-        add_td_subst id_txt td subst
-    | Wfunction (ql, qr) ->
-        let ql = T.qualid ql and qr = T.qualid qr in
-        add_fs_subst ql qr subst
-    | Wfunctionsubst (ql, qr) ->
-        let ql = T.qualid ql and qr = T.qualid qr in
-        add_fd_subst ql qr subst
-    | Wpredicate (ql, qr) ->
-        let ql = T.qualid ql and qr = T.qualid qr in
-        add_ps_subst ql qr subst
-    | Wpredicatesubst (ql, qr) ->
-        let ql = T.qualid ql and qr = T.qualid qr in
-        add_pd_subst ql qr subst
-    | Wgoal q ->
-        add_pr_subst (T.qualid q) Decl.Pgoal subst
-    | Waxiom q ->
-        add_pr_subst (T.qualid q) Decl.Paxiom subst
-    | _ -> assert false (* TODO *) in
+    (* | Uast.Wtype (id, s_type_decl) ->
+     *     let td = type_decl info s_type_decl in
+     *     let id_txt = E.string_of_longident id.txt in
+     *     add_ts_subst id_txt td subst
+     * | Wtypesubst (id, s_type_decl) ->
+     *     let td = type_decl info s_type_decl in
+     *     let id_txt = E.string_of_longident id.txt in
+     *     add_td_subst id_txt td subst
+     * | Wfunction (ql, qr) ->
+     *     let ql = T.qualid ql and qr = T.qualid qr in
+     *     add_fs_subst ql qr subst
+     * | Wfunctionsubst (ql, qr) ->
+     *     let ql = T.qualid ql and qr = T.qualid qr in
+     *     add_fd_subst ql qr subst
+     * | Wpredicate (ql, qr) ->
+     *     let ql = T.qualid ql and qr = T.qualid qr in
+     *     add_ps_subst ql qr subst
+     * | Wpredicatesubst (ql, qr) ->
+     *     let ql = T.qualid ql and qr = T.qualid qr in
+     *     add_pd_subst ql qr subst
+     * | Wgoal q ->
+     *     add_pr_subst (T.qualid q) Decl.Pgoal subst
+     * | Waxiom q ->
+     *     add_pr_subst (T.qualid q) Decl.Paxiom subst *)
+    | _ -> ignore (subst); assert false (* TODO *) in
   List.fold_left mk_subst empty_subst ctr_list
 
 let clone_subst subst =
@@ -298,8 +311,8 @@ let s_structure, s_signature =
     | Sig_function f ->
         let f, coerc = function_ f in
         O.mk_dlogic loc coerc [f]
-    | Sig_prop p ->
-        [mk_prop loc p]
+    | Sig_axiom p ->
+        [mk_axiom loc p]
     | Sig_typext _ -> assert false (* TODO *)
     | Sig_module _ -> assert false (* TODO *)
     | Sig_recmodule _ -> assert false (* TODO *)
@@ -307,12 +320,13 @@ let s_structure, s_signature =
     | Sig_exception {ptyexn_constructor; _} ->
         [mk_exn loc ptyexn_constructor]
     | Sig_open _ -> assert false (* TODO *)
-    | Sig_include {spincl_mod; _} -> begin match spincl_mod.mdesc with
-        | Mod_ident id -> let s = E.string_of_longident id.txt in
+    | Sig_include {pincl_mod; _} -> begin match pincl_mod.pmty_desc with
+        | Pmty_ident id -> let s = E.string_of_longident id.txt in
             Hashtbl.find mod_type_table s
-        | Mod_signature _ -> assert false (* TODO *)
-        | Mod_functor _ -> assert false (* TODO *)
-        | Mod_with ({mdesc = Mod_ident s; mloc; _}, constraint_list) ->
+        | Pmty_signature _ -> assert false (* TODO *)
+        | Pmty_functor _ -> assert false (* TODO *)
+        | Pmty_with
+            ({pmty_desc = Pmty_ident s; pmty_loc; _}, constraint_list) ->
              let subst = subst info constraint_list in
             (* let od_list = s_module_type info mod_type in *)
             (* let mk_subst acc od = clone_subst subst od :: acc in *)
@@ -320,11 +334,11 @@ let s_structure, s_signature =
             (* let od_list = List.fold_left mk_subst [] od_list in
              * List.rev (List.flatten od_list) *)
             let id = E.longident ~id_loc:(T.location s.loc) s.txt in
-            [O.mk_odecl (T.location mloc) (Dcloneexport (id, cl_subst))]
-        | Mod_with _ -> assert false (* TODO *)
-        | Mod_typeof _ -> assert false (* TODO *)
-        | Mod_extension _ -> assert false (* TODO *)
-        | Mod_alias _ -> assert false (* TODO *) end
+            [O.mk_odecl (T.location pmty_loc) (Dcloneexport (id, cl_subst))]
+        | Pmty_with _ -> assert false (* TODO *)
+        | Pmty_typeof _ -> assert false (* TODO *)
+        | Pmty_extension _ -> assert false (* TODO *)
+        | Pmty_alias _ -> assert false (* TODO *) end
     | Sig_class _ -> assert false (* TODO *)
     | Sig_class_type _ -> assert false (* TODO *)
     | Sig_attribute _ ->
@@ -397,10 +411,11 @@ let s_structure, s_signature =
     | Uast.Str_exception {ptyexn_constructor; _} ->
         let id, pty, mask = E.exception_constructor ptyexn_constructor in
         [O.mk_dexn loc id pty mask]
-    | Uast.Str_open {popen_lid; popen_loc; _}
-    | Uast.Str_ghost_open {popen_lid; popen_loc; _} ->
+    | Uast.Str_open {popen_expr = {pmod_desc = Pmod_ident lid; _}; popen_loc; _}
+    | Uast.Str_ghost_open
+        {popen_expr = {pmod_desc = Pmod_ident lid; _}; popen_loc; _} ->
         let loc = T.location popen_loc in
-        let fname, mname = mk_import_name_list popen_lid in
+        let fname, mname = mk_import_name_list lid in
         [O.mk_duseimport loc [Qdot (fname, mname), Some mname]]
     | Uast.Str_ghost_val _ ->
         assert false (* TODO *)
@@ -410,7 +425,7 @@ let s_structure, s_signature =
 
   and s_module_binding info {spmb_name = {txt; loc}; spmb_expr; spmb_loc; _} =
     let open Odecl in
-    let mod_bind_name = txt in
+    let mod_bind_name = match txt with None -> assert false | Some t -> t in
     let mod_type_name = function (* FIXME: make it more robust *)
       | Uast.Mod_ident s | Mod_with ({mdesc = Mod_ident s; _}, _) -> Some s.txt
       | _ -> None in
@@ -423,9 +438,11 @@ let s_structure, s_signature =
           Loc.errorm "Module aliasing is not supported."
       | Uast.Smod_structure str ->
           s_structure info str
-      | Uast.Smod_functor (arg_name, arg, body) ->
-          let id_loc = T.location arg_name.loc in
-          let id = T.mk_id ~id_loc arg_name.txt in
+      | Uast.Smod_functor ({txt = None; _}, _, _) ->
+          assert false (* TODO *)
+      | Uast.Smod_functor ({txt = Some arg_name; loc}, arg, body) ->
+          let id_loc = T.location loc in
+          let id = T.mk_id ~id_loc arg_name in
           let body = s_module_expr body in
           let arg, subst_arg = s_module_type info (Opt.get arg) in
           ignore (subst_arg); (* TODO *)
@@ -441,7 +458,7 @@ let s_structure, s_signature =
       | Smod_unpack _ -> assert false (* TODO *)
       | Smod_extension _ -> assert false (* TODO *) in
     let scope_loc = T.location spmb_loc in
-    let scope_id  = T.(mk_id ~id_loc:(location loc) txt) in
+    let scope_id  = T.(mk_id ~id_loc:(location loc) mod_bind_name) in
     [O.mk_omodule scope_loc scope_id (s_module_expr spmb_expr)]
 
   and s_module_type info {mdesc; _} =
@@ -452,11 +469,15 @@ let s_structure, s_signature =
           assert false end
     | Mod_signature s_sig ->
         s_signature info s_sig, empty_subst
-    | Mod_functor (arg_name, arg, body) ->
-        let id_loc = T.location arg_name.loc in
-        let id = T.mk_id arg_name.txt ~id_loc in
+    | Mod_functor (Unit, _) ->
+        assert false (* TODO *)
+    | Mod_functor (Named ({txt = None; _}, _), _) ->
+        assert false (* TODO *)
+    | Mod_functor (Named ({txt = Some arg_name; loc}, arg), body) ->
+        let id_loc = T.location loc in
+        let id = T.mk_id arg_name ~id_loc in
         let body, subst = s_module_type info body in
-        let arg, subst_arg = s_module_type info (Opt.get arg) in
+        let arg, subst_arg = s_module_type info arg in
         ignore (subst_arg);
         O.mk_functor id_loc id arg body, subst
     | Mod_with (mod_type, constraint_list) ->

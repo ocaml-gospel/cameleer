@@ -7,11 +7,16 @@ module T = Uterm
 include struct
   open struct
     let get_id_of_lb_arg = function
-      Uast.Lnone id | Lquestion id | Lnamed id | Lghost (id, _) -> id
+      | Uast.Lunit -> assert false
+      | Uast.Lnone id | Loptional id | Lnamed id | Lghost (id, _) -> id
   end
 
-  let loc_of_lb_arg   lb = T.location (get_id_of_lb_arg lb).pid_loc
-  let ident_of_lb_arg lb = T.preid (get_id_of_lb_arg lb)
+  let loc_of_lb_arg = function
+    | Uast.Lunit -> T.dummy_loc
+    | lb -> T.location (get_id_of_lb_arg lb).pid_loc
+  let ident_of_lb_arg = function
+    | Uast.Lunit -> T.mk_id "()"
+    | lb -> T.preid (get_id_of_lb_arg lb)
 end
 
 (** Converts a GOSPEL postcondition of the form [Uast.term] into a Why3's
@@ -58,7 +63,7 @@ let empty_spec = {
 let vspec spec =
   let sp_writes  = List.map (T.term false) spec.Uast.sp_writes in
   let sp_checkrw = match sp_writes with [] -> false |  _ -> true in {
-  sp_pre     = List.map (fun (t, _) -> T.term false t) spec.Uast.sp_pre;
+  sp_pre     = List.map (T.term false) spec.Uast.sp_pre;
   sp_post    = List.map (sp_post spec.Uast.sp_hd_ret) spec.Uast.sp_post;
   sp_xpost   = List.map sp_xpost spec.sp_xpost;
   sp_reads   = [];

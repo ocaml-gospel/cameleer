@@ -65,7 +65,7 @@ let transfer q1 q2 =
                   (q2.front = [] -> q2.rear = []) *)
     (*@ invariant q1.view = q1.front @ List.rev q1.rear &&
                   q2.view = q2.front @ List.rev q2.rear *)
-    (*@ invariant q2.view @ q1.view = (old q2).view @ (old q1).view *)
+    (* @ invariant q2.view @ q1.view = (old q2).view @ (old q1).view *)
     push (pop q1) q2
   done
 (*@ transfer q1 q2

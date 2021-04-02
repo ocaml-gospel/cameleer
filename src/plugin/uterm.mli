@@ -1,9 +1,10 @@
+open Ppxlib
 open Gospel
 open Why3
 
 val dummy_loc : Loc.position
 
-val location : Warnings.loc -> Loc.position
+val location : Location.t -> Loc.position
 
 val mk_id :
   ?id_ats:Ptree.attr list -> ?id_loc:Loc.position -> string -> Ptree.ident
@@ -15,9 +16,9 @@ val ident_of_lsymbol  : Tterm.lsymbol   -> Ptree.ident
 
 val mk_pattern : ?pat_loc:Loc.position -> Ptree.pat_desc -> Ptree.pattern
 
-val constant : Oasttypes.constant -> Constant.constant
+val constant : Asttypes.constant -> Constant.constant
 
-val preid : Identifier.preid -> Ptree.ident
+val preid : Identifier.Preid.t -> Ptree.ident
 
 val qualid : Uast.qualid -> Ptree.qualid
 

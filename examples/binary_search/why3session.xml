@@ -2,139 +2,139 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="5" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="binary_search.ml"/>
 <theory name="Refinement__Make" proved="true">
  <goal name="BS.is_pre_order_cmp" proved="true">
- <proof prover="2"><result status="valid" time="0.04" steps="13866"/></proof>
+ <proof prover="2"><result status="valid" time="0.04" steps="19225"/></proof>
  </goal>
  <goal name="BS.binary_search&#39;refn&#39;vc" expl="VC for binary_search&#39;refn" proved="true">
- <proof prover="2"><result status="valid" time="0.05" steps="16055"/></proof>
+ <proof prover="2"><result status="valid" time="0.05" steps="21186"/></proof>
  </goal>
 </theory>
 <theory name="Binary_search" proved="true">
  <goal name="binary_search&#39;vc" expl="VC for binary_search" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="binary_search&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11758"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="16577"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="11845"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="16664"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.2" expl="check division by zero" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11408"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="16570"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.3" expl="index in array bounds" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="13495"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="18658"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.4" expl="loop variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="13072"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="18590"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="13659"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="18813"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.6" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="13850"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="19455"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.7" expl="index in array bounds" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="13704"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="18858"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.8" expl="loop variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="13110"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="18628"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.9" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="13693"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="18847"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.10" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="14284"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="19889"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.11" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="13756"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="18910"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.12" expl="exceptional postcondition" proved="true">
-  <proof prover="0" timelimit="1"><result status="valid" time="0.01" steps="16"/></proof>
+  <proof prover="1" timelimit="1"><result status="valid" time="0.01" steps="16"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="BinarySearch.binary_search&#39;vc" expl="VC for binary_search" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="binary_search&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.00" steps="4"/></proof>
+  <proof prover="1"><result status="valid" time="0.00" steps="4"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="12"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.2" expl="check division by zero" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="10"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="10"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.3" expl="index in array bounds" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="22"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="23"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.4" expl="loop variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="16"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="16"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="16"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.6" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="131"/></proof>
+  <proof prover="1"><result status="valid" time="0.05" steps="178"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.7" expl="loop variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="18"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="18"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.8" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="18"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.9" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="121"/></proof>
+  <proof prover="1"><result status="valid" time="0.07" steps="128"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.10" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="28"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="29"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.11" expl="exceptional postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.00" steps="16"/></proof>
+  <proof prover="1"><result status="valid" time="0.00" steps="16"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="Make.binary_search&#39;vc" expl="VC for binary_search" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="binary_search&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="13537"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="18325"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="13631"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="18419"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.2" expl="check division by zero" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="13159"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="18321"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.3" expl="index in array bounds" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="15626"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="20769"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.4" expl="loop variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="15324"/></proof>
+  <proof prover="2"><result status="valid" time="0.06" steps="20842"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="15930"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="21065"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.6" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.19" steps="67801"/></proof>
+  <proof prover="2"><result status="valid" time="0.58" steps="235085"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.7" expl="loop variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="15351"/></proof>
+  <proof prover="2"><result status="valid" time="0.06" steps="20869"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.8" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="15953"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="21088"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.9" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="18150"/></proof>
+  <proof prover="2"><result status="valid" time="0.06" steps="24701"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.10" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="15918"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="21057"/></proof>
   </goal>
   <goal name="binary_search&#39;vc.11" expl="exceptional postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="15377"/></proof>
+  <proof prover="2"><result status="valid" time="0.06" steps="20616"/></proof>
   </goal>
  </transf>
  </goal>

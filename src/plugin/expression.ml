@@ -1,12 +1,12 @@
 open Why3
 open Ptree
 open Gospel
-open Oasttypes
+open Ppxlib
 open Longident
 open Why3ocaml_driver
 module T = Uterm
 module S = Vspec
-module O = Oparsetree
+module P = Parsetree
 
 let rec string_of_longident = function
   | Longident.Lident s -> s

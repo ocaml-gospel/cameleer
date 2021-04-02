@@ -33,11 +33,12 @@ let read_file file nm c =
   let ocaml_structure = parse_ocaml_structure_lb lb in
   parse_structure_gospel ocaml_structure nm
 
-let type_check name nm structs =
-  let md = Gospel.Tmodule.init_muc name in
-  let penv = Gospel.Typing.penv [] (Gospel.Utils.Sstr.singleton nm) in
-  let md = List.fold_left (Gospel.Typing.type_str_item penv) md structs in
-  Gospel.Tmodule.wrap_up_muc md
+(* TODO: type-checking structure items *)
+(* let type_check name nm structs =
+ *   let md = Gospel.Tmodule.init_muc name in
+ *   let penv = Gospel.Typing.penv [] (Gospel.Utils.Sstr.singleton nm) in
+ *   let md = List.fold_left (Gospel.Typing.type_str_item penv) md structs in
+ *   Gospel.Tmodule.wrap_up_muc md *)
 
 let rec add_decl od =
   match od with
