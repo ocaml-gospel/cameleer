@@ -1,11 +1,12 @@
+open Ppxlib
 open Why3
 open Ptree
 open Gospel
-open Oasttypes
 open Identifier
 open Why3ocaml_driver
 module D = Why3.Dterm
 module Ty = Ttypes
+module P = Parsetree
 
 let dummy_loc = Loc.dummy_position
 
@@ -28,18 +29,18 @@ let ident_of_lsymbol Tterm.{ls_name = name; _} =
   mk_id name.id_str ~id_loc:(location name.id_loc)
 
 let constant = function
-  | Pconst_integer (s, _) ->
+  | P.Pconst_integer (s, _) ->
       if s.[0] = '-' then let s = String.sub s 1 (String.length s - 1) in
         let n = Number.int_literal ILitDec ~neg:false s in
         Constant.(ConstInt (Number.neg_int n))
       else let n = Number.int_literal ILitDec ~neg:false s in
         Constant.ConstInt n
-  | Pconst_string (s, _) ->
+  | P.Pconst_string (s, _, _) ->
       Constant.ConstStr s
   | Pconst_float _ -> assert false (* TODO *)
   | _ -> assert false
 
-let preid {pid_str; pid_loc; _} =
+let preid Preid.{pid_str; pid_loc; _} =
   (* FIXME: right place for driver lookup? *)
   let pid_str = match query_syntax pid_str with Some s -> s | _ -> pid_str in
   mk_id ~id_loc:(location pid_loc) pid_str
@@ -93,7 +94,7 @@ let rec pattern Uast.{pat_desc = p_desc; pat_loc} =
   mk_pat (pat_desc p_desc)
 
 let binder (id, ty) =
-  (location id.pid_loc, Some (preid id), false, Opt.map pty ty)
+  (location id.Preid.pid_loc, Some (preid id), false, Opt.map pty ty)
 
 let rec term in_post Uast.{term_desc = t_desc; term_loc} =
   let term_loc = location term_loc in
@@ -105,7 +106,7 @@ let rec term in_post Uast.{term_desc = t_desc; term_loc} =
     | Uast.Tor_asym  -> D.DTor_asym
     | Uast.Timplies  -> D.DTimplies
     | Uast.Tiff      -> D.DTiff in
-  let attr a = ATstr (Ident.create_attribute a) in
+  let attr a = ATstr (Why3.Ident.create_attribute a) in
   let pat_term (pat, t) = pattern pat, term in_post t in
   let qualid_term (q, t) = qualid q, term in_post t in
   let term_desc = function

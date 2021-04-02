@@ -1,6 +1,7 @@
 open Ppxlib
 open Gospel
 open Why3
+module P = Parsetree
 
 val dummy_loc : Loc.position
 
@@ -16,7 +17,7 @@ val ident_of_lsymbol  : Tterm.lsymbol   -> Ptree.ident
 
 val mk_pattern : ?pat_loc:Loc.position -> Ptree.pat_desc -> Ptree.pattern
 
-val constant : Asttypes.constant -> Constant.constant
+val constant : P.constant -> Constant.constant
 
 val preid : Identifier.Preid.t -> Ptree.ident
 
