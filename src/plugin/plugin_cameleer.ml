@@ -30,6 +30,7 @@ let mk_info () =
 let read_file file nm c =
   let lb = Lexing.from_channel c in
   Location.init lb file;
+  Format.eprintf "read_file: %s@." file;
   let ocaml_structure = parse_ocaml_structure_lb lb in
   parse_structure_gospel ocaml_structure nm
 

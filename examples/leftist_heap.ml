@@ -105,8 +105,8 @@ module type S = sig
 
 end
 
-module Make (E: PRE_ORD) : S with type elt = E.t
-                             [@gospel "with predicate le = E.le"] = struct
+module Make (E: PRE_ORD) (* : S with type elt = E.t
+                          *     [@gospel "with predicate le = E.le"]  *)= struct
   type elt = E.t
 
   (*@ predicate le (x: elt) (y: elt) = E.le x y *)
@@ -136,7 +136,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         | N _ e l r -> let occ_lr = occ x l + occ x r in
             if x = e then 1 + occ_lr else occ_lr *)
 
-  let [@lemma] rec occ_nonneg (y: elt) = function
+  let[@lemma] rec occ_nonneg (y: elt) = function
     | E -> ()
     | N (_, _, l, r) -> occ_nonneg y l; occ_nonneg y r
   (*@ occ_nonneg y param
