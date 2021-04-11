@@ -6,6 +6,7 @@
 <prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="3" name="Alt-Ergo" version="2.3.3" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="4" name="Z3" version="4.8.6" alternative="counterexamples" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml">
 <path name=".."/><path name="BinTreeModuleTupl.ml"/>
 <theory name="BinTreeModuleTupl">
@@ -1247,89 +1248,89 @@
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.1" expl="assertion" proved="true">
-  <proof prover="3"><result status="valid" time="0.02" steps="20"/></proof>
+  <proof prover="3"><result status="valid" time="0.02" steps="64"/></proof>
   </goal>
   <goal name="remove_min_elt&#39;vc.2" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.2.0" expl="variant decrease" proved="true">
-   <proof prover="3"><result status="valid" time="0.01" steps="20"/></proof>
+   <proof prover="3"><result status="valid" time="0.01" steps="18"/></proof>
    </goal>
    <goal name="remove_min_elt&#39;vc.2.1" expl="variant decrease" proved="true">
-   <proof prover="3"><result status="valid" time="0.02" steps="26"/></proof>
+   <proof prover="3"><result status="valid" time="0.02" steps="24"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.3" expl="precondition" proved="true">
-  <proof prover="3"><result status="valid" time="0.01" steps="22"/></proof>
+  <proof prover="3"><result status="valid" time="0.01" steps="20"/></proof>
   </goal>
   <goal name="remove_min_elt&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="3"><result status="valid" time="0.02" steps="24"/></proof>
+  <proof prover="3"><result status="valid" time="0.02" steps="22"/></proof>
   </goal>
   <goal name="remove_min_elt&#39;vc.5" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.5.0" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.01" steps="28"/></proof>
+   <proof prover="3"><result status="valid" time="0.01" steps="26"/></proof>
    </goal>
    <goal name="remove_min_elt&#39;vc.5.1" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.02" steps="30"/></proof>
+   <proof prover="3"><result status="valid" time="0.02" steps="28"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.6" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.6.0" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.04" steps="187"/></proof>
+   <proof prover="3"><result status="valid" time="0.04" steps="162"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.7" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.7.0" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="1.55" steps="2425"/></proof>
+   <proof prover="3"><result status="valid" time="1.85" steps="2638"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.8" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.8.0" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.03" steps="127"/></proof>
+   <proof prover="3"><result status="valid" time="0.03" steps="117"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.9" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.9.0" expl="precondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.06" steps="224"/></proof>
+   <proof prover="3"><result status="valid" time="0.06" steps="203"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.10" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.10.0" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.02" steps="20"/></proof>
+   <proof prover="3"><result status="valid" time="0.02" steps="22"/></proof>
    </goal>
    <goal name="remove_min_elt&#39;vc.10.1" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.01" steps="36"/></proof>
+   <proof prover="3"><result status="valid" time="0.01" steps="34"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.11" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.11.0" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.64" steps="973"/></proof>
+   <proof prover="3"><result status="valid" time="0.23" steps="506"/></proof>
    </goal>
    <goal name="remove_min_elt&#39;vc.11.1" expl="postcondition" proved="true">
-   <proof prover="1" timelimit="5"><result status="valid" time="1.07" steps="1606049"/></proof>
+   <proof prover="1" timelimit="5"><result status="valid" time="1.30" steps="2052309"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min_elt&#39;vc.12" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min_elt&#39;vc.12.0" expl="postcondition" proved="true">
-   <proof prover="3"><result status="valid" time="0.48" steps="719"/></proof>
+   <proof prover="3"><result status="valid" time="0.17" steps="407"/></proof>
    </goal>
    <goal name="remove_min_elt&#39;vc.12.1" expl="postcondition" proved="true">
-   <proof prover="1" timelimit="5"><result status="valid" time="0.50" steps="1055584"/></proof>
+   <proof prover="1" timelimit="5"><result status="valid" time="0.28" steps="643328"/></proof>
    </goal>
   </transf>
   </goal>
@@ -1338,23 +1339,20 @@
    <goal name="remove_min_elt&#39;vc.13.0" expl="postcondition">
    <transf name="assert" arg1="(height r - height param &gt;= -1)">
     <goal name="remove_min_elt&#39;vc.13.0.0" expl="asserted formula">
-    </goal>
-    <goal name="remove_min_elt&#39;vc.13.0.1" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.01" steps="22"/></proof>
-    </goal>
-   </transf>
-   <transf name="assert" arg1="(height param - height r &lt;= 1)">
-    <goal name="remove_min_elt&#39;vc.13.0.0" expl="asserted formula">
+    <proof prover="3" obsolete="true"><result status="timeout" time="5.00"/></proof>
     <transf name="split_vc" >
      <goal name="remove_min_elt&#39;vc.13.0.0.0" expl="asserted formula" proved="true">
-     <proof prover="3"><result status="valid" time="0.02" steps="70"/></proof>
+     <proof prover="3"><result status="valid" time="0.01" steps="24"/></proof>
      </goal>
      <goal name="remove_min_elt&#39;vc.13.0.0.1" expl="asserted formula">
+     <proof prover="2" timelimit="5" obsolete="true"><result status="timeout" time="5.00" steps="273456"/></proof>
+     <proof prover="3" obsolete="true"><result status="timeout" time="5.00"/></proof>
+     <proof prover="4" obsolete="true"><result status="timeout" time="5.00" steps="12149799"/></proof>
      </goal>
     </transf>
     </goal>
     <goal name="remove_min_elt&#39;vc.13.0.1" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.02" steps="22"/></proof>
+    <proof prover="3"><result status="valid" time="0.01" steps="22"/></proof>
     </goal>
    </transf>
    </goal>
@@ -1363,10 +1361,10 @@
     <goal name="remove_min_elt&#39;vc.13.1.0" expl="asserted formula" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="remove_min_elt&#39;vc.13.1.0.0" expl="asserted formula" proved="true">
-     <proof prover="3"><result status="valid" time="0.03" steps="70"/></proof>
+     <proof prover="3"><result status="valid" time="0.03" steps="24"/></proof>
      </goal>
      <goal name="remove_min_elt&#39;vc.13.1.0.1" expl="asserted formula" proved="true">
-     <proof prover="3"><result status="valid" time="0.03" steps="139"/></proof>
+     <proof prover="3"><result status="valid" time="0.03" steps="223"/></proof>
      </goal>
     </transf>
     </goal>
@@ -1834,8 +1832,6 @@
     <goal name="add&#39;vc.17.1.2" expl="postcondition">
     <transf name="split_vc" >
      <goal name="add&#39;vc.17.1.2.0" expl="postcondition" proved="true">
-     <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1858126"/></proof>
-     <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="75295"/></proof>
      <proof prover="3"><result status="valid" time="0.02" steps="32"/></proof>
      </goal>
      <goal name="add&#39;vc.17.1.2.1" expl="postcondition">
@@ -1845,8 +1841,6 @@
     <goal name="add&#39;vc.17.1.3" expl="postcondition">
     <transf name="split_vc" >
      <goal name="add&#39;vc.17.1.3.0" expl="postcondition" proved="true">
-     <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="1965815"/></proof>
-     <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="132895"/></proof>
      <proof prover="3"><result status="valid" time="0.02" steps="32"/></proof>
      </goal>
      <goal name="add&#39;vc.17.1.3.1" expl="postcondition">
