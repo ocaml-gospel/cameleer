@@ -30,7 +30,6 @@ let mk_info () =
 let read_file file nm c =
   let lb = Lexing.from_channel c in
   Location.init lb file;
-  Format.eprintf "read_file: %s@." file;
   let ocaml_structure = parse_ocaml_structure_lb lb in
   parse_structure_gospel ocaml_structure nm
 
@@ -50,9 +49,18 @@ let rec add_decl od =
       List.iter add_decl dl;
       Why3.Typing.close_scope ~import:true loc
 
+open Format
+
+let rec pp_qualid fmt = function
+  | Qident id -> fprintf fmt "%s" id.id_str
+  | Qdot (q, id) -> fprintf fmt "%a.%s" pp_qualid q id.id_str
+
 open Mod_subst
 
 let mk_refine_modules info top_mod_name =
+  let rec merge_qualid q = function
+    | Qident id -> Qdot (q, id)
+    | Qdot (q', id) -> Qdot (merge_qualid q q', id) in
   let open_module_id id = open_module id in
   let use_top_mod id =
     let ouse = Odecl.mk_duseimport Loc.dummy_position [id, None] in
@@ -69,8 +77,8 @@ let mk_refine_modules info top_mod_name =
     let mk_cstsym id td_params = let id_refee, id_refer = mk_id_ref id in
       let pty_params = List.map (fun x -> PTtyvar x) td_params in
       CStsym (id_refee, td_params, PTtyapp (id_refer, pty_params)) in
-    let mk_cspsym id = let id_refee, id_refer = mk_id_ref id in
-      CSpsym (id_refee, id_refer) in
+    (* let mk_cspsym id = let id_refee, id_refer = mk_id_ref id in
+     *   CSpsym (id_refee, id_refer) in *)
     match odecl with
     | Odecl (_, Dlet (id, _, _, _)) ->
         let id = { id with id_loc = Loc.dummy_position } in (* FIXME *)
@@ -82,11 +90,18 @@ let mk_refine_modules info top_mod_name =
     | Odecl (_, Dtype [{td_ident; td_params; _}]) ->
         mk_cstsym td_ident td_params :: acc
     | Odecl (_, Dlogic [{ld_ident; ld_type = None; _}]) ->
-        mk_cspsym ld_ident :: acc
+        let ld_id = { ld_ident with id_loc = Loc.dummy_position } in
+        let id_refinee = mk_id_refinee ld_id in
+        let id_refiner = try let id = Mstr.find ld_id.id_str subst.subst_ps in
+          merge_qualid mod_refiner id
+        with Not_found -> mk_id_refiner ld_id in
+        CSpsym (id_refinee, id_refiner) :: acc
     | Odecl (_, Dlogic [{ld_ident; ld_type = Some _; _}]) ->
-        let id = { ld_ident with id_loc = Loc.dummy_position } in
-        let id_refinee = mk_id_refinee id in
-        let id_refiner = mk_id_refiner id in
+        let ld_id = { ld_ident with id_loc = Loc.dummy_position } in
+        let id_refinee = mk_id_refinee ld_id in
+        let id_refiner = try let id = Mstr.find ld_id.id_str subst.subst_fs in
+          merge_qualid mod_refiner id
+        with Not_found -> mk_id_refiner ld_id in
         CSfsym (id_refinee, id_refiner) :: acc
     | Odecl (_, Dexn (id, _, _)) ->
         let id = { id with id_loc = Loc.dummy_position } in

@@ -2,6 +2,9 @@ open Format
 
 let fname = ref None
 let debug = ref false
+let batch = ref false
+
+let prover = ref None
 
 let path = Queue.create ()
 
@@ -11,6 +14,10 @@ let spec = [ "-L", Arg.String (fun s -> Queue.add s path),
              "add <dir> to the search path";
              "--debug", Arg.Unit (fun () -> debug := true),
              "print debug information";
+             "--batch", Arg.Unit (fun () -> batch := true),
+             "activate batch mode";
+             "--prover", Arg.String (fun s -> prover := Some s),
+             "set prover for batch mode";
              "--version",
              Arg.Unit (fun () -> printf "Cameleer %s@." version; exit 0),
              " print version information" ]
@@ -32,5 +39,18 @@ let debug = if !debug then "--debug=print_modules" else ""
 
 let path = Queue.fold (fun acc s -> sprintf "-L %s %s" s acc) "" path
 
+let execute_ide fname path debug =
+  Sys.command (sprintf "why3 ide %s %s %s" fname path debug)
+
+let execute_batch fname path debug prover =
+  Sys.command (sprintf "why3 prove %s %s %s -P %s -a split_vc"
+                 fname path debug prover)
+
+let batch = !batch
+
 let _ =
-  exit (Sys.command (sprintf "why3 ide %s %s %s" fname path debug))
+  if batch then
+    let p = match !prover with None -> usage () | Some s -> s in
+    exit (execute_batch fname path debug p)
+  else
+    exit (execute_ide fname path debug)

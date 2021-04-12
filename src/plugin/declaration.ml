@@ -250,20 +250,23 @@ open Mod_subst
  *   sloq [] q *)
 
 let subst info ctr_list =
-  ignore (info); (* TODO *)
   let mk_subst subst = function
-    (* | Uast.Wtype (id, s_type_decl) ->
-     *     let td = type_decl info s_type_decl in
-     *     let id_txt = E.string_of_longident id.txt in
-     *     add_ts_subst id_txt td subst
-     * | Wtypesubst (id, s_type_decl) ->
-     *     let td = type_decl info s_type_decl in
-     *     let id_txt = E.string_of_longident id.txt in
-     *     add_td_subst id_txt td subst
-     * | Wfunction (ql, qr) ->
-     *     let ql = T.qualid ql and qr = T.qualid qr in
-     *     add_fs_subst ql qr subst
-     * | Wfunctionsubst (ql, qr) ->
+    | Uast.Wtype (id, s_type_decl) ->
+        let td = type_decl info s_type_decl in
+        let id_txt = E.string_of_longident id.txt in
+        add_ts_subst id_txt td subst
+    | Wtypesubst (id, s_type_decl) ->
+        let td = type_decl info s_type_decl in
+        let id_txt = E.string_of_longident id.txt in
+        add_td_subst id_txt td subst
+    | Wpredicate (id, qr) ->
+        let ql = T.preid id and qr = T.qualid qr in
+        add_ps_subst ql.id_str qr subst
+    | Wfunction (id, qr) ->
+        (* FIXME: don't really need that conversion to preid *)
+        let ql = T.preid id and qr = T.qualid qr in
+        add_fs_subst ql.id_str qr subst
+    (* | Wfunctionsubst (ql, qr) ->
      *     let ql = T.qualid ql and qr = T.qualid qr in
      *     add_fd_subst ql qr subst
      * | Wpredicate (ql, qr) ->
@@ -275,22 +278,23 @@ let subst info ctr_list =
      * | Wgoal q ->
      *     add_pr_subst (T.qualid q) Decl.Pgoal subst
      * | Waxiom q ->
-     *     add_pr_subst (T.qualid q) Decl.Paxiom subst *)
-    | _ -> ignore (subst); assert false (* TODO *) in
+     *     add_pr_subst (T.qualid q) Decl.Paxiom subst in *)
+    | _ -> assert false (* TODO *) in
   List.fold_left mk_subst empty_subst ctr_list
 
-let clone_subst subst =
-  let mk_csfsym (q1, q2) = CSfsym (q1, q2) in
-  let csfsym = List.map mk_csfsym (Mqual.bindings subst.subst_fs) in
-  (* | Odecl (loc, d) -> begin match subst_decl subst d with
-   *     | []   -> []
-   *     | [od] -> [Odecl (loc, od)]
-   *     | _    -> assert false end
-   * | Omodule (loc, id, od_list) ->
-   *     let mk_subst acc od = apply_subst subst od :: acc in
-   *     let od_subst = List.fold_left mk_subst [] od_list in
-   *     [Omodule (loc, id, List.rev (List.flatten od_subst))] *)
-  csfsym
+(* TODO: *)
+(* let clone_subst subst =
+ *   let mk_csfsym (q1, q2) = CSfsym (q1, q2) in
+ *   let csfsym = List.map mk_csfsym (Mqual.bindings subst.subst_fs) in
+ *   (\* | Odecl (loc, d) -> begin match subst_decl subst d with
+ *    *     | []   -> []
+ *    *     | [od] -> [Odecl (loc, od)]
+ *    *     | _    -> assert false end
+ *    * | Omodule (loc, id, od_list) ->
+ *    *     let mk_subst acc od = apply_subst subst od :: acc in
+ *    *     let od_subst = List.fold_left mk_subst [] od_list in
+ *    *     [Omodule (loc, id, List.rev (List.flatten od_subst))] *\)
+ *   csfsym *)
 
 let s_structure, s_signature =
   let mod_type_table : (string, O.odecl list) Hashtbl.t = Hashtbl.create 16 in
@@ -325,16 +329,17 @@ let s_structure, s_signature =
             Hashtbl.find mod_type_table s
         | Pmty_signature _ -> assert false (* TODO *)
         | Pmty_functor _ -> assert false (* TODO *)
-        | Pmty_with
-            ({pmty_desc = Pmty_ident s; pmty_loc; _}, constraint_list) ->
-             let subst = subst info constraint_list in
-            (* let od_list = s_module_type info mod_type in *)
-            (* let mk_subst acc od = clone_subst subst od :: acc in *)
-             let cl_subst = clone_subst subst in
-            (* let od_list = List.fold_left mk_subst [] od_list in
-             * List.rev (List.flatten od_list) *)
-            let id = E.longident ~id_loc:(T.location s.loc) s.txt in
-            [O.mk_odecl (T.location pmty_loc) (Dcloneexport (id, cl_subst))]
+        (* TODO *)
+        (* | Pmty_with
+         *     ({pmty_desc = Pmty_ident s; pmty_loc; _}, constraint_list) ->
+         *      let subst = subst info constraint_list in
+         *     (\* let od_list = s_module_type info mod_type in *\)
+         *     (\* let mk_subst acc od = clone_subst subst od :: acc in *\)
+         *      let cl_subst = clone_subst subst in
+         *     (\* let od_list = List.fold_left mk_subst [] od_list in
+         *      * List.rev (List.flatten od_list) *\)
+         *     let id = E.longident ~id_loc:(T.location s.loc) s.txt in
+         *     [O.mk_odecl (T.location pmty_loc) (Dcloneexport (id, cl_subst))] *)
         | Pmty_with _ -> assert false (* TODO *)
         | Pmty_typeof _ -> assert false (* TODO *)
         | Pmty_extension _ -> assert false (* TODO *)
@@ -451,8 +456,9 @@ let s_structure, s_signature =
       | Smod_constraint (mod_expr, mod_type) ->
           let mod_type_name = mod_type_name mod_type.Uast.mdesc in
           let mod_type_name = Opt.map E.longident mod_type_name in
+          let path = [mod_bind_name] in
           let mod_type, subst = s_module_type info mod_type in
-          let info_ref = mk_info_refinement mod_type_name mod_type subst in
+          let info_ref = mk_info_refinement mod_type_name mod_type subst path in
           add_info_refinement info mod_bind_name info_ref;
           s_module_expr mod_expr
       | Smod_unpack _ -> assert false (* TODO *)

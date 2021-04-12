@@ -14,14 +14,17 @@ let mk_odecl loc d =
 let mk_omodule loc id mod_expr =
   Omodule (loc, id, mod_expr)
 
+type path = string list
+
 type info_refinement = {
   info_ref_name : qualid option;
   info_ref_decl : odecl list;
   info_subst    : subst;
+  info_path     : path;
 }
 
-let mk_info_refinement info_ref_name info_ref_decl info_subst =
-  { info_ref_name; info_ref_decl; info_subst; }
+let mk_info_refinement info_ref_name info_ref_decl info_subst info_path =
+  { info_ref_name; info_ref_decl; info_subst; info_path }
 
 type info = { (* to be completed as needed *)
   info_arith_construct : (string, int) Hashtbl.t;

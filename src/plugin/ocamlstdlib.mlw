@@ -29,6 +29,14 @@ module OCamlStdLib
 
   function (%) (x y: int) : int = mod x y
 
+  predicate same_location 'a 'a
+
+  axiom same_location_eq: forall x y: 'a.
+    same_location x y -> x = y
+
+  val (==) (x y: 'a) : bool
+    ensures { result <-> same_location x y }
+
   predicate is_pre_order (cmp: 'a -> 'a -> int) =
     (forall x. cmp x x = 0) /\
     (forall x y. cmp x y = 0 <-> cmp y x = 0) /\
