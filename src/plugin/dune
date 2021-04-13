@@ -1,5 +1,5 @@
 (executable
-  (libraries gospel why3)
+  (libraries ppxlib gospel why3)
   (name plugin_cameleer)
   (modes plugin)
   (embed_in_plugin_libraries
