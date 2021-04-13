@@ -6,6 +6,50 @@
 <prover id="2" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="leftist_heap.ml"/>
+<theory name="Refinement__Make" proved="true">
+ <goal name="S.reflexive" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="20233"/></proof>
+ </goal>
+ <goal name="S.total" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="20278"/></proof>
+ </goal>
+ <goal name="S.transitive" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="20358"/></proof>
+ </goal>
+ <goal name="S.size&#39;refn&#39;vc" expl="VC for size&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.04" steps="19509"/></proof>
+ </goal>
+ <goal name="S.is_minimum_def" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="20466"/></proof>
+ </goal>
+ <goal name="S.min_def" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="20550"/></proof>
+ </goal>
+ <goal name="S.empty&#39;refn&#39;vc" expl="VC for empty&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="20599"/></proof>
+ </goal>
+ <goal name="S.is_empty&#39;refn&#39;vc" expl="VC for is_empty&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="20786"/></proof>
+ </goal>
+ <goal name="S.merge&#39;refn&#39;vc" expl="VC for merge&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.11" steps="22761"/></proof>
+ </goal>
+ <goal name="S.insert&#39;refn&#39;vc" expl="VC for insert&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.09" steps="21374"/></proof>
+ </goal>
+ <goal name="S.filter&#39;refn&#39;vc" expl="VC for filter&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.05" steps="19612"/></proof>
+ </goal>
+ <goal name="S.find_min&#39;refn&#39;vc" expl="VC for find_min&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.07" steps="23575"/></proof>
+ </goal>
+ <goal name="S.find_min_exn&#39;refn&#39;vc" expl="VC for find_min_exn&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.05" steps="19612"/></proof>
+ </goal>
+ <goal name="S.delete_all&#39;refn&#39;vc" expl="VC for delete_all&#39;refn" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="20909"/></proof>
+ </goal>
+</theory>
 <theory name="Leftist_heap" proved="true">
  <goal name="Make.size&#39;vc" expl="VC for size" proved="true">
  <proof prover="1"><result status="valid" time="0.05" steps="19717"/></proof>

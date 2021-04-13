@@ -24,7 +24,7 @@ module type S = sig
 
   (*@ predicate leftist (h: t) *)
 
-  val [@logic] size : t -> int
+  val[@logic] size : t -> int
   (*@ r = size t
         ensures 0 <= r *)
 
@@ -47,7 +47,7 @@ module type S = sig
 
   (*@ predicate leftist_heap (h: t) *)
 
-  val [@logic] empty : t
+  val[@logic] empty : t
   (*@ r = empty
         ensures size r = 0
         ensures forall x. occ x r = 0 *)
@@ -105,8 +105,8 @@ module type S = sig
 
 end
 
-module Make (E: PRE_ORD) (* : S with type elt = E.t
-                          *     [@gospel "with predicate le = E.le"]  *)= struct
+module Make (E: PRE_ORD) : S with type elt = E.t
+                             [@gospel "with predicate le = E.le"] = struct
   type elt = E.t
 
   (*@ predicate le (x: elt) (y: elt) = E.le x y *)

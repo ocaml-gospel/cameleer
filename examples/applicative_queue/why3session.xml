@@ -3,58 +3,58 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="applicative_queue.ml"/>
 <theory name="Applicative_queue" proved="true">
  <goal name="t&#39;vc" expl="VC for t" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="t&#39;vc.0" expl="VC for t" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="13100"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="19839"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="empty&#39;vc" expl="VC for empty" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="empty&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="14477"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="21351"/></proof>
   </goal>
   <goal name="empty&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="13005"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="19336"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="is_empty&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="15583"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="22417"/></proof>
   </goal>
   <goal name="is_empty&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="79"/></proof>
+  <proof prover="2"><result status="valid" time="0.02" steps="79"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="add&#39;vc" expl="VC for add" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="add&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="15684"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="22619"/></proof>
   </goal>
   <goal name="add&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="17978"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="25286"/></proof>
   </goal>
   <goal name="add&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="23707"/></proof>
+  <proof prover="0"><result status="valid" time="0.09" steps="31360"/></proof>
   </goal>
   <goal name="add&#39;vc.3" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="add&#39;vc.3.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.07" steps="17734"/></proof>
+   <proof prover="0"><result status="valid" time="0.07" steps="24959"/></proof>
    </goal>
    <goal name="add&#39;vc.3.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.04" steps="14544"/></proof>
+   <proof prover="0"><result status="valid" time="0.04" steps="21218"/></proof>
    </goal>
    <goal name="add&#39;vc.3.2" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.03" steps="14556"/></proof>
+   <proof prover="0"><result status="valid" time="0.03" steps="21230"/></proof>
    </goal>
   </transf>
   </goal>
@@ -63,45 +63,45 @@
  <goal name="head&#39;vc" expl="VC for head" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="head&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.15" steps="33553"/></proof>
+  <proof prover="0"><result status="valid" time="0.15" steps="43309"/></proof>
   </goal>
   <goal name="head&#39;vc.1" expl="exceptional postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="18"/></proof>
+  <proof prover="2"><result status="valid" time="0.01" steps="18"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="tail_list&#39;vc" expl="VC for tail_list" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="tail_list&#39;vc.0" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="11588"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="17387"/></proof>
   </goal>
   <goal name="tail_list&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="15317"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="21841"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="tail&#39;vc" expl="VC for tail" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="tail&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="17488"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="24345"/></proof>
   </goal>
   <goal name="tail&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.15" steps="39747"/></proof>
+  <proof prover="0"><result status="valid" time="0.15" steps="54331"/></proof>
   </goal>
   <goal name="tail&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="12991"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="18790"/></proof>
   </goal>
   <goal name="tail&#39;vc.3" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="21493"/></proof>
+  <proof prover="0"><result status="valid" time="0.09" steps="29026"/></proof>
   </goal>
   <goal name="tail&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.10" steps="24206"/></proof>
+  <proof prover="0"><result status="valid" time="0.10" steps="31940"/></proof>
   </goal>
   <goal name="tail&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="13004"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="18803"/></proof>
   </goal>
   <goal name="tail&#39;vc.6" expl="exceptional postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="18"/></proof>
+  <proof prover="2"><result status="valid" time="0.01" steps="18"/></proof>
   </goal>
  </transf>
  </goal>

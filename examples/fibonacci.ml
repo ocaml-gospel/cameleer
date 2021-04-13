@@ -1,14 +1,13 @@
 let[@logic] [@ghost] rec fib n =
   if n <= 1 then n else fib (n-1) + fib (n-2)
-[@@gospel {| r = fib n
+(*@ r = fib n
       requires n >= 0
-      variant  n|}]
+      variant  n *)
 
 let fibonacci n =
   let y = ref 0 in
   let x = ref 1 in
-  for [@gospel {| invariant !y = fib i && !x = fib (i+1) |}]
-    i = 0 to n - 1 do
+  for i = 0 to n - 1 do
     (*@ invariant !y = fib i && !x = fib (i+1) *)
     let aux = !y in
     y := !x;
