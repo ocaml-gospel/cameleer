@@ -2,13 +2,13 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="5" steplimit="0" memlimit="1000"/>
-<prover id="1" name="CVC4" version="1.7" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="uf.ml"/>
 <theory name="Uf" proved="true">
  <goal name="init&#39;vc" expl="VC for init" proved="true">
- <proof prover="0"><result status="valid" time="0.01" steps="4"/></proof>
+ <proof prover="1"><result status="valid" time="0.05" steps="20375"/></proof>
  </goal>
  <goal name="uf&#39;vc" expl="VC for uf" proved="true">
  <transf name="exists" proved="true" arg1="(init ())">
@@ -17,7 +17,15 @@
    <goal name="uf&#39;vc.0.0" proved="true">
    <transf name="exists" proved="true" arg1="(fun (x: int) -&gt; x)">
     <goal name="uf&#39;vc.0.0.0" proved="true">
-    <proof prover="0" timelimit="1"><result status="valid" time="0.30" steps="1309"/></proof>
+    <transf name="exists" proved="true" arg1="(fun (_: int) -&gt; 0)">
+     <goal name="uf&#39;vc.0.0.0.0" proved="true">
+     <transf name="exists" proved="true" arg1="0">
+      <goal name="uf&#39;vc.0.0.0.0.0" proved="true">
+      <proof prover="1"><result status="valid" time="0.14" steps="29044"/></proof>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
     </goal>
    </transf>
    </goal>
@@ -26,142 +34,132 @@
  </transf>
  </goal>
  <goal name="find&#39;vc" expl="VC for find" proved="true">
- <proof prover="0"><result status="valid" time="0.62" steps="1636"/></proof>
+ <proof prover="2"><result status="valid" time="0.39" steps="1295"/></proof>
  </goal>
  <goal name="union&#39;vc" expl="VC for union" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="union&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
+  <proof prover="1"><result status="valid" time="0.05" steps="21295"/></proof>
   </goal>
   <goal name="union&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="40"/></proof>
+  <proof prover="1"><result status="valid" time="0.07" steps="22624"/></proof>
   </goal>
   <goal name="union&#39;vc.2" expl="index in array bounds" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="64"/></proof>
+  <proof prover="1"><result status="valid" time="0.09" steps="25011"/></proof>
   </goal>
   <goal name="union&#39;vc.3" expl="index in array bounds" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="64"/></proof>
+  <proof prover="1"><result status="valid" time="0.10" steps="25013"/></proof>
   </goal>
   <goal name="union&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="64"/></proof>
+  <proof prover="1"><result status="valid" time="0.07" steps="21748"/></proof>
   </goal>
   <goal name="union&#39;vc.5" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="70"/></proof>
+  <proof prover="1"><result status="valid" time="0.09" steps="26192"/></proof>
   </goal>
   <goal name="union&#39;vc.6" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.06" steps="72"/></proof>
+  <proof prover="1"><result status="valid" time="0.15" steps="26300"/></proof>
   </goal>
   <goal name="union&#39;vc.7" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.52" steps="618"/></proof>
+  <proof prover="1"><result status="valid" time="0.51" steps="176774"/></proof>
   </goal>
   <goal name="union&#39;vc.8" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.78" steps="865"/></proof>
+  <proof prover="1"><result status="valid" time="0.15" steps="34179"/></proof>
   </goal>
   <goal name="union&#39;vc.9" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.98" steps="1011"/></proof>
+  <proof prover="1"><result status="valid" time="0.14" steps="34099"/></proof>
   </goal>
   <goal name="union&#39;vc.10" expl="type invariant" proved="true">
-  <proof prover="1"><result status="valid" time="0.52" steps="33689"/></proof>
+  <proof prover="1"><result status="valid" time="0.29" steps="41323"/></proof>
   </goal>
   <goal name="union&#39;vc.11" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="2.63" steps="1545"/></proof>
+  <proof prover="1"><result status="valid" time="0.31" steps="53686"/></proof>
   </goal>
   <goal name="union&#39;vc.12" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.69" steps="1563"/></proof>
+  <proof prover="1"><result status="valid" time="0.21" steps="44337"/></proof>
   </goal>
   <goal name="union&#39;vc.13" expl="type invariant" proved="true">
-  <proof prover="1"><result status="valid" time="0.63" steps="41636"/></proof>
+  <proof prover="1"><result status="valid" time="0.21" steps="45506"/></proof>
   </goal>
   <goal name="union&#39;vc.14" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.34" steps="25258"/></proof>
+  <proof prover="1"><result status="valid" time="0.12" steps="33655"/></proof>
   </goal>
   <goal name="union&#39;vc.15" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="64"/></proof>
+  <proof prover="1"><result status="valid" time="0.09" steps="23110"/></proof>
   </goal>
   <goal name="union&#39;vc.16" expl="index in array bounds" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="70"/></proof>
+  <proof prover="1"><result status="valid" time="0.10" steps="27075"/></proof>
   </goal>
   <goal name="union&#39;vc.17" expl="index in array bounds" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="70"/></proof>
+  <proof prover="1"><result status="valid" time="0.10" steps="27077"/></proof>
   </goal>
   <goal name="union&#39;vc.18" expl="index in array bounds" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="72"/></proof>
+  <proof prover="1"><result status="valid" time="0.10" steps="27111"/></proof>
   </goal>
   <goal name="union&#39;vc.19" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="72"/></proof>
+  <proof prover="1"><result status="valid" time="0.12" steps="27111"/></proof>
   </goal>
   <goal name="union&#39;vc.20" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="76"/></proof>
+  <proof prover="1"><result status="valid" time="0.08" steps="27253"/></proof>
   </goal>
   <goal name="union&#39;vc.21" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="78"/></proof>
+  <proof prover="1"><result status="valid" time="0.10" steps="27315"/></proof>
   </goal>
   <goal name="union&#39;vc.22" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.15" steps="875"/></proof>
+  <proof prover="1"><result status="valid" time="0.19" steps="43056"/></proof>
   </goal>
   <goal name="union&#39;vc.23" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.09" steps="1018"/></proof>
-  <proof prover="1"><result status="valid" time="0.40" steps="31598"/></proof>
+  <proof prover="1"><result status="valid" time="0.17" steps="39039"/></proof>
   </goal>
   <goal name="union&#39;vc.24" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.22" steps="1141"/></proof>
-  <proof prover="1"><result status="valid" time="0.29" steps="29060"/></proof>
+  <proof prover="1"><result status="valid" time="0.12" steps="35477"/></proof>
   </goal>
   <goal name="union&#39;vc.25" expl="type invariant" proved="true">
-  <proof prover="1"><result status="valid" time="0.42" steps="33545"/></proof>
+  <proof prover="1"><result status="valid" time="0.33" steps="41901"/></proof>
   </goal>
   <goal name="union&#39;vc.26" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="2.94" steps="1760"/></proof>
-  <proof prover="1"><result status="valid" time="0.51" steps="34107"/></proof>
+  <proof prover="1"><result status="valid" time="0.19" steps="42988"/></proof>
   </goal>
   <goal name="union&#39;vc.27" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.93" steps="1769"/></proof>
-  <proof prover="1"><result status="valid" time="0.64" steps="46270"/></proof>
+  <proof prover="1"><result status="valid" time="0.20" steps="48694"/></proof>
   </goal>
   <goal name="union&#39;vc.28" expl="type invariant" proved="true">
-  <proof prover="1"><result status="valid" time="0.64" steps="46119"/></proof>
+  <proof prover="1"><result status="valid" time="0.22" steps="50303"/></proof>
   </goal>
   <goal name="union&#39;vc.29" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.65" steps="40035"/></proof>
+  <proof prover="1"><result status="valid" time="0.23" steps="47415"/></proof>
   </goal>
   <goal name="union&#39;vc.30" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="72"/></proof>
-  <proof prover="1"><result status="valid" time="0.20" steps="18039"/></proof>
+  <proof prover="1"><result status="valid" time="0.09" steps="27068"/></proof>
   </goal>
   <goal name="union&#39;vc.31" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="0.09" steps="74"/></proof>
-  <proof prover="1"><result status="valid" time="0.15" steps="18556"/></proof>
+  <proof prover="1"><result status="valid" time="0.10" steps="27164"/></proof>
   </goal>
   <goal name="union&#39;vc.32" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.22" steps="861"/></proof>
+  <proof prover="1"><result status="valid" time="0.18" steps="41787"/></proof>
   </goal>
   <goal name="union&#39;vc.33" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.21" steps="1005"/></proof>
-  <proof prover="1"><result status="valid" time="0.33" steps="30077"/></proof>
+  <proof prover="1"><result status="valid" time="0.18" steps="38504"/></proof>
   </goal>
   <goal name="union&#39;vc.34" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.49" steps="1128"/></proof>
-  <proof prover="1"><result status="valid" time="0.27" steps="28087"/></proof>
+  <proof prover="1"><result status="valid" time="0.14" steps="34986"/></proof>
   </goal>
   <goal name="union&#39;vc.35" expl="type invariant" proved="true">
-  <proof prover="1"><result status="valid" time="0.36" steps="32964"/></proof>
+  <proof prover="1"><result status="valid" time="0.19" steps="41374"/></proof>
   </goal>
   <goal name="union&#39;vc.36" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="3.17" steps="1745"/></proof>
-  <proof prover="1"><result status="valid" time="0.39" steps="33319"/></proof>
+  <proof prover="1"><result status="valid" time="0.18" steps="42406"/></proof>
   </goal>
   <goal name="union&#39;vc.37" expl="type invariant" proved="true">
-  <proof prover="0"><result status="valid" time="1.84" steps="1753"/></proof>
-  <proof prover="1"><result status="valid" time="0.55" steps="44732"/></proof>
+  <proof prover="1"><result status="valid" time="0.20" steps="47147"/></proof>
   </goal>
   <goal name="union&#39;vc.38" expl="type invariant" proved="true">
-  <proof prover="1"><result status="valid" time="0.52" steps="44988"/></proof>
+  <proof prover="1"><result status="valid" time="0.23" steps="49663"/></proof>
   </goal>
   <goal name="union&#39;vc.39" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.42" steps="38979"/></proof>
+  <proof prover="1"><result status="valid" time="0.21" steps="46683"/></proof>
   </goal>
   <goal name="union&#39;vc.40" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.15" steps="19067"/></proof>
+  <proof prover="1"><result status="valid" time="0.15" steps="27958"/></proof>
   </goal>
  </transf>
  </goal>

@@ -1,22 +1,22 @@
-(*@ open Sequence *)
+(*@ open Seq *)
 
-(*@ function seq_of_list (l: 'a list): 'a sequence = match l with
+(*@ function seq_of_list (l: 'a list): 'a seq = match l with
       | [] -> empty
-      | x :: r -> cons x (seq_of_list r)
-    coercion *)
+      | x :: r -> cons x (seq_of_list r) *)
+(*@ coercion *)
 
 (*@ lemma seq_of_list_append: forall l1 l2: 'a list.
       seq_of_list (List.append l1 l2) == seq_of_list l1 ++ seq_of_list l2 *)
 
-(*@ predicate permitted (v: 'a sequence) (s: 'a sequence) =
+(*@ predicate permitted (v: 'a seq) (s: 'a seq) =
       length v <= length s &&
       forall i. 0 <= i < length v -> v[i] = s[i] *)
 
-(*@ predicate complete (l: 'a sequence) (v: 'a sequence) =
+(*@ predicate complete (l: 'a seq) (v: 'a seq) =
       length v = length l *)
 
 let rec fold_left ((v: 'a list))
-    ((inv: 'b -> 'a sequence -> bool) [@ghost]) ((l0: 'a list) [@ghost]) f
+    ((inv: 'b -> 'a seq -> bool) [@ghost]) ((l0: 'a list) [@ghost]) f
     (acc: 'b) = function
   | []     -> acc, v
   | x :: l -> fold_left (v @ [x]) inv l0 f (f acc x) l

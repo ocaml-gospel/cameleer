@@ -2,7 +2,7 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="find.ml"/>
@@ -10,22 +10,22 @@
  <goal name="Make.find&#39;vc" expl="VC for find" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="find&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="11646"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="17846"/></proof>
   </goal>
   <goal name="find&#39;vc.1" expl="index in array bounds" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="11884"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="17969"/></proof>
   </goal>
   <goal name="find&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11771"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="17971"/></proof>
   </goal>
   <goal name="find&#39;vc.3" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="12892"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="19510"/></proof>
   </goal>
   <goal name="find&#39;vc.4" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="10"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="10"/></proof>
   </goal>
   <goal name="find&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="12235"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="18596"/></proof>
   </goal>
  </transf>
  </goal>

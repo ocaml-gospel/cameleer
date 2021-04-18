@@ -828,7 +828,8 @@ and s_value_binding info svb =
     | Lnamed     {pid_loc; pid_str; _}
     | Loptional  {pid_loc; pid_str; _} -> let id_loc = T.location pid_loc in
         mk_binder id_loc (Some (T.mk_id ~id_loc pid_str)) ghost pty
-    | _ -> assert false (* TODO *) in
+    | _ ->
+        mk_binder T.dummy_loc (Some (T.mk_id "()")) ghost pty in
   let pair_args binder_spec binder_code expr =
     let id_spec, id_code, ghost = match binder_spec, binder_code with
     | (_, Some id_spec, g1, _), (_, Some id_code, g2, _) ->

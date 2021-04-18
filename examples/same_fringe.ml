@@ -37,7 +37,7 @@ module Make (Eq: EQUAL) = struct
     | _ ->
         false
   (*@ b = eq_num e1 e2
-        variant length (enum_elements e1)
+        variant List.length (enum_elements e1)
         ensures b <-> enum_elements e1 = enum_elements e2 *)
 
   let same_fringe (t1: tree) (t2: tree) =

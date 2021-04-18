@@ -15,15 +15,15 @@ type uf = {
   mutable rep : (int -> int) [@ghost];
   mutable dst : (int -> int) [@ghost];
   mutable maxd: int          [@ghost];
-} (*@ invariant 0 <= maxd *)
-  (*@ invariant length rank = length link *)
-  (*@ invariant forall i. mem i link -> 0 <= link.(i) < length link *)
-  (*@ invariant forall i. mem i link -> rep (rep i) = rep i *)
-  (*@ invariant forall i. mem i link -> 0 <= rep i < length link *)
-  (*@ invariant forall i. mem i link -> link.(i) <> i -> rep i = rep link.(i) *)
-  (*@ invariant forall i. mem i link -> (link.(i) = i <-> rep i = i) *)
-  (*@ invariant forall i. mem i link -> 0 <= dst i <= maxd *)
-  (*@ invariant forall i. mem i link -> link.(i) <> i -> dst i < dst link.(i) *)
+} (*@ invariant 0 <= maxd
+      invariant length rank = length link
+      invariant forall i. mem i link -> 0 <= link.(i) < length link
+      invariant forall i. mem i link -> rep (rep i) = rep i
+      invariant forall i. mem i link -> 0 <= rep i < length link
+      invariant forall i. mem i link -> link.(i) <> i -> rep i = rep link.(i)
+      invariant forall i. mem i link -> (link.(i) = i <-> rep i = i)
+      invariant forall i. mem i link -> 0 <= dst i <= maxd
+      invariant forall i. mem i link -> link.(i) <> i -> dst i < dst link.(i) *)
 
 let rec find i uf =
   let p = uf.link.(i) in

@@ -72,4 +72,4 @@ let mk_functor loc id arg body =
 
 let mk_cloneexport ?odecl_loc id clone_subst =
   let loc = match odecl_loc with Some l -> l | None -> Loc.dummy_position in
-  mk_odecl loc (Dcloneexport (id, clone_subst))
+  mk_odecl loc (Dcloneexport (loc, id, clone_subst))

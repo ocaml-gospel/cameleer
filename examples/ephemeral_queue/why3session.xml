@@ -2,175 +2,172 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="3" name="Z3" version="4.8.6" timelimit="5" steplimit="0" memlimit="1000"/>
-<file format="ocaml">
+<file format="ocaml" proved="true">
 <path name=".."/><path name="ephemeral_queue.ml"/>
-<theory name="Ephemeral_queue">
- <goal name="t&#39;vc" expl="VC for t">
- <transf name="split_vc" >
-  <goal name="t&#39;vc.0" expl="VC for t">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.03" steps="13180"/></proof>
+<theory name="Ephemeral_queue" proved="true">
+ <goal name="t&#39;vc" expl="VC for t" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="t&#39;vc.0" expl="VC for t" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="19919"/></proof>
   </goal>
  </transf>
  </goal>
- <goal name="create&#39;vc" expl="VC for create">
- <transf name="split_vc" >
-  <goal name="create&#39;vc.0" expl="precondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.04" steps="13065"/></proof>
+ <goal name="create&#39;vc" expl="VC for create" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="create&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="19396"/></proof>
   </goal>
-  <goal name="create&#39;vc.1" expl="precondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.05" steps="14364"/></proof>
+  <goal name="create&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="21292"/></proof>
   </goal>
-  <goal name="create&#39;vc.2" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.03" steps="13002"/></proof>
-  </goal>
- </transf>
- </goal>
- <goal name="is_empty&#39;vc" expl="VC for is_empty">
- <transf name="split_vc" >
-  <goal name="is_empty&#39;vc.0" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.04" steps="13860"/></proof>
+  <goal name="create&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="19157"/></proof>
   </goal>
  </transf>
  </goal>
- <goal name="push&#39;vc" expl="VC for push">
- <transf name="split_vc" >
-  <goal name="push&#39;vc.0" expl="type invariant">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.07" steps="17133"/></proof>
-  </goal>
-  <goal name="push&#39;vc.1" expl="type invariant">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.12" steps="27311"/></proof>
-  </goal>
-  <goal name="push&#39;vc.2" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.03" steps="14081"/></proof>
-  </goal>
-  <goal name="push&#39;vc.3" expl="type invariant">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.06" steps="16033"/></proof>
-  </goal>
-  <goal name="push&#39;vc.4" expl="type invariant">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.06" steps="16914"/></proof>
-  </goal>
-  <goal name="push&#39;vc.5" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.02" steps="14092"/></proof>
+ <goal name="is_empty&#39;vc" expl="VC for is_empty" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="is_empty&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="20142"/></proof>
   </goal>
  </transf>
  </goal>
- <goal name="head_list&#39;vc" expl="VC for head_list">
- <transf name="split_vc" >
-  <goal name="head_list&#39;vc.0" expl="unreachable point">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.03" steps="11390"/></proof>
+ <goal name="push&#39;vc" expl="VC for push" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="push&#39;vc.0" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="24037"/></proof>
   </goal>
-  <goal name="head_list&#39;vc.1" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.04" steps="14386"/></proof>
+  <goal name="push&#39;vc.1" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.12" steps="32130"/></proof>
   </goal>
- </transf>
- </goal>
- <goal name="tail_list&#39;vc" expl="VC for tail_list">
- <transf name="split_vc" >
-  <goal name="tail_list&#39;vc.0" expl="unreachable point">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.02" steps="11390"/></proof>
+  <goal name="push&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="20593"/></proof>
   </goal>
-  <goal name="tail_list&#39;vc.1" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.05" steps="14386"/></proof>
+  <goal name="push&#39;vc.3" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="22874"/></proof>
   </goal>
- </transf>
- </goal>
- <goal name="pop&#39;vc" expl="VC for pop">
- <transf name="split_vc" >
-  <goal name="pop&#39;vc.0" expl="exceptional postcondition">
-  <proof prover="0" obsolete="true"><result status="valid" time="0.01" steps="30"/></proof>
+  <goal name="push&#39;vc.4" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="23667"/></proof>
   </goal>
-  <goal name="pop&#39;vc.1" expl="precondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.08" steps="19340"/></proof>
-  </goal>
-  <goal name="pop&#39;vc.2" expl="type invariant">
-  <proof prover="0" obsolete="true"><result status="valid" time="0.01" steps="67"/></proof>
-  </goal>
-  <goal name="pop&#39;vc.3" expl="type invariant">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.07" steps="20196"/></proof>
-  </goal>
-  <goal name="pop&#39;vc.4" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.08" steps="19210"/></proof>
-  </goal>
-  <goal name="pop&#39;vc.5" expl="precondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.11" steps="23849"/></proof>
-  </goal>
-  <goal name="pop&#39;vc.6" expl="type invariant">
-  <proof prover="0" obsolete="true"><result status="valid" time="0.02" steps="84"/></proof>
-  </goal>
-  <goal name="pop&#39;vc.7" expl="type invariant">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.08" steps="20101"/></proof>
-  </goal>
-  <goal name="pop&#39;vc.8" expl="postcondition">
-  <proof prover="2" obsolete="true"><result status="valid" time="0.14" steps="31425"/></proof>
+  <goal name="push&#39;vc.5" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="20604"/></proof>
   </goal>
  </transf>
  </goal>
- <goal name="transfer&#39;vc" expl="VC for transfer">
- <transf name="split_vc" >
+ <goal name="head_list&#39;vc" expl="VC for head_list" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="head_list&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="19394"/></proof>
+  </goal>
+  <goal name="head_list&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="20845"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="tail_list&#39;vc" expl="VC for tail_list" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="tail_list&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.02" steps="19394"/></proof>
+  </goal>
+  <goal name="tail_list&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="20845"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="pop&#39;vc" expl="VC for pop" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="pop&#39;vc.0" expl="exceptional postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="30"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="27996"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.2" expl="type invariant" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="67"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.3" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="26054"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.4" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="26517"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.11" steps="35428"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.6" expl="type invariant" proved="true">
+  <proof prover="1"><result status="valid" time="0.02" steps="84"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.7" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.08" steps="26442"/></proof>
+  </goal>
+  <goal name="pop&#39;vc.8" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.14" steps="41910"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="transfer&#39;vc" expl="VC for transfer" proved="true">
+ <transf name="split_vc" proved="true" >
   <goal name="transfer&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="19155"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="19210"/></proof>
   </goal>
   <goal name="transfer&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="20740"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="20902"/></proof>
   </goal>
   <goal name="transfer&#39;vc.2" expl="loop invariant init" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="20569"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="21909"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.3" expl="type invariant" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="17478"/></proof>
+  <goal name="transfer&#39;vc.3" expl="loop invariant init" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="20851"/></proof>
   </goal>
   <goal name="transfer&#39;vc.4" expl="type invariant" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="19662"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="20782"/></proof>
   </goal>
   <goal name="transfer&#39;vc.5" expl="type invariant" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="17916"/></proof>
+  <proof prover="2"><result status="valid" time="0.03" steps="20785"/></proof>
   </goal>
   <goal name="transfer&#39;vc.6" expl="type invariant" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="19959"/></proof>
+  <proof prover="2"><result status="valid" time="0.04" steps="20938"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.7" expl="loop variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="23692"/></proof>
+  <goal name="transfer&#39;vc.7" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="20941"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.8" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="19942"/></proof>
+  <goal name="transfer&#39;vc.8" expl="loop variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.07" steps="25054"/></proof>
   </goal>
   <goal name="transfer&#39;vc.9" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.19" steps="21521"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="22456"/></proof>
   </goal>
   <goal name="transfer&#39;vc.10" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="21267"/></proof>
+  <proof prover="2"><result status="valid" time="0.07" steps="22482"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.11" expl="type invariant" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="17753"/></proof>
+  <goal name="transfer&#39;vc.11" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.05" steps="22502"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.12" expl="type invariant" proved="true">
-  <proof prover="2"><result status="valid" time="0.14" steps="19937"/></proof>
+  <goal name="transfer&#39;vc.12" expl="loop invariant preservation" proved="true">
+  <proof prover="2"><result status="valid" time="0.09" steps="29063"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.13" expl="exceptional postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="17882"/></proof>
+  <goal name="transfer&#39;vc.13" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="20841"/></proof>
   </goal>
   <goal name="transfer&#39;vc.14" expl="type invariant" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="17643"/></proof>
+  <proof prover="2"><result status="valid" time="0.14" steps="20844"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.15" expl="type invariant" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="19827"/></proof>
+  <goal name="transfer&#39;vc.15" expl="exceptional postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="20910"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.16" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="19918"/></proof>
+  <goal name="transfer&#39;vc.16" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="20761"/></proof>
   </goal>
-  <goal name="transfer&#39;vc.17" expl="postcondition">
-  <proof prover="2"><result status="timeout" time="1.00" steps="594208"/></proof>
-  <transf name="split_vc" >
-   <goal name="transfer&#39;vc.17.0" expl="postcondition">
-   <proof prover="1"><result status="timeout" time="5.00"/></proof>
-   <proof prover="2" timelimit="5"><result status="timeout" time="5.00" steps="1213660"/></proof>
-   <proof prover="3"><result status="timeout" time="5.00" steps="6504599"/></proof>
-   </goal>
-  </transf>
+  <goal name="transfer&#39;vc.17" expl="type invariant" proved="true">
+  <proof prover="2"><result status="valid" time="0.03" steps="20764"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.18" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.04" steps="20832"/></proof>
+  </goal>
+  <goal name="transfer&#39;vc.19" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.06" steps="22314"/></proof>
   </goal>
  </transf>
  </goal>

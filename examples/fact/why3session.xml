@@ -9,32 +9,32 @@
  <goal name="fact&#39;vc" expl="VC for fact" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="fact&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="10875"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="16674"/></proof>
   </goal>
   <goal name="fact&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="11408"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="17315"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="fact_imp&#39;vc" expl="VC for fact_imp" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="fact_imp&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="10970"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="16769"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="12005"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="18174"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.2" expl="loop variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="11119"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="16918"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.3" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="11672"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="17579"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.4" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="12429"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="18598"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="11604"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="17511"/></proof>
   </goal>
  </transf>
  </goal>

@@ -14,19 +14,19 @@ let fibonacci n =
     x := !x + aux
   done;
   !y
-[@@gospel {| r = fibonacci n
+(*@ r = fibonacci n
       requires n >= 0
-      ensures  r = fib n |}]
+      ensures  r = fib n *)
 
 let fib_main k =
   let rec fib_rec_aux (n [@ghost]) a b k =
     if k = 0 then a else fib_rec_aux (n + 1) b (a + b) (k - 1)
-  [@@gospel {| r = fib_rec_aux n a b k
+  (*@ r = fib_rec_aux n a b k
         requires k >= 0
         requires 0 <= n && a = fib n && b = fib (n+1)
         variant  k
-        ensures  r = fib (n+k) |}] in
+        ensures  r = fib (n+k) *) in
   fib_rec_aux 0 0 1 k
-[@@gospel {| r = fib_main k
+(*@ r = fib_main k
       requires k >= 0
-      ensures  r = fib k |}]
+      ensures  r = fib k *)

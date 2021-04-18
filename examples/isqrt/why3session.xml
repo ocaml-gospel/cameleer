@@ -9,52 +9,49 @@
  <goal name="sqr_non_neg" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_non_neg.0" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="18367"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="18465"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="sqr_increasing" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_increasing.0" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="21677"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="21774"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="sqr_sum" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_sum.0" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="22870"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="22968"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="int_sqrt&#39;vc" expl="VC for int_sqrt" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="int_sqrt&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="16986"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="16977"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="18644"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="18624"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.2" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="18810"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="18790"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.3" expl="loop variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="19178"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="19158"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.4" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="17935"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="17915"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="17948"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="17928"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.6" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="19507"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="19487"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.7" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="19001"/></proof>
-  </goal>
-  <goal name="int_sqrt&#39;vc.8" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.08" steps="19785"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="18981"/></proof>
   </goal>
  </transf>
  </goal>

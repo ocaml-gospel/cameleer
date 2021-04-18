@@ -10,60 +10,60 @@
  <goal name="fact&#39;vc" expl="VC for fact" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="fact&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="16577"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="16674"/></proof>
   </goal>
   <goal name="fact&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="17217"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="17315"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="routine&#39;vc" expl="VC for routine" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="routine&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="18085"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="18183"/></proof>
   </goal>
   <goal name="routine&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="16763"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="16860"/></proof>
   </goal>
   <goal name="routine&#39;vc.2" expl="loop variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="16891"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="16988"/></proof>
   </goal>
   <goal name="routine&#39;vc.3" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="17613"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="17711"/></proof>
   </goal>
   <goal name="routine&#39;vc.4" expl="loop variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="16872"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="16969"/></proof>
   </goal>
   <goal name="routine&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="206370"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="206892"/></proof>
   </goal>
   <goal name="routine&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="17413"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="17511"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="routine2&#39;vc" expl="VC for routine2" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="routine2&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="18083"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="18181"/></proof>
   </goal>
   <goal name="routine2&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="16745"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="16842"/></proof>
   </goal>
   <goal name="routine2&#39;vc.2" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="16837"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="16934"/></proof>
   </goal>
   <goal name="routine2&#39;vc.3" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="18504"/></proof>
+  <proof prover="0"><result status="valid" time="0.05" steps="18602"/></proof>
   </goal>
   <goal name="routine2&#39;vc.4" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="16748"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="16845"/></proof>
   </goal>
   <goal name="routine2&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="16705"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="16802"/></proof>
   </goal>
   <goal name="routine2&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="16691"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="16788"/></proof>
   </goal>
  </transf>
  </goal>

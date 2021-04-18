@@ -15,7 +15,7 @@ let routine n =
     let v = !u in
     while !s <= !r do
       (*@ invariant 1 <= !s <= !r + 1 /\ !u = !s * fact !r
-          variant !r - !s *)
+          variant   !r - !s *)
       u := !u + v;
       s := !s + 1
     done;
