@@ -159,7 +159,7 @@
      <proof prover="0"><result status="valid" time="0.03" steps="125"/></proof>
      </goal>
      <goal name="optimize_and_filter&#39;vc.2.1.1.1" expl="postcondition" proved="true">
-     <proof prover="2"><result status="valid" time="0.08" steps="36775"/></proof>
+     <proof prover="2"><result status="valid" time="0.19" steps="36775"/></proof>
      </goal>
     </transf>
     </goal>

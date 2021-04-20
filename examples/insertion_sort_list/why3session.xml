@@ -2,66 +2,76 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="3" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="insertion_sort_list.ml"/>
 <theory name="Insertion_sort_list" proved="true">
  <goal name="InsertionSort.sorted_mem" proved="true">
- <proof prover="2"><result status="valid" time="0.89" steps="137749"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="sorted_mem.0" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="203"/></proof>
+  </goal>
+  <goal name="sorted_mem.1" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="399"/></proof>
+  </goal>
+  <goal name="sorted_mem.2" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="113"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="InsertionSort.sorted_append" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sorted_append.0" proved="true">
-  <proof prover="2"><result status="valid" time="0.52" steps="67847"/></proof>
+  <proof prover="3"><result status="valid" time="0.34" steps="74640"/></proof>
   </goal>
   <goal name="sorted_append.1" proved="true">
-  <proof prover="2"><result status="valid" time="0.22" steps="34538"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="195"/></proof>
   </goal>
   <goal name="sorted_append.2" proved="true">
-  <proof prover="2"><result status="valid" time="0.25" steps="36868"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="259"/></proof>
   </goal>
   <goal name="sorted_append.3" proved="true">
-  <proof prover="2"><result status="valid" time="0.29" steps="42236"/></proof>
+  <proof prover="0"><result status="valid" time="0.22" steps="2679"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="InsertionSort.insert&#39;vc" expl="VC for insert" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="insert&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="25955"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="73"/></proof>
   </goal>
   <goal name="insert&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="23516"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="18"/></proof>
   </goal>
   <goal name="insert&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.64" steps="87508"/></proof>
+  <proof prover="0"><result status="valid" time="0.27" steps="2662"/></proof>
   </goal>
   <goal name="insert&#39;vc.3" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.10" steps="1220"/></proof>
+  <proof prover="3"><result status="valid" time="0.33" steps="95610"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="InsertionSort.insertion_sort&#39;vc" expl="VC for insertion_sort" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="insertion_sort&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="26399"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="63"/></proof>
   </goal>
   <goal name="insertion_sort&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="23559"/></proof>
+  <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
   </goal>
   <goal name="insertion_sort&#39;vc.2" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="insertion_sort&#39;vc.2.0" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.18" steps="24939"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
    </goal>
    <goal name="insertion_sort&#39;vc.2.1" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.34" steps="57007"/></proof>
+   <proof prover="0"><result status="valid" time="0.02" steps="99"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="insertion_sort&#39;vc.3" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.15" steps="530"/></proof>
+  <proof prover="0"><result status="valid" time="0.21" steps="2885"/></proof>
   </goal>
  </transf>
  </goal>
