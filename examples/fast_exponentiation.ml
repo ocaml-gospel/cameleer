@@ -7,4 +7,4 @@ let rec fast_exp x n =
 (*@ r = fast_exp x n
       requires 0 <= n
       variant  n
-      ensures  r = Power.power x n *)
+      ensures  r = x ^ n *)
