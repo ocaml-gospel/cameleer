@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="whyml">
+<path name=".."/><path name="ocamlstdlib.mlw"/>
+<theory name="OCamlStdLib">
+ <goal name="cmp_eq">
+ <proof prover="0"><undone/></proof>
+ <proof prover="1"><result status="unknown" time="0.10" steps="18194"/></proof>
+ </goal>
+ <goal name="List.find_all&#39;vc" expl="VC for find_all" proved="true">
+ <proof prover="1"><result status="valid" time="0.03" steps="11316"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

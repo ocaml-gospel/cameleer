@@ -17,7 +17,7 @@ let driver: syntax_map = Hstr.create 16
 let () = List.iter (fun (x, y) -> Hstr.add driver x y)
     [
       "integer", "int";
-      "int", "int"; (* FIXME? For now, no proofs of arith overflow absence *)
+      "int", "int";
       "+", "infix +";
       "*", "infix *";
       "-", "infix -";

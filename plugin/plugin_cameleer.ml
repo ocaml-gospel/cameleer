@@ -8,10 +8,10 @@ let debug = ref false
 open Why3.Typing
 open Wstdlib
 open Ident
-open Declaration
+open Cameleer
 module Pm = Pmodule
-module E = Expression
-module T = Uterm
+module E = Cameleer.Expression
+module T = Cameleer.Uterm
 
 let print_modules = Debug.lookup_flag "print_modules"
 
@@ -140,7 +140,7 @@ let read_channel env path file c =
   let id = T.mk_id mod_name in
   open_module id; (* This is the beginning of the top module construction *)
   let info = mk_info () in
-  let f = s_structure info f in
+  let f = Declaration.s_structure info f in
   let f = use_std_lib @ f in
   let rec pp_list pp fmt l = match l with
     | [] -> ()

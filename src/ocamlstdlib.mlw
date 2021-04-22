@@ -6,8 +6,7 @@ module OCamlStdLib
   use export int.Abs
   use export mach.int.Int
   use export list.List
-  (* use export list.Length (\* TO REMOVE *\) *)
-  use export list.Append (* TO REMOVE *)
+  use export list.Append
   use export ocaml.Exceptions
   use export option.Option
   use export ref.Ref
@@ -281,5 +280,13 @@ end
 module Sum
 
   use export int.Sum
+
+end
+
+module Power
+
+  use int.Power
+
+  function (^) (x y: int) : int = power x y
 
 end
