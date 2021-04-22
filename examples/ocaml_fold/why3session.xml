@@ -4,8 +4,8 @@
 <why3session shape_version="6">
 <prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
-<path name=".."/><path name="fold.ml"/>
-<theory name="Fold" proved="true">
+<path name=".."/><path name="ocaml_fold.ml"/>
+<theory name="Ocaml_fold" proved="true">
  <goal name="seq_of_list_append" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="seq_of_list_append.0" proved="true">
@@ -16,7 +16,7 @@
     <proof prover="0"><result status="valid" time="0.02" steps="139"/></proof>
     </goal>
     <goal name="seq_of_list_append.0.0.1" proved="true">
-    <proof prover="0"><result status="valid" time="0.04" steps="327"/></proof>
+    <proof prover="0"><result status="valid" time="0.03" steps="327"/></proof>
     </goal>
    </transf>
    </goal>
@@ -32,7 +32,7 @@
   <goal name="fold_left&#39;vc.1" expl="precondition" proved="true">
   <transf name="replace" proved="true" arg1="(seq_of_list (v ++&#39; Cons x1 (Nil: list a)))" arg2="(seq_of_list v ++ (cons x1 empty))">
    <goal name="fold_left&#39;vc.1.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.04" steps="289"/></proof>
+   <proof prover="0"><result status="valid" time="0.03" steps="289"/></proof>
    </goal>
    <goal name="fold_left&#39;vc.1.1" expl="equality hypothesis" proved="true">
    <proof prover="0"><result status="valid" time="0.03" steps="293"/></proof>
@@ -40,7 +40,7 @@
   </transf>
   </goal>
   <goal name="fold_left&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="203"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="205"/></proof>
   </goal>
   <goal name="fold_left&#39;vc.3" expl="precondition" proved="true">
   <transf name="instantiate" proved="true" arg1="H3" arg2="(seq_of_list v),acc,x1">
@@ -53,15 +53,15 @@
     <proof prover="0"><result status="valid" time="0.04" steps="379"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.3.0.2" expl="destruct premise" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="116"/></proof>
+    <proof prover="0"><result status="valid" time="0.02" steps="116"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.3.0.3" expl="precondition" proved="true">
     <transf name="assert" proved="true" arg1="(v ++&#39; Cons x1 (Nil: list a) == snoc (seq_of_list v) x1)">
      <goal name="fold_left&#39;vc.3.0.3.0" expl="asserted formula" proved="true">
-     <proof prover="0"><result status="valid" time="0.06" steps="528"/></proof>
+     <proof prover="0"><result status="valid" time="0.05" steps="528"/></proof>
      </goal>
      <goal name="fold_left&#39;vc.3.0.3.1" expl="precondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.00" steps="34"/></proof>
+     <proof prover="0"><result status="valid" time="0.01" steps="34"/></proof>
      </goal>
     </transf>
     </goal>
@@ -70,14 +70,14 @@
   </transf>
   </goal>
   <goal name="fold_left&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="28"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="28"/></proof>
   </goal>
   <goal name="fold_left&#39;vc.5" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="fold_left&#39;vc.5.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="fold_left&#39;vc.5.0.0" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.00" steps="14"/></proof>
+    <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.5.0.1" expl="postcondition" proved="true">
     <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
@@ -87,10 +87,10 @@
    <goal name="fold_left&#39;vc.5.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="fold_left&#39;vc.5.1.0" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="82"/></proof>
+    <proof prover="0"><result status="valid" time="0.02" steps="83"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.5.1.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.03" steps="213"/></proof>
+    <proof prover="0"><result status="valid" time="0.03" steps="214"/></proof>
     </goal>
    </transf>
    </goal>

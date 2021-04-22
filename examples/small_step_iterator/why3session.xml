@@ -3,21 +3,19 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
-<prover id="3" name="CVC4" version="1.8" timelimit="5" steplimit="0" memlimit="1000"/>
-<prover id="4" name="Z3" version="4.8.10" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="CVC4" version="1.8" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
-<path name=".."/><path name="cursor.ml"/>
-<theory name="Cursor" proved="true">
+<path name=".."/><path name="small_step_iterator.ml"/>
+<theory name="Small_step_iterator" proved="true">
  <goal name="CursorList.t&#39;vc" expl="VC for t" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="t&#39;vc.0" expl="VC for t" proved="true">
-  <transf name="assert" proved="true" arg1="(seq_of_list (Nil: list a) == seq_of_list (Nil: list a) ++ seq_of_list (Nil: list a))
-">
+  <transf name="assert" proved="true" arg1="(seq_of_list (Nil: list a) == seq_of_list (Nil: list a) ++ seq_of_list (Nil: list a))">
    <goal name="t&#39;vc.0.0" expl="asserted formula" proved="true">
-   <proof prover="4"><result status="valid" time="0.46" steps="1592856"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="65"/></proof>
    </goal>
    <goal name="t&#39;vc.0.1" expl="VC for t" proved="true">
-   <proof prover="4"><result status="valid" time="0.02" steps="105725"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="7"/></proof>
    </goal>
   </transf>
   </goal>
@@ -28,7 +26,7 @@
   <goal name="seq_of_list_append.0" proved="true">
   <transf name="induction_arg_ty_lex" proved="true" arg1="l1">
    <goal name="seq_of_list_append.0.0" proved="true">
-   <proof prover="0"><result status="valid" time="0.10" steps="1425"/></proof>
+   <proof prover="0"><result status="valid" time="0.10" steps="1422"/></proof>
    </goal>
   </transf>
   </goal>
@@ -39,14 +37,7 @@
   <goal name="seq_of_list_length.0" proved="true">
   <transf name="induction_arg_ty_lex" proved="true" arg1="l">
    <goal name="seq_of_list_length.0.0" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="seq_of_list_length.0.0.0" proved="true">
-    <proof prover="0"><result status="valid" time="0.00" steps="25"/></proof>
-    </goal>
-    <goal name="seq_of_list_length.0.0.1" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="34"/></proof>
-    </goal>
-   </transf>
+   <proof prover="0"><result status="valid" time="0.02" steps="74"/></proof>
    </goal>
   </transf>
   </goal>
@@ -64,10 +55,10 @@
     <goal name="seq_of_list_mem.0.0.1" proved="true">
     <transf name="case" proved="true" arg1="(x1 = x2)">
      <goal name="seq_of_list_mem.0.0.1.0" expl="true case" proved="true">
-     <proof prover="0"><result status="valid" time="0.02" steps="106"/></proof>
+     <proof prover="0"><result status="valid" time="0.02" steps="109"/></proof>
      </goal>
      <goal name="seq_of_list_mem.0.0.1.1" expl="false case" proved="true">
-     <proof prover="3" timelimit="1"><result status="valid" time="0.22" steps="47664"/></proof>
+     <proof prover="1"><result status="valid" time="0.19" steps="47664"/></proof>
      </goal>
     </transf>
     </goal>
@@ -80,10 +71,10 @@
    <goal name="seq_of_list_mem.1.0" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="seq_of_list_mem.1.0.0" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="22"/></proof>
+    <proof prover="0"><result status="valid" time="0.02" steps="22"/></proof>
     </goal>
     <goal name="seq_of_list_mem.1.0.1" proved="true">
-    <proof prover="0"><result status="valid" time="0.06" steps="636"/></proof>
+    <proof prover="0"><result status="valid" time="0.05" steps="635"/></proof>
     </goal>
    </transf>
    </goal>
@@ -99,7 +90,7 @@
   <goal name="next&#39;vc.1" expl="type invariant" proved="true">
   <transf name="assert" proved="true" arg1="(forall x: &#39;a, s1 s2: seq &#39;a. (s1 ++ (cons x s2)) == (snoc s1 x ++ s2))">
    <goal name="next&#39;vc.1.0" expl="asserted formula" proved="true">
-   <proof prover="0"><result status="valid" time="0.05" steps="419"/></proof>
+   <proof prover="0"><result status="valid" time="0.04" steps="419"/></proof>
    </goal>
    <goal name="next&#39;vc.1.1" expl="type invariant" proved="true">
    <proof prover="0"><result status="valid" time="0.02" steps="104"/></proof>
@@ -107,23 +98,40 @@
   </transf>
   </goal>
   <goal name="next&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="256"/></proof>
+  <proof prover="0"><result status="valid" time="0.04" steps="256"/></proof>
   </goal>
   <goal name="next&#39;vc.3" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="26"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="26"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="CursorList.has_next&#39;vc" expl="VC for has_next" proved="true">
- <proof prover="0"><result status="valid" time="0.03" steps="155"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="has_next&#39;vc.0" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="58"/></proof>
+  </goal>
+  <goal name="has_next&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="53"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="CursorList.create&#39;vc" expl="VC for create" proved="true">
- <proof prover="0"><result status="valid" time="0.01" steps="75"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="create&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="65"/></proof>
+  </goal>
+  <goal name="create&#39;vc.1" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+  </goal>
+  <goal name="create&#39;vc.2" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="sum_cursor&#39;vc" expl="VC for sum_cursor" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sum_cursor&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="98"/></proof>
+  <proof prover="0"><result status="valid" time="0.01" steps="95"/></proof>
   </goal>
   <goal name="sum_cursor&#39;vc.1" expl="loop invariant init" proved="true">
   <proof prover="0"><result status="valid" time="0.02" steps="29"/></proof>
@@ -135,20 +143,13 @@
   <proof prover="0"><result status="valid" time="0.01" steps="24"/></proof>
   </goal>
   <goal name="sum_cursor&#39;vc.4" expl="loop variant decrease" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="sum_cursor&#39;vc.4.0" expl="loop variant decrease" proved="true">
-   <proof prover="0"><result status="valid" time="0.01" steps="46"/></proof>
-   </goal>
-   <goal name="sum_cursor&#39;vc.4.1" expl="loop variant decrease" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="56"/></proof>
-   </goal>
-  </transf>
+  <proof prover="0"><result status="valid" time="0.02" steps="82"/></proof>
   </goal>
   <goal name="sum_cursor&#39;vc.5" expl="loop invariant preservation" proved="true">
   <proof prover="0"><result status="valid" time="0.01" steps="36"/></proof>
   </goal>
   <goal name="sum_cursor&#39;vc.6" expl="loop invariant preservation" proved="true">
-  <proof prover="3"><result status="valid" time="0.89" steps="156503"/></proof>
+  <proof prover="1"><result status="valid" time="0.83" steps="156503"/></proof>
   </goal>
   <goal name="sum_cursor&#39;vc.7" expl="postcondition" proved="true">
   <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,(!),is_nil,length2,mem1,is_none,(++&#39;),reverse,rev_append1,num_occ,([]&#39;),singleton,cons,snoc,(++),mem,fst,snd,(%),is_pre_order,([]),rev,append,rev_append,seq_of_list,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,sum&#39;def,sum_left,sum_ext,sum_le,sum_zero,sum_nonneg,sum_decomp,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append1,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,Num_Occ_NonNeg,Mem_Num_Occ,Append_Num_Occ,reverse_num_occ,length_nonnegative,(==)&#39;spec,create&#39;spec,empty&#39;def,set&#39;spec,set&#39;def,([&lt;-])&#39;def,singleton&#39;spec,cons&#39;spec,snoc&#39;spec,([..])&#39;spec,([..])&#39;def,([_..])&#39;def,([.._])&#39;def,(++)&#39;spec,mem_append,mem_tail,same_location_eq,cmp_eq,compare_pre_order,my_array&#39;invariant,to_list_range&#39;def,to_list_append,non_neg_max_array_length,permitted_empty,t&#39;invariant,seq_of_list_append,seq_of_list_mem,H6,H5">
@@ -162,10 +163,10 @@
  <goal name="Mem.mem_cursor&#39;vc" expl="VC for mem_cursor" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="mem_cursor&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="94"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="98"/></proof>
   </goal>
   <goal name="mem_cursor&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
+  <proof prover="0"><result status="valid" time="0.03" steps="20"/></proof>
   </goal>
   <goal name="mem_cursor&#39;vc.2" expl="precondition" proved="true">
   <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
@@ -174,7 +175,7 @@
   <proof prover="0"><result status="valid" time="0.01" steps="22"/></proof>
   </goal>
   <goal name="mem_cursor&#39;vc.4" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="517"/></proof>
+  <proof prover="0"><result status="valid" time="0.07" steps="520"/></proof>
   </goal>
   <goal name="mem_cursor&#39;vc.5" expl="loop variant decrease" proved="true">
   <proof prover="0"><result status="valid" time="0.02" steps="63"/></proof>
@@ -186,14 +187,7 @@
   <proof prover="0"><result status="valid" time="0.03" steps="216"/></proof>
   </goal>
   <goal name="mem_cursor&#39;vc.8" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="mem_cursor&#39;vc.8.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.01" steps="12"/></proof>
-   </goal>
-   <goal name="mem_cursor&#39;vc.8.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="745"/></proof>
-   </goal>
-  </transf>
+  <proof prover="0"><result status="valid" time="0.09" steps="1013"/></proof>
   </goal>
  </transf>
  </goal>
