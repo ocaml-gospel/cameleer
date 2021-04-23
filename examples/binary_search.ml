@@ -58,7 +58,7 @@ end
 module type OrderedType = sig
   type t
 
-  val[@logic] cmp: t -> t -> int
+  val [@logic] cmp: t -> t -> int
   (*@ axiom is_pre_order_cmp: is_pre_order cmp *)
 end
 

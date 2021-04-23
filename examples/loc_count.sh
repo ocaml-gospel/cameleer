@@ -1,2 +1,3 @@
 #!/bin/bash
-ocamlwc *ml
+
+gospel wc *.ml

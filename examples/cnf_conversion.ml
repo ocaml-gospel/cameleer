@@ -34,12 +34,12 @@ type formula_cnf =
 
 type valuation = ident -> bool
 
-let[@logic] eval_literal (v: valuation) (f: literal) : bool
+let [@logic] eval_literal (v: valuation) (f: literal) : bool
   = match f with
   | FVar x   -> v x
   | FConst b -> b
 
-let[@logic] rec eval (v: valuation) (f: formula) : bool
+let [@logic] rec eval (v: valuation) (f: formula) : bool
   = match f with
   | L     phi1     -> eval_literal v phi1
   | FAnd  (f1, f2) -> eval v f1 && eval v f2
@@ -49,7 +49,7 @@ let[@logic] rec eval (v: valuation) (f: formula) : bool
 (*@ r = eval v f
       variant f *)
 
-let[@logic] rec eval_wi (v: valuation) (f: formula_wi) : bool
+let [@logic] rec eval_wi (v: valuation) (f: formula_wi) : bool
   = match f with
   | L_wi    phi1     -> eval_literal v phi1
   | FAnd_wi (f1, f2) -> eval_wi v f1 && eval_wi v f2
@@ -58,7 +58,7 @@ let[@logic] rec eval_wi (v: valuation) (f: formula_wi) : bool
 (*@ r = eval_wi v f
       variant f *)
 
-let[@logic] rec eval_nnf (v: valuation) (f: formula_nnf) : bool
+let [@logic] rec eval_nnf (v: valuation) (f: formula_nnf) : bool
   = match f with
   | FAnd_nnf (f1, f2) -> eval_nnf v f1 && eval_nnf v f2
   | FOr_nnf  (f1, f2) -> eval_nnf v f1 || eval_nnf v f2
@@ -67,7 +67,7 @@ let[@logic] rec eval_nnf (v: valuation) (f: formula_nnf) : bool
 (*@ r = eval_nnf v f
       variant f *)
 
-let[@logic] rec eval_disj (v: valuation) (f: disj) : bool
+let [@logic] rec eval_disj (v: valuation) (f: disj) : bool
   = match f with
   | FOr_cnf  (f1, f2) -> eval_disj v f1 || eval_disj v f2
   | FNeg_cnf literal  -> not (eval_literal v literal)
@@ -75,7 +75,7 @@ let[@logic] rec eval_disj (v: valuation) (f: disj) : bool
 (*@ r = eval_disj v f
       variant f *)
 
-let[@logic] rec eval_cnf (v: valuation) (f: formula_cnf) : bool
+let [@logic] rec eval_cnf (v: valuation) (f: formula_cnf) : bool
   = match f with
   | FAnd_cnf (f1, f2) -> eval_cnf v f1 && eval_cnf v f2
   | D        disj     -> eval_disj v disj
@@ -99,7 +99,7 @@ let[@logic] rec eval_cnf (v: valuation) (f: formula_cnf) : bool
       | FAnd_cnf phi1 phi2 -> 1 + size_cnf phi1 + size_cnf phi2
       | D phi1 -> size_disj phi1 *)
 
-let[@lemma] rec size_nonneg (phi: formula_wi)
+let [@lemma] rec size_nonneg (phi: formula_wi)
   = match phi with
   | L_wi _      -> ()
   | FNeg_wi phi -> size_nonneg phi
@@ -109,7 +109,7 @@ let[@lemma] rec size_nonneg (phi: formula_wi)
       variant phi
       ensures size phi >= 0 *)
 
-let[@lemma] rec size_nonneg_disj (phi: disj)
+let [@lemma] rec size_nonneg_disj (phi: disj)
   = match phi with
   | FNeg_cnf _ | L_cnf _ -> ()
   | FOr_cnf (phi1, phi2) -> size_nonneg_disj phi1; size_nonneg_disj phi2
@@ -117,7 +117,7 @@ let[@lemma] rec size_nonneg_disj (phi: disj)
       variant phi
       ensures size_disj phi >= 0 *)
 
-let[@lemma] rec size_nonneg_cnf (phi: formula_cnf)
+let [@lemma] rec size_nonneg_cnf (phi: formula_cnf)
   = match phi with
   | FAnd_cnf (phi1, phi2) -> size_nonneg_cnf phi1; size_nonneg_cnf phi2
   | D phi1                -> size_nonneg_disj phi1
@@ -125,7 +125,7 @@ let[@lemma] rec size_nonneg_cnf (phi: formula_cnf)
       variant phi
       ensures size_cnf phi >= 0 *)
 
-let[@logic] rec impl_free (phi: formula) : formula_wi
+let [@logic] rec impl_free (phi: formula) : formula_wi
   = match phi with
   | FNeg   phi1        -> FNeg_wi (impl_free phi1)
   | FOr   (phi1, phi2) -> FOr_wi (impl_free phi1, impl_free phi2)
@@ -136,7 +136,7 @@ let[@logic] rec impl_free (phi: formula) : formula_wi
       variant phi
       ensures forall v. eval v phi = eval_wi v r *)
 
-let[@logic] rec nnfc (phi: formula_wi)
+let [@logic] rec nnfc (phi: formula_wi)
   = match phi with
   | FNeg_wi (FNeg_wi phi1) ->
       nnfc phi1
@@ -156,7 +156,7 @@ let[@logic] rec nnfc (phi: formula_wi)
       variant size phi
       ensures forall v. eval_wi v phi = eval_nnf v r *)
 
-let[@logic] rec distr (phi1: formula_cnf) (phi2: formula_cnf)
+let [@logic] rec distr (phi1: formula_cnf) (phi2: formula_cnf)
   = match phi1, phi2 with
   | FAnd_cnf (phi11, phi12), phi2 ->
       FAnd_cnf (distr phi11 phi2, distr phi12 phi2)
@@ -168,7 +168,7 @@ let[@logic] rec distr (phi1: formula_cnf) (phi2: formula_cnf)
       variant size_cnf phi1 + size_cnf phi2
       ensures forall v. (eval_cnf v phi1 || eval_cnf v phi2) = eval_cnf v r *)
 
-let[@logic] rec cnfc (phi: formula_nnf)
+let [@logic] rec cnfc (phi: formula_nnf)
   = match phi with
   | FOr_nnf  (phi1, phi2) -> distr (cnfc phi1) (cnfc phi2)
   | FAnd_nnf (phi1, phi2) -> FAnd_cnf (cnfc phi1, cnfc phi2)

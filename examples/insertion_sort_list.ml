@@ -21,12 +21,10 @@ module type PRE_ORD = sig
   (*@ axiom sorted_singleton: forall x. sorted_list (x :: []) *)
   (*@ axiom sorted_cons: forall x y l.
         le x y -> sorted_list (y :: l) -> sorted_list (x :: (y :: l)) *)
-
   (*@ axiom sorted_list_inversion: forall l.
         sorted_list l ->
           (l = []) \/ (exists x. l = x :: []) \/
           (exists x y ll. le x y /\ sorted_list (y :: ll) /\ l = x :: y :: l) *)
-
 end
 
 module InsertionSort (E: PRE_ORD) = struct
@@ -39,8 +37,7 @@ module InsertionSort (E: PRE_ORD) = struct
 
   (*@ lemma sorted_append: forall l1 l2.
         (sorted_list l1 && sorted_list l2 &&
-          (forall x y. List.mem x l1 -> List.mem y l2 -> le x y))
-        <->
+          (forall x y. List.mem x l1 -> List.mem y l2 -> le x y)) <->
         sorted_list (l1 ++ l2) *)
 
   let rec insert x = function
@@ -59,5 +56,4 @@ module InsertionSort (E: PRE_ORD) = struct
         variant param
         ensures permut param l
         ensures sorted_list l *)
-
 end

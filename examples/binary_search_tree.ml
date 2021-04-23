@@ -1,10 +1,9 @@
 module type OrderedType = sig
   type t
 
-  val[@logic] compare : t -> t -> int
+  val [@logic] compare : t -> t -> int
   (*@ axiom is_pre_order: is_pre_order compare *)
 end
-
 
 module Make (Ord: OrderedType) = struct
   type elt = Ord.t

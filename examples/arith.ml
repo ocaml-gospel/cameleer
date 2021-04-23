@@ -26,7 +26,6 @@ let [@logic] rec eval_b (st: store) = function
   | ELeq (a1, a2) -> eval_0 st a1 <= eval_0 st a2
 (*@ eval_b st b
       variant b *)
-
 and [@logic] eval_0 store = function
   | ECte n -> n
   | EVar x -> store x
@@ -80,7 +79,7 @@ and [@ghost] [@logic] code_size = function
   | [] -> 0
   | o :: r -> opcode_size o + code_size r
 
-let[@lemma] rec opcode_size_nonneg = function
+let [@lemma] rec opcode_size_nonneg = function
   | OTrue
   | OFalse
   | OPush _
@@ -95,7 +94,7 @@ let[@lemma] rec opcode_size_nonneg = function
   | OBranch (c1, c2) -> code_size_nonneg c1; code_size_nonneg c2
 (*@ opcode_size_nonneg o
       ensures opcode_size o >= 0 *)
-and[@lemma] code_size_nonneg = function
+and [@lemma] code_size_nonneg = function
   | [] -> ()
   | o :: r -> opcode_size_nonneg o; code_size_nonneg r
 (*@ code_size_nonneg p
@@ -108,7 +107,7 @@ let [@lemma] rec code_size_append (c1: code) (c2: code) =
 (*@ code_size_append c1 c2
       ensures code_size (c1 @ c2) = code_size c1 + code_size c2 *)
 
-let [@logic] [@ghost] rec star (s: stack) (c: code) (st: store) : res =
+let [@ghost] [@logic] rec star (s: stack) (c: code) (st: store) : res =
   match c with
   | []            -> Res (s, [], st)
   | OTrue    :: r -> star (VBool true  :: s) r st
@@ -175,15 +174,15 @@ let [@lemma] rec star_append (store: store)
   | OSub     :: r -> begin match s1 with
       | VInt x :: VInt y :: sr ->
           star_append store r p2 (VInt (x - y) :: sr) s2 s
-      | _ -> assert false (* to reinforce this cannot happen *) end
+      | _ -> assert false end
   | OAdd     :: r -> begin match s1 with
       | VInt x :: VInt y :: sr ->
           star_append store r p2 (VInt (x + y) :: sr) s2 s
-      | _ -> assert false (* to reinforce this cannot happen *) end
+      | _ -> assert false end
   | OMul     :: r -> begin match s1 with
       | VInt x :: VInt y :: sr ->
           star_append store r p2 (VInt (x * y) :: sr) s2 s
-      | _ -> assert false (* to reinforce this cannot happen *) end
+      | _ -> assert false end
   | OAnd     :: r -> begin match s1 with
       | VBool x :: VBool y :: sr ->
           star_append store r p2 (VBool (x && y) :: sr) s2 s
@@ -252,7 +251,6 @@ let rec compile_bool ((st: store) [@ghost]) = function
               | Res (stack, code, store) ->
                   stack = (VBool (eval_b st b)) :: [] && code = [] &&
                   st = store *)
-
 and compile ((st: store) [@ghost]) = function
   | ECte n -> [OPush n]
   | EVar n -> [OFetch n]

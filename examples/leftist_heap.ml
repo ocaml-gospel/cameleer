@@ -24,7 +24,7 @@ module type S = sig
 
   (*@ predicate leftist (h: t) *)
 
-  val[@logic] size : t -> int
+  val [@logic] size : t -> int
   (*@ r = size t
         ensures 0 <= r *)
 
@@ -47,7 +47,7 @@ module type S = sig
 
   (*@ predicate leftist_heap (h: t) *)
 
-  val[@logic] empty : t
+  val [@logic] empty : t
   (*@ r = empty
         ensures size r = 0
         ensures forall x. occ x r = 0 *)
@@ -124,7 +124,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         | N n _ l r ->
             n = rank h && leftist l && leftist r && rank l >= rank r *)
 
-  let[@logic] rec size = function
+  let [@logic] rec size = function
     | E -> 0
     | N (_,_ , l, r) -> 1 + size l + size r
   (*@ r = size param
@@ -136,7 +136,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         | N _ e l r -> let occ_lr = occ x l + occ x r in
             if x = e then 1 + occ_lr else occ_lr *)
 
-  let[@lemma] rec occ_nonneg (y: elt) = function
+  let [@lemma] rec occ_nonneg (y: elt) = function
     | E -> ()
     | N (_, _, l, r) -> occ_nonneg y l; occ_nonneg y r
   (*@ occ_nonneg y param
@@ -184,7 +184,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
   (*@ r = empty
         ensures r = E *)
 
-  let[@logic] is_empty = function
+  let [@logic] is_empty = function
     | E -> true
     | N (_, _, _, _) -> false
   (*@ b = is_empty param
@@ -192,7 +192,6 @@ module Make (E: PRE_ORD) : S with type elt = E.t
 
   exception Empty
 
-  (* Rank of the tree *)
   let _rank = function
     | E -> 0
     | N (r, _, _, _) -> r
@@ -277,7 +276,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         ensures  match r with
                  | None -> is_empty param
                  | Some (h, x) ->
-                     x = minimum param && (* minimum element *)
+                     x = minimum param &&
                      occ (minimum param) h = occ (minimum param) param - 1 &&
                      forall y. y <> minimum param -> occ y param = occ y h &&
                      size h = size param - 1 &&

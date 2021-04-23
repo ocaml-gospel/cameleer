@@ -30,9 +30,6 @@
  <goal name="Make.occ_min&#39;vc" expl="VC for occ_min" proved="true">
  <proof prover="0"><result status="valid" time="0.24" steps="4556"/></proof>
  </goal>
- <goal name="Make.min_elt&#39;vc" expl="VC for min_elt" proved="true">
- <proof prover="1"><result status="valid" time="0.06" steps="23027"/></proof>
- </goal>
  <goal name="Make.remove_min&#39;vc" expl="VC for remove_min" proved="true">
  <proof prover="1"><result status="valid" time="0.15" steps="34142"/></proof>
  </goal>

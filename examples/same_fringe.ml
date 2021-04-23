@@ -44,5 +44,4 @@ module Make (Eq: EQUAL) = struct
     eq_enum (enum t1 Done) (enum t2 Done)
     (*@ b = same_fringe t1 t2
           ensures b <-> elements t1 = elements t2 *)
-
 end

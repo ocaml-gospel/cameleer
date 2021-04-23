@@ -4,14 +4,15 @@ type 'a t = {
   mutable size : int;
   mutable view : 'a list [@ghost];
 } (*@ invariant size = List.length view
-      invariant (front = [] -> rear = []) && view = front ++ List.rev rear *)
+      invariant (front = [] -> rear = []) && view = front @ List.rev rear *)
 
 let create () = {
   front = [];
   rear  = [];
   size  = 0;
   view  = [];
-} (*@ q = create ()
+}
+(*@ q = create ()
         ensures q.view = [] *)
 
 let [@logic] is_empty q = q.size = 0
@@ -53,7 +54,7 @@ let pop q =
   q.size <- q.size - 1;
   x
 (*@ x = pop q
-      raises  Not_found -> is_empty (old q) (* SUPER IMPORTANT ! *)
+      raises  Not_found -> is_empty (old q)
       ensures x :: q.view = (old q).view *)
 
 let transfer q1 q2 =

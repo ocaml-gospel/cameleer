@@ -1,7 +1,7 @@
 (*@ open Array *)
 
 (** The following is used to prove validity of the [uf] type invariant. *)
-let [@logic] [@ghost] init () =
+let [@ghost] [@logic] init () =
   Array.init 0 (fun x -> x)
 (*@ a = init ()
       ensures length a = 0 *)

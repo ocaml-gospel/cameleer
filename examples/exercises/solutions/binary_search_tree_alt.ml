@@ -69,15 +69,6 @@ module Make (Ord: OrderedType) = struct
         variant  t
         ensures  occ (min t) t = 1 *)
 
-  let rec min_elt = function
-    | E -> assert false
-    | T (E, v, _) -> v
-    | T (l, _, _) -> min_elt l
-  (*@ r = min_elt t
-        requires t <> E
-        variant  t
-        ensures  r = min t *)
-
   let rec remove_min = function
     | E -> assert false
     | T (E, v, r) -> v, r

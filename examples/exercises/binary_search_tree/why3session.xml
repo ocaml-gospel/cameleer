@@ -90,26 +90,26 @@
  <proof prover="1"><result status="valid" time="0.20" steps="46525"/></proof>
  </goal>
  <goal name="Make.occ_min&#39;vc" expl="VC for occ_min" proved="true">
- <proof prover="0" timelimit="1"><result status="valid" time="0.30" steps="4556"/></proof>
+ <proof prover="0"><result status="valid" time="0.23" steps="4556"/></proof>
  </goal>
  <goal name="Make.min_elt&#39;vc" expl="VC for min_elt" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="min_elt&#39;vc.0" expl="unreachable point" proved="true">
-  <proof prover="1"><result status="valid" time="0.05" steps="18711"/></proof>
+  <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
   </goal>
   <goal name="min_elt&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.08" steps="21182"/></proof>
+  <proof prover="0"><result status="valid" time="0.01" steps="24"/></proof>
   </goal>
   <goal name="min_elt&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.05" steps="19791"/></proof>
+  <proof prover="0"><result status="valid" time="0.01" steps="21"/></proof>
   </goal>
   <goal name="min_elt&#39;vc.3" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="min_elt&#39;vc.3.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="19661"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
    </goal>
    <goal name="min_elt&#39;vc.3.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.07" steps="19739"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="22"/></proof>
    </goal>
   </transf>
   </goal>
@@ -118,47 +118,47 @@
  <goal name="Make.remove_min&#39;vc" expl="VC for remove_min" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="remove_min&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.07" steps="21325"/></proof>
+  <proof prover="0"><result status="valid" time="0.01" steps="78"/></proof>
   </goal>
   <goal name="remove_min&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.07" steps="20909"/></proof>
+  <proof prover="0"><result status="valid" time="0.02" steps="19"/></proof>
   </goal>
   <goal name="remove_min&#39;vc.2" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min&#39;vc.2.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.08" steps="19710"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
    </goal>
    <goal name="remove_min&#39;vc.2.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="20711"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
    </goal>
    <goal name="remove_min&#39;vc.2.2" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.13" steps="24623"/></proof>
+   <proof prover="0"><result status="valid" time="0.06" steps="672"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min&#39;vc.3" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min&#39;vc.3.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.05" steps="18793"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="21"/></proof>
    </goal>
    <goal name="remove_min&#39;vc.3.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.09" steps="23513"/></proof>
+   <proof prover="0"><result status="valid" time="0.02" steps="146"/></proof>
    </goal>
    <goal name="remove_min&#39;vc.3.2" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.08" steps="22479"/></proof>
+   <proof prover="0"><result status="valid" time="0.03" steps="146"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="remove_min&#39;vc.4" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="remove_min&#39;vc.4.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.07" steps="19889"/></proof>
+   <proof prover="0"><result status="valid" time="0.02" steps="23"/></proof>
    </goal>
    <goal name="remove_min&#39;vc.4.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="25310"/></proof>
+   <proof prover="0"><result status="valid" time="0.02" steps="141"/></proof>
    </goal>
    <goal name="remove_min&#39;vc.4.2" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.09" steps="23071"/></proof>
+   <proof prover="0"><result status="valid" time="0.02" steps="143"/></proof>
    </goal>
   </transf>
   </goal>
@@ -186,44 +186,6 @@
   </goal>
   <goal name="remove&#39;vc.6" expl="postcondition" proved="true">
   <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
-  </goal>
-  <goal name="remove&#39;vc.7" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="remove&#39;vc.7.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
-   </goal>
-   <goal name="remove&#39;vc.7.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="99"/></proof>
-   </goal>
-   <goal name="remove&#39;vc.7.2" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="101"/></proof>
-   </goal>
-   <goal name="remove&#39;vc.7.3" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="168"/></proof>
-   </goal>
-   <goal name="remove&#39;vc.7.4" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.09" steps="918"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="remove&#39;vc.8" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="remove&#39;vc.8.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.01" steps="20"/></proof>
-   </goal>
-   <goal name="remove&#39;vc.8.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.03" steps="257"/></proof>
-   </goal>
-   <goal name="remove&#39;vc.8.2" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.03" steps="193"/></proof>
-   </goal>
-   <goal name="remove&#39;vc.8.3" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="97"/></proof>
-   </goal>
-   <goal name="remove&#39;vc.8.4" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="655"/></proof>
-   </goal>
-  </transf>
   </goal>
  </transf>
  </goal>
