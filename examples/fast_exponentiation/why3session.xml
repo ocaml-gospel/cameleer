@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="fast_exponentiation.ml"/>
+<theory name="Fast_exponentiation" proved="true">
+ <goal name="fast_exp&#39;vc" expl="VC for fast_exp" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="fast_exp&#39;vc.0" expl="check division by zero" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="6"/></proof>
+  </goal>
+  <goal name="fast_exp&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="48"/></proof>
+  </goal>
+  <goal name="fast_exp&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.02" steps="40"/></proof>
+  </goal>
+  <goal name="fast_exp&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.01" steps="6"/></proof>
+  </goal>
+  <goal name="fast_exp&#39;vc.4" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="2278"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>

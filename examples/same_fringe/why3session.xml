@@ -2,23 +2,22 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="same_fringe.ml"/>
 <theory name="Same_fringe" proved="true">
  <goal name="Make.enum&#39;vc" expl="VC for enum" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="enum&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.06" steps="13979"/></proof>
+  <proof prover="0"><result status="valid" time="0.01" steps="42"/></proof>
   </goal>
   <goal name="enum&#39;vc.1" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="enum&#39;vc.1.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.03" steps="14236"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="19"/></proof>
    </goal>
    <goal name="enum&#39;vc.1.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="16466"/></proof>
+   <proof prover="0"><result status="valid" time="0.02" steps="71"/></proof>
    </goal>
   </transf>
   </goal>
@@ -29,10 +28,10 @@
   <goal name="eq_enum&#39;vc.0" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="eq_enum&#39;vc.0.0" expl="variant decrease" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="14889"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="22"/></proof>
    </goal>
    <goal name="eq_enum&#39;vc.0.1" expl="variant decrease" proved="true">
-   <proof prover="0"><result status="valid" time="0.01" steps="56"/></proof>
+   <proof prover="0"><result status="valid" time="0.00" steps="83"/></proof>
    </goal>
   </transf>
   </goal>
@@ -41,38 +40,38 @@
    <goal name="eq_enum&#39;vc.1.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="eq_enum&#39;vc.1.0.0" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.03" steps="12310"/></proof>
+    <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
     </goal>
     <goal name="eq_enum&#39;vc.1.0.1" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.04" steps="12320"/></proof>
+    <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
     </goal>
     <goal name="eq_enum&#39;vc.1.0.2" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="24"/></proof>
+    <proof prover="0"><result status="valid" time="0.01" steps="29"/></proof>
     </goal>
     <goal name="eq_enum&#39;vc.1.0.3" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.03" steps="12348"/></proof>
+    <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
     </goal>
     <goal name="eq_enum&#39;vc.1.0.4" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.04" steps="12320"/></proof>
+    <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="eq_enum&#39;vc.1.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="eq_enum&#39;vc.1.1.0" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.03" steps="12302"/></proof>
+    <proof prover="0"><result status="valid" time="0.00" steps="17"/></proof>
     </goal>
     <goal name="eq_enum&#39;vc.1.1.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="34"/></proof>
+    <proof prover="0"><result status="valid" time="0.00" steps="47"/></proof>
     </goal>
     <goal name="eq_enum&#39;vc.1.1.2" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="54"/></proof>
+    <proof prover="0"><result status="valid" time="0.02" steps="70"/></proof>
     </goal>
     <goal name="eq_enum&#39;vc.1.1.3" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="46"/></proof>
+    <proof prover="0"><result status="valid" time="0.01" steps="59"/></proof>
     </goal>
     <goal name="eq_enum&#39;vc.1.1.4" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="34"/></proof>
+    <proof prover="0"><result status="valid" time="0.01" steps="47"/></proof>
     </goal>
    </transf>
    </goal>
@@ -85,10 +84,10 @@
   <goal name="same_fringe&#39;vc.0" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="same_fringe&#39;vc.0.0" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.05" steps="13213"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="23"/></proof>
    </goal>
    <goal name="same_fringe&#39;vc.0.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.04" steps="13045"/></proof>
+   <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
    </goal>
   </transf>
   </goal>

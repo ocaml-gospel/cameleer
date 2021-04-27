@@ -18,9 +18,9 @@ module Make (E: PRE_ORD) = struct
 
   type tree = T of E.t * tree list
 
-  let [@logic] [@ghost] le_tree e = function T (x, _) -> E.leq e x
+  let [@ghost] [@logic] le_tree e = function T (x, _) -> E.leq e x
 
-  let [@logic] [@ghost] rec le_tree_list e = function
+  let [@ghost] [@logic] rec le_tree_list e = function
     | [] -> true
     | t :: r -> le_tree e t && le_tree_list e r
 
@@ -36,12 +36,12 @@ module Make (E: PRE_ORD) = struct
         | [] -> occ_list x l = 0
         | t :: r -> occ_list x l = occ x t + occ_list x r *)
 
-  let[@lemma] rec occ_nonneg = function
+  let [@lemma] rec occ_nonneg = function
     | T (_, l) -> occ_list_nonneg l
   (*@ occ_nonneg param
         variant param
         ensures forall x. occ x param >= 0 *)
-  and[@lemma] occ_list_nonneg = function
+  and [@lemma] occ_list_nonneg = function
     | [] -> ()
     | t :: r -> occ_nonneg t; occ_list_nonneg r
   (*@ occ_list_nonneg param
@@ -57,9 +57,9 @@ module Make (E: PRE_ORD) = struct
 
   (*@ function minimum_tree (t: tree) : elt = match t with T x _ -> x *)
 
-  let [@logic] [@ghost] rec heap_tree = function
+  let [@ghost] [@logic] rec heap_tree = function
     | T (x, l) -> le_tree_list x l && heap_tree_list l
-  and [@logic] [@ghost] heap_tree_list = function
+  and [@ghost] [@logic] heap_tree_list = function
     | [] -> true
     | t :: r -> heap_tree t && heap_tree_list r
 
@@ -121,13 +121,13 @@ module Make (E: PRE_ORD) = struct
         variant  param
         ensures  forall x. le_root x param -> forall y. mem y param ->
                    E.le x y *)
-  and tree_mem_le = function T (_, l) -> tree_list_mem_le l
+  and [@lemma] tree_mem_le = function T (_, l) -> tree_list_mem_le l
   (*@ tree_mem_le param
         requires heap_tree param
         variant  param
         ensures  forall x. le_tree x param -> forall y. mem_tree y param ->
                    E.le x y *)
-  and tree_list_mem_le = function
+  and [@lemma] tree_list_mem_le = function
     | [] -> ()
     | x :: r -> tree_mem_le x; tree_list_mem_le r
   (*@ tree_list_mem_le param

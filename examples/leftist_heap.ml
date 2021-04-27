@@ -124,7 +124,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         | N n _ l r ->
             n = rank h && leftist l && leftist r && rank l >= rank r *)
 
-  let[@logic] rec size = function
+  let [@logic] rec size = function
     | E -> 0
     | N (_,_ , l, r) -> 1 + size l + size r
   (*@ r = size param
@@ -184,7 +184,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
   (*@ r = empty
         ensures r = E *)
 
-  let[@logic] is_empty = function
+  let [@logic] is_empty = function
     | E -> true
     | N (_, _, _, _) -> false
   (*@ b = is_empty param
@@ -192,7 +192,6 @@ module Make (E: PRE_ORD) : S with type elt = E.t
 
   exception Empty
 
-  (* Rank of the tree *)
   let _rank = function
     | E -> 0
     | N (r, _, _, _) -> r
@@ -277,7 +276,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         ensures  match r with
                  | None -> is_empty param
                  | Some (h, x) ->
-                     x = minimum param && (* minimum element *)
+                     x = minimum param &&
                      occ (minimum param) h = occ (minimum param) param - 1 &&
                      forall y. y <> minimum param -> occ y param = occ y h &&
                      size h = size param - 1 &&

@@ -3,15 +3,16 @@ type 'a t = {
   mutable rear : 'a list;
   mutable size : int;
   mutable view : 'a list [@ghost];
-} (*@ invariant size = length view *)
-  (*@ invariant (front = [] -> rear = []) && view = front ++ List.rev rear *)
+} (*@ invariant size = List.length view
+      invariant (front = [] -> rear = []) && view = front @ List.rev rear *)
 
 let create () = {
   front = [];
   rear  = [];
   size  = 0;
   view  = [];
-} (*@ q = create ()
+}
+(*@ q = create ()
         ensures q.view = [] *)
 
 let [@logic] is_empty q = q.size = 0
@@ -53,19 +54,19 @@ let pop q =
   q.size <- q.size - 1;
   x
 (*@ x = pop q
-      raises  Not_found -> is_empty (old q) (* SUPER IMPORTANT ! *)
+      raises  Not_found -> is_empty (old q)
       ensures x :: q.view = (old q).view *)
 
 let transfer q1 q2 =
   while not (is_empty q1) do
-    (*@ variant   List.length q1.view *)
-    (*@ invariant q1.size = List.length q1.view &&
-                  q2.size = List.length q2.view *)
-    (*@ invariant (q1.front = [] -> q1.rear = []) &&
-                  (q2.front = [] -> q2.rear = []) *)
-    (*@ invariant q1.view = q1.front @ List.rev q1.rear &&
-                  q2.view = q2.front @ List.rev q2.rear *)
-    (*@ invariant q2.view @ q1.view = (old q2).view @ (old q1).view *)
+    (*@ variant   List.length q1.view
+        invariant q1.size = List.length q1.view &&
+                  q2.size = List.length q2.view
+        invariant (q1.front = [] -> q1.rear = []) &&
+                  (q2.front = [] -> q2.rear = [])
+        invariant q1.view = q1.front @ List.rev q1.rear &&
+                  q2.view = q2.front @ List.rev q2.rear
+        invariant q2.view @ q1.view = (old q2).view @ (old q1).view *)
     push (pop q1) q2
   done
 (*@ transfer q1 q2

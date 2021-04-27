@@ -2,33 +2,33 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="even_odd.ml"/>
 <theory name="Even_odd" proved="true">
  <goal name="even&#39;vc" expl="VC for even" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="even&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="10875"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
   </goal>
   <goal name="even&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="11408"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
   </goal>
   <goal name="even&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="13363"/></proof>
+  <proof prover="1"><result status="valid" time="0.03" steps="171"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="odd&#39;vc" expl="VC for odd" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="odd&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="10875"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
   </goal>
   <goal name="odd&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="11408"/></proof>
+  <proof prover="1"><result status="valid" time="0.00" steps="6"/></proof>
   </goal>
   <goal name="odd&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="13340"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="134"/></proof>
   </goal>
  </transf>
  </goal>

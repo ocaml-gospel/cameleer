@@ -1,4 +1,4 @@
-let [@logic] [@ghost] rec fact x =
+let [@logic] rec fact x =
   if x = 0 then 1
   else x * fact (x - 1)
 (*@ r = fact x
@@ -9,13 +9,13 @@ let routine n =
   let r = ref 0 in
   let u = ref 1 in
   while !r < n do
-    (*@ invariant 0 <= !r <= n /\ !u = fact !r *)
-    (*@ variant   n - !r *)
+    (*@ invariant 0 <= !r <= n /\ !u = fact !r
+        variant   n - !r *)
     let s = ref 1 in
     let v = !u in
     while !s <= !r do
-      (*@ invariant 1 <= !s <= !r + 1 /\ !u = !s * fact !r *)
-      (*@ variant !r - !s *)
+      (*@ invariant 1 <= !s <= !r + 1 /\ !u = !s * fact !r
+          variant   !r - !s *)
       u := !u + v;
       s := !s + 1
     done;

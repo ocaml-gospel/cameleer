@@ -30,7 +30,7 @@ let head {self; _} = match self with
       raises  Not_found -> is_empty param
       ensures match param.view with [] -> false | y :: _ -> x = y *)
 
-let [@logic] [@ghost] tail_list = function
+let [@ghost] [@logic] tail_list = function
   | [] -> assert false
   | _ :: l -> l
 (*@ r = tail_list q

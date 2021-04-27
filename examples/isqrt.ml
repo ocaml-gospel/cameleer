@@ -8,21 +8,21 @@
 (*@ lemma sqr_sum :
       forall x y : integer. sqr(x+y) = sqr x + 2*x*y + sqr y *)
 
-(*@ predicate isqrt_spec (x res:integer) =
-    res >= 0 /\ sqr res <= x < sqr (res + 1) *)
+(*@ predicate int_sqrt_spec (x res:integer) =
+      res >= 0 /\ sqr res <= x < sqr (res + 1) *)
 
-let isqrt x =
+let int_sqrt x =
   let count = ref 0 in
   let sum = ref 1 in
   while !sum <= x do
-    (*@ invariant !count >= 0 *)
-    (*@ invariant x >= sqr !count *)
-    (*@ invariant !sum = sqr (!count+1) *)
-    (*@ variant   x - !count *)
+    (*@ invariant !count >= 0
+        invariant x >= sqr !count
+        invariant !sum = sqr (!count + 1)
+        variant   x - !count *)
     count := !count + 1;
     sum := !sum + (2 * !count + 1)
   done;
   !count
-(*@ r = isqrt x
+(*@ r = int_sqrt x
       requires x >= 0
-      ensures  isqrt_spec x r *)
+      ensures  int_sqrt_spec x r *)

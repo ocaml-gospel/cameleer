@@ -20,7 +20,7 @@ module Mjrty (Eq: EQUAL) = struct
     let n = Array.length a in
     let cand = ref a.(0) in
     let k = ref 0 in
-    try for i = 0 to n - 1 do (* could start at 1 with k initialized to 1 *)
+    try for i = 0 to n - 1 do
       (*@ invariant 0 <= !k <= numof a !cand 0 i
           invariant 2 * (numof a !cand 0 i - !k) <= i - !k
           invariant forall c. c <> !cand -> 2 * numof a c 0 i <= i - !k *)
@@ -49,5 +49,4 @@ module Mjrty (Eq: EQUAL) = struct
       ensures  2 * numof a c 0 (Array.length a) > Array.length a
       raises   Not_found ->
                  forall x. 2 * numof a x 0 (Array.length a) <= Array.length a *)
-
 end

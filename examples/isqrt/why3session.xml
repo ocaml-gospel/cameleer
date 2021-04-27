@@ -2,56 +2,57 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="2" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="isqrt.ml"/>
 <theory name="Isqrt" proved="true">
  <goal name="sqr_non_neg" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_non_neg.0" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="12296"/></proof>
+  <proof prover="1"><result status="valid" time="0.00" steps="7"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="sqr_increasing" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_increasing.0" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="15605"/></proof>
+  <proof prover="2"><result status="valid" time="0.09" steps="23105"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="sqr_sum" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_sum.0" proved="true">
-  <proof prover="0"><result status="valid" time="0.07" steps="16799"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="56"/></proof>
   </goal>
  </transf>
  </goal>
- <goal name="isqrt&#39;vc" expl="VC for isqrt" proved="true">
+ <goal name="int_sqrt&#39;vc" expl="VC for int_sqrt" proved="true">
  <transf name="split_vc" proved="true" >
-  <goal name="isqrt&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="11178"/></proof>
+  <goal name="int_sqrt&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="4"/></proof>
   </goal>
-  <goal name="isqrt&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="12455"/></proof>
+  <goal name="int_sqrt&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="7"/></proof>
   </goal>
-  <goal name="isqrt&#39;vc.2" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="12621"/></proof>
+  <goal name="int_sqrt&#39;vc.2" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
   </goal>
-  <goal name="isqrt&#39;vc.3" expl="loop variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="12989"/></proof>
+  <goal name="int_sqrt&#39;vc.3" expl="loop variant decrease" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="34"/></proof>
   </goal>
-  <goal name="isqrt&#39;vc.4" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="12008"/></proof>
+  <goal name="int_sqrt&#39;vc.4" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="16"/></proof>
   </goal>
-  <goal name="isqrt&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="12021"/></proof>
+  <goal name="int_sqrt&#39;vc.5" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="17"/></proof>
   </goal>
-  <goal name="isqrt&#39;vc.6" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.05" steps="13318"/></proof>
+  <goal name="int_sqrt&#39;vc.6" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.02" steps="41"/></proof>
   </goal>
-  <goal name="isqrt&#39;vc.7" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.04" steps="12812"/></proof>
+  <goal name="int_sqrt&#39;vc.7" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.01" steps="18"/></proof>
   </goal>
  </transf>
  </goal>

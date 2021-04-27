@@ -1,0 +1,292 @@
+module OCamlStdLib
+
+  use export int.Int
+  use export int.ComputerDivision
+  use export int.MinMax
+  use export int.Abs
+  use export mach.int.Int
+  use export list.List
+  use export list.Append
+  use export ocaml.Exceptions
+  use export option.Option
+  use export ref.Ref
+  use export ref.Refint
+
+  let invalid_arg (s: string)
+    raises { Invalid_argument }
+  = raise (Invalid_argument s)
+
+  val ignore (_: 'a) : unit
+
+  let function fst (x: ('a, 'b)) : 'a =
+    let r, _ = x in r
+
+  let function snd (x: ('a, 'b)) : 'b =
+    let _, r = x in r
+
+  type result 'a 'b = Ok 'a | Error 'b
+
+  function (%) (x y: int) : int = mod x y
+
+  predicate same_location 'a 'a
+
+  axiom same_location_eq: forall x y: 'a.
+    same_location x y -> x = y
+
+  val (==) (x y: 'a) : bool
+    ensures { result <-> same_location x y }
+
+  predicate is_pre_order (cmp: 'a -> 'a -> int) =
+    (forall x. cmp x x = 0) /\
+    (forall x y. cmp x y = 0 <-> cmp y x = 0) /\
+    (forall x y. cmp x y < 0 <-> cmp y x > 0) /\
+    (forall x y z.
+      (cmp x y = 0 -> cmp y z = 0 -> cmp x z = 0) /\
+      (cmp x y = 0 -> cmp y z < 0 -> cmp x z < 0) /\
+      (cmp x y < 0 -> cmp y z = 0 -> cmp x z < 0) /\
+      (cmp x y < 0 -> cmp y z < 0 -> cmp x z < 0))
+
+  lemma cmp_eq: forall x y: 'a, cmp: 'a -> 'a -> int.
+    is_pre_order cmp -> (cmp x y = 0 <-> x = y)
+
+  val function compare (x y: 'a) : int
+  axiom compare_pre_order : is_pre_order (fun (x: 'a) (y: 'a) -> compare x y)
+
+  use import seq.Seq as Seq
+
+  scope import Array
+
+    type my_array 'a = private {
+      mutable ghost elts : seq 'a;
+                  length : int;
+    } invariant { 0 <= length = Seq.length elts }
+
+    function ([]) (a: my_array 'a) (i: int) : 'a = Seq.([]) a.elts i
+
+    val get (a: my_array 'a) (i: int) : 'a
+      requires { [@expl:index in array bounds] 0 <= i < length a }
+      ensures  { result = a[i] }
+
+    val set (a: my_array 'a) (i: int) (v: 'a) : unit
+      writes   { a }
+      requires { 0 <= i < length a }
+      ensures  { a.elts = (old a.elts)[i <- v] }
+
+    meta coercion function elts
+
+    val ([]) (a: my_array 'a) (i: int) : 'a
+      requires { [@expl:index in array bounds] 0 <= i < a.length }
+      ensures  { result = a[i] }
+
+    val ([]<-) (a: my_array 'a) (i: int) (v: 'a) : unit writes {a}
+      requires { [@expl:index in array bounds] 0 <= i < a.length }
+      ensures  { a.elts = (old a.elts)[i <- v] }
+
+    val make (n: int) (v: 'a) : my_array 'a
+      requires { [@expl:array creation size] n >= 0 }
+      ensures  { forall i. 0 <= i < n -> result[i] = v }
+      ensures  { result.length = n }
+
+    let init (n: int) (f: int -> 'a) : my_array 'a
+      requires { [@expl:array creation size] n >= 0 }
+      ensures  { forall i. 0 <= i < n -> result[i] = f i }
+      ensures  { length result = n }
+    = let a = make n (f 0) in
+      for i = 1 to n - 1 do
+        invariant { forall j. 0 <= j < i -> a[j] = f j }
+        a[i] <- f i
+      done;
+      a
+
+    val sort (cmp: 'a -> 'a -> int) (a: my_array 'a) : unit
+      requires { is_pre_order cmp }
+      ensures  { forall i j. 0 <= i <= j < length a -> cmp a[i] a[j] <= 0 }
+
+    let rec function to_list_range (a: my_array 'a) (l u: int) : list 'a
+      requires { l >= 0 /\ u <= a.length }
+      variant  { u - l }
+    = if u <= l then Nil else Cons a[l] (to_list_range a (l+1) u)
+
+    use list.Append
+
+    let rec lemma to_list_append (a: my_array 'a) (l m u: int)
+      requires { 0 <= l <= m <= u <= a.length }
+      variant  { m - l }
+      ensures  { to_list_range a l m ++ to_list_range a m u =
+                 to_list_range a l u }
+    = if l < m then to_list_append a (l+1) m u
+
+    let to_list (a: my_array 'a) : list 'a
+      ensures { result = to_list_range a 0 (length a) }
+    = to_list_range a 0 (length a)
+
+  end
+
+  type array 'a = my_array 'a
+
+  scope Sys
+
+    val constant max_array_length : int
+    axiom non_neg_max_array_length : 0 < max_array_length
+
+  end
+
+  scope List
+
+    use export list.List
+    use export list.Length
+    use export list.Mem
+    use export list.NumOcc
+    use import list.Append    as A
+    use import list.Reverse   as R
+    use import list.RevAppend as RA
+
+    let function rev (l: list 'a) : list 'a =
+      R.reverse l
+
+    let function append (l1 l2: list 'a) : list 'a =
+      A.(++) l1 l2
+
+    let function rev_append (s t: list 'a) : list 'a =
+      RA.rev_append s t
+
+    val mem (x: 'a) (l: list 'a) : bool
+      ensures { result <-> mem x l }
+
+    val filter (p: 'a -> bool) (l: list 'a) : list 'a
+      ensures { forall x. mem x result <-> p x && mem x l }
+      ensures { forall x. mem x result -> num_occ x result = num_occ x l }
+
+    let find_all (p: 'a -> bool) (l: list 'a)
+      ensures { forall x. mem x result -> p x && mem x l }
+      ensures { forall x. mem x result -> num_occ x result = num_occ x l }
+    = filter p l
+
+    val list_exists (p: 'a -> bool) (l: list 'a) : bool
+      ensures { result <-> exists x. mem x l /\ p x }
+
+  end
+
+end
+
+module Array
+  use int.Int
+  use seq.Seq
+  use OCamlStdLib
+
+  (* scope import MyArray *)
+
+    type my_array 'a = private {
+      mutable ghost elts : seq 'a;
+                  length : int;
+    } invariant { 0 <= length = Seq.length elts }
+
+    function ([]) (a: my_array 'a) (i: int) : 'a = Seq.([]) a.elts i
+
+    val get (a: my_array 'a) (i: int) : 'a
+      requires { [@expl:index in array bounds] 0 <= i < length a }
+      ensures  { result = a[i] }
+
+    val set (a: my_array 'a) (i: int) (v: 'a) : unit
+      writes   { a }
+      requires { 0 <= i < length a }
+      ensures  { a.elts = (old a.elts)[i <- v] }
+
+    meta coercion function elts
+
+    val ([]) (a: my_array 'a) (i: int) : 'a
+      requires { [@expl:index in array bounds] 0 <= i < a.length }
+      ensures  { result = a[i] }
+
+    val ([]<-) (a: my_array 'a) (i: int) (v: 'a) : unit writes {a}
+      requires { [@expl:index in array bounds] 0 <= i < a.length }
+      ensures  { a.elts = (old a.elts)[i <- v] }
+
+    val make (n: int) (v: 'a) : my_array 'a
+      requires { [@expl:array creation size] n >= 0 }
+      ensures  { forall i. 0 <= i < n -> result[i] = v }
+      ensures  { result.length = n }
+
+    let init (n: int) (f: int -> 'a) : my_array 'a
+      requires { [@expl:array creation size] n >= 0 }
+      ensures  { forall i. 0 <= i < n -> result[i] = f i }
+      ensures  { length result = n }
+    = let a = make n (f 0) in
+      for i = 1 to n - 1 do
+        invariant { forall j. 0 <= j < i -> a[j] = f j }
+        a[i] <- f i
+      done;
+      a
+
+    val sort (cmp: 'a -> 'a -> int) (a: my_array 'a) : unit
+      requires { is_pre_order cmp }
+      ensures  { forall i j. 0 <= i <= j < length a -> cmp a[i] a[j] <= 0 }
+
+    let rec function to_list_range (a: my_array 'a) (l u: int) : list 'a
+      requires { l >= 0 /\ u <= a.length }
+      variant  { u - l }
+    = if u <= l then Nil else Cons a[l] (to_list_range a (l+1) u)
+
+    use list.Append
+
+    let rec lemma to_list_append (a: my_array 'a) (l m u: int)
+      requires { 0 <= l <= m <= u <= a.length }
+      variant  { m - l }
+      ensures  { to_list_range a l m ++ to_list_range a m u =
+                 to_list_range a l u }
+    = if l < m then to_list_append a (l+1) m u
+
+    let to_list (a: my_array 'a) : list 'a
+      ensures { result = to_list_range a 0 (length a) }
+    = to_list_range a 0 (length a)
+
+  (* end *)
+
+  type array 'a = my_array 'a
+
+end
+
+module Seq
+
+  use export seq.Seq
+  use export seq.Mem
+
+end
+
+module SeqPermut
+
+  use export seq.Permut
+
+end
+
+module Permut
+
+  use export list.Permut
+
+end
+
+module Numof
+
+  use array.NumOfEq
+  use import int.NumOf as N
+
+  use OCamlStdLib
+
+  function numof (a: Array.my_array 'a) (v: 'a) (l u: int) : int =
+    N.numof (fun i -> (Array.([]) a i) = v) l u
+
+end
+
+module Sum
+
+  use export int.Sum
+
+end
+
+module Power
+
+  use int.Power
+
+  function (^) (x y: int) : int = power x y
+
+end

@@ -2,174 +2,173 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="3" name="Alt-Ergo" version="2.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="program_proofs.ml"/>
 <theory name="Program_proofs" proved="true">
  <goal name="Mult.mult&#39;vc" expl="VC for mult" proved="true">
- <proof prover="2"><result status="valid" time="0.04" steps="11882"/></proof>
+ <proof prover="1"><result status="valid" time="0.01" steps="22"/></proof>
  </goal>
  <goal name="Mult.mult_commutative&#39;vc" expl="VC for mult_commutative" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="mult_commutative&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11132"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="11"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11081"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="10"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="11671"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="10"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.3" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11150"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11113"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="11116"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.6" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11168"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.7" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="11117"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.8" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11714"/></proof>
+  <proof prover="1"><result status="valid" time="0.00" steps="12"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.9" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.02" steps="11212"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.10" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="11759"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.11" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="11790"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="15"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.12" expl="variant decrease" proved="true">
-  <proof prover="2" timelimit="5"><result status="valid" time="0.05" steps="11237"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="16"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.13" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11805"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="16"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.14" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.03" steps="11192"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="17"/></proof>
   </goal>
   <goal name="mult_commutative&#39;vc.15" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="12932"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="54"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="Mirror.mirror_involutive&#39;vc" expl="VC for mirror_involutive" proved="true">
- <proof prover="2"><result status="valid" time="0.09" steps="17707"/></proof>
+ <proof prover="1"><result status="valid" time="0.00" steps="74"/></proof>
  </goal>
  <goal name="Mirror.mirror_size&#39;vc" expl="VC for mirror_size" proved="true">
- <proof prover="2"><result status="valid" time="0.11" steps="30357"/></proof>
+ <proof prover="1"><result status="valid" time="0.02" steps="132"/></proof>
  </goal>
  <goal name="AST.eval&#39;vc" expl="VC for eval" proved="true">
- <proof prover="2"><result status="valid" time="0.07" steps="15643"/></proof>
+ <proof prover="1"><result status="valid" time="0.01" steps="70"/></proof>
  </goal>
  <goal name="AST.eval_list&#39;vc" expl="VC for eval_list" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="eval_list&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="17597"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="40"/></proof>
   </goal>
   <goal name="eval_list&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="17597"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="40"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="AST.shorten&#39;vc" expl="VC for shorten" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="shorten&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="16569"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="65"/></proof>
   </goal>
   <goal name="shorten&#39;vc.1" expl="postcondition" proved="true">
   <transf name="destruct_term" proved="true" arg1="r">
    <goal name="shorten&#39;vc.1.0" expl="postcondition" proved="true">
    <transf name="destruct_term" proved="true" arg1="op">
     <goal name="shorten&#39;vc.1.0.0" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.02" steps="71"/></proof>
+    <proof prover="1"><result status="valid" time="0.02" steps="192"/></proof>
     </goal>
     <goal name="shorten&#39;vc.1.0.1" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.02" steps="69"/></proof>
+    <proof prover="1"><result status="valid" time="0.02" steps="134"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="shorten&#39;vc.1.1" expl="postcondition" proved="true">
    <transf name="destruct_term" proved="true" arg1="op">
     <goal name="shorten&#39;vc.1.1.0" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.02" steps="70"/></proof>
+    <proof prover="1"><result status="valid" time="0.02" steps="158"/></proof>
     </goal>
     <goal name="shorten&#39;vc.1.1.1" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.02" steps="68"/></proof>
+    <proof prover="1"><result status="valid" time="0.02" steps="109"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="shorten&#39;vc.1.2" expl="postcondition" proved="true">
    <transf name="destruct_term" proved="true" arg1="op">
     <goal name="shorten&#39;vc.1.2.0" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.01" steps="68"/></proof>
+    <proof prover="1"><result status="valid" time="0.02" steps="153"/></proof>
     </goal>
     <goal name="shorten&#39;vc.1.2.1" expl="postcondition" proved="true">
-    <proof prover="3"><result status="valid" time="0.01" steps="66"/></proof>
+    <proof prover="1"><result status="valid" time="0.02" steps="108"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
   <goal name="shorten&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="14540"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="AST.optimize&#39;vc" expl="VC for optimize" proved="true">
- <proof prover="2"><result status="valid" time="0.08" steps="20589"/></proof>
+ <proof prover="1"><result status="valid" time="0.02" steps="109"/></proof>
  </goal>
  <goal name="AST.optimize_and_filter&#39;vc" expl="VC for optimize_and_filter" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="optimize_and_filter&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="19350"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="41"/></proof>
   </goal>
   <goal name="optimize_and_filter&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.11" steps="19401"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="41"/></proof>
   </goal>
   <goal name="optimize_and_filter&#39;vc.2" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="optimize_and_filter&#39;vc.2.0" expl="postcondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.04" steps="14951"/></proof>
+   <proof prover="1"><result status="valid" time="0.01" steps="8"/></proof>
    </goal>
    <goal name="optimize_and_filter&#39;vc.2.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="optimize_and_filter&#39;vc.2.1.0" expl="postcondition" proved="true">
     <transf name="destruct_term" proved="true" arg1="op">
      <goal name="optimize_and_filter&#39;vc.2.1.0.0" expl="postcondition" proved="true">
-     <proof prover="3"><result status="valid" time="0.02" steps="109"/></proof>
+     <proof prover="1"><result status="valid" time="0.03" steps="327"/></proof>
      </goal>
      <goal name="optimize_and_filter&#39;vc.2.1.0.1" expl="postcondition" proved="true">
-     <proof prover="2"><result status="valid" time="0.07" steps="20487"/></proof>
+     <proof prover="1"><result status="valid" time="0.03" steps="192"/></proof>
      </goal>
     </transf>
     </goal>
     <goal name="optimize_and_filter&#39;vc.2.1.1" expl="postcondition" proved="true">
     <transf name="destruct_term" proved="true" arg1="op">
      <goal name="optimize_and_filter&#39;vc.2.1.1.0" expl="postcondition" proved="true">
-     <proof prover="3"><result status="valid" time="0.03" steps="125"/></proof>
+     <proof prover="1"><result status="valid" time="0.03" steps="542"/></proof>
      </goal>
      <goal name="optimize_and_filter&#39;vc.2.1.1.1" expl="postcondition" proved="true">
-     <proof prover="2"><result status="valid" time="0.08" steps="22929"/></proof>
+     <proof prover="1"><result status="valid" time="0.03" steps="224"/></proof>
      </goal>
     </transf>
     </goal>
     <goal name="optimize_and_filter&#39;vc.2.1.2" expl="postcondition" proved="true">
     <transf name="destruct_term" proved="true" arg1="op">
      <goal name="optimize_and_filter&#39;vc.2.1.2.0" expl="postcondition" proved="true">
-     <proof prover="3"><result status="valid" time="0.03" steps="128"/></proof>
+     <proof prover="1"><result status="valid" time="0.03" steps="549"/></proof>
      </goal>
      <goal name="optimize_and_filter&#39;vc.2.1.2.1" expl="postcondition" proved="true">
-     <proof prover="2"><result status="valid" time="0.09" steps="22855"/></proof>
+     <proof prover="1"><result status="valid" time="0.03" steps="213"/></proof>
      </goal>
     </transf>
     </goal>
@@ -186,80 +185,80 @@
    <goal name="to_int&#39;vc.0.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="to_int&#39;vc.0.0.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.06" steps="16331"/></proof>
+    <proof prover="1"><result status="valid" time="0.01" steps="11"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="to_int&#39;vc.0.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="to_int&#39;vc.0.1.0" expl="postcondition" proved="true">
-    <proof prover="2"><result status="valid" time="0.05" steps="17314"/></proof>
+    <proof prover="1"><result status="valid" time="0.01" steps="12"/></proof>
     </goal>
    </transf>
    </goal>
   </transf>
   </goal>
   <goal name="to_int&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.09" steps="18354"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="21"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="PeanoNumbers.of_int&#39;vc" expl="VC for of_int" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="of_int&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="16571"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
   </goal>
   <goal name="of_int&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.06" steps="17646"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
   </goal>
   <goal name="of_int&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="18441"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="25"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="PeanoNumbers.to_int_of_int&#39;vc" expl="VC for to_int_of_int" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="to_int_of_int&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="2"><result status="valid" time="0.05" steps="16754"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="16"/></proof>
   </goal>
   <goal name="to_int_of_int&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.04" steps="16740"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="16"/></proof>
   </goal>
   <goal name="to_int_of_int&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="19226"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="39"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="PeanoNumbers.of_int_to_int&#39;vc" expl="VC for of_int_to_int" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="of_int_to_int&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="17862"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
   </goal>
   <goal name="of_int_to_int&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="20076"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="107"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="PeanoNumbers.less_transitive&#39;vc" expl="VC for less_transitive" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="less_transitive&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="19970"/></proof>
+  <proof prover="1"><result status="valid" time="0.03" steps="140"/></proof>
   </goal>
   <goal name="less_transitive&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="19765"/></proof>
+  <proof prover="1"><result status="valid" time="0.03" steps="269"/></proof>
   </goal>
   <goal name="less_transitive&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="19637"/></proof>
+  <proof prover="1"><result status="valid" time="0.03" steps="148"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="PeanoNumbers.add&#39;vc" expl="VC for add" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="add&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.07" steps="18157"/></proof>
+  <proof prover="1"><result status="valid" time="0.01" steps="16"/></proof>
   </goal>
   <goal name="add&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.08" steps="20088"/></proof>
+  <proof prover="1"><result status="valid" time="0.02" steps="51"/></proof>
   </goal>
  </transf>
  </goal>

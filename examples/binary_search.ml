@@ -6,9 +6,9 @@ let binary_search a v =
   let u = ref (Array.length a - 1) in
   let exception Found of int in
   try while !l <= !u do
-      (*@ variant   !u - !l *)
-      (*@ invariant 0 <= !l && !u < Array.length a *)
-      (*@ invariant forall i. 0 <= i < Array.length a -> a.(i) = v ->
+      (*@ variant   !u - !l
+          invariant 0 <= !l && !u < Array.length a
+          invariant forall i. 0 <= i < Array.length a -> a.(i) = v ->
             !l <= i <= !u *)
       let m = !l + (!u - !l) / 2 in
       if a.(m) < v then
@@ -31,10 +31,10 @@ module BinarySearch = struct
     let u = ref (Array.length a - 1) in
     let exception Found of int in
     try while !l <= !u do
-        (*@ variant   !u - !l *)
-        (*@ invariant 0 <= !l && !u < Array.length a *)
-        (*@ invariant forall i. 0 <= i < Array.length a ->
-              compare a.(i) v = 0 -> !l <= i <= !u *)
+      (*@ variant   !u - !l
+          invariant 0 <= !l && !u < Array.length a
+          invariant forall i. 0 <= i < Array.length a ->
+            compare a.(i) v = 0 -> !l <= i <= !u *)
         let m = !l + (!u - !l) / 2 in
         let c = compare a.(m) v in
         if c < 0 then
@@ -46,7 +46,7 @@ module BinarySearch = struct
       done;
       raise Not_found
     with Found i -> i
-    (*@ i = binary_search_1 compare a v
+  (*@ i = binary_search_1 compare a v
           requires is_pre_order compare
           requires forall i j. 0 <= i <= j < Array.length a ->
                      compare a.(i) a.(j) <= 0
@@ -58,7 +58,7 @@ end
 module type OrderedType = sig
   type t
 
-  val[@logic] cmp: t -> t -> int
+  val [@logic] cmp: t -> t -> int
   (*@ axiom is_pre_order_cmp: is_pre_order cmp *)
 end
 
@@ -78,7 +78,7 @@ module type BS = sig
 end
 
 module Make (Ord: OrderedType) : BS with type elt = Ord.t
-                          [@gospel "with function cmp = Ord.cmp"]
+                                 [@gospel "with function cmp = Ord.cmp"]
 = struct
   type elt = Ord.t
 
@@ -92,10 +92,10 @@ module Make (Ord: OrderedType) : BS with type elt = Ord.t
     let u = ref (Array.length a - 1) in
     let exception Found of int in
     try while !l <= !u do
-        (*@ variant   !u - !l *)
-        (*@ invariant 0 <= !l && !u < Array.length a *)
-        (*@ invariant forall i. 0 <= i < Array.length a ->
-              cmp a.(i) v = 0 -> !l <= i <= !u *)
+      (*@ variant   !u - !l
+          invariant 0 <= !l && !u < Array.length a
+          invariant forall i. 0 <= i < Array.length a ->
+            cmp a.(i) v = 0 -> !l <= i <= !u *)
         let m = !l + (!u - !l) / 2 in
         let c = Ord.cmp a.(m) v in
         if c < 0 then
@@ -107,7 +107,7 @@ module Make (Ord: OrderedType) : BS with type elt = Ord.t
       done;
       raise Not_found
     with Found i -> i
-    (*@ i = binary_search a v
+  (*@ i = binary_search a v
           requires is_sorted a
           raises   Not_found -> forall i. 0 <= i < Array.length a ->
                      cmp a.(i) v <> 0
