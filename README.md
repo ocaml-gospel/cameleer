@@ -4,29 +4,27 @@ A Deductive Verification Tool for OCaml Programs
 
 Dependency on the VOCaL project
 -------------------------------
-Cameleer depends on the GOSPEL specification language, which is part of the
-[VOCaL project](https://vocal.lri.fr/). For convenience, and since the GOSPEL
-opam package is yet to be released, we include `vocal` as a submodule of this
-repository.
+Cameleer depends on the GOSPEL specification language. Since the GOSPEL opam
+package is yet to be release, one should first clone it and install it before
+`cameleer`:
+```
+git clone -b implementations_gospel https://github.com/ocaml-gospel/gospel
+opam pin add path/to/gospel
+```
+This will pin the `gospel` package and ask to install it. Press `RET` or type
+`y` to accept both the pin add procedure and the installation part.
 
 Install
 -------
 First, start by cloning the Cameleer project:
 ```
-  $ git clone --recursive git@github.com:mariojppereira/cameleer.git
+  $ git clone git@github.com:mariojppereira/cameleer.git
 ```
 This will clone the Cameleer repository into a directory named `cameleer`.
 Note the use of the `--recursive` option, in order to fetch the `vocal`
 repository.
 
-Next, pin add the needed opam packages:
-```
-  $ opam pin add path/to/cameleer/vocal
-```
-This will pin the `vocal`, `gospel`, and `why3gospel` packages from the
-VOCaL project. It will also ask to install such packages.
-
-Finally, pin add the `cameleer` package:
+Next, pin add the `cameleer` package:
 ```
   $ opam pin add path/to/cameleer
 ```
@@ -64,3 +62,33 @@ one can chose different theorem provers, in order to discharge the generated
 proof obligation.
 
 The `examples/` directory contains several case studies verified with Cameleer.
+
+Using Vagrantfile
+-----------------
+We have included a `Vagrantfile`, in order to allow one to easily start a
+Virtual Machine with all the required dependencies of the Cameleer
+project. Simply to
+```
+vagrant up
+```
+in the `cameleer` folder in order to start the Virtual Machine. This will take
+several minutes. This will install `opam`, the `why3` framework, the `alt-ergo`
+solver, the `gospel` specification language, and finally the `cameleer` tool
+itself. If it succeeds, expect to see the following message at the end of the
+whole process:
+```
+default: File "test.ml", line 1, characters 39-44:
+default: Goal Postcondition from verification condition succ'vc.
+default: Prover result is: Valid (0.02s, 2 steps).
+```
+Then, one can do
+```
+vagrant ssh
+```
+to log into the Virtual Machine. We have not included a graphical interface and
+we have only installed the `alt-ergo` solver in this setting. Hence, any use of
+Cameleer should be performed using the `batch` mode. For instance:
+```
+cameleer --batch --prover alt-ergo applicative_queue
+```
+inside the `examples` folder.
