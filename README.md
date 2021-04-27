@@ -91,4 +91,5 @@ Cameleer should be performed using the `batch` mode. For instance:
 ```
 cameleer --batch --prover alt-ergo applicative_queue
 ```
-inside the `examples` folder.
+inside the `examples` folder. If you have any trouble running the `cameleer`
+after `vagrant ssh`, please run `eval $(opam env)`.
