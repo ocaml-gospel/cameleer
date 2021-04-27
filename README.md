@@ -2,7 +2,7 @@ Cameleer
 ========
 A Deductive Verification Tool for OCaml Programs
 
-Dependency on the VOCaL project
+Dependency on the GOSPEL project
 -------------------------------
 Cameleer depends on the GOSPEL specification language. Since the GOSPEL opam
 package is yet to be release, one should first clone it and install it before
