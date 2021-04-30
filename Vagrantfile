@@ -33,6 +33,7 @@ config.vm.provision "shell", privileged: false, inline: <<-SHELL
     opam pin add -y cameleer
     why3 config detect
     echo "let succ x = x + 1 (*@ r = succ x ensures r > x *)" > test.ml
+    eval `opam config env`
     cameleer --batch --prover alt-ergo test.ml
     SHELL
 end

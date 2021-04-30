@@ -13,7 +13,8 @@ module OCamlStdLib
   use export ref.Refint
 
   let invalid_arg (s: string)
-    raises { Invalid_argument }
+    raises  { Invalid_argument }
+    ensures { false }
   = raise (Invalid_argument s)
 
   val ignore (_: 'a) : unit
