@@ -1,4 +1,4 @@
-module OCamlStdLib
+module Stdlib
 
   use export int.Int
   use export int.ComputerDivision
@@ -14,7 +14,7 @@ module OCamlStdLib
 
   let invalid_arg (s: string)
     raises  { Invalid_argument }
-    ensures { false }
+    returns { _ -> false }
   = raise (Invalid_argument s)
 
   val ignore (_: 'a) : unit
@@ -170,10 +170,40 @@ module OCamlStdLib
 
 end
 
+module Map
+
+  use map.Map, set.Fset
+  use Stdlib
+
+  scope Make
+
+    scope O
+      type t
+
+      val function compare (x y: t) : int
+      axiom compare_pre_order : is_pre_order compare
+    end
+
+    type key = O.t
+    type t 'a = abstract {
+      dom  : fset key;
+      model: key -> 'a;
+    }
+
+    val constant empty: t 'a
+      ensures { result.dom = empty }
+
+    val is_empty (s: t 'a) : bool
+      ensures { result <-> is_empty s.dom }
+
+  end
+end
+
+
 module Array
   use int.Int
   use seq.Seq
-  use OCamlStdLib
+  use Stdlib
 
   (* scope import MyArray *)
 
@@ -271,7 +301,7 @@ module Numof
   use array.NumOfEq
   use import int.NumOf as N
 
-  use OCamlStdLib
+  use Stdlib
 
   function numof (a: Array.my_array 'a) (v: 'a) (l u: int) : int =
     N.numof (fun i -> (Array.([]) a i) = v) l u
@@ -289,5 +319,11 @@ module Power
   use int.Power
 
   function (^) (x y: int) : int = power x y
+
+end
+
+module Set
+
+  use export set.Fset
 
 end
