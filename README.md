@@ -18,11 +18,9 @@ Install
 -------
 First, start by cloning the Cameleer project:
 ```
-  $ git clone git@github.com:mariojppereira/cameleer.git
+  $ git clone https://github.com/ocaml-gospel/cameleer
 ```
 This will clone the Cameleer repository into a directory named `cameleer`.
-Note the use of the `--recursive` option, in order to fetch the `vocal`
-repository.
 
 Next, pin add the `cameleer` package:
 ```
