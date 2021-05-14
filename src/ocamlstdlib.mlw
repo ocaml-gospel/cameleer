@@ -247,14 +247,14 @@ module Map
 
   scope Make
 
-    scope O
+    scope Ord
       type t
 
       val function compare (x y: t) : int
       axiom compare_pre_order : is_pre_order compare
     end
 
-    type key = O.t
+    type key = Ord.t
     type t 'a = abstract {
       dom  : fset key;
       model: key -> 'a;
