@@ -17,7 +17,7 @@ let print_modules = Debug.lookup_flag "print_modules"
 
 let use_std_lib =
   let dummy_pos = Loc.dummy_position in
-  let stdlib = Qdot (Qident (T.mk_id "ocamlstdlib"), T.mk_id "OCamlStdLib") in
+  let stdlib = Qdot (Qident (T.mk_id "ocamlstdlib"), T.mk_id "Stdlib") in
   let use_stdlib = Odecl.mk_duseimport dummy_pos ~import:false [stdlib, None] in
   [use_stdlib]
 
