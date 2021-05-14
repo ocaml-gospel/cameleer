@@ -63,6 +63,13 @@ module BinTree (Ord: OrderedType) = struct
             (forall rv. mem2 rv r -> Ord.compare v rv < 0) &&
             abs (height l - height r) <= 2 &&
             bst l && bst r*)
+            
+  (*@ predicate bst_no_height (t:t) = match t with
+        |Empty -> true
+        | Node l v r h -> 
+            (forall lv. mem2 lv l -> Ord.compare lv v < 0) &&
+            (forall rv. mem2 rv r -> Ord.compare v rv < 0) &&
+            bst_no_height l && bst_no_height r*)
 
 
   let rec height = function
@@ -81,7 +88,7 @@ module BinTree (Ord: OrderedType) = struct
         else occ_uniq2 x (if z < 0 then l else r)
   (*@ occ_uniq2 x t
         variant t
-        requires bst t
+        requires bst t || bst_no_height t
         ensures  occ x t <= 1 *)
 
   (* let [@lemma] rec is_maximum_max (t: t) =
@@ -95,7 +102,7 @@ module BinTree (Ord: OrderedType) = struct
    *   variant t
    *   ensures is_maximum (max_tree t) t*\) *)
 
-  let create l v r =
+  let [@logic] create l v r =
     let hl = match l with Empty -> 0 | Node (_,_,_,h) -> h in
     let hr = match r with Empty -> 0 | Node (_,_,_,h) -> h in
     Node(l, v, r, (if hl >= hr then hl + 1 else hr + 1))
@@ -150,7 +157,8 @@ module BinTree (Ord: OrderedType) = struct
       ensures bst res
       ensures forall w: elt. w <> v -> occ w res = occ w l + occ w r
       ensures occ v res = 1
-      ensures max (height l) (height r) <= height res <= 1 + max (height l) (height r)*)
+      ensures max (height l) (height r) <= height res <= 1 + max (height l) (height r)
+      ensures abs ((height l) - (height r)) <= 2 -> res = create l v r*)
 
   (*@ predicate is_minimum (x: elt) (tree: t) =
     mem2 x tree /\ forall e: elt. mem2 e tree -> Ord.compare x e < 0 \/ e = x *)
@@ -193,9 +201,7 @@ module BinTree (Ord: OrderedType) = struct
    let rec remove_min_elt = function
       Empty -> assert false
     | Node (Empty,_, r,_) as x -> assert (height r - height x = - 1); r
-    | Node (l, v, r,_) -> let y = remove_min_elt l in
-                          if (abs ((height y) - (height r)) <= 2) then create y v r
-                          else bal y v r
+    | Node (l, v, r,_) -> bal (remove_min_elt l) v r
   (*@ r = remove_min_elt param
       variant param
       requires bst param
@@ -207,9 +213,7 @@ module BinTree (Ord: OrderedType) = struct
       
   let rec add_min_element x = function
       | Empty -> create Empty x Empty
-      | Node (l, v, r, _) -> let y = add_min_element x l in
-        if (abs ((height y) - (height r)) <= 2) then create y v r
-        else bal y v r
+      | Node (l, v, r, _) -> bal (add_min_element x l) v r
   (*@ r = add_min_element x param
       variant param
       requires bst param
@@ -223,9 +227,7 @@ module BinTree (Ord: OrderedType) = struct
     match (t1, t2) with
     | (Empty, t) -> t
     | (t, Empty) -> t
-    | (_, _) -> let y = remove_min_elt t2 in
-                if (abs ((height y) - (height t1)) <= 2) then create t1 (min_tree t2) y 
-                else bal t1 (min_tree t2) y
+    | (_, _) -> bal t1 (min_tree t2) (remove_min_elt t2)
   (*@ r = merge t1 t2
       requires bst t1 && bst t2
       requires abs ((height t1) - (height t2)) <= 2
@@ -255,10 +257,10 @@ module BinTree (Ord: OrderedType) = struct
         if z = 0 then t else
         if z < 0 then
           let ll = add l x in
-          if l == ll then t else if (abs ((height ll) - (height r)) <= 2) then create ll v r else bal ll v r
+          if l == ll then t else bal ll v r
         else
           let rr = add r x in
-          if r == rr then t else if (abs ((height l) - (height rr)) <= 2) then create l v rr else bal l v rr
+          if r == rr then t else bal l v rr
   (*@r = add t x
       requires bst t
       variant t
@@ -276,11 +278,11 @@ module BinTree (Ord: OrderedType) = struct
         if z < 0 then
           let ll = remove x l in
           if l == ll then t
-          else if (abs ((height ll) - (height r)) <= 2) then create ll v r else bal ll v r
+          else bal ll v r
         else
           let rr = remove x r in
           if r == rr then t
-          else if (abs ((height l) - (height rr)) <= 2) then create l v rr else bal l v rr
+          else bal l v rr
           (*@ r = remove x t
               requires bst t
               variant t
@@ -288,4 +290,37 @@ module BinTree (Ord: OrderedType) = struct
               ensures occ x r = if (occ x t > 0) then ((occ x t) - 1) else occ x t
               ensures bst r
               ensures height t - 1 <= height r <= height t*)
+              
+              
+   (*@ predicate subset (s1 s2: t) = forall x : elt. mem2 x s1 -> mem2 x s2*)
+
+
+  (*@ lemma subset_refl:
+    forall s: t. subset s s*)
+
+  (*@ lemma subset_trans:
+    forall s1 s2 s3: t. subset s1 s2 -> subset s2 s3 -> subset s1 s3*)
+    
+    
+    
+    
+    
+  let rec subset s1 s2 =
+      match (s1, s2) with
+        Empty, _ ->
+          true
+      | _, Empty ->
+          false
+      | Node (l1, v1, r1, _), (Node (l2, v2, r2, _) as t2) ->
+          let c = Ord.compare v1 v2 in
+          if c = 0 then
+            subset l1 l2 && subset r1 r2
+          else if c < 0 then
+            subset (Node (l1, v1, Empty, 0)) l2 && subset r1 t2
+          else
+            subset (Node (Empty, v1, r1, 0)) r2 && subset l1 t2
+  (*@ r = subset t1 t2
+    requires bst_no_height t1 && bst_no_height t2
+    variant t1, t2
+    ensures subset t1 t2 <-> r*)
 end
