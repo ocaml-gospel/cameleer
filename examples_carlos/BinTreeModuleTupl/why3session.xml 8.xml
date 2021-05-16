@@ -2530,8 +2530,11 @@
   </goal>
   <goal name="subset&#39;vc.12" expl="postcondition">
   <transf name="split_vc" >
-   <goal name="subset&#39;vc.12.0" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
+   <goal name="subset&#39;vc.12.0" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1"><result status="highfailure" time="0.66" steps="2459041"/></proof>
+   <proof prover="6"><result status="timeout" time="1.00" steps="43564"/></proof>
+   <transf name="split_vc" >
     <goal name="subset&#39;vc.12.0.0" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="subset&#39;vc.12.0.0.0" expl="postcondition" proved="true">
@@ -2555,43 +2558,31 @@
      <proof prover="1"><result status="highfailure" time="0.68" steps="1417655"/></proof>
      <proof prover="6"><result status="valid" time="0.32" steps="27793"/></proof>
      </goal>
-    </transf>
-    </goal>
-    <goal name="subset&#39;vc.12.0.4" expl="postcondition" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="subset&#39;vc.12.0.4.0" expl="postcondition" proved="true">
-     <transf name="inline_goal" proved="true" >
-      <goal name="subset&#39;vc.12.0.4.0.0" expl="postcondition" proved="true">
-      <transf name="split_all_full" proved="true" >
-       <goal name="subset&#39;vc.12.0.4.0.0.0" expl="postcondition" proved="true">
-       <proof prover="1"><result status="timeout" time="1.00" steps="2660797"/></proof>
-       <proof prover="6"><result status="valid" time="0.74" steps="37211"/></proof>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
+     <goal name="subset&#39;vc.12.1.3.0" expl="postcondition">
+     <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><undone/></proof>
+     <proof prover="6"><result status="valid" time="0.24" steps="27798"/></proof>
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.0.5" expl="postcondition" proved="true">
-    <transf name="inline_goal" proved="true" >
-     <goal name="subset&#39;vc.12.0.5.0" expl="postcondition" proved="true">
-     <transf name="split_all_full" proved="true" >
-      <goal name="subset&#39;vc.12.0.5.0.0" expl="postcondition" proved="true">
-      <transf name="split_vc" proved="true" >
-       <goal name="subset&#39;vc.12.0.5.0.0.0" expl="postcondition" proved="true">
-       <transf name="inline_goal" proved="true" >
-        <goal name="subset&#39;vc.12.0.5.0.0.0.0" expl="postcondition" proved="true">
-        <proof prover="1" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="85175953"/></proof>
-        <proof prover="6" timelimit="30" memlimit="4000"><result status="valid" time="2.12" steps="35827"/></proof>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
+    <goal name="subset&#39;vc.12.0.4" expl="postcondition">
+    <transf name="split_vc" >
+     <goal name="subset&#39;vc.12.0.4.0" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><result status="highfailure" time="0.77" steps="1372077"/></proof>
+     <proof prover="6"><result status="timeout" time="1.00" steps="41397"/></proof>
+     </goal>
+     <goal name="subset&#39;vc.12.1.4.0" expl="postcondition">
+     <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><undone/></proof>
+     <proof prover="6" obsolete="true"><result status="timeout" time="1.00" steps="41555"/></proof>
      </goal>
     </transf>
+    </goal>
+    <goal name="subset&#39;vc.12.0.5" expl="postcondition">
+    <proof prover="0"><result status="timeout" time="1.00"/></proof>
+    <proof prover="1"><result status="highfailure" time="0.67" steps="1244699"/></proof>
+    <proof prover="6"><result status="timeout" time="1.00" steps="38120"/></proof>
     </goal>
    </transf>
    </goal>
@@ -2621,64 +2612,36 @@
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.1.3" expl="postcondition" proved="true">
-    <transf name="assert" proved="true" arg1="(forall y. y &lt;&gt; x6 -&gt; mem2 y t2 -&gt; mem2 y x7 \/ mem2 y x5)">
-     <goal name="subset&#39;vc.12.1.3.0" expl="asserted formula" proved="true">
-     <proof prover="1"><result status="timeout" time="1.00" steps="2452375"/></proof>
-     <proof prover="6"><result status="valid" time="0.17" steps="20392"/></proof>
-     </goal>
-     <goal name="subset&#39;vc.12.1.3.1" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.55" steps="7176"/></proof>
-     <proof prover="1"><result status="timeout" time="1.00" steps="2536715"/></proof>
-     <proof prover="6"><result status="timeout" time="1.00" steps="38826"/></proof>
-     </goal>
-    </transf>
-    </goal>
-    <goal name="subset&#39;vc.12.1.4" expl="postcondition" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="subset&#39;vc.12.1.4.0" expl="postcondition" proved="true">
-     <transf name="case" proved="true" arg1="(subset (Node x3 x2 Empty 0) x7)">
-      <goal name="subset&#39;vc.12.1.4.0.0" expl="true case (postcondition)" proved="true">
-      <proof prover="1"><result status="highfailure" time="0.78" steps="2222485"/></proof>
-      <proof prover="6"><result status="valid" time="0.43" steps="33135"/></proof>
+    <goal name="subset&#39;vc.12.1.3" expl="postcondition">
+    <transf name="case" arg1="(subset x3 x7)">
+     <goal name="subset&#39;vc.12.1.3.0" expl="true case (postcondition)">
+     <proof prover="0"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><result status="timeout" time="1.00" steps="2147709"/></proof>
+     <proof prover="6"><result status="timeout" time="1.00" steps="42735"/></proof>
+     <transf name="case" arg1="(subset x1 x5)">
+      <goal name="subset&#39;vc.12.1.3.0.0" expl="true case (postcondition)" proved="true">
+      <proof prover="1"><result status="valid" time="0.03" steps="8436"/></proof>
       </goal>
-      <goal name="subset&#39;vc.12.1.4.0.1" expl="false case (postcondition)" proved="true">
-      <transf name="assert" proved="true" arg1="(exists x. mem2 x (Node x3 x2 Empty 0) /\ not mem2 x x7)">
-       <goal name="subset&#39;vc.12.1.4.0.1.0" expl="asserted formula" proved="true">
-       <proof prover="1"><result status="valid" time="0.06" steps="92621"/></proof>
+      <goal name="subset&#39;vc.12.1.3.0.1" expl="false case (true case. postcondition)">
+      <transf name="assert" arg1="(forall x. mem2 x x1 -&gt; not mem2 x x7)">
+       <goal name="subset&#39;vc.12.1.3.0.1.0" expl="asserted formula" proved="true">
+       <proof prover="1"><result status="valid" time="0.07" steps="114470"/></proof>
        </goal>
-       <goal name="subset&#39;vc.12.1.4.0.1.1" expl="false case (postcondition)" proved="true">
-       <transf name="introduce_exists" proved="true" >
-        <goal name="subset&#39;vc.12.1.4.0.1.1.0" expl="false case (postcondition)" proved="true">
-        <transf name="case" proved="true" arg1="(x = x3)">
-         <goal name="subset&#39;vc.12.1.4.0.1.1.0.0" expl="false case (true case. postcondition)" proved="true">
-         <proof prover="1"><result status="valid" time="0.17" steps="362445"/></proof>
-         <transf name="assert" proved="true" arg1="(not mem2 x3 x2)">
-          <goal name="subset&#39;vc.12.1.4.0.1.1.0.0.0" expl="asserted formula" proved="true">
-          <proof prover="1"><result status="valid" time="0.06" steps="98917"/></proof>
-          </goal>
-          <goal name="subset&#39;vc.12.1.4.0.1.1.0.0.1" expl="false case (true case. postcondition)" proved="true">
-          <proof prover="1"><result status="valid" time="0.17" steps="416920"/></proof>
-          </goal>
-         </transf>
-         </goal>
-         <goal name="subset&#39;vc.12.1.4.0.1.1.0.1" expl="false case (postcondition)" proved="true">
-         <transf name="assert" proved="true" arg1="(mem2 x x4)">
-          <goal name="subset&#39;vc.12.1.4.0.1.1.0.1.0" expl="asserted formula" proved="true">
-          <proof prover="1"><result status="timeout" time="1.00" steps="2009211"/></proof>
-          <proof prover="6"><result status="valid" time="0.16" steps="22095"/></proof>
-          </goal>
-          <goal name="subset&#39;vc.12.1.4.0.1.1.0.1.1" expl="false case (postcondition)" proved="true">
-          <transf name="assert" proved="true" arg1="(not mem2 x x6)">
-           <goal name="subset&#39;vc.12.1.4.0.1.1.0.1.1.0" expl="asserted formula" proved="true">
-           <proof prover="1"><result status="valid" time="0.14" steps="349622"/></proof>
-           </goal>
-           <goal name="subset&#39;vc.12.1.4.0.1.1.0.1.1.1" expl="false case (postcondition)" proved="true">
-           <proof prover="1"><result status="valid" time="0.44" steps="1152681"/></proof>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
+       <goal name="subset&#39;vc.12.1.3.0.1.1" expl="false case (true case. postcondition)">
+       <proof prover="0"><result status="timeout" time="1.00"/></proof>
+       <proof prover="1"><result status="timeout" time="1.00" steps="2304035"/></proof>
+       <proof prover="6"><result status="timeout" time="1.00" steps="43681"/></proof>
+       <transf name="assert" arg1="(forall x. mem2 x x1 -&gt; x &lt;&gt; x2)">
+        <goal name="subset&#39;vc.12.1.3.0.1.1.0" expl="asserted formula" proved="true">
+        <proof prover="1"><result status="valid" time="0.06" steps="95865"/></proof>
+        </goal>
+        <goal name="subset&#39;vc.12.1.3.0.1.1.1" expl="false case (true case. postcondition)">
+        <proof prover="0"><result status="timeout" time="1.00"/></proof>
+        <proof prover="1" timelimit="25" memlimit="6500"><result status="timeout" time="25.00" steps="37541591"/></proof>
+        <proof prover="6"><result status="timeout" time="1.00" steps="43714"/></proof>
+        <transf name="remove" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,(!),is_nil,length2,mem,is_none,(++&#39;),rev_append1,([]&#39;),cons,snoc,(++),fst,snd,(%),is_pre_order2,([]),rev,append,rev_append,size,height,bst,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,Append_Num_Occ,length_nonnegative,(==)&#39;spec,empty&#39;def,set&#39;spec,set&#39;def,([&lt;-])&#39;def,cons&#39;spec,snoc&#39;spec,([..])&#39;spec,([..])&#39;def,([_..])&#39;def,([.._])&#39;def,(++)&#39;spec,same_location_eq,cmp_eq,compare_pre_order,my_array&#39;invariant,to_list_range&#39;def,to_list_append,non_neg_max_array_length,is_pre_order1,is_pre_order,size_nonneg,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,is_minimum_min,subset_refl,subset_trans,H1,h3">
+         <goal name="subset&#39;vc.12.1.3.0.1.1.1.0" expl="false case (true case. postcondition)">
+         <proof prover="0" timelimit="25" memlimit="6500"><result status="timeout" time="25.00"/></proof>
          </goal>
         </transf>
         </goal>
@@ -2688,11 +2651,66 @@
       </goal>
      </transf>
      </goal>
+     <goal name="subset&#39;vc.12.1.3.1" expl="false case (postcondition)">
+     <transf name="assert" arg1="(forall x. mem2 x x3 -&gt; not mem2 x x5)">
+      <goal name="subset&#39;vc.12.1.3.1.0" expl="asserted formula" proved="true">
+      <proof prover="1"><result status="valid" time="0.07" steps="114292"/></proof>
+      </goal>
+      <goal name="subset&#39;vc.12.1.3.1.1" expl="false case (postcondition)">
+      <proof prover="0"><result status="timeout" time="1.00"/></proof>
+      <proof prover="1"><result status="timeout" time="1.00" steps="2322847"/></proof>
+      <proof prover="6"><result status="timeout" time="1.00" steps="37190"/></proof>
+      <transf name="assert" arg1="(forall x. mem2 x x3 -&gt; x &lt;&gt; x2)">
+       <goal name="subset&#39;vc.12.1.3.1.1.0" expl="asserted formula" proved="true">
+       <proof prover="1"><result status="valid" time="0.07" steps="95846"/></proof>
+       </goal>
+       <goal name="subset&#39;vc.12.1.3.1.1.1" expl="false case (postcondition)">
+       <proof prover="0"><result status="timeout" time="1.00"/></proof>
+       <proof prover="1" timelimit="25" memlimit="6500"><result status="highfailure" time="22.11" steps="36322994"/></proof>
+       <proof prover="6"><result status="timeout" time="1.00" steps="37226"/></proof>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="subset&#39;vc.12.1.4" expl="postcondition">
+    <transf name="split_vc" >
+     <goal name="subset&#39;vc.12.1.4.0" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><result status="highfailure" time="0.70" steps="1466974"/></proof>
+     <proof prover="6"><result status="timeout" time="1.00" steps="43913"/></proof>
+     </goal>
+     <goal name="subset&#39;vc.12.0.4.0" expl="postcondition">
+     <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><undone/></proof>
+     <proof prover="6" obsolete="true"><result status="timeout" time="1.00" steps="44088"/></proof>
+     </goal>
     </transf>
     </goal>
     <goal name="subset&#39;vc.12.1.5" expl="postcondition">
+    <transf name="assert" arg1="(forall x. x &lt;&gt; x2 -&gt; mem2 x t1 -&gt; mem2 x x3 \/ mem2 x x1)">
+     <goal name="subset&#39;vc.12.1.5.0" expl="asserted formula" proved="true">
+     <proof prover="1"><result status="highfailure" time="0.71" steps="1287751"/></proof>
+     <proof prover="6"><result status="valid" time="0.16" steps="21290"/></proof>
+     </goal>
+     <goal name="subset&#39;vc.12.1.5.1" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><result status="highfailure" time="0.71" steps="1439947"/></proof>
+     <proof prover="6"><result status="timeout" time="1.00" steps="44036"/></proof>
+     </goal>
+    </transf>
     <transf name="split_vc" >
      <goal name="subset&#39;vc.12.1.5.0" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><result status="highfailure" time="0.73" steps="1516424"/></proof>
+     <proof prover="6"><result status="timeout" time="1.00" steps="32636"/></proof>
+     </goal>
+     <goal name="subset&#39;vc.12.0.5.0" expl="postcondition">
+     <proof prover="0" obsolete="true"><result status="timeout" time="2.00"/></proof>
+     <proof prover="1"><undone/></proof>
+     <proof prover="6" obsolete="true"><result status="timeout" time="1.00" steps="36392"/></proof>
      </goal>
     </transf>
     </goal>

@@ -294,14 +294,7 @@ module BinTree (Ord: OrderedType) = struct
               
    (*@ predicate subset (s1 s2: t) = forall x : elt. mem2 x s1 -> mem2 x s2*)
 
-
-  (*@ lemma subset_refl:
-    forall s: t. subset s s*)
-
-  (*@ lemma subset_trans:
-    forall s1 s2 s3: t. subset s1 s2 -> subset s2 s3 -> subset s1 s3*)
-    
-    
+   
     
     
     
@@ -322,5 +315,5 @@ module BinTree (Ord: OrderedType) = struct
   (*@ r = subset t1 t2
     requires bst_no_height t1 && bst_no_height t2
     variant t1, t2
-    ensures subset t1 t2 <-> r*)
+    ensures r <-> subset t1 t2*)
 end

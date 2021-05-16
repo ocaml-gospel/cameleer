@@ -2,7 +2,7 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="30" steplimit="0" memlimit="4000"/>
 <prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="6" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
@@ -143,7 +143,7 @@
  <goal name="BinTree.bal&#39;vc" expl="VC for bal" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="bal&#39;vc.0" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.53" steps="7434"/></proof>
+  <proof prover="0" timelimit="1" memlimit="1000"><result status="valid" time="0.53" steps="7434"/></proof>
   </goal>
   <goal name="bal&#39;vc.1" expl="precondition" proved="true">
   <proof prover="1"><result status="valid" time="0.07" steps="87055"/></proof>
@@ -1407,7 +1407,7 @@
    <proof prover="6"><result status="valid" time="0.21" steps="24126"/></proof>
    </goal>
    <goal name="min_tree&#39;vc.3.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="1.15" steps="17040"/></proof>
+   <proof prover="0" timelimit="1" memlimit="1000"><result status="valid" time="1.15" steps="17040"/></proof>
    </goal>
   </transf>
   </goal>
@@ -2424,166 +2424,213 @@
   </goal>
  </transf>
  </goal>
+ <goal name="BinTree.subset_refl" proved="true">
+ <proof prover="1"><result status="valid" time="0.06" steps="77404"/></proof>
+ </goal>
+ <goal name="BinTree.subset_trans" proved="true">
+ <proof prover="1"><result status="valid" time="0.05" steps="78646"/></proof>
+ </goal>
  <goal name="BinTree.subset&#39;vc" expl="VC for subset">
  <transf name="split_vc" >
   <goal name="subset&#39;vc.0" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.0.0" expl="variant decrease" proved="true">
-   <proof prover="1"><result status="valid" time="0.16" steps="314863"/></proof>
+   <proof prover="1"><result status="valid" time="0.16" steps="315407"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.1" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.1.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="87131"/></proof>
+   <proof prover="1"><result status="valid" time="0.06" steps="87675"/></proof>
    </goal>
    <goal name="subset&#39;vc.1.1" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="87211"/></proof>
+   <proof prover="1"><result status="valid" time="0.06" steps="87755"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.2" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.2.0" expl="variant decrease" proved="true">
-   <proof prover="1"><result status="valid" time="0.17" steps="315042"/></proof>
+   <proof prover="1"><result status="valid" time="0.18" steps="315586"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.3" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.3.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="87299"/></proof>
+   <proof prover="1"><result status="valid" time="0.06" steps="87843"/></proof>
    </goal>
    <goal name="subset&#39;vc.3.1" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="87379"/></proof>
+   <proof prover="1"><result status="valid" time="0.06" steps="87923"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.4" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.4.0" expl="variant decrease" proved="true">
-   <proof prover="1"><result status="valid" time="0.18" steps="331854"/></proof>
+   <proof prover="1"><result status="valid" time="0.17" steps="332392"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.5" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.5.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.18" steps="332765"/></proof>
+   <proof prover="1"><result status="valid" time="0.18" steps="333299"/></proof>
    </goal>
    <goal name="subset&#39;vc.5.1" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.07" steps="87893"/></proof>
+   <proof prover="1"><result status="valid" time="0.07" steps="88437"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.6" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.6.0" expl="variant decrease" proved="true">
-   <proof prover="1"><result status="valid" time="0.19" steps="331385"/></proof>
+   <proof prover="1"><result status="valid" time="0.17" steps="331923"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.7" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.7.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="87983"/></proof>
+   <proof prover="1"><result status="valid" time="0.06" steps="88527"/></proof>
    </goal>
    <goal name="subset&#39;vc.7.1" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.03" steps="5823"/></proof>
+   <proof prover="1"><result status="valid" time="0.03" steps="5857"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.8" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.8.0" expl="variant decrease" proved="true">
-   <proof prover="1"><result status="valid" time="0.17" steps="331942"/></proof>
+   <proof prover="1"><result status="valid" time="0.19" steps="332480"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.9" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.9.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.18" steps="332795"/></proof>
+   <proof prover="1"><result status="valid" time="0.18" steps="333329"/></proof>
    </goal>
    <goal name="subset&#39;vc.9.1" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.05" steps="87844"/></proof>
+   <proof prover="1"><result status="valid" time="0.05" steps="88388"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.10" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.10.0" expl="variant decrease" proved="true">
-   <proof prover="1"><result status="valid" time="0.16" steps="331265"/></proof>
+   <proof prover="1"><result status="valid" time="0.16" steps="331803"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.11" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.11.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.06" steps="87934"/></proof>
+   <proof prover="1"><result status="valid" time="0.06" steps="88478"/></proof>
    </goal>
    <goal name="subset&#39;vc.11.1" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.03" steps="5827"/></proof>
+   <proof prover="1"><result status="valid" time="0.03" steps="5861"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="subset&#39;vc.12" expl="postcondition">
   <transf name="split_vc" >
-   <goal name="subset&#39;vc.12.0" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
+   <goal name="subset&#39;vc.12.0" expl="postcondition">
+   <transf name="split_vc" >
     <goal name="subset&#39;vc.12.0.0" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="subset&#39;vc.12.0.0.0" expl="postcondition" proved="true">
-     <proof prover="1"><result status="valid" time="0.03" steps="85918"/></proof>
+     <proof prover="1"><result status="valid" time="0.03" steps="5817"/></proof>
      </goal>
     </transf>
     </goal>
     <goal name="subset&#39;vc.12.0.1" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="subset&#39;vc.12.0.1.0" expl="postcondition" proved="true">
-     <proof prover="1"><result status="valid" time="0.03" steps="5787"/></proof>
+     <proof prover="0" timelimit="10"><result status="valid" time="7.73" steps="100481"/></proof>
      </goal>
     </transf>
     </goal>
     <goal name="subset&#39;vc.12.0.2" expl="postcondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.08" steps="88457"/></proof>
+    <transf name="split_vc" proved="true" >
+     <goal name="subset&#39;vc.12.0.2.0" expl="postcondition" proved="true">
+     <proof prover="1"><result status="valid" time="0.03" steps="5821"/></proof>
+     </goal>
+    </transf>
     </goal>
     <goal name="subset&#39;vc.12.0.3" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="subset&#39;vc.12.0.3.0" expl="postcondition" proved="true">
-     <proof prover="1"><result status="highfailure" time="0.68" steps="1417655"/></proof>
-     <proof prover="6"><result status="valid" time="0.32" steps="27793"/></proof>
+     <proof prover="0"><result status="valid" time="29.06" steps="614301"/></proof>
+     <proof prover="1" timelimit="30" memlimit="4000"><result status="highfailure" time="26.58" steps="34288679"/></proof>
+     <proof prover="6" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="459766"/></proof>
+     </goal>
+     <goal name="subset&#39;vc.12.0.3.1" expl="postcondition" proved="true">
+     <proof prover="0"><result status="valid" time="27.61" steps="578207"/></proof>
+     <proof prover="1" timelimit="30" memlimit="4000"><result status="highfailure" time="26.37" steps="34470387"/></proof>
+     <proof prover="6" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="443786"/></proof>
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.0.4" expl="postcondition" proved="true">
-    <transf name="split_vc" proved="true" >
+    <goal name="subset&#39;vc.12.0.4" expl="postcondition">
+    <transf name="split_vc" >
      <goal name="subset&#39;vc.12.0.4.0" expl="postcondition" proved="true">
-     <transf name="inline_goal" proved="true" >
-      <goal name="subset&#39;vc.12.0.4.0.0" expl="postcondition" proved="true">
-      <transf name="split_all_full" proved="true" >
-       <goal name="subset&#39;vc.12.0.4.0.0.0" expl="postcondition" proved="true">
-       <proof prover="1"><result status="timeout" time="1.00" steps="2660797"/></proof>
-       <proof prover="6"><result status="valid" time="0.74" steps="37211"/></proof>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
+     <proof prover="6"><result status="valid" time="0.56" steps="33259"/></proof>
+     </goal>
+     <goal name="subset&#39;vc.12.0.4.1" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="30.00"/></proof>
+     <proof prover="1" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="58828831"/></proof>
+     <proof prover="6" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="753376"/></proof>
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.0.5" expl="postcondition" proved="true">
-    <transf name="inline_goal" proved="true" >
+    <goal name="subset&#39;vc.12.0.5" expl="postcondition">
+    <transf name="split_vc" >
      <goal name="subset&#39;vc.12.0.5.0" expl="postcondition" proved="true">
-     <transf name="split_all_full" proved="true" >
-      <goal name="subset&#39;vc.12.0.5.0.0" expl="postcondition" proved="true">
-      <transf name="split_vc" proved="true" >
-       <goal name="subset&#39;vc.12.0.5.0.0.0" expl="postcondition" proved="true">
-       <transf name="inline_goal" proved="true" >
-        <goal name="subset&#39;vc.12.0.5.0.0.0.0" expl="postcondition" proved="true">
-        <proof prover="1" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="85175953"/></proof>
-        <proof prover="6" timelimit="30" memlimit="4000"><result status="valid" time="2.12" steps="35827"/></proof>
+     <proof prover="6" timelimit="5"><result status="valid" time="0.83" steps="33340"/></proof>
+     </goal>
+     <goal name="subset&#39;vc.12.0.5.1" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="30.00"/></proof>
+     <proof prover="1" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="80459974"/></proof>
+     <proof prover="6" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="752234"/></proof>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="subset&#39;vc.12.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="subset&#39;vc.12.1.0" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="subset&#39;vc.12.1.0.0" expl="postcondition" proved="true">
+     <proof prover="1"><result status="valid" time="0.03" steps="86468"/></proof>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="subset&#39;vc.12.1.1" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="subset&#39;vc.12.1.1.0" expl="postcondition" proved="true">
+     <proof prover="1"><result status="valid" time="0.03" steps="5821"/></proof>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="subset&#39;vc.12.1.2" expl="postcondition" proved="true">
+    <proof prover="1"><result status="valid" time="0.08" steps="89002"/></proof>
+    </goal>
+    <goal name="subset&#39;vc.12.1.3" expl="postcondition" proved="true">
+    <proof prover="6"><result status="valid" time="0.32" steps="27945"/></proof>
+    </goal>
+    <goal name="subset&#39;vc.12.1.4" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="subset&#39;vc.12.1.4.0" expl="postcondition" proved="true">
+     <transf name="inline_goal" proved="true" >
+      <goal name="subset&#39;vc.12.1.4.0.0" expl="postcondition" proved="true">
+      <transf name="split_all_full" proved="true" >
+       <goal name="subset&#39;vc.12.1.4.0.0.0" expl="postcondition" proved="true">
+       <transf name="split_vc" proved="true" >
+        <goal name="subset&#39;vc.12.1.4.0.0.0.0" expl="postcondition" proved="true">
+        <proof prover="6" timelimit="5" memlimit="2000"><result status="valid" time="0.92" steps="37283"/></proof>
         </goal>
        </transf>
        </goal>
@@ -2591,94 +2638,23 @@
       </goal>
      </transf>
      </goal>
+     <goal name="subset&#39;vc.12.1.4.1" expl="postcondition" proved="true">
+     <proof prover="1"><result status="valid" time="0.03" steps="5877"/></proof>
+     </goal>
     </transf>
     </goal>
-   </transf>
-   </goal>
-   <goal name="subset&#39;vc.12.1" expl="postcondition">
-   <transf name="split_vc" >
-    <goal name="subset&#39;vc.12.1.0" expl="postcondition" proved="true">
+    <goal name="subset&#39;vc.12.1.5" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
-     <goal name="subset&#39;vc.12.1.0.0" expl="postcondition" proved="true">
-     <proof prover="1"><result status="valid" time="0.03" steps="5783"/></proof>
-     </goal>
-    </transf>
-    </goal>
-    <goal name="subset&#39;vc.12.1.1" expl="postcondition" proved="true">
-    <transf name="assert" proved="true" arg1="(mem2 w2 t1)">
-     <goal name="subset&#39;vc.12.1.1.0" expl="asserted formula" proved="true">
-     <proof prover="0" timelimit="25" memlimit="6500"><result status="valid" time="0.03" steps="113"/></proof>
-     </goal>
-     <goal name="subset&#39;vc.12.1.1.1" expl="postcondition" proved="true">
-     <proof prover="0" timelimit="25" memlimit="6500"><result status="valid" time="0.04" steps="217"/></proof>
-     </goal>
-    </transf>
-    </goal>
-    <goal name="subset&#39;vc.12.1.2" expl="postcondition" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="subset&#39;vc.12.1.2.0" expl="postcondition" proved="true">
-     <proof prover="1"><result status="valid" time="0.03" steps="5787"/></proof>
-     </goal>
-    </transf>
-    </goal>
-    <goal name="subset&#39;vc.12.1.3" expl="postcondition" proved="true">
-    <transf name="assert" proved="true" arg1="(forall y. y &lt;&gt; x6 -&gt; mem2 y t2 -&gt; mem2 y x7 \/ mem2 y x5)">
-     <goal name="subset&#39;vc.12.1.3.0" expl="asserted formula" proved="true">
-     <proof prover="1"><result status="timeout" time="1.00" steps="2452375"/></proof>
-     <proof prover="6"><result status="valid" time="0.17" steps="20392"/></proof>
-     </goal>
-     <goal name="subset&#39;vc.12.1.3.1" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.55" steps="7176"/></proof>
-     <proof prover="1"><result status="timeout" time="1.00" steps="2536715"/></proof>
-     <proof prover="6"><result status="timeout" time="1.00" steps="38826"/></proof>
-     </goal>
-    </transf>
-    </goal>
-    <goal name="subset&#39;vc.12.1.4" expl="postcondition" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="subset&#39;vc.12.1.4.0" expl="postcondition" proved="true">
-     <transf name="case" proved="true" arg1="(subset (Node x3 x2 Empty 0) x7)">
-      <goal name="subset&#39;vc.12.1.4.0.0" expl="true case (postcondition)" proved="true">
-      <proof prover="1"><result status="highfailure" time="0.78" steps="2222485"/></proof>
-      <proof prover="6"><result status="valid" time="0.43" steps="33135"/></proof>
-      </goal>
-      <goal name="subset&#39;vc.12.1.4.0.1" expl="false case (postcondition)" proved="true">
-      <transf name="assert" proved="true" arg1="(exists x. mem2 x (Node x3 x2 Empty 0) /\ not mem2 x x7)">
-       <goal name="subset&#39;vc.12.1.4.0.1.0" expl="asserted formula" proved="true">
-       <proof prover="1"><result status="valid" time="0.06" steps="92621"/></proof>
-       </goal>
-       <goal name="subset&#39;vc.12.1.4.0.1.1" expl="false case (postcondition)" proved="true">
-       <transf name="introduce_exists" proved="true" >
-        <goal name="subset&#39;vc.12.1.4.0.1.1.0" expl="false case (postcondition)" proved="true">
-        <transf name="case" proved="true" arg1="(x = x3)">
-         <goal name="subset&#39;vc.12.1.4.0.1.1.0.0" expl="false case (true case. postcondition)" proved="true">
-         <proof prover="1"><result status="valid" time="0.17" steps="362445"/></proof>
-         <transf name="assert" proved="true" arg1="(not mem2 x3 x2)">
-          <goal name="subset&#39;vc.12.1.4.0.1.1.0.0.0" expl="asserted formula" proved="true">
-          <proof prover="1"><result status="valid" time="0.06" steps="98917"/></proof>
-          </goal>
-          <goal name="subset&#39;vc.12.1.4.0.1.1.0.0.1" expl="false case (true case. postcondition)" proved="true">
-          <proof prover="1"><result status="valid" time="0.17" steps="416920"/></proof>
-          </goal>
-         </transf>
-         </goal>
-         <goal name="subset&#39;vc.12.1.4.0.1.1.0.1" expl="false case (postcondition)" proved="true">
-         <transf name="assert" proved="true" arg1="(mem2 x x4)">
-          <goal name="subset&#39;vc.12.1.4.0.1.1.0.1.0" expl="asserted formula" proved="true">
-          <proof prover="1"><result status="timeout" time="1.00" steps="2009211"/></proof>
-          <proof prover="6"><result status="valid" time="0.16" steps="22095"/></proof>
-          </goal>
-          <goal name="subset&#39;vc.12.1.4.0.1.1.0.1.1" expl="false case (postcondition)" proved="true">
-          <transf name="assert" proved="true" arg1="(not mem2 x x6)">
-           <goal name="subset&#39;vc.12.1.4.0.1.1.0.1.1.0" expl="asserted formula" proved="true">
-           <proof prover="1"><result status="valid" time="0.14" steps="349622"/></proof>
-           </goal>
-           <goal name="subset&#39;vc.12.1.4.0.1.1.0.1.1.1" expl="false case (postcondition)" proved="true">
-           <proof prover="1"><result status="valid" time="0.44" steps="1152681"/></proof>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
+     <goal name="subset&#39;vc.12.1.5.0" expl="postcondition" proved="true">
+     <transf name="inline_goal" proved="true" >
+      <goal name="subset&#39;vc.12.1.5.0.0" expl="postcondition" proved="true">
+      <transf name="split_all_full" proved="true" >
+       <goal name="subset&#39;vc.12.1.5.0.0.0" expl="postcondition" proved="true">
+       <transf name="split_vc" proved="true" >
+        <goal name="subset&#39;vc.12.1.5.0.0.0.0" expl="postcondition" proved="true">
+        <transf name="inline_goal" proved="true" >
+         <goal name="subset&#39;vc.12.1.5.0.0.0.0.0" expl="postcondition" proved="true">
+         <proof prover="1" timelimit="30" memlimit="4000"><result status="valid" time="4.12" steps="9741983"/></proof>
          </goal>
         </transf>
         </goal>
@@ -2688,11 +2664,8 @@
       </goal>
      </transf>
      </goal>
-    </transf>
-    </goal>
-    <goal name="subset&#39;vc.12.1.5" expl="postcondition">
-    <transf name="split_vc" >
-     <goal name="subset&#39;vc.12.1.5.0" expl="postcondition">
+     <goal name="subset&#39;vc.12.1.5.1" expl="postcondition" proved="true">
+     <proof prover="1"><result status="valid" time="0.03" steps="5881"/></proof>
      </goal>
     </transf>
     </goal>
