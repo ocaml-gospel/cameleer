@@ -66,7 +66,7 @@ module BinTree (Ord: OrderedType) = struct
             
   (*@ predicate bst_no_height (t:t) = match t with
         |Empty -> true
-        | Node l v r h -> 
+        | Node l v r _ -> 
             (forall lv. mem2 lv l -> Ord.compare lv v < 0) &&
             (forall rv. mem2 rv r -> Ord.compare v rv < 0) &&
             bst_no_height l && bst_no_height r*)

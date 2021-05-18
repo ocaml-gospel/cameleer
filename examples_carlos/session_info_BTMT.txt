@@ -1,0 +1,1288 @@
+== Number of root goals ==
+  total: 15  proved: 15
+
+== Number of sub goals ==
+  total: 881  proved: 881
+
+== Goals not proved ==
+  
+== Goals proved by only one prover ==
+  +-- file [../BinTreeModuleTupl.ml]
+    +-- theory BinTreeModuleTupl
+      +-- goal BinTree.occ_nonneg'vc: Alt-Ergo 2.4.0
+      +-- goal BinTree.height_nonneg
+        +-- transformation split_vc
+          +-- goal height_nonneg.0
+            +-- transformation induction_arg_ty_lex t
+              +-- goal height_nonneg.0.0: Alt-Ergo 2.4.0
+      +-- goal BinTree.height'vc: Alt-Ergo 2.4.0
+      +-- goal BinTree.occ_uniq2'vc
+        +-- transformation split_vc
+          +-- goal occ_uniq2'vc.0: Alt-Ergo 2.4.0
+          +-- goal occ_uniq2'vc.1
+            +-- transformation split_vc
+              +-- goal occ_uniq2'vc.1.0
+                +-- transformation split_vc
+                  +-- goal occ_uniq2'vc.1.0.0: Alt-Ergo 2.4.0
+                  +-- goal occ_uniq2'vc.1.0.1: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.1.1
+                +-- transformation split_vc
+                  +-- goal occ_uniq2'vc.1.1.0: Alt-Ergo 2.4.0
+                  +-- goal occ_uniq2'vc.1.1.1: Alt-Ergo 2.4.0
+          +-- goal occ_uniq2'vc.2
+            +-- transformation split_vc
+              +-- goal occ_uniq2'vc.2.0: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.2.1: Alt-Ergo 2.4.0
+          +-- goal occ_uniq2'vc.3: Alt-Ergo 2.4.0
+          +-- goal occ_uniq2'vc.4
+            +-- transformation split_vc
+              +-- goal occ_uniq2'vc.4.0
+                +-- transformation split_vc
+                  +-- goal occ_uniq2'vc.4.0.0: Alt-Ergo 2.4.0
+                  +-- goal occ_uniq2'vc.4.0.1: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.4.1
+                +-- transformation split_vc
+                  +-- goal occ_uniq2'vc.4.1.0: Alt-Ergo 2.4.0
+                  +-- goal occ_uniq2'vc.4.1.1: Alt-Ergo 2.4.0
+          +-- goal occ_uniq2'vc.5
+            +-- transformation split_vc
+              +-- goal occ_uniq2'vc.5.0: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.5.1: Alt-Ergo 2.4.0
+          +-- goal occ_uniq2'vc.6
+            +-- transformation split_vc
+              +-- goal occ_uniq2'vc.6.0: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.6.1: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.6.2: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.6.3
+                +-- transformation split_vc
+                  +-- goal occ_uniq2'vc.6.3.0: Alt-Ergo 2.4.0
+                  +-- goal occ_uniq2'vc.6.3.1: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.6.4
+                +-- transformation split_vc
+                  +-- goal occ_uniq2'vc.6.4.0: Alt-Ergo 2.4.0
+              +-- goal occ_uniq2'vc.6.5: Alt-Ergo 2.4.0
+      +-- goal BinTree.create'vc
+        +-- transformation split_vc
+          +-- goal create'vc.0
+            +-- transformation split_vc
+              +-- goal create'vc.0.0
+                +-- transformation split_vc
+                  +-- goal create'vc.0.0.0
+                    +-- transformation split_vc
+                      +-- goal create'vc.0.0.0.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.0.0.0.1: Alt-Ergo 2.4.0
+                  +-- goal create'vc.0.0.1
+                    +-- transformation split_vc
+                      +-- goal create'vc.0.0.1.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.0.0.1.1: Alt-Ergo 2.4.0
+              +-- goal create'vc.0.1
+                +-- transformation split_vc
+                  +-- goal create'vc.0.1.0
+                    +-- transformation split_vc
+                      +-- goal create'vc.0.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.0.1.0.1: Alt-Ergo 2.4.0
+                  +-- goal create'vc.0.1.1
+                    +-- transformation split_vc
+                      +-- goal create'vc.0.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.0.1.1.1: Alt-Ergo 2.4.0
+          +-- goal create'vc.1
+            +-- transformation split_vc
+              +-- goal create'vc.1.0
+                +-- transformation split_vc
+                  +-- goal create'vc.1.0.0
+                    +-- transformation split_vc
+                      +-- goal create'vc.1.0.0.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.1.0.0.1: Alt-Ergo 2.4.0
+                  +-- goal create'vc.1.0.1
+                    +-- transformation split_vc
+                      +-- goal create'vc.1.0.1.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.1.0.1.1: Alt-Ergo 2.4.0
+              +-- goal create'vc.1.1
+                +-- transformation split_vc
+                  +-- goal create'vc.1.1.0
+                    +-- transformation split_vc
+                      +-- goal create'vc.1.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.1.1.0.1: Alt-Ergo 2.4.0
+                  +-- goal create'vc.1.1.1
+                    +-- transformation split_vc
+                      +-- goal create'vc.1.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.1.1.1.1: Alt-Ergo 2.4.0
+          +-- goal create'vc.2
+            +-- transformation split_vc
+              +-- goal create'vc.2.0
+                +-- transformation split_vc
+                  +-- goal create'vc.2.0.0
+                    +-- transformation split_vc
+                      +-- goal create'vc.2.0.0.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.2.0.0.1: Alt-Ergo 2.4.0
+                  +-- goal create'vc.2.0.1
+                    +-- transformation split_vc
+                      +-- goal create'vc.2.0.1.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.2.0.1.1: Alt-Ergo 2.4.0
+              +-- goal create'vc.2.1
+                +-- transformation split_vc
+                  +-- goal create'vc.2.1.0
+                    +-- transformation split_vc
+                      +-- goal create'vc.2.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.2.1.0.1: Alt-Ergo 2.4.0
+                  +-- goal create'vc.2.1.1
+                    +-- transformation split_vc
+                      +-- goal create'vc.2.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.2.1.1.1: Alt-Ergo 2.4.0
+          +-- goal create'vc.3
+            +-- transformation split_vc
+              +-- goal create'vc.3.0
+                +-- transformation split_vc
+                  +-- goal create'vc.3.0.0
+                    +-- transformation split_vc
+                      +-- goal create'vc.3.0.0.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.3.0.0.1: Alt-Ergo 2.4.0
+                  +-- goal create'vc.3.0.1
+                    +-- transformation split_vc
+                      +-- goal create'vc.3.0.1.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.3.0.1.1: Alt-Ergo 2.4.0
+              +-- goal create'vc.3.1
+                +-- transformation split_vc
+                  +-- goal create'vc.3.1.0
+                    +-- transformation split_vc
+                      +-- goal create'vc.3.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.3.1.0.1: Alt-Ergo 2.4.0
+                  +-- goal create'vc.3.1.1
+                    +-- transformation split_vc
+                      +-- goal create'vc.3.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal create'vc.3.1.1.1: Alt-Ergo 2.4.0
+      +-- goal BinTree.bal'vc
+        +-- transformation split_vc
+          +-- goal bal'vc.0: Alt-Ergo 2.4.0
+          +-- goal bal'vc.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.2: Alt-Ergo 2.4.0
+          +-- goal bal'vc.3: Alt-Ergo 2.4.0
+          +-- goal bal'vc.4: Alt-Ergo 2.4.0
+          +-- goal bal'vc.5
+            +-- transformation split_vc
+              +-- goal bal'vc.5.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.5.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.5.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.5.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.5.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.5.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.6: Alt-Ergo 2.4.0
+          +-- goal bal'vc.7: Alt-Ergo 2.4.0
+          +-- goal bal'vc.8: Alt-Ergo 2.4.0
+          +-- goal bal'vc.9: Alt-Ergo 2.4.0
+          +-- goal bal'vc.10: Alt-Ergo 2.4.0
+          +-- goal bal'vc.11
+            +-- transformation split_vc
+              +-- goal bal'vc.11.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.11.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.11.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.11.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.11.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.11.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.12: Alt-Ergo 2.4.0
+          +-- goal bal'vc.13: Alt-Ergo 2.4.0
+          +-- goal bal'vc.14: Alt-Ergo 2.4.0
+          +-- goal bal'vc.15: Alt-Ergo 2.4.0
+          +-- goal bal'vc.16: Alt-Ergo 2.4.0
+          +-- goal bal'vc.17: Alt-Ergo 2.4.0
+          +-- goal bal'vc.18
+            +-- transformation split_vc
+              +-- goal bal'vc.18.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.18.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.18.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.18.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.18.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.18.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.19: Alt-Ergo 2.4.0
+          +-- goal bal'vc.20: Alt-Ergo 2.4.0
+          +-- goal bal'vc.21: Alt-Ergo 2.4.0
+          +-- goal bal'vc.22: Alt-Ergo 2.4.0
+          +-- goal bal'vc.23: Alt-Ergo 2.4.0
+          +-- goal bal'vc.24: Alt-Ergo 2.4.0
+          +-- goal bal'vc.25: Alt-Ergo 2.4.0
+          +-- goal bal'vc.26
+            +-- transformation split_vc
+              +-- goal bal'vc.26.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.26.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.26.0.1
+                    +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,occ_uniq2,create'spec,create'def,H19,H18,H17,H16,H15,H11,H9,H8,H7,H6,H5,H4,H3,H2,H1,H13,H12,H14
+                      +-- goal bal'vc.26.0.1.0: Alt-Ergo 2.4.0
+              +-- goal bal'vc.26.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.26.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.26.1.1
+                    +-- transformation assert (compare x6 x < 0)
+                      +-- goal bal'vc.26.1.1.0: CVC4 1.8
+                      +-- goal bal'vc.26.1.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.27: Alt-Ergo 2.4.0
+          +-- goal bal'vc.28: Alt-Ergo 2.4.0
+          +-- goal bal'vc.29: Alt-Ergo 2.4.0
+          +-- goal bal'vc.30
+            +-- transformation split_vc
+              +-- goal bal'vc.30.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.30.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.30.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.30.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.30.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.30.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.31
+            +-- transformation split_vc
+              +-- goal bal'vc.31.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.31.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.31.0.1
+                    +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create'spec,create'def,H22,H21,H20,H19,H18,H14,H12,H11,H9,H8,H7,H4,H3,H2,H1,H15,H17
+                      +-- goal bal'vc.31.0.1.0: Alt-Ergo 2.4.0
+              +-- goal bal'vc.31.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.31.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.31.1.1
+                    +-- transformation assert (compare x5 x2 < 0)
+                      +-- goal bal'vc.31.1.1.0: CVC4 1.8
+                      +-- goal bal'vc.31.1.1.1
+                        +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,height,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create'spec,create'def,H21,H20,H19,H18,H17,H14,H12,H11,H10,H9,H8,H7,H5,H4,H3,H2,H1,H15,H16
+                          +-- goal bal'vc.31.1.1.1.0: Alt-Ergo 2.4.0
+          +-- goal bal'vc.32
+            +-- transformation split_vc
+              +-- goal bal'vc.32.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.32.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.32.0.1
+                    +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,occ_uniq2,create'spec,H23,H20,H15,H13,H12,H10,H9,H8,H7,H6,H5,H4,H3,H2,H1,H16,H18
+                      +-- goal bal'vc.32.0.1.0: Alt-Ergo 2.4.0
+              +-- goal bal'vc.32.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.32.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.32.1.1
+                    +-- transformation remove zero,one,(-),(>),(<=),abs,min,max,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,([]),get,rev,append,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,same_location_eq,array'invariant,H15,H12,H8,H6,H16
+                      +-- goal bal'vc.32.1.1.0: Alt-Ergo 2.4.0
+          +-- goal bal'vc.33
+            +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,mem2,height,bst,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create'spec,create'def,H25,H24,H23,H22,H21,H20,H19,H18,H17,H16,H15,H14,H13,H12,H11,H10,H9,H8,H7,H6,H5,H4
+              +-- goal bal'vc.33.0: Alt-Ergo 2.4.0
+          +-- goal bal'vc.34
+            +-- transformation split_vc
+              +-- goal bal'vc.34.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.34.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.34.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.34.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.34.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.34.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.35: Alt-Ergo 2.4.0
+          +-- goal bal'vc.36: Alt-Ergo 2.4.0
+          +-- goal bal'vc.37: Alt-Ergo 2.4.0
+          +-- goal bal'vc.38: Alt-Ergo 2.4.0
+          +-- goal bal'vc.39
+            +-- transformation split_vc
+              +-- goal bal'vc.39.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.39.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.39.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.39.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.39.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.39.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.40: Alt-Ergo 2.4.0
+          +-- goal bal'vc.41: Alt-Ergo 2.4.0
+          +-- goal bal'vc.42: Alt-Ergo 2.4.0
+          +-- goal bal'vc.43: Alt-Ergo 2.4.0
+          +-- goal bal'vc.44: Alt-Ergo 2.4.0
+          +-- goal bal'vc.45
+            +-- transformation split_vc
+              +-- goal bal'vc.45.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.45.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.45.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.45.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.45.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.45.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.46: Alt-Ergo 2.4.0
+          +-- goal bal'vc.47
+            +-- transformation split_vc
+              +-- goal bal'vc.47.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.47.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.47.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.47.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.47.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.47.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.48: Alt-Ergo 2.4.0
+          +-- goal bal'vc.49
+            +-- transformation split_vc
+              +-- goal bal'vc.49.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.49.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.49.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.49.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.49.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.49.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.50: Alt-Ergo 2.4.0
+          +-- goal bal'vc.51: Alt-Ergo 2.4.0
+          +-- goal bal'vc.52: Alt-Ergo 2.4.0
+          +-- goal bal'vc.53: Alt-Ergo 2.4.0
+          +-- goal bal'vc.54: Alt-Ergo 2.4.0
+          +-- goal bal'vc.55: Alt-Ergo 2.4.0
+          +-- goal bal'vc.56: Alt-Ergo 2.4.0
+          +-- goal bal'vc.57: Alt-Ergo 2.4.0
+          +-- goal bal'vc.58
+            +-- transformation split_vc
+              +-- goal bal'vc.58.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.58.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.58.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.58.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.58.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.58.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.59: Alt-Ergo 2.4.0
+          +-- goal bal'vc.60
+            +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,bst,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,occ_uniq2,create'spec,create'def,H20,H19,H18,H17,H15,H14,H13,H12,H11,H9,H8,H7,H6,H5,H4,H3,H2,H1
+              +-- goal bal'vc.60.0: CVC4 1.8
+          +-- goal bal'vc.61: Alt-Ergo 2.4.0
+          +-- goal bal'vc.62: Alt-Ergo 2.4.0
+          +-- goal bal'vc.63: Alt-Ergo 2.4.0
+          +-- goal bal'vc.64
+            +-- transformation split_vc
+              +-- goal bal'vc.64.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.64.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.64.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.64.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.64.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.64.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.65
+            +-- transformation split_vc
+              +-- goal bal'vc.65.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.65.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.65.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.65.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.65.1.0: CVC4 1.8
+                  +-- goal bal'vc.65.1.1
+                    +-- transformation remove zero,one,(-),(>),(<=),(>=),min,set,([]'),([<-]'),(!),is_nil,is_none,rev_append1,fst,snd,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,Length_nonnegative,Length_nil,Append_l_nil,mem_append,reverse_append,reverse_cons,reverse_mem,Reverse_length,rev_append_append_l,rev_append_def,([<-])'spec,make_spec,cmp_eq,is_pre_order1,height_nonneg,create'spec,H21,H18,H12,H11,H9,H7,H16,H17
+                      +-- goal bal'vc.65.1.1.0: Alt-Ergo 2.4.0
+          +-- goal bal'vc.66
+            +-- transformation split_vc
+              +-- goal bal'vc.66.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.66.0.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.66.0.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.66.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.66.1.0
+                    +-- transformation inline_all
+                      +-- goal bal'vc.66.1.0.0
+                        +-- transformation remove length1,mem,(++),reverse,rev_append,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,non_neg_max_array_length,is_pre_order1,occ_uniq2,create'spec,create'def,H25,H23,H22,H21,H20,H19,H16,H15,H13,H12,H10,H9,H8,H7,H6,H5,H4,H3,H2,H1,H18,H17
+                          +-- goal bal'vc.66.1.0.0.0: CVC4 1.8
+                  +-- goal bal'vc.66.1.1
+                    +-- transformation remove zero,one,(-),(>),(<=),(>=),get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),rev,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,create'spec,H24,H21,H19,H12,H8,H7,H6,H5
+                      +-- goal bal'vc.66.1.1.0: Z3 4.8.6
+          +-- goal bal'vc.67: Alt-Ergo 2.4.0
+          +-- goal bal'vc.68
+            +-- transformation split_vc
+              +-- goal bal'vc.68.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.68.0.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.0.0.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.68.0.0.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.0.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.68.0.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.0.1.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.68.0.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.0.1.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.68.0.1.1.0: Alt-Ergo 2.4.0
+              +-- goal bal'vc.68.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.68.1.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.1.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.68.1.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.1.1.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.68.2
+                +-- transformation split_vc
+                  +-- goal bal'vc.68.2.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.2.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.2.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.68.2.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.2.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.2.1.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.68.3
+                +-- transformation split_vc
+                  +-- goal bal'vc.68.3.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.3.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.3.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.68.3.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.3.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.3.1.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.68.4
+                +-- transformation split_vc
+                  +-- goal bal'vc.68.4.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.4.0.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.68.4.0.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.68.4.0.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.4.0.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.68.4.0.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.68.4.0.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.68.4.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.68.4.1.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.68.4.1.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.68.4.1.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.68.4.1.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.68.4.1.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.68.4.1.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.69
+            +-- transformation split_vc
+              +-- goal bal'vc.69.0
+                +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create'spec,create'def,H20,H19,H18,H17,H15,H14,H13,H1,H11,H10,H8,H7,H6,H5,H2
+                  +-- goal bal'vc.69.0.0: CVC4 1.8
+              +-- goal bal'vc.69.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.69.1.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.69.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.69.1.0.1
+                        +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,mem2,height,bst,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,create'spec,create'def,H25,H24,H23,H22,H21,H17,H1,H18,H15,H14,H12,H11,H10,H7,H6,H5,H2,H20
+                          +-- goal bal'vc.69.1.0.1.0: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.69.1.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.69.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.69.1.1.1
+                        +-- transformation inline_all
+                          +-- goal bal'vc.69.1.1.1.0: CVC4 1.8
+              +-- goal bal'vc.69.2
+                +-- transformation split_vc
+                  +-- goal bal'vc.69.2.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.69.2.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.69.2.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.69.2.1: CVC4 1.8
+              +-- goal bal'vc.69.3
+                +-- transformation split_vc
+                  +-- goal bal'vc.69.3.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.69.3.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.69.3.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.69.3.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.69.3.1.0: CVC4 1.8
+                      +-- goal bal'vc.69.3.1.1
+                        +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,height_nonneg,create'spec,H26,H24,H18,H17,H1,H15,H14,H11,H10,H8,H7,H6,H5,H2,H19,H20
+                          +-- goal bal'vc.69.3.1.1.0: CVC4 1.8
+              +-- goal bal'vc.69.4: Alt-Ergo 2.4.0
+          +-- goal bal'vc.70
+            +-- transformation split_vc
+              +-- goal bal'vc.70.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.70.0.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.0.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.0.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.70.0.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.0.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.0.1.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.70.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.70.1.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.1.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.70.1.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.1.1.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.70.2
+                +-- transformation split_vc
+                  +-- goal bal'vc.70.2.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.2.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.2.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.70.2.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.2.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.2.1.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.70.3
+                +-- transformation split_vc
+                  +-- goal bal'vc.70.3.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.3.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.3.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.70.3.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.3.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.3.1.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.70.4
+                +-- transformation split_vc
+                  +-- goal bal'vc.70.4.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.4.0.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.4.0.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.70.4.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.70.4.1.0: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.70.4.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.71
+            +-- transformation split_vc
+              +-- goal bal'vc.71.0
+                +-- transformation split_vc
+                  +-- goal bal'vc.71.0.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.0.0.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.0.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.0.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.0.0.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.0.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.0.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.71.0.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.0.1.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.1.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.1.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.0.1.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.1.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.1.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.71.0.2
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.0.2.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.2.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.2.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.0.2.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.2.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.2.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.71.0.3
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.0.3.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.3.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.3.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.0.3.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.3.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.3.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.71.0.4
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.0.4.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.4.0.0
+                            +-- transformation split_vc
+                              +-- goal bal'vc.71.0.4.0.0.0: Alt-Ergo 2.4.0
+                              +-- goal bal'vc.71.0.4.0.0.1: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.4.0.1
+                            +-- transformation split_vc
+                              +-- goal bal'vc.71.0.4.0.1.0: Alt-Ergo 2.4.0
+                              +-- goal bal'vc.71.0.4.0.1.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.0.4.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.0.4.1.0
+                            +-- transformation split_vc
+                              +-- goal bal'vc.71.0.4.1.0.0: Alt-Ergo 2.4.0
+                              +-- goal bal'vc.71.0.4.1.0.1: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.0.4.1.1
+                            +-- transformation split_vc
+                              +-- goal bal'vc.71.0.4.1.1.0: Alt-Ergo 2.4.0
+                              +-- goal bal'vc.71.0.4.1.1.1: Alt-Ergo 2.4.0
+              +-- goal bal'vc.71.1
+                +-- transformation split_vc
+                  +-- goal bal'vc.71.1.0
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.1.0.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.0.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.0.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.1.0.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.0.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.0.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.71.1.1
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.1.1.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.1.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.1.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.1.1.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.1.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.1.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.71.1.2
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.1.2.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.2.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.2.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.1.2.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.2.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.2.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.71.1.3
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.1.3.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.3.0.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.3.0.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.1.3.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.3.1.0: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.3.1.1: Alt-Ergo 2.4.0
+                  +-- goal bal'vc.71.1.4
+                    +-- transformation split_vc
+                      +-- goal bal'vc.71.1.4.0
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.4.0.0
+                            +-- transformation split_vc
+                              +-- goal bal'vc.71.1.4.0.0.0: Alt-Ergo 2.4.0
+                              +-- goal bal'vc.71.1.4.0.0.1: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.4.0.1
+                            +-- transformation split_vc
+                              +-- goal bal'vc.71.1.4.0.1.0: Alt-Ergo 2.4.0
+                              +-- goal bal'vc.71.1.4.0.1.1: Alt-Ergo 2.4.0
+                      +-- goal bal'vc.71.1.4.1
+                        +-- transformation split_vc
+                          +-- goal bal'vc.71.1.4.1.0
+                            +-- transformation split_vc
+                              +-- goal bal'vc.71.1.4.1.0.0: Alt-Ergo 2.4.0
+                              +-- goal bal'vc.71.1.4.1.0.1: Alt-Ergo 2.4.0
+                          +-- goal bal'vc.71.1.4.1.1
+                            +-- transformation split_vc
+                              +-- goal bal'vc.71.1.4.1.1.0: Alt-Ergo 2.4.0
+                              +-- goal bal'vc.71.1.4.1.1.1: Alt-Ergo 2.4.0
+          +-- goal bal'vc.72: Alt-Ergo 2.4.0
+      +-- goal BinTree.min_tree'vc
+        +-- transformation split_vc
+          +-- goal min_tree'vc.0
+            +-- transformation split_vc
+              +-- goal min_tree'vc.0.0: Alt-Ergo 2.4.0
+          +-- goal min_tree'vc.1
+            +-- transformation split_vc
+              +-- goal min_tree'vc.1.0: Alt-Ergo 2.4.0
+              +-- goal min_tree'vc.1.1: Alt-Ergo 2.4.0
+          +-- goal min_tree'vc.2
+            +-- transformation split_vc
+              +-- goal min_tree'vc.2.0: Alt-Ergo 2.4.0
+              +-- goal min_tree'vc.2.1: Alt-Ergo 2.4.0
+          +-- goal min_tree'vc.3
+            +-- transformation split_vc
+              +-- goal min_tree'vc.3.0: Alt-Ergo 2.4.0
+              +-- goal min_tree'vc.3.1: Alt-Ergo 2.4.0
+      +-- goal BinTree.is_minimum_min'vc: Alt-Ergo 2.4.0
+      +-- goal BinTree.remove_min_elt'vc
+        +-- transformation split_vc
+          +-- goal remove_min_elt'vc.0
+            +-- transformation split_vc
+              +-- goal remove_min_elt'vc.0.0: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.1: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.2
+            +-- transformation split_vc
+              +-- goal remove_min_elt'vc.2.0: Alt-Ergo 2.4.0
+              +-- goal remove_min_elt'vc.2.1: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.3: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.4: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.5
+            +-- transformation split_vc
+              +-- goal remove_min_elt'vc.5.0: Alt-Ergo 2.4.0
+              +-- goal remove_min_elt'vc.5.1: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.6
+            +-- transformation split_vc
+              +-- goal remove_min_elt'vc.6.0: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.7: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.8: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.9: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.10
+            +-- transformation split_vc
+              +-- goal remove_min_elt'vc.10.0: Alt-Ergo 2.4.0
+              +-- goal remove_min_elt'vc.10.1: Alt-Ergo 2.4.0
+          +-- goal remove_min_elt'vc.11
+            +-- transformation split_vc
+              +-- goal remove_min_elt'vc.11.0
+                +-- transformation split_vc
+                  +-- goal remove_min_elt'vc.11.0.0
+                    +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create'spec,create'def,min_tree'spec,H4,H1,H2
+                      +-- goal remove_min_elt'vc.11.0.0.0: Alt-Ergo 2.4.0
+              +-- goal remove_min_elt'vc.11.1
+                +-- transformation split_vc
+                  +-- goal remove_min_elt'vc.11.1.0
+                    +-- transformation inline_all
+                      +-- goal remove_min_elt'vc.11.1.0.0: CVC4 1.8
+          +-- goal remove_min_elt'vc.12
+            +-- transformation split_vc
+              +-- goal remove_min_elt'vc.12.0: Alt-Ergo 2.4.0
+              +-- goal remove_min_elt'vc.12.1
+                +-- transformation split_vc
+                  +-- goal remove_min_elt'vc.12.1.0: CVC4 1.8
+          +-- goal remove_min_elt'vc.13
+            +-- transformation split_vc
+              +-- goal remove_min_elt'vc.13.0
+                +-- transformation assert (height r - height param >= -1)
+                  +-- goal remove_min_elt'vc.13.0.0
+                    +-- transformation split_vc
+                      +-- goal remove_min_elt'vc.13.0.0.0: Alt-Ergo 2.4.0
+                      +-- goal remove_min_elt'vc.13.0.0.1
+                        +-- transformation remove zero,one,(-),(>),(<=),(>=),min,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create'spec,min_tree'spec,is_minimum_min,H15,H2,H1,H,H8,H9,H7,H6,H4
+                          +-- goal remove_min_elt'vc.13.0.0.1.0: Alt-Ergo 2.4.0
+                  +-- goal remove_min_elt'vc.13.0.1: Alt-Ergo 2.4.0
+              +-- goal remove_min_elt'vc.13.1
+                +-- transformation assert (height r - height param <= 0)
+                  +-- goal remove_min_elt'vc.13.1.0
+                    +-- transformation split_vc
+                      +-- goal remove_min_elt'vc.13.1.0.0: Alt-Ergo 2.4.0
+                      +-- goal remove_min_elt'vc.13.1.0.1: Alt-Ergo 2.4.0
+                  +-- goal remove_min_elt'vc.13.1.1: Alt-Ergo 2.4.0
+      +-- goal BinTree.add_min_element'vc
+        +-- transformation split_vc
+          +-- goal add_min_element'vc.0: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.1: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.2: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.3: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.4: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.5: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.6
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.6.0: Alt-Ergo 2.4.0
+              +-- goal add_min_element'vc.6.1: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.7: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.8: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.9
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.9.0: Alt-Ergo 2.4.0
+              +-- goal add_min_element'vc.9.1: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.10
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.10.0: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.11
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.11.0: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.12
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.12.0: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.13
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.13.0: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.14
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.14.0: Alt-Ergo 2.4.0
+              +-- goal add_min_element'vc.14.1: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.15
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.15.0: Alt-Ergo 2.4.0
+              +-- goal add_min_element'vc.15.1: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.16
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.16.0: Alt-Ergo 2.4.0
+              +-- goal add_min_element'vc.16.1: Alt-Ergo 2.4.0
+          +-- goal add_min_element'vc.17
+            +-- transformation split_vc
+              +-- goal add_min_element'vc.17.0
+                +-- transformation split_vc
+                  +-- goal add_min_element'vc.17.0.0: Alt-Ergo 2.4.0
+                  +-- goal add_min_element'vc.17.0.1
+                    +-- transformation split_vc
+                      +-- goal add_min_element'vc.17.0.1.0
+                        +-- transformation remove zero,one,(-),(>),(<=),(>=),get1,set,([]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,([]),(%),rev,append,rev_append,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,is_nil'spec,Length_nonnegative,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,is_pre_order1,height_nonneg,occ_uniq2,create'def,min_tree'spec,is_minimum_min,H2,H1,H,H11,H8,H9,H7,H4
+                          +-- goal add_min_element'vc.17.0.1.0.0: Alt-Ergo 2.4.0
+              +-- goal add_min_element'vc.17.1
+                +-- transformation split_vc
+                  +-- goal add_min_element'vc.17.1.0: Alt-Ergo 2.4.0
+                  +-- goal add_min_element'vc.17.1.1: Alt-Ergo 2.4.0
+      +-- goal BinTree.merge'vc
+        +-- transformation split_vc
+          +-- goal merge'vc.0: Alt-Ergo 2.4.0
+          +-- goal merge'vc.1: Alt-Ergo 2.4.0
+          +-- goal merge'vc.2
+            +-- transformation split_vc
+              +-- goal merge'vc.2.0: Alt-Ergo 2.4.0
+              +-- goal merge'vc.2.1: Alt-Ergo 2.4.0
+          +-- goal merge'vc.3
+            +-- transformation split_vc
+              +-- goal merge'vc.3.0: Alt-Ergo 2.4.0
+              +-- goal merge'vc.3.1: Alt-Ergo 2.4.0
+          +-- goal merge'vc.4: Alt-Ergo 2.4.0
+          +-- goal merge'vc.5: Alt-Ergo 2.4.0
+          +-- goal merge'vc.6: Alt-Ergo 2.4.0
+          +-- goal merge'vc.7: Alt-Ergo 2.4.0
+          +-- goal merge'vc.8
+            +-- transformation split_vc
+              +-- goal merge'vc.8.0: Alt-Ergo 2.4.0
+              +-- goal merge'vc.8.1: Alt-Ergo 2.4.0
+              +-- goal merge'vc.8.2: Alt-Ergo 2.4.0
+              +-- goal merge'vc.8.3: Alt-Ergo 2.4.0
+          +-- goal merge'vc.9
+            +-- transformation split_vc
+              +-- goal merge'vc.9.0: Alt-Ergo 2.4.0
+              +-- goal merge'vc.9.1: Alt-Ergo 2.4.0
+              +-- goal merge'vc.9.2: Alt-Ergo 2.4.0
+              +-- goal merge'vc.9.3: Alt-Ergo 2.4.0
+          +-- goal merge'vc.10
+            +-- transformation split_vc
+              +-- goal merge'vc.10.0: Alt-Ergo 2.4.0
+              +-- goal merge'vc.10.1: Alt-Ergo 2.4.0
+              +-- goal merge'vc.10.2: Alt-Ergo 2.4.0
+              +-- goal merge'vc.10.3: Alt-Ergo 2.4.0
+          +-- goal merge'vc.11
+            +-- transformation split_vc
+              +-- goal merge'vc.11.0
+                +-- transformation split_vc
+                  +-- goal merge'vc.11.0.0: Alt-Ergo 2.4.0
+                  +-- goal merge'vc.11.0.1: Alt-Ergo 2.4.0
+                  +-- goal merge'vc.11.0.2: Alt-Ergo 2.4.0
+                  +-- goal merge'vc.11.0.3: CVC4 1.8
+              +-- goal merge'vc.11.1
+                +-- transformation split_vc
+                  +-- goal merge'vc.11.1.0: Alt-Ergo 2.4.0
+                  +-- goal merge'vc.11.1.1: Alt-Ergo 2.4.0
+                  +-- goal merge'vc.11.1.2: Alt-Ergo 2.4.0
+                  +-- goal merge'vc.11.1.3: Alt-Ergo 2.4.0
+      +-- goal BinTree.mem'vc
+        +-- transformation split_vc
+          +-- goal mem'vc.0
+            +-- transformation split_vc
+              +-- goal mem'vc.0.0
+                +-- transformation split_vc
+                  +-- goal mem'vc.0.0.0: Alt-Ergo 2.4.0
+                  +-- goal mem'vc.0.0.1: Alt-Ergo 2.4.0
+              +-- goal mem'vc.0.1
+                +-- transformation split_vc
+                  +-- goal mem'vc.0.1.0: Alt-Ergo 2.4.0
+                  +-- goal mem'vc.0.1.1: Alt-Ergo 2.4.0
+          +-- goal mem'vc.1
+            +-- transformation split_vc
+              +-- goal mem'vc.1.0: Alt-Ergo 2.4.0
+              +-- goal mem'vc.1.1: Alt-Ergo 2.4.0
+          +-- goal mem'vc.2
+            +-- transformation split_vc
+              +-- goal mem'vc.2.0
+                +-- transformation split_vc
+                  +-- goal mem'vc.2.0.0
+                    +-- transformation split_vc
+                      +-- goal mem'vc.2.0.0.0: Alt-Ergo 2.4.0
+                  +-- goal mem'vc.2.0.1: Alt-Ergo 2.4.0
+                  +-- goal mem'vc.2.0.2: Alt-Ergo 2.4.0
+              +-- goal mem'vc.2.1
+                +-- transformation split_vc
+                  +-- goal mem'vc.2.1.0: Alt-Ergo 2.4.0
+                  +-- goal mem'vc.2.1.1
+                    +-- transformation split_vc
+                      +-- goal mem'vc.2.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal mem'vc.2.1.1.1: Alt-Ergo 2.4.0
+                  +-- goal mem'vc.2.1.2: Alt-Ergo 2.4.0
+      +-- goal BinTree.add'vc
+        +-- transformation split_vc
+          +-- goal add'vc.0
+            +-- transformation split_vc
+              +-- goal add'vc.0.0: Alt-Ergo 2.4.0
+              +-- goal add'vc.0.1: Alt-Ergo 2.4.0
+          +-- goal add'vc.1: Alt-Ergo 2.4.0
+          +-- goal add'vc.2
+            +-- transformation split_vc
+              +-- goal add'vc.2.0: Alt-Ergo 2.4.0
+              +-- goal add'vc.2.1: Alt-Ergo 2.4.0
+          +-- goal add'vc.3
+            +-- transformation split_vc
+              +-- goal add'vc.3.0: Alt-Ergo 2.4.0
+          +-- goal add'vc.4
+            +-- transformation split_vc
+              +-- goal add'vc.4.0: Alt-Ergo 2.4.0
+          +-- goal add'vc.5
+            +-- transformation split_vc
+              +-- goal add'vc.5.0: Alt-Ergo 2.4.0
+          +-- goal add'vc.6
+            +-- transformation split_vc
+              +-- goal add'vc.6.0: Alt-Ergo 2.4.0
+          +-- goal add'vc.7
+            +-- transformation split_vc
+              +-- goal add'vc.7.0: Alt-Ergo 2.4.0
+              +-- goal add'vc.7.1: Alt-Ergo 2.4.0
+          +-- goal add'vc.8: Alt-Ergo 2.4.0
+          +-- goal add'vc.9
+            +-- transformation split_vc
+              +-- goal add'vc.9.0: Alt-Ergo 2.4.0
+              +-- goal add'vc.9.1: Alt-Ergo 2.4.0
+          +-- goal add'vc.10
+            +-- transformation split_vc
+              +-- goal add'vc.10.0: Alt-Ergo 2.4.0
+          +-- goal add'vc.11
+            +-- transformation split_vc
+              +-- goal add'vc.11.0: Alt-Ergo 2.4.0
+          +-- goal add'vc.12
+            +-- transformation split_vc
+              +-- goal add'vc.12.0: Alt-Ergo 2.4.0
+          +-- goal add'vc.13
+            +-- transformation split_vc
+              +-- goal add'vc.13.0: Alt-Ergo 2.4.0
+          +-- goal add'vc.14
+            +-- transformation split_vc
+              +-- goal add'vc.14.0: Alt-Ergo 2.4.0
+              +-- goal add'vc.14.1: Alt-Ergo 2.4.0
+              +-- goal add'vc.14.2
+                +-- transformation split_vc
+                  +-- goal add'vc.14.2.0: Alt-Ergo 2.4.0
+                  +-- goal add'vc.14.2.1: Alt-Ergo 2.4.0
+              +-- goal add'vc.14.3
+                +-- transformation split_vc
+                  +-- goal add'vc.14.3.0: Alt-Ergo 2.4.0
+                  +-- goal add'vc.14.3.1: Alt-Ergo 2.4.0
+          +-- goal add'vc.15
+            +-- transformation split_vc
+              +-- goal add'vc.15.0: Alt-Ergo 2.4.0
+              +-- goal add'vc.15.1
+                +-- transformation split_vc
+                  +-- goal add'vc.15.1.0: Alt-Ergo 2.4.0
+              +-- goal add'vc.15.2
+                +-- transformation split_vc
+                  +-- goal add'vc.15.2.0: Alt-Ergo 2.4.0
+                  +-- goal add'vc.15.2.1: Alt-Ergo 2.4.0
+              +-- goal add'vc.15.3: Alt-Ergo 2.4.0
+          +-- goal add'vc.16
+            +-- transformation split_vc
+              +-- goal add'vc.16.0: Alt-Ergo 2.4.0
+              +-- goal add'vc.16.1: Alt-Ergo 2.4.0
+              +-- goal add'vc.16.2
+                +-- transformation split_vc
+                  +-- goal add'vc.16.2.0: Alt-Ergo 2.4.0
+                  +-- goal add'vc.16.2.1: Alt-Ergo 2.4.0
+              +-- goal add'vc.16.3
+                +-- transformation split_vc
+                  +-- goal add'vc.16.3.0: Alt-Ergo 2.4.0
+                  +-- goal add'vc.16.3.1: Alt-Ergo 2.4.0
+          +-- goal add'vc.17
+            +-- transformation split_vc
+              +-- goal add'vc.17.0
+                +-- transformation split_vc
+                  +-- goal add'vc.17.0.0: Alt-Ergo 2.4.0
+                  +-- goal add'vc.17.0.1: Alt-Ergo 2.4.0
+                  +-- goal add'vc.17.0.2
+                    +-- transformation split_vc
+                      +-- goal add'vc.17.0.2.0: Alt-Ergo 2.4.0
+                      +-- goal add'vc.17.0.2.1: Alt-Ergo 2.4.0
+                  +-- goal add'vc.17.0.3
+                    +-- transformation split_vc
+                      +-- goal add'vc.17.0.3.0: Alt-Ergo 2.4.0
+                      +-- goal add'vc.17.0.3.1: Alt-Ergo 2.4.0
+              +-- goal add'vc.17.1
+                +-- transformation split_vc
+                  +-- goal add'vc.17.1.0: Alt-Ergo 2.4.0
+                  +-- goal add'vc.17.1.1: Alt-Ergo 2.4.0
+                  +-- goal add'vc.17.1.2
+                    +-- transformation split_vc
+                      +-- goal add'vc.17.1.2.0: Alt-Ergo 2.4.0
+                      +-- goal add'vc.17.1.2.1
+                        +-- transformation remove zero,one,(-),(>),(<=),(>=),min,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create'def,min_tree'spec,is_minimum_min,H2,H1,H,H16,H13,H11,H9,H8,H7,H6,H4
+                          +-- goal add'vc.17.1.2.1.0: Alt-Ergo 2.4.0
+                  +-- goal add'vc.17.1.3
+                    +-- transformation split_vc
+                      +-- goal add'vc.17.1.3.0: Alt-Ergo 2.4.0
+                      +-- goal add'vc.17.1.3.1
+                        +-- transformation remove zero,one,(-),(>),(<=),(>=),min,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create'def,min_tree'spec,is_minimum_min,H2,H1,H,H13,H11,H9,H8,H7,H6,H4
+                          +-- goal add'vc.17.1.3.1.0: Alt-Ergo 2.4.0
+      +-- goal BinTree.remove'vc
+        +-- transformation split_vc
+          +-- goal remove'vc.0
+            +-- transformation split_vc
+              +-- goal remove'vc.0.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.0.1: Alt-Ergo 2.4.0
+          +-- goal remove'vc.1
+            +-- transformation split_vc
+              +-- goal remove'vc.1.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.2
+            +-- transformation split_vc
+              +-- goal remove'vc.2.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.3
+            +-- transformation split_vc
+              +-- goal remove'vc.3.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.3.1: Alt-Ergo 2.4.0
+          +-- goal remove'vc.4
+            +-- transformation split_vc
+              +-- goal remove'vc.4.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.4.1: Alt-Ergo 2.4.0
+          +-- goal remove'vc.5: Alt-Ergo 2.4.0
+          +-- goal remove'vc.6
+            +-- transformation split_vc
+              +-- goal remove'vc.6.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.6.1: Alt-Ergo 2.4.0
+          +-- goal remove'vc.7
+            +-- transformation split_vc
+              +-- goal remove'vc.7.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.8
+            +-- transformation split_vc
+              +-- goal remove'vc.8.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.9
+            +-- transformation split_vc
+              +-- goal remove'vc.9.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.10
+            +-- transformation split_vc
+              +-- goal remove'vc.10.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.11
+            +-- transformation split_vc
+              +-- goal remove'vc.11.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.11.1: Alt-Ergo 2.4.0
+          +-- goal remove'vc.12: Alt-Ergo 2.4.0
+          +-- goal remove'vc.13
+            +-- transformation split_vc
+              +-- goal remove'vc.13.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.13.1: Alt-Ergo 2.4.0
+          +-- goal remove'vc.14
+            +-- transformation split_vc
+              +-- goal remove'vc.14.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.15
+            +-- transformation split_vc
+              +-- goal remove'vc.15.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.16
+            +-- transformation split_vc
+              +-- goal remove'vc.16.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.17
+            +-- transformation split_vc
+              +-- goal remove'vc.17.0: Alt-Ergo 2.4.0
+          +-- goal remove'vc.18
+            +-- transformation split_vc
+              +-- goal remove'vc.18.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.18.1: Alt-Ergo 2.4.0
+              +-- goal remove'vc.18.2
+                +-- transformation split_vc
+                  +-- goal remove'vc.18.2.0: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.18.2.1: Alt-Ergo 2.4.0
+              +-- goal remove'vc.18.3: Alt-Ergo 2.4.0
+          +-- goal remove'vc.19
+            +-- transformation split_vc
+              +-- goal remove'vc.19.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.19.1: Alt-Ergo 2.4.0
+              +-- goal remove'vc.19.2
+                +-- transformation split_vc
+                  +-- goal remove'vc.19.2.0: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.19.2.1: CVC4 1.8
+              +-- goal remove'vc.19.3: Alt-Ergo 2.4.0
+          +-- goal remove'vc.20
+            +-- transformation split_vc
+              +-- goal remove'vc.20.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.20.1: Alt-Ergo 2.4.0
+              +-- goal remove'vc.20.2
+                +-- transformation split_vc
+                  +-- goal remove'vc.20.2.0: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.20.2.1: Alt-Ergo 2.4.0
+              +-- goal remove'vc.20.3: Alt-Ergo 2.4.0
+          +-- goal remove'vc.21
+            +-- transformation split_vc
+              +-- goal remove'vc.21.0
+                +-- transformation split_vc
+                  +-- goal remove'vc.21.0.0
+                    +-- transformation split_vc
+                      +-- goal remove'vc.21.0.0.0: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.21.0.1: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.21.0.2
+                    +-- transformation split_vc
+                      +-- goal remove'vc.21.0.2.0
+                        +-- transformation split_vc
+                          +-- goal remove'vc.21.0.2.0.0: Alt-Ergo 2.4.0
+                      +-- goal remove'vc.21.0.2.1
+                        +-- transformation inline_goal
+                          +-- goal remove'vc.21.0.2.1.0
+                            +-- transformation split_all_full
+                              +-- goal remove'vc.21.0.2.1.0.0
+                                +-- transformation inline_goal
+                                  +-- goal remove'vc.21.0.2.1.0.0.0
+                                    +-- transformation remove zero,one,(-),(>),(<=),(>=),min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,Min_r,Min_assoc,Max_assoc,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_inf,Mod_inf,Div_mult,Length_nonnegative,Append_assoc,Append_l_nil,Append_length,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,array'invariant,create'def,min_tree'spec,is_minimum_min,H2,H,H16,H15,H13,H10,H9,H8,H4,Mod_bound,is_nil'spec1,is_nil'spec,Length_nil1,Length_nil,mem_append2,mem_append1,mem_append,is_none'spec1,is_none'spec,([<-])'spec1,([<-])'spec,make_spec1,make_spec,reverse_mem1,reverse_mem,occ_uniq21,occ_uniq2,create'spec3,create'spec2,create'spec1
+                                      +-- goal remove'vc.21.0.2.1.0.0.0.0: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.21.0.3
+                    +-- transformation remove zero,one,(-),(>),(<=),(>=),get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Mod_inf,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,create'def,min_tree'spec,is_minimum_min,H2,H,H10,H9,H7,H4
+                      +-- goal remove'vc.21.0.3.0: Alt-Ergo 2.4.0
+              +-- goal remove'vc.21.1
+                +-- transformation split_vc
+                  +-- goal remove'vc.21.1.0
+                    +-- transformation split_vc
+                      +-- goal remove'vc.21.1.0.0: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.21.1.1: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.21.1.2: Alt-Ergo 2.4.0
+                  +-- goal remove'vc.21.1.3: Alt-Ergo 2.4.0
+      +-- goal BinTree.subset'vc
+        +-- transformation split_vc
+          +-- goal subset'vc.0
+            +-- transformation split_vc
+              +-- goal subset'vc.0.0: Alt-Ergo 2.4.0
+          +-- goal subset'vc.1
+            +-- transformation split_vc
+              +-- goal subset'vc.1.0: Alt-Ergo 2.4.0
+              +-- goal subset'vc.1.1: Alt-Ergo 2.4.0
+          +-- goal subset'vc.2
+            +-- transformation split_vc
+              +-- goal subset'vc.2.0: Alt-Ergo 2.4.0
+          +-- goal subset'vc.3
+            +-- transformation split_vc
+              +-- goal subset'vc.3.0: Alt-Ergo 2.4.0
+              +-- goal subset'vc.3.1: Alt-Ergo 2.4.0
+          +-- goal subset'vc.4
+            +-- transformation split_vc
+              +-- goal subset'vc.4.0: Alt-Ergo 2.4.0
+          +-- goal subset'vc.5
+            +-- transformation split_vc
+              +-- goal subset'vc.5.0: Alt-Ergo 2.4.0
+              +-- goal subset'vc.5.1: Alt-Ergo 2.4.0
+          +-- goal subset'vc.6
+            +-- transformation split_vc
+              +-- goal subset'vc.6.0: Alt-Ergo 2.4.0
+          +-- goal subset'vc.7
+            +-- transformation split_vc
+              +-- goal subset'vc.7.0: Alt-Ergo 2.4.0
+              +-- goal subset'vc.7.1: Alt-Ergo 2.4.0
+          +-- goal subset'vc.8
+            +-- transformation split_vc
+              +-- goal subset'vc.8.0: Alt-Ergo 2.4.0
+          +-- goal subset'vc.9
+            +-- transformation split_vc
+              +-- goal subset'vc.9.0: Alt-Ergo 2.4.0
+              +-- goal subset'vc.9.1: Alt-Ergo 2.4.0
+          +-- goal subset'vc.10
+            +-- transformation split_vc
+              +-- goal subset'vc.10.0: Alt-Ergo 2.4.0
+          +-- goal subset'vc.11
+            +-- transformation split_vc
+              +-- goal subset'vc.11.0: Alt-Ergo 2.4.0
+              +-- goal subset'vc.11.1: Alt-Ergo 2.4.0
+          +-- goal subset'vc.12
+            +-- transformation split_vc
+              +-- goal subset'vc.12.0
+                +-- transformation split_vc
+                  +-- goal subset'vc.12.0.0
+                    +-- transformation split_vc
+                      +-- goal subset'vc.12.0.0.0: Alt-Ergo 2.4.0
+                  +-- goal subset'vc.12.0.1
+                    +-- transformation split_vc
+                      +-- goal subset'vc.12.0.1.0: Alt-Ergo 2.4.0
+                  +-- goal subset'vc.12.0.2: Alt-Ergo 2.4.0
+                  +-- goal subset'vc.12.0.3
+                    +-- transformation split_vc
+                      +-- goal subset'vc.12.0.3.0: CVC4 1.8
+                  +-- goal subset'vc.12.0.4
+                    +-- transformation split_vc
+                      +-- goal subset'vc.12.0.4.0
+                        +-- transformation inline_goal
+                          +-- goal subset'vc.12.0.4.0.0
+                            +-- transformation split_all_full
+                              +-- goal subset'vc.12.0.4.0.0.0: CVC4 1.8
+                  +-- goal subset'vc.12.0.5
+                    +-- transformation inline_goal
+                      +-- goal subset'vc.12.0.5.0
+                        +-- transformation split_all_full
+                          +-- goal subset'vc.12.0.5.0.0
+                            +-- transformation split_vc
+                              +-- goal subset'vc.12.0.5.0.0.0
+                                +-- transformation inline_goal
+                                  +-- goal subset'vc.12.0.5.0.0.0.0
+                                    +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,bst,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,Length_nonnegative,Append_assoc,Append_l_nil,Append_length,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,create'def,min_tree'spec,is_minimum_min,H8,H7,H4,H3,Abs_le2,Abs_le1,Abs_le,Div_bound1,Div_bound,Mod_bound1,Mod_bound,is_nil'spec1,is_nil'spec,Length_nil1,Length_nil,mem_append2,mem_append1,mem_append,is_none'spec1,is_none'spec,([<-])'spec1,([<-])'spec,make_spec1,make_spec,cmp_eq1,cmp_eq,reverse_mem1,reverse_mem,occ_uniq21,occ_uniq2,create'spec3,create'spec2,create'spec1,create'spec
+                                      +-- goal subset'vc.12.0.5.0.0.0.0.0: CVC4 1.8
+              +-- goal subset'vc.12.1
+                +-- transformation split_vc
+                  +-- goal subset'vc.12.1.0
+                    +-- transformation split_vc
+                      +-- goal subset'vc.12.1.0.0: Alt-Ergo 2.4.0
+                  +-- goal subset'vc.12.1.1
+                    +-- transformation assert (mem2 w2 t1)
+                      +-- goal subset'vc.12.1.1.0: Alt-Ergo 2.4.0
+                      +-- goal subset'vc.12.1.1.1: Alt-Ergo 2.4.0
+                  +-- goal subset'vc.12.1.2
+                    +-- transformation split_vc
+                      +-- goal subset'vc.12.1.2.0: Alt-Ergo 2.4.0
+                  +-- goal subset'vc.12.1.3
+                    +-- transformation assert (forall y. y <> x6 -> mem2 y t2 -> mem2 y x7 \/ mem2 y x5)
+                      +-- goal subset'vc.12.1.3.0: Alt-Ergo 2.4.0
+                      +-- goal subset'vc.12.1.3.1: Alt-Ergo 2.4.0
+                  +-- goal subset'vc.12.1.4
+                    +-- transformation split_vc
+                      +-- goal subset'vc.12.1.4.0
+                        +-- transformation case (subset (Node x3 x2 Empty 0) x7)
+                          +-- goal subset'vc.12.1.4.0.0
+                            +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,bst,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,occ_uniq2,create'spec,create'def,min_tree'spec,is_minimum_min,H7,H6,H5,H3,H2
+                              +-- goal subset'vc.12.1.4.0.0.0: Alt-Ergo 2.4.0
+                          +-- goal subset'vc.12.1.4.0.1
+                            +-- transformation assert (exists x. mem2 x (Node x3 x2 Empty 0) /\ not mem2 x x7)
+                              +-- goal subset'vc.12.1.4.0.1.0: Alt-Ergo 2.4.0
+                              +-- goal subset'vc.12.1.4.0.1.1
+                                +-- transformation introduce_exists
+                                  +-- goal subset'vc.12.1.4.0.1.1.0
+                                    +-- transformation case (x = x3)
+                                      +-- goal subset'vc.12.1.4.0.1.1.0.0
+                                        +-- transformation assert (not mem2 x3 x2)
+                                          +-- goal subset'vc.12.1.4.0.1.1.0.0.0: Alt-Ergo 2.4.0
+                                          +-- goal subset'vc.12.1.4.0.1.1.0.0.1
+                                            +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,bst,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create'spec,create'def,min_tree'spec,is_minimum_min,H3,H1,h3,h
+                                              +-- goal subset'vc.12.1.4.0.1.1.0.0.1.0: Alt-Ergo 2.4.0
+                                      +-- goal subset'vc.12.1.4.0.1.1.0.1
+                                        +-- transformation assert (mem2 x x4)
+                                          +-- goal subset'vc.12.1.4.0.1.1.0.1.0: Alt-Ergo 2.4.0
+                                          +-- goal subset'vc.12.1.4.0.1.1.0.1.1
+                                            +-- transformation assert (not mem2 x x6)
+                                              +-- goal subset'vc.12.1.4.0.1.1.0.1.1.0: Alt-Ergo 2.4.0
+                                              +-- goal subset'vc.12.1.4.0.1.1.0.1.1.1
+                                                +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,is_nil'spec,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,is_pre_order1,height_nonneg,occ_uniq2,create'spec,create'def,min_tree'spec,is_minimum_min,H6,H3,H1,h4,h2
+                                                  +-- goal subset'vc.12.1.4.0.1.1.0.1.1.1.0: Z3 4.8.6
+                  +-- goal subset'vc.12.1.5
+                    +-- transformation split_vc
+                      +-- goal subset'vc.12.1.5.0
+                        +-- transformation case (subset (Node Empty x2 x1 0) x5)
+                          +-- goal subset'vc.12.1.5.0.0
+                            +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,bst,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,occ_uniq2,create'spec,create'def,min_tree'spec,is_minimum_min,H7,H6,H5,H3,H2
+                              +-- goal subset'vc.12.1.5.0.0.0: Alt-Ergo 2.4.0
+                          +-- goal subset'vc.12.1.5.0.1
+                            +-- transformation assert (exists x. mem2 x (Node Empty x2 x1 0) /\ not mem2 x x5)
+                              +-- goal subset'vc.12.1.5.0.1.0: Alt-Ergo 2.4.0
+                              +-- goal subset'vc.12.1.5.0.1.1
+                                +-- transformation introduce_exists
+                                  +-- goal subset'vc.12.1.5.0.1.1.0
+                                    +-- transformation case (x = x3)
+                                      +-- goal subset'vc.12.1.5.0.1.1.0.0
+                                        +-- transformation assert (not subset t1 t2)
+                                          +-- goal subset'vc.12.1.5.0.1.1.0.0.0
+                                            +-- transformation remove zero,one,(-),(>),(<=),(>=),abs,min,max,get1,set,([]'),([<-]'),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,bst,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil'spec,Length_nonnegative,Length_nil,is_none'spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array'invariant,([<-])'spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create'spec,create'def,min_tree'spec,is_minimum_min,H,H1,h3
+                                              +-- goal subset'vc.12.1.5.0.1.1.0.0.0.0: Alt-Ergo 2.4.0
+                                          +-- goal subset'vc.12.1.5.0.1.1.0.0.1: Alt-Ergo 2.4.0
+                                      +-- goal subset'vc.12.1.5.0.1.1.0.1
+                                        +-- transformation assert (mem2 x x2)
+                                          +-- goal subset'vc.12.1.5.0.1.1.0.1.0: Alt-Ergo 2.4.0
+                                          +-- goal subset'vc.12.1.5.0.1.1.0.1.1
+                                            +-- transformation assert (not mem2 x x8)
+                                              +-- goal subset'vc.12.1.5.0.1.1.0.1.1.0: Alt-Ergo 2.4.0
+                                              +-- goal subset'vc.12.1.5.0.1.1.0.1.1.1
+                                                +-- transformation assert (mem2 x t1)
+                                                  +-- goal subset'vc.12.1.5.0.1.1.0.1.1.1.0: Alt-Ergo 2.4.0
+                                                  +-- goal subset'vc.12.1.5.0.1.1.0.1.1.1.1: Alt-Ergo 2.4.0
+  
+== Statistics per prover: number of proofs, time (minimum/maximum/average) in seconds ==
+  Alt-Ergo 2.4.0      : 502   0.01   1.52   0.08
+  CVC4 1.8            :  17   0.05   1.47   0.55
+  Z3 4.8.6            :   2   0.05   0.42   0.23
+  
