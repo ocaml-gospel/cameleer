@@ -566,7 +566,8 @@ let s_structure, s_signature =
           ignore subst_arg;
           (* TODO *)
           O.mk_functor decl_loc id arg body
-      | Smod_apply _ -> assert false (* TODO *)
+      | Smod_apply (lhs, rhs) ->
+          s_mod_apply info lhs rhs
       | Smod_constraint (mod_expr, mod_type) ->
           let mod_type_name = mod_type_name mod_type.Uast.mdesc in
           let mod_type_name = Opt.map E.longident mod_type_name in
@@ -574,7 +575,7 @@ let s_structure, s_signature =
           let mod_type, subst = s_module_type info mod_type in
           let info_ref = mk_info_refinement mod_type_name mod_type subst path in
           add_info_refinement info mod_bind_name info_ref;
-          s_module_expr mod_expr
+          [O.mk_omodule scope_loc scope_id (s_module_expr mod_expr)]
       | Smod_unpack _ -> assert false (* TODO *)
       | Smod_extension _ -> assert false
       (* TODO *)
@@ -582,6 +583,28 @@ let s_structure, s_signature =
     let scope_loc = T.location spmb_loc in
     let scope_id = T.(mk_id ~id_loc:(location loc) mod_bind_name) in
     [ O.mk_omodule scope_loc scope_id (s_module_expr spmb_expr) ]
+
+  and s_mod_apply _info lhs_expr _rhs_expr =
+    match lhs_expr.Uast.spmod_desc with
+    | Smod_ident {txt = Ldot (Lident x, y); loc} ->
+        let subst =
+          let qtsym = T.(Qdot (Qident (mk_id "Ord"), mk_id "t")) in
+          let idtsym = T.(PTtyapp (Qdot (Qident (mk_id "X"), mk_id "t"), [])) in
+          let lqvsym = T.(Qdot (Qident (mk_id "Ord"), mk_id "compare")) in
+          let rqvsym = T.(Qdot (Qident (mk_id "X"), mk_id "compare")) in
+          [CStsym (qtsym, [], idtsym); CSvsym (lqvsym, rqvsym)] in
+        let x_y = T.mk_id (x ^ "_" ^ y) in
+        let qualid = Qdot (Qident (T.mk_id "ocamlstdlib"), x_y) in
+        let loc = T.location loc in
+        [O.mk_odecl loc (Ptree.Dcloneexport (loc, qualid, subst))]
+    | Smod_ident _ -> assert false (* TODO *)
+    | Smod_structure _ -> assert false (* TODO *)
+    | Smod_functor _ -> assert false (* TODO *)
+    | Smod_apply _ -> assert false (* TODO *)
+    | Smod_constraint _ -> assert false (* TODO *)
+    | Smod_unpack _ -> assert false (* TODO *)
+    | Smod_extension _ -> assert false (* TODO *)
+
   and s_module_type info { mdesc; _ } =
     match mdesc with
     | Mod_ident id -> (
