@@ -500,6 +500,44 @@ module Set_Make
 
 end
 
+(* TEMPORARY: just for experience purposes *)
+module Map_Make
+
+  use map.Map, set.Fset
+  use Stdlib
+
+  scope Ord
+    type t
+
+    val function compare (x y: t) : int
+    axiom compare_pre_order : is_pre_order compare
+  end
+
+  type key = Ord.t
+  type t 'a = abstract {
+    dom : fset key;
+    view: key -> 'a;
+  }
+
+  val constant empty: t 'a
+    ensures { result.dom = empty }
+
+  val is_empty (s: t 'a) : bool
+    ensures { result <-> is_empty s.dom }
+
+  val mem (k: key) (s: t 'a) : bool
+    ensures { result <-> mem k s.dom }
+
+  val find (k: key) (s: t 'a) : 'a
+    raises  { Not_found -> not mem k s.dom }
+    ensures { mem k s.dom /\ result = s.view k }
+
+  val add (k: key) (v: 'a) (s: t 'a) : t 'a
+    ensures { result.dom = add k s.dom }
+    ensures { result.view = s.view[k <- v] }
+
+end
+
 module Map
 
   use map.Map, set.Fset
