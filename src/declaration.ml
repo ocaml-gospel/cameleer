@@ -575,7 +575,8 @@ let s_structure, s_signature =
           let mod_type, subst = s_module_type info mod_type in
           let info_ref = mk_info_refinement mod_type_name mod_type subst path in
           add_info_refinement info mod_bind_name info_ref;
-          [O.mk_omodule scope_loc scope_id (s_module_expr mod_expr)]
+          (* [O.mk_omodule scope_loc scope_id (s_module_expr mod_expr)] *)
+          s_module_expr mod_expr
       | Smod_unpack _ -> assert false (* TODO *)
       | Smod_extension _ -> assert false
       (* TODO *)
