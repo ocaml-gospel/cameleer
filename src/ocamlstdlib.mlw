@@ -536,6 +536,8 @@ module Map_Make
     ensures { result.dom = add k s.dom }
     ensures { result.view = s.view[k <- v] }
 
+  val update (x: key) (f: option 'a -> option 'a) (s: t 'a) : t 'a
+
 end
 
 module Map
