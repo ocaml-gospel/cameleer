@@ -501,6 +501,75 @@ module Set_Make
 end
 
 (* TEMPORARY: just for experience purposes *)
+module Hashtbl_Make
+
+  use map.Map, set.Fset
+  use Stdlib
+
+  scope HashedType
+    type t
+
+    val equal (x y: t) : bool
+    (*@ b = equal x y
+          ensures b <-> x = y *)
+
+    val hash (x: t) : int
+  end
+
+  type key = HashedType.t
+
+  type t 'a = abstract {
+    mutable         dom : fset key;
+    mutable         view: key -> list 'a;
+            initial_size: int;
+  } invariant { initial_size >= cardinal dom }
+    invariant { forall x. mem x dom <-> view x <> Nil }
+
+  val find (h: t 'a) (k: key) : 'a
+    raises  { Not_found -> not mem k h.dom }
+    ensures { match h.view k with
+              | Nil -> false
+              | Cons v _ -> v = result end }
+
+  val create (n: int) : t 'a
+    ensures { result.initial_size = n }
+    ensures { result.dom = empty }
+
+  val clear (h: t 'a) : unit
+    writes  { h }
+    ensures { h.dom = empty }
+    ensures { h.view = (fun _ -> Nil) }
+
+  val length (h: t 'a) : int
+    ensures { result = cardinal h.dom }
+
+  val mem (h: t 'a) (k: key) : bool
+    ensures { result <-> mem k h.dom }
+
+  val add (h: t 'a) (k: key) (v: 'a) : unit
+    writes  { h }
+    ensures { h.dom = add k (old h).dom }
+    ensures { let l = (old h).view k in
+              h.view = (old h).view[k <- Cons v l] }
+
+  val remove (h: t 'a) (k: key) : unit
+    writes  { h }
+    ensures { h.dom = remove k (old h).dom }
+    ensures { let l = (old h).view k in
+              match l with
+              | Nil -> true
+              | Cons _ r -> h.view = (old h).view[k <- r] end }
+
+  val replace (h: t 'a) (k: key) (v: 'a) : unit
+    writes  { h }
+    ensures { h.dom = add k (old h).dom }
+    ensures { let l = (old h).view k in
+              match l with
+              | Nil -> h.view = (old h).view[k <- Cons v Nil]
+              | Cons _ r -> h.view = (old h).view[k <- Cons v r] end }
+
+end
+
 module Map_Make
 
   use map.Map, set.Fset
