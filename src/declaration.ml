@@ -589,11 +589,14 @@ let s_structure, s_signature =
     match lhs_expr.Uast.spmod_desc with
     | Smod_ident {txt = Ldot (Lident x, y); loc} ->
         let subst =
-          let qtsym = T.(Qdot (Qident (mk_id "Ord"), mk_id "t")) in
-          let idtsym = T.(PTtyapp (Qdot (Qident (mk_id "X"), mk_id "t"), [])) in
-          let lqvsym = T.(Qdot (Qident (mk_id "Ord"), mk_id "compare")) in
-          let rqvsym = T.(Qdot (Qident (mk_id "X"), mk_id "compare")) in
-          [CStsym (qtsym, [], idtsym); CSvsym (lqvsym, rqvsym)] in
+          let qtsym = T.(Qdot (Qident (mk_id "HashedType"), mk_id "t")) in
+          let idtsym = T.(PTtyapp (Qdot (Qident (mk_id "H"), mk_id "t"), [])) in
+          let lqvsym_equal = T.(Qdot (Qident (mk_id "HashedType"), mk_id "equal")) in
+          let rqvsym_equal = T.(Qdot (Qident (mk_id "H"), mk_id "equal")) in
+          let lqvsym_hash = T.(Qdot (Qident (mk_id "HashedType"), mk_id "hash")) in
+          let rqvsym_hash = T.(Qdot (Qident (mk_id "H"), mk_id "hash")) in
+          [CStsym (qtsym, [], idtsym); CSvsym (lqvsym_equal, rqvsym_equal);
+           CSvsym (lqvsym_hash, rqvsym_hash)] in
         let x_y = T.mk_id (x ^ "_" ^ y) in
         let qualid = Qdot (Qident (T.mk_id "ocamlstdlib"), x_y) in
         let loc = T.location loc in
