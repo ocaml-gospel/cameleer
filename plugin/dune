@@ -3,7 +3,7 @@
   (name plugin_cameleer)
   (modes plugin)
   (embed_in_plugin_libraries
-   compiler-libs.common ocaml-compiler-libs.shadow sexplib0
+   compiler-libs.common ocaml-compiler-libs.shadow
    ppxlib.stdppx ocaml-migrate-parsetree ppxlib.ast ppxlib fmt gospel cameleer))
 
 (install
