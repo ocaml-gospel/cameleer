@@ -5,17 +5,6 @@ module type OrderedType = sig
   (*@ axiom is_pre_order: is_pre_order compare *)
 end
 
-module type S =
-sig
-  type elt
-  type t
-
-  val find: t -> elt -> bool
-  val insert: t -> elt -> t
-  val delete: t -> elt -> t
-end
-
-
 module BinTree (Ord: OrderedType) = struct
   type elt = Ord.t
   type t = Empty | Node of t * elt * t * int
@@ -136,10 +125,6 @@ module BinTree (Ord: OrderedType) = struct
   (*@ predicate is_minimum (x: elt) (tree: t) =
     mem2 x tree /\ forall e: elt. mem2 e tree -> Ord.compare x e < 0 \/ e = x *)
 
-  (* @ predicate is_maximum (x:elt) (tree: t) =
-     mem2 x tree /\ forall e: elt. mem2 e tree -> Ord.compare x e > 0 \/ e = x*)
-
-
   let [@logic] rec min_tree (tree: t) : elt =
     match tree with
     | Empty -> assert false
@@ -224,13 +209,13 @@ module BinTree (Ord: OrderedType) = struct
         else
           let rr = add r x in
           if r == rr then t else bal l v rr
-  (*@r = add t x
-      requires bst t
-      variant t
-      ensures forall j: elt. j <> x -> occ j r = occ j t
-      ensures occ x r = occ x t || occ x r = 1 + occ x t
-      ensures bst r
-      ensures 1 >= height r - height t >= 0*)
+  (*@ r = add t x
+        requires bst t
+        variant t
+        ensures forall j: elt. j <> x -> occ j r = occ j t
+        ensures occ x r = occ x t || occ x r = 1 + occ x t
+        ensures bst r
+        ensures 1 >= height r - height t >= 0 *)
 
   let rec remove x = function
     | Empty -> Empty
@@ -246,40 +231,37 @@ module BinTree (Ord: OrderedType) = struct
           let rr = remove x r in
           if r == rr then t
           else bal l v rr
-          (*@ r = remove x t
-              requires bst t
-              variant t
-              ensures forall j: elt. (x<>j) -> occ j t = occ j r
-              ensures occ x r = if (occ x t > 0) then ((occ x t) - 1) else occ x t
-              ensures bst r
-              ensures height t - 1 <= height r <= height t*)
+  (*@ r = remove x t
+        requires bst t
+        variant t
+        ensures forall j: elt. (x<>j) -> occ j t = occ j r
+        ensures occ x r = if (occ x t > 0) then ((occ x t) - 1) else occ x t
+        ensures bst r
+        ensures height t - 1 <= height r <= height t*)
 
+  (*@ predicate subset (s1 s2: t) = forall x : elt. mem2 x s1 -> mem2 x s2*)
 
-   (*@ predicate subset (s1 s2: t) = forall x : elt. mem2 x s1 -> mem2 x s2*)
+  (*@ lemma subset_refl: forall s: t. subset s s*)
 
-
-  (*@ lemma subset_refl:
-    forall s: t. subset s s*)
-
-  (*@ lemma subset_trans:
-    forall s1 s2 s3: t. subset s1 s2 -> subset s2 s3 -> subset s1 s3*)
+  (*@ lemma subset_trans: forall s1 s2 s3: t.
+        subset s1 s2 -> subset s2 s3 -> subset s1 s3*)
 
   let rec subset s1 s2 =
-      match (s1, s2) with
-        Empty, _ ->
-          true
-      | _, Empty ->
-          false
-      | Node (l1, v1, r1, _), (Node (l2, v2, r2, _) as t2) ->
-          let c = Ord.compare v1 v2 in
-          if c = 0 then
-            subset l1 l2 && subset r1 r2
-          else if c < 0 then
-            subset (Node (l1, v1, Empty, 0)) l2 && subset r1 t2
-          else
-            subset (Node (Empty, v1, r1, 0)) r2 && subset l1 t2
+    match (s1, s2) with
+      Empty, _ ->
+        true
+    | _, Empty ->
+        false
+    | Node (l1, v1, r1, _), (Node (l2, v2, r2, _) as t2) ->
+        let c = Ord.compare v1 v2 in
+        if c = 0 then
+          subset l1 l2 && subset r1 r2
+        else if c < 0 then
+          subset (Node (l1, v1, Empty, 0)) l2 && subset r1 t2
+        else
+          subset (Node (Empty, v1, r1, 0)) r2 && subset l1 t2
   (*@ r = subset t1 t2
-    requires bst_no_height t1 && bst_no_height t2
-    variant t1, t2
-    ensures subset t1 t2 <-> r*)
+        requires bst_no_height t1 && bst_no_height t2
+        variant t1, t2
+        ensures subset t1 t2 <-> r*)
 end
