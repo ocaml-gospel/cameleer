@@ -5,9 +5,9 @@
 <prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="6000"/>
 <prover id="1" name="Z3" version="4.8.6" timelimit="30" steplimit="0" memlimit="6000"/>
 <prover id="6" name="CVC4" version="1.8" timelimit="10" steplimit="0" memlimit="6000"/>
-<file format="ocaml" proved="true">
+<file format="ocaml">
 <path name=".."/><path name="BinTreeModuleTupl.ml"/>
-<theory name="BinTreeModuleTupl" proved="true">
+<theory name="BinTreeModuleTupl">
  <goal name="BinTree.occ_nonneg&#39;vc" expl="VC for occ_nonneg" proved="true">
  <proof prover="0"><result status="valid" time="0.02" steps="45"/></proof>
  </goal>
@@ -1977,6 +1977,7 @@
    <goal name="remove_max_elt&#39;vc.11.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="remove_max_elt&#39;vc.11.0.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="timeout" time="5.00"/></proof>
     <proof prover="6" timelimit="5"><result status="valid" time="0.55" steps="39316"/></proof>
     </goal>
    </transf>
@@ -2326,8 +2327,8 @@
   </goal>
  </transf>
  </goal>
- <goal name="BinTree.join&#39;vc" expl="VC for join" proved="true">
- <transf name="split_vc" proved="true" >
+ <goal name="BinTree.join&#39;vc" expl="VC for join">
+ <transf name="split_vc" >
   <goal name="join&#39;vc.0" expl="precondition" proved="true">
   <proof prover="0"><result status="valid" time="0.02" steps="22"/></proof>
   </goal>
@@ -2350,6 +2351,7 @@
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.6.0" expl="variant decrease" proved="true">
    <proof prover="0"><result status="valid" time="0.03" steps="151"/></proof>
+   <proof prover="6" timelimit="5" obsolete="true"><result status="timeout" time="5.00" steps="53108"/></proof>
    </goal>
   </transf>
   </goal>
@@ -2387,7 +2389,7 @@
   <goal name="join&#39;vc.11" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.11.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.03" steps="51"/></proof>
+   <proof prover="0"><result status="valid" time="0.03" steps="56"/></proof>
    </goal>
    <goal name="join&#39;vc.11.1" expl="precondition" proved="true">
    <proof prover="0"><result status="valid" time="0.02" steps="34"/></proof>
@@ -2397,40 +2399,30 @@
   <goal name="join&#39;vc.12" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.12.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.20" steps="1001"/></proof>
+   <proof prover="0"><result status="valid" time="0.20" steps="1446"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="join&#39;vc.13" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.13.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.05" steps="234"/></proof>
+   <proof prover="0"><result status="valid" time="0.05" steps="242"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="join&#39;vc.14" expl="precondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="join&#39;vc.14.0" expl="precondition" proved="true">
-   <transf name="split_all_full" proved="true" >
-    <goal name="join&#39;vc.14.0.0" expl="precondition" proved="true">
-    <transf name="inline_all" proved="true" >
-     <goal name="join&#39;vc.14.0.0.0" expl="precondition" proved="true">
-     <transf name="remove" proved="true" arg1="length1,mem,(++),reverse,height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,Length_nonnegative,Append_assoc,Append_l_nil,Append_length,mem_decomp,reverse_append,reverse_cons,reverse_reverse,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H16,H7,H6,H5,H2,H1,H4,H3,Abs_le2,Abs_le1,Abs_le,Div_bound1,Div_bound,Mod_bound1,Mod_bound,is_nil&#39;spec1,is_nil&#39;spec,Length_nil1,Length_nil,mem_append2,mem_append1,mem_append,is_none&#39;spec1,is_none&#39;spec,([&lt;-])&#39;spec,make_spec,cmp_eq1,cmp_eq,reverse_mem1,reverse_mem,occ_uniq2,create&#39;spec3,create&#39;spec2,create&#39;spec1,create&#39;spec">
-      <goal name="join&#39;vc.14.0.0.0.0" expl="precondition" proved="true">
-      <proof prover="6" timelimit="5"><result status="valid" time="0.09" steps="8327"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
+  <goal name="join&#39;vc.14" expl="precondition">
+  <transf name="split_vc" >
+   <goal name="join&#39;vc.14.0" expl="precondition">
+   <proof prover="0" memlimit="2000"><result status="timeout" time="5.00"/></proof>
+   <proof prover="1" memlimit="4000"><result status="timeout" time="30.00" steps="38655482"/></proof>
+   <proof prover="6" timelimit="30" memlimit="4000"><undone/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="join&#39;vc.15" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.15.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.13" steps="1236"/></proof>
+   <proof prover="0"><result status="valid" time="0.13" steps="926"/></proof>
    </goal>
   </transf>
   </goal>
@@ -2478,35 +2470,35 @@
    <proof prover="0"><result status="valid" time="0.02" steps="34"/></proof>
    </goal>
    <goal name="join&#39;vc.21.1" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.04" steps="52"/></proof>
+   <proof prover="0"><result status="valid" time="0.04" steps="57"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="join&#39;vc.22" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.22.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.16" steps="894"/></proof>
+   <proof prover="0"><result status="valid" time="0.16" steps="1495"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="join&#39;vc.23" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.23.0" expl="precondition" proved="true">
-   <proof prover="6" timelimit="5"><result status="valid" time="0.53" steps="45895"/></proof>
+   <proof prover="6" timelimit="5"><result status="valid" time="0.53" steps="51110"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="join&#39;vc.24" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.24.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.06" steps="227"/></proof>
+   <proof prover="0"><result status="valid" time="0.06" steps="254"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="join&#39;vc.25" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.25.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.13" steps="868"/></proof>
+   <proof prover="0"><result status="valid" time="0.13" steps="1245"/></proof>
    </goal>
   </transf>
   </goal>
@@ -2529,6 +2521,7 @@
   <proof prover="0"><result status="valid" time="0.03" steps="51"/></proof>
   </goal>
   <goal name="join&#39;vc.32" expl="postcondition" proved="true">
+  <proof prover="0"><result status="timeout" time="5.00"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="join&#39;vc.32.0" expl="postcondition" proved="true">
    <proof prover="0"><result status="valid" time="0.01" steps="30"/></proof>
@@ -2550,8 +2543,8 @@
    </goal>
   </transf>
   </goal>
-  <goal name="join&#39;vc.33" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
+  <goal name="join&#39;vc.33" expl="postcondition">
+  <transf name="split_vc" >
    <goal name="join&#39;vc.33.0" expl="postcondition" proved="true">
    <proof prover="0"><result status="valid" time="0.03" steps="54"/></proof>
    </goal>
@@ -2561,31 +2554,11 @@
    <goal name="join&#39;vc.33.2" expl="postcondition" proved="true">
    <proof prover="0"><result status="valid" time="0.02" steps="60"/></proof>
    </goal>
-   <goal name="join&#39;vc.33.3" expl="postcondition" proved="true">
-   <transf name="split_all_full" proved="true" >
-    <goal name="join&#39;vc.33.3.0" expl="postcondition" proved="true">
-    <transf name="inline_all" proved="true" >
-     <goal name="join&#39;vc.33.3.0.0" expl="postcondition" proved="true">
-     <proof prover="1" timelimit="5"><result status="valid" time="4.16" steps="9307444"/></proof>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
+   <goal name="join&#39;vc.33.3" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="5.00"/></proof>
    </goal>
-   <goal name="join&#39;vc.33.4" expl="postcondition" proved="true">
-   <transf name="split_all_full" proved="true" >
-    <goal name="join&#39;vc.33.4.0" expl="postcondition" proved="true">
-    <transf name="inline_all" proved="true" >
-     <goal name="join&#39;vc.33.4.0.0" expl="postcondition" proved="true">
-     <transf name="remove" proved="true" arg1="length1,mem,(++),reverse,rev_append,height,bst_no_height,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,Length_nonnegative,Append_assoc,Append_l_nil,Append_length,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,same_location_eq,array&#39;invariant,non_neg_max_array_length,is_pre_order,height_nonneg,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,H17,H7,H15,H14,H13,H9,H4,H3,H2,Abs_le2,Abs_le1,Abs_le,Div_bound1,Div_bound,Mod_bound1,Mod_bound,is_nil&#39;spec1,is_nil&#39;spec,Length_nil1,Length_nil,mem_append2,mem_append1,mem_append,is_none&#39;spec1,is_none&#39;spec,([&lt;-])&#39;spec1,([&lt;-])&#39;spec,make_spec1,make_spec,cmp_eq1,cmp_eq,reverse_mem1,occ_uniq2,create&#39;spec3,create&#39;spec2,create&#39;spec1,create&#39;spec">
-      <goal name="join&#39;vc.33.4.0.0.0" expl="postcondition" proved="true">
-      <proof prover="6" timelimit="5"><result status="valid" time="0.13" steps="13344"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
+   <goal name="join&#39;vc.33.4" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="5.00"/></proof>
    </goal>
    <goal name="join&#39;vc.33.5" expl="postcondition" proved="true">
    <proof prover="0"><result status="valid" time="0.03" steps="80"/></proof>
@@ -2604,20 +2577,20 @@
    <proof prover="0"><result status="valid" time="0.02" steps="30"/></proof>
    </goal>
    <goal name="join&#39;vc.34.3" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.07" steps="512"/></proof>
+   <proof prover="0"><result status="valid" time="0.07" steps="490"/></proof>
    </goal>
    <goal name="join&#39;vc.34.4" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.07" steps="511"/></proof>
+   <proof prover="0"><result status="valid" time="0.07" steps="574"/></proof>
    </goal>
    <goal name="join&#39;vc.34.5" expl="postcondition" proved="true">
    <proof prover="0"><result status="valid" time="0.01" steps="34"/></proof>
    </goal>
   </transf>
   </goal>
-  <goal name="join&#39;vc.35" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="join&#39;vc.35.0" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
+  <goal name="join&#39;vc.35" expl="postcondition">
+  <transf name="split_vc" >
+   <goal name="join&#39;vc.35.0" expl="postcondition">
+   <transf name="split_vc" >
     <goal name="join&#39;vc.35.0.0" expl="postcondition" proved="true">
     <proof prover="0"><result status="valid" time="0.02" steps="49"/></proof>
     </goal>
@@ -2627,27 +2600,13 @@
     <goal name="join&#39;vc.35.0.2" expl="postcondition" proved="true">
     <proof prover="0"><result status="valid" time="0.03" steps="102"/></proof>
     </goal>
-    <goal name="join&#39;vc.35.0.3" expl="postcondition" proved="true">
-    <transf name="split_all_full" proved="true" >
-     <goal name="join&#39;vc.35.0.3.0" expl="postcondition" proved="true">
-     <transf name="inline_all" proved="true" >
-      <goal name="join&#39;vc.35.0.3.0.0" expl="postcondition" proved="true">
-      <proof prover="1"><result status="valid" time="6.64" steps="9930988"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
+    <goal name="join&#39;vc.35.0.3" expl="postcondition">
+    <proof prover="0"><result status="timeout" time="5.00"/></proof>
+    <proof prover="1" timelimit="5"><result status="timeout" time="5.00" steps="8277245"/></proof>
     </goal>
-    <goal name="join&#39;vc.35.0.4" expl="postcondition" proved="true">
-    <transf name="split_all_full" proved="true" >
-     <goal name="join&#39;vc.35.0.4.0" expl="postcondition" proved="true">
-     <transf name="inline_all" proved="true" >
-      <goal name="join&#39;vc.35.0.4.0.0" expl="postcondition" proved="true">
-      <proof prover="1"><result status="valid" time="8.49" steps="12694839"/></proof>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
+    <goal name="join&#39;vc.35.0.4" expl="postcondition">
+    <proof prover="0"><result status="timeout" time="5.00"/></proof>
+    <proof prover="1" timelimit="5"><result status="timeout" time="5.00" steps="7668684"/></proof>
     </goal>
     <goal name="join&#39;vc.35.0.5" expl="postcondition" proved="true">
     <proof prover="0"><result status="valid" time="0.02" steps="34"/></proof>
@@ -2666,15 +2625,37 @@
     <proof prover="0"><result status="valid" time="0.03" steps="102"/></proof>
     </goal>
     <goal name="join&#39;vc.35.1.3" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.42" steps="2455"/></proof>
+    <proof prover="0"><result status="valid" time="0.42" steps="3444"/></proof>
     </goal>
     <goal name="join&#39;vc.35.1.4" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.34" steps="2131"/></proof>
+    <proof prover="0"><result status="valid" time="0.34" steps="2711"/></proof>
     </goal>
     <goal name="join&#39;vc.35.1.5" expl="postcondition" proved="true">
     <proof prover="0"><result status="valid" time="0.02" steps="34"/></proof>
     </goal>
    </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="join&#39;vc.36" expl="postcondition">
+  <transf name="split_vc" >
+   <goal name="join&#39;vc.36.0" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="5.00"/></proof>
+   </goal>
+   <goal name="join&#39;vc.36.1" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="5.00"/></proof>
+   </goal>
+   <goal name="join&#39;vc.36.2" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="5.00"/></proof>
+   </goal>
+   <goal name="join&#39;vc.36.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.05" steps="219"/></proof>
+   </goal>
+   <goal name="join&#39;vc.36.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.05" steps="221"/></proof>
+   </goal>
+   <goal name="join&#39;vc.36.5" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.02" steps="38"/></proof>
    </goal>
   </transf>
   </goal>
@@ -3424,8 +3405,8 @@
   </goal>
  </transf>
  </goal>
- <goal name="BinTree.subset&#39;vc" expl="VC for subset" proved="true">
- <transf name="split_vc" proved="true" >
+ <goal name="BinTree.subset&#39;vc" expl="VC for subset">
+ <transf name="split_vc" >
   <goal name="subset&#39;vc.0" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.0.0" expl="variant decrease" proved="true">
@@ -3528,10 +3509,10 @@
    </goal>
   </transf>
   </goal>
-  <goal name="subset&#39;vc.12" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="subset&#39;vc.12.0" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
+  <goal name="subset&#39;vc.12" expl="postcondition">
+  <transf name="split_vc" >
+   <goal name="subset&#39;vc.12.0" expl="postcondition">
+   <transf name="split_vc" >
     <goal name="subset&#39;vc.12.0.0" expl="postcondition" proved="true">
     <transf name="inline_goal" proved="true" >
      <goal name="subset&#39;vc.12.0.0.0" expl="postcondition" proved="true">
@@ -3603,18 +3584,20 @@
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.0.5" expl="postcondition" proved="true">
-    <transf name="inline_goal" proved="true" >
-     <goal name="subset&#39;vc.12.0.5.0" expl="postcondition" proved="true">
-     <transf name="split_all_full" proved="true" >
-      <goal name="subset&#39;vc.12.0.5.0.0" expl="postcondition" proved="true">
-      <transf name="split_vc" proved="true" >
-       <goal name="subset&#39;vc.12.0.5.0.0.0" expl="postcondition" proved="true">
-       <transf name="inline_goal" proved="true" >
-        <goal name="subset&#39;vc.12.0.5.0.0.0.0" expl="postcondition" proved="true">
-        <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,bst,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,Length_nonnegative,Append_assoc,Append_l_nil,Append_length,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,create&#39;def,min_tree&#39;spec,is_minimum_min,H8,H7,H4,H3,Abs_le2,Abs_le1,Abs_le,Div_bound1,Div_bound,Mod_bound1,Mod_bound,is_nil&#39;spec1,is_nil&#39;spec,Length_nil1,Length_nil,mem_append2,mem_append1,mem_append,is_none&#39;spec1,is_none&#39;spec,([&lt;-])&#39;spec1,([&lt;-])&#39;spec,make_spec1,make_spec,cmp_eq1,cmp_eq,reverse_mem1,reverse_mem,occ_uniq21,occ_uniq2,create&#39;spec3,create&#39;spec2,create&#39;spec1,create&#39;spec">
-         <goal name="subset&#39;vc.12.0.5.0.0.0.0.0" expl="postcondition" proved="true">
-         <proof prover="6" timelimit="5"><result status="valid" time="0.07" steps="8948"/></proof>
+    <goal name="subset&#39;vc.12.0.5" expl="postcondition">
+    <transf name="split_vc" >
+     <goal name="subset&#39;vc.12.0.5.0" expl="postcondition">
+     <transf name="inline_goal" >
+      <goal name="subset&#39;vc.12.0.5.0.0" expl="postcondition">
+      <transf name="split_all_full" >
+       <goal name="subset&#39;vc.12.0.5.0.0.0" expl="postcondition">
+       <transf name="split_vc" >
+        <goal name="subset&#39;vc.12.0.5.0.0.0.0" expl="postcondition">
+        <transf name="inline_goal" >
+         <goal name="subset&#39;vc.12.0.5.0.0.0.0.0" expl="postcondition">
+         <proof prover="0" timelimit="30" memlimit="4000"><result status="timeout" time="30.00"/></proof>
+         <proof prover="1"><undone/></proof>
+         <proof prover="6" timelimit="30" memlimit="4000"><result status="timeout" time="30.00" steps="46977"/></proof>
          </goal>
         </transf>
         </goal>
@@ -3628,164 +3611,35 @@
     </goal>
    </transf>
    </goal>
-   <goal name="subset&#39;vc.12.1" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="subset&#39;vc.12.1.0" expl="postcondition" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="subset&#39;vc.12.1.0.0" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.01" steps="26"/></proof>
+   <goal name="subset&#39;vc.12.1" expl="postcondition">
+   <transf name="split_vc" >
+    <goal name="subset&#39;vc.12.1.0" expl="postcondition">
+    <transf name="split_vc" >
+     <goal name="subset&#39;vc.12.1.0.0" expl="postcondition">
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.1.1" expl="postcondition" proved="true">
-    <transf name="assert" proved="true" arg1="(mem2 w2 t1)">
-     <goal name="subset&#39;vc.12.1.1.0" expl="asserted formula" proved="true">
-     <proof prover="0"><result status="valid" time="0.03" steps="112"/></proof>
-     </goal>
-     <goal name="subset&#39;vc.12.1.1.1" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.04" steps="217"/></proof>
+    <goal name="subset&#39;vc.12.1.1" expl="postcondition">
+    <transf name="split_vc" >
+     <goal name="subset&#39;vc.12.1.1.0" expl="postcondition">
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.1.2" expl="postcondition" proved="true">
-    <transf name="split_all_full" proved="true" >
-     <goal name="subset&#39;vc.12.1.2.0" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.01" steps="26"/></proof>
+    <goal name="subset&#39;vc.12.1.2" expl="postcondition">
+    </goal>
+    <goal name="subset&#39;vc.12.1.3" expl="postcondition">
+    <transf name="split_vc" >
+     <goal name="subset&#39;vc.12.1.3.0" expl="postcondition">
+     <proof prover="0" obsolete="true"><result status="timeout" time="5.00"/></proof>
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.1.3" expl="postcondition" proved="true">
-    <transf name="assert" proved="true" arg1="(forall y. y &lt;&gt; x6 -&gt; mem2 y t2 -&gt; mem2 y x7 \/ mem2 y x5)">
-     <goal name="subset&#39;vc.12.1.3.0" expl="asserted formula" proved="true">
-     <proof prover="0"><result status="valid" time="0.03" steps="180"/></proof>
-     </goal>
-     <goal name="subset&#39;vc.12.1.3.1" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.53" steps="7182"/></proof>
-     </goal>
-    </transf>
+    <goal name="subset&#39;vc.12.1.4" expl="postcondition">
     </goal>
-    <goal name="subset&#39;vc.12.1.4" expl="postcondition" proved="true">
-    <transf name="case" proved="true" arg1="(subset (Node x3 x2 Empty 0) x7)">
-     <goal name="subset&#39;vc.12.1.4.0" expl="true case (postcondition)" proved="true">
-     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,bst,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,is_minimum_min,H7,H6,H5,H3,H2">
-      <goal name="subset&#39;vc.12.1.4.0.0" expl="true case (postcondition)" proved="true">
-      <proof prover="0"><result status="valid" time="0.01" steps="74"/></proof>
-      </goal>
-     </transf>
-     </goal>
-     <goal name="subset&#39;vc.12.1.4.1" expl="false case (postcondition)" proved="true">
-     <transf name="assert" proved="true" arg1="(exists x. mem2 x (Node x3 x2 Empty 0) /\ not mem2 x x7)">
-      <goal name="subset&#39;vc.12.1.4.1.0" expl="asserted formula" proved="true">
-      <proof prover="0"><result status="valid" time="0.03" steps="136"/></proof>
-      </goal>
-      <goal name="subset&#39;vc.12.1.4.1.1" expl="false case (postcondition)" proved="true">
-      <transf name="introduce_exists" proved="true" >
-       <goal name="subset&#39;vc.12.1.4.1.1.0" expl="false case (postcondition)" proved="true">
-       <transf name="case" proved="true" arg1="(x = x3)">
-        <goal name="subset&#39;vc.12.1.4.1.1.0.0" expl="false case (true case. postcondition)" proved="true">
-        <transf name="assert" proved="true" arg1="(not mem2 x3 x2)">
-         <goal name="subset&#39;vc.12.1.4.1.1.0.0.0" expl="asserted formula" proved="true">
-         <proof prover="0"><result status="valid" time="0.04" steps="311"/></proof>
-         </goal>
-         <goal name="subset&#39;vc.12.1.4.1.1.0.0.1" expl="false case (true case. postcondition)" proved="true">
-         <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,bst,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,is_minimum_min,H3,H1,h3,h">
-          <goal name="subset&#39;vc.12.1.4.1.1.0.0.1.0" expl="false case (true case. postcondition)" proved="true">
-          <proof prover="0"><result status="valid" time="0.71" steps="19697"/></proof>
-          </goal>
-         </transf>
-         </goal>
-        </transf>
-        </goal>
-        <goal name="subset&#39;vc.12.1.4.1.1.0.1" expl="false case (postcondition)" proved="true">
-        <transf name="assert" proved="true" arg1="(mem2 x x4)">
-         <goal name="subset&#39;vc.12.1.4.1.1.0.1.0" expl="asserted formula" proved="true">
-         <proof prover="0"><result status="valid" time="0.04" steps="310"/></proof>
-         </goal>
-         <goal name="subset&#39;vc.12.1.4.1.1.0.1.1" expl="false case (postcondition)" proved="true">
-         <transf name="assert" proved="true" arg1="(not mem2 x x6)">
-          <goal name="subset&#39;vc.12.1.4.1.1.0.1.1.0" expl="asserted formula" proved="true">
-          <proof prover="0"><result status="valid" time="0.14" steps="1456"/></proof>
-          </goal>
-          <goal name="subset&#39;vc.12.1.4.1.1.0.1.1.1" expl="false case (postcondition)" proved="true">
-          <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,is_nil&#39;spec,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,is_pre_order1,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,is_minimum_min,H6,H3,H1,h4,h2">
-           <goal name="subset&#39;vc.12.1.4.1.1.0.1.1.1.0" expl="false case (postcondition)" proved="true">
-           <proof prover="1" timelimit="5"><result status="valid" time="0.14" steps="238609"/></proof>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
-         </goal>
-        </transf>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-    <goal name="subset&#39;vc.12.1.5" expl="postcondition" proved="true">
-    <transf name="split_vc" proved="true" >
-     <goal name="subset&#39;vc.12.1.5.0" expl="postcondition" proved="true">
-     <transf name="case" proved="true" arg1="(subset (Node Empty x2 x1 0) x5)">
-      <goal name="subset&#39;vc.12.1.5.0.0" expl="true case (postcondition)" proved="true">
-      <proof prover="0"><result status="valid" time="1.98" steps="27842"/></proof>
-      </goal>
-      <goal name="subset&#39;vc.12.1.5.0.1" expl="false case (postcondition)" proved="true">
-      <transf name="assert" proved="true" arg1="(exists x. mem2 x (Node Empty x2 x1 0) /\ not mem2 x x5)">
-       <goal name="subset&#39;vc.12.1.5.0.1.0" expl="asserted formula" proved="true">
-       <proof prover="0"><result status="valid" time="0.04" steps="136"/></proof>
-       </goal>
-       <goal name="subset&#39;vc.12.1.5.0.1.1" expl="false case (postcondition)" proved="true">
-       <transf name="introduce_exists" proved="true" >
-        <goal name="subset&#39;vc.12.1.5.0.1.1.0" expl="false case (postcondition)" proved="true">
-        <transf name="case" proved="true" arg1="(x=x3)">
-         <goal name="subset&#39;vc.12.1.5.0.1.1.0.0" expl="false case (true case. postcondition)" proved="true">
-         <transf name="assert" proved="true" arg1="(not subset t1 t2)">
-          <goal name="subset&#39;vc.12.1.5.0.1.1.0.0.0" expl="asserted formula" proved="true">
-          <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,bst,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,is_minimum_min,H,H1,h3">
-           <goal name="subset&#39;vc.12.1.5.0.1.1.0.0.0.0" expl="asserted formula" proved="true">
-           <proof prover="0"><result status="valid" time="0.74" steps="22052"/></proof>
-           </goal>
-          </transf>
-          </goal>
-          <goal name="subset&#39;vc.12.1.5.0.1.1.0.0.1" expl="false case (true case. postcondition)" proved="true">
-          <proof prover="0"><result status="valid" time="0.01" steps="38"/></proof>
-          </goal>
-         </transf>
-         </goal>
-         <goal name="subset&#39;vc.12.1.5.0.1.1.0.1" expl="false case (postcondition)" proved="true">
-         <transf name="assert" proved="true" arg1="(mem2 x x2)">
-          <goal name="subset&#39;vc.12.1.5.0.1.1.0.1.0" expl="asserted formula" proved="true">
-          <proof prover="0"><result status="valid" time="0.04" steps="331"/></proof>
-          </goal>
-          <goal name="subset&#39;vc.12.1.5.0.1.1.0.1.1" expl="false case (postcondition)" proved="true">
-          <transf name="assert" proved="true" arg1="(not mem2 x x8)">
-           <goal name="subset&#39;vc.12.1.5.0.1.1.0.1.1.0" expl="asserted formula" proved="true">
-           <proof prover="0"><result status="valid" time="0.15" steps="1193"/></proof>
-           </goal>
-           <goal name="subset&#39;vc.12.1.5.0.1.1.0.1.1.1" expl="false case (postcondition)" proved="true">
-           <transf name="assert" proved="true" arg1="(mem2 x t1)">
-            <goal name="subset&#39;vc.12.1.5.0.1.1.0.1.1.1.0" expl="asserted formula" proved="true">
-            <proof prover="0"><result status="valid" time="0.06" steps="331"/></proof>
-            </goal>
-            <goal name="subset&#39;vc.12.1.5.0.1.1.0.1.1.1.1" expl="false case (postcondition)" proved="true">
-            <proof prover="0"><result status="valid" time="0.76" steps="10957"/></proof>
-            </goal>
-           </transf>
-           </goal>
-          </transf>
-          </goal>
-         </transf>
-         </goal>
-        </transf>
-        </goal>
-       </transf>
-       </goal>
-      </transf>
-      </goal>
-     </transf>
+    <goal name="subset&#39;vc.12.1.5" expl="postcondition">
+    <transf name="split_vc" >
+     <goal name="subset&#39;vc.12.1.5.0" expl="postcondition">
+     <proof prover="0" obsolete="true"><result status="timeout" time="5.00"/></proof>
      </goal>
     </transf>
     </goal>

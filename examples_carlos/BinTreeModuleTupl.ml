@@ -163,9 +163,12 @@ module BinTree (Ord: OrderedType) = struct
   (*@ predicate is_minimum (x: elt) (tree: t) =
     mem2 x tree /\ forall e: elt. mem2 e tree -> Ord.compare x e < 0 \/ e = x *)
 
-  (* @ predicate is_maximum (x:elt) (tree: t) =
+  (*@ predicate is_maximum (x:elt) (tree: t) =
      mem2 x tree /\ forall e: elt. mem2 e tree -> Ord.compare x e > 0 \/ e = x*)
      
+  
+      
+      
 
   let [@logic] rec min_tree (tree: t) : elt =
     match tree with
@@ -176,16 +179,16 @@ module BinTree (Ord: OrderedType) = struct
     variant t
     requires t <> Empty && bst t
     ensures is_minimum r t*)
-
-  (* let [@logic] rec max_tree (tree: t) : elt =
-   *   match tree with
-   *   | Empty -> assert false
-   *   | Node (_, a, Empty,_) -> a
-   *   | Node (_,_, r, _) -> max_tree r
-   * (\*@ r = max_tree t
-   *   variant t
-   *   requires t <> Empty && bst t
-   *   ensures is_maximum r t*\) *)
+    
+  let [@logic] rec max_tree (tree: t) : elt =
+    match tree with
+    | Empty -> assert false
+    | Node (_,a,Empty,_) -> a
+    | Node (_,_,r,_) -> max_tree r
+  (*@ r = max_tree t
+    variant t
+    requires t <> Empty && bst t
+    ensures is_maximum r t*)
 
   let [@lemma] rec is_minimum_min (t: t) =
     match t with
@@ -198,6 +201,18 @@ module BinTree (Ord: OrderedType) = struct
     variant t
     ensures is_minimum (min_tree t) t*)
 
+   let [@lemma] rec is_maximum_max (t: t) =
+    match t with
+    |Empty -> assert false
+    |Node (_,_,Empty,_) -> ()
+    |Node (_,_,r,_) -> is_maximum_max r
+  (*@ is_maximum_max t
+    requires t <> Empty
+    requires bst t
+    variant t
+    ensures is_maximum (max_tree t) t*)
+    
+    
    let rec remove_min_elt = function
       Empty -> assert false
     | Node (Empty,_, r,_) as x -> assert (height r - height x = - 1); r
@@ -211,6 +226,20 @@ module BinTree (Ord: OrderedType) = struct
       ensures not mem2 (min_tree param) r
       ensures height param - 1 <= height r <= height param*)
       
+  let rec remove_max_elt = function
+      Empty -> assert false
+    | Node (l,_, Empty,_) as x -> assert (height l - height x = - 1); l
+    | Node (l, v, r,_) -> bal l v (remove_max_elt r)
+  (*@ r = remove_max_elt param
+      variant param
+      requires bst param
+      requires param <> Empty
+      ensures bst r
+      ensures forall j: elt. j <> (max_tree param) -> occ j r = occ j param
+      ensures not mem2 (max_tree param) r
+      ensures height param - 1 <= height r <= height param*)
+      
+  
   let rec add_min_element x = function
       | Empty -> create Empty x Empty
       | Node (l, v, r, _) -> bal (add_min_element x l) v r
@@ -222,6 +251,38 @@ module BinTree (Ord: OrderedType) = struct
       ensures forall j: elt. j <> x -> occ j param = occ j r
       ensures occ x r = 1
       ensures height param <= height r <= height param + 1*)
+      
+  let rec add_max_element x = function
+      | Empty -> create Empty x Empty
+      | Node (l, v, r, _) -> bal l v (add_max_element x r)
+  (*@ r = add_max_element x param
+      variant param
+      requires bst param
+      requires forall j: elt. mem2 j param -> Ord.compare x j > 0
+      ensures bst r 
+      ensures forall j: elt. j <> x -> occ j param = occ j r
+      ensures occ x r = 1
+      ensures height param <= height r <= height param + 1*)
+      
+     
+  let rec join l v r =
+    match (l,r) with
+    (Empty, _) -> add_min_element v r
+    |(_, Empty) -> add_max_element v l
+    |(Node(ll, lv, lr, lh), Node(rl, rv, rr, rh)) ->
+      if lh > rh +2 then bal ll lv (join lr v r) else
+      if rh > lh + 2 then bal (join l v rl) rv rr else
+      create l v r
+  (*@ res = join l v r
+      variant l,r
+      requires bst l && bst r
+      requires forall y: elt. mem2 y l -> Ord.compare y v < 0
+      requires forall x: elt. mem2 x r -> Ord.compare v x < 0
+      requires forall x y. mem2 x l -> mem2 y r -> Ord.compare x y < 0
+      ensures bst res
+      ensures forall w: elt. w <> v -> occ w res = occ w l + occ w r
+      ensures occ v res = 1
+      ensures max (height l) (height r) <= height res <= 1 + max (height l) (height r)*)
 
   let merge t1 t2 =
     match (t1, t2) with
@@ -292,12 +353,9 @@ module BinTree (Ord: OrderedType) = struct
               ensures height t - 1 <= height r <= height t*)
               
               
-   (*@ predicate subset (s1 s2: t) = forall x : elt. mem2 x s1 -> mem2 x s2*)
+  (*@ predicate subset (s1 s2: t) = forall x : elt. mem2 x s1 -> mem2 x s2*)
 
    
-    
-    
-    
   let rec subset s1 s2 =
       match (s1, s2) with
         Empty, _ ->
