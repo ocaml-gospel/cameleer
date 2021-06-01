@@ -566,8 +566,8 @@ let s_structure, s_signature =
           ignore subst_arg;
           (* TODO *)
           O.mk_functor decl_loc id arg body
-      | Smod_apply (lhs, rhs) ->
-          s_mod_apply info lhs rhs
+      | Smod_apply (funct, arg) ->
+          s_mod_apply info funct arg
       | Smod_constraint (mod_expr, mod_type) ->
           let mod_type_name = mod_type_name mod_type.Uast.mdesc in
           let mod_type_name = Opt.map E.longident mod_type_name in
@@ -585,18 +585,32 @@ let s_structure, s_signature =
     let scope_id = T.(mk_id ~id_loc:(location loc) mod_bind_name) in
     [ O.mk_omodule scope_loc scope_id (s_module_expr spmb_expr) ]
 
-  and s_mod_apply _info lhs_expr _rhs_expr =
-    match lhs_expr.Uast.spmod_desc with
+  and s_mod_apply _info funct arg =
+    let qarg = match arg.spmod_desc with
+      | Smod_ident {loc; txt} ->
+          let id_loc = T.location loc in
+          E.longident ~id_loc txt
+      | _ -> assert false (* TODO *) in
+    match funct.Uast.spmod_desc with
     | Smod_ident {txt = Ldot (Lident x, y); loc} ->
         let subst =
-          let qtsym = T.(Qdot (Qident (mk_id "HashedType"), mk_id "t")) in
-          let idtsym = T.(PTtyapp (Qdot (Qident (mk_id "H"), mk_id "t"), [])) in
-          let lqvsym_equal = T.(Qdot (Qident (mk_id "HashedType"), mk_id "equal")) in
-          let rqvsym_equal = T.(Qdot (Qident (mk_id "H"), mk_id "equal")) in
-          let lqvsym_hash = T.(Qdot (Qident (mk_id "HashedType"), mk_id "hash")) in
-          let rqvsym_hash = T.(Qdot (Qident (mk_id "H"), mk_id "hash")) in
-          [CStsym (qtsym, [], idtsym); CSvsym (lqvsym_equal, rqvsym_equal);
-           CSvsym (lqvsym_hash, rqvsym_hash)] in
+          if x = "Map" then
+            let qord = Qident (T.mk_id "Ord") in
+            let qtsym = Qdot (qord, T.mk_id "t") in
+            let idtsym = T.(PTtyapp (Qdot (qarg, mk_id "t"), [])) in
+            let lqvsym_cmp = Qdot (qord, T.mk_id "compare") in
+            let rqvsym_cmp = T.(Qdot (qarg, mk_id "compare")) in
+            [CStsym (qtsym, [], idtsym); CSvsym (lqvsym_cmp, rqvsym_cmp); ]
+          else
+            let qhash = Qident (T.mk_id "HashedType") in
+            let qtsym = Qdot (qhash, T.mk_id "t") in
+            let idtsym = T.(PTtyapp (Qdot (qarg, mk_id "t"), [])) in
+            let lqvsym_equal = Qdot (qhash, T.mk_id "equal") in
+            let rqvsym_equal = T.(Qdot (qarg, mk_id "equal")) in
+            let lqvsym_hash = T.(Qdot (qhash, mk_id "hash")) in
+            let rqvsym_hash = T.(Qdot (qarg, mk_id "hash")) in
+            [CStsym (qtsym, [], idtsym); CSvsym (lqvsym_equal, rqvsym_equal);
+             CSvsym (lqvsym_hash, rqvsym_hash)] in
         let x_y = T.mk_id (x ^ "_" ^ y) in
         let qualid = Qdot (Qident (T.mk_id "ocamlstdlib"), x_y) in
         let loc = T.location loc in

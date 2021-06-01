@@ -345,7 +345,16 @@ module Map_Make
     ensures { result.dom = add k s.dom }
     ensures { result.view = s.view[k <- v] }
 
-  val update (x: key) (f: option 'a -> option 'a) (s: t 'a) : t 'a
+  val function find_opt (x: key) (m: t 'a) : option 'a
+    ensures { match result with
+              | None   -> not mem x m.dom
+              | Some r -> mem x m.dom /\ r = m.view x end }
+
+  val update (x: key) (f: option 'a -> option 'a) (m: t 'a) : t 'a
+    ensures { match f (find_opt x m) with
+              | None   -> result.dom  = remove x m.dom
+              | Some z -> result.dom  = add x m.dom /\
+                          result.view = m.view[x <- z] end }
 
 end
 
