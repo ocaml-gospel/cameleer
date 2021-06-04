@@ -416,8 +416,13 @@ let s_structure, s_signature =
     | Sig_axiom p -> [ mk_axiom loc p ]
     | Sig_inductive ind_decl -> [ mk_ind loc ind_decl ]
     | Sig_typext _ -> assert false (* TODO *)
-    | Sig_module _ ->
-        Loc.errorm ~loc "Module declarations in module types not supported"
+    | Sig_module {mdname = {txt; loc}; mdtype; mdloc; _} ->
+        let id_loc = T.location loc in
+        let loc = T.location mdloc in
+        let id = T.mk_id (Option.get txt) ~id_loc in
+        (* let info = update_path info md_name.I.id_str in *)
+        let odecl_list, _ = s_module_type info mdtype in
+        [O.mk_omodule loc id odecl_list]
     | Sig_recmodule _ -> assert false (* TODO *)
     | Sig_modtype _ -> assert false (* TODO *)
     | Sig_exception { ptyexn_constructor; _ } ->
