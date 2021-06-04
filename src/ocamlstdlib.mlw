@@ -238,6 +238,31 @@ module Stdlib
 
   end
 
+  scope Queue
+
+    type t 'a = abstract {
+      mutable view: seq 'a;
+    }
+
+    exception Empty
+
+    val create () : t 'a
+      ensures { result.view = empty }
+
+    val is_empty (q: t 'a) : bool
+      ensures { result <-> q.view = empty }
+
+    val pop (q: t 'a) : 'a
+      writes  { q }
+      raises  { Empty -> q.view = empty /\ q.view = (old q).view }
+      ensures { (old q).view = cons result q.view }
+
+    val add (x: 'a) (q: t 'a) : unit
+      writes  { q }
+      ensures { q.view = snoc (old q).view x }
+
+  end
+
 end
 
 (* TEMPORARY: just for experience purposes *)
@@ -463,6 +488,33 @@ module Array
   (* end *)
 
   type array 'a = my_array 'a
+
+end
+
+module Queue
+
+  use seq.Seq, ocaml.Exceptions
+
+  type t 'a = abstract {
+    mutable view: seq 'a;
+  }
+
+  exception Empty
+
+  val create () : t 'a
+    ensures { result.view = empty }
+
+  val is_empty (q: t 'a) : bool
+    ensures { result <-> q.view = empty }
+
+  val pop (q: t 'a) : 'a
+    writes  { q }
+    raises  { Empty -> q.view = empty /\ q.view = (old q).view }
+    ensures { (old q).view = cons result q.view }
+
+  val add (x: 'a) (q: t 'a) : unit
+    writes  { q }
+    ensures { q.view = snoc (old q).view x }
 
 end
 
