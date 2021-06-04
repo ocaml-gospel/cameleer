@@ -614,7 +614,7 @@ let s_structure, s_signature =
         let x_y = T.mk_id (x ^ "_" ^ y) in
         let qualid = Qdot (Qident (T.mk_id "ocamlstdlib"), x_y) in
         let loc = T.location loc in
-        [O.mk_odecl loc (Ptree.Dcloneexport (loc, qualid, subst))]
+        [O.mk_odecl loc (Ptree.Dcloneexport (qualid, subst))]
     | Smod_ident _ -> assert false (* TODO *)
     | Smod_structure _ -> assert false (* TODO *)
     | Smod_functor _ -> assert false (* TODO *)
