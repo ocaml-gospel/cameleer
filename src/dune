@@ -1,0 +1,9 @@
+(library
+  (public_name cameleer)
+  (libraries ppxlib gospel why3))
+
+(install
+  (section share_root)
+  (files
+    (ocamlstdlib.mlw as why3/stdlib/ocamlstdlib.mlw))
+  (package cameleer))

@@ -1,0 +1,125 @@
+module OCamlStdLib
+
+  use export int.Int
+  use export int.ComputerDivision
+  use export int.MinMax
+  use export int.Abs
+  use export mach.int.Int
+  use export list.List
+  use export list.Length (* TO REMOVE *)
+  use export list.Append (* TO REMOVE *)
+  use export ocaml.Exceptions
+  use export option.Option
+  use export ref.Ref
+  use export ref.Refint
+
+  let invalid_arg (s: string)
+    raises { Invalid_argument }
+  = raise (Invalid_argument s)
+
+  predicate same_location 'a 'a
+
+  axiom same_location_eq: forall x y: 'a.
+    same_location x y -> x = y
+
+  val (==) (x y: 'a) : bool
+    ensures { result <-> same_location x y }
+
+  val ignore (_: 'a) : unit
+
+  let function fst (x: ('a, 'b)) : 'a =
+    let r, _ = x in r
+
+  let function snd (x: ('a, 'b)) : 'b =
+    let _, r = x in r
+
+  type result 'a 'b = Ok 'a | Error 'b
+
+  use import array.Array as A
+
+  type array 'a = A.array 'a
+
+  function (%) (x y: int) : int = mod x y
+
+  scope import Array
+
+    use export array.Init
+
+    function get (a: array 'a) (i: int) : 'a = a[i]
+
+    val get (a: array 'a) (i: int) : 'a
+      requires { [@expl:index in array bounds] 0 <= i < length a }
+      ensures  { result = get a i }
+
+    val set (a: array 'a) (i: int) (v: 'a) : unit
+      writes   { a }
+      requires { 0 <= i < length a }
+      ensures  { a.elts = Map.set (old a).elts i v }
+      ensures  { a = (old a)[i <- v] }
+  end
+
+  predicate is_pre_order (cmp: 'a -> 'a -> int) =
+    (forall x. cmp x x = 0) /\
+    (forall x y. cmp x y = 0 <-> cmp y x = 0) /\
+    (forall x y. cmp x y < 0 <-> cmp y x > 0) /\
+    (forall x y z.
+      (cmp x y = 0 -> cmp y z = 0 -> cmp x z = 0) /\
+      (cmp x y = 0 -> cmp y z < 0 -> cmp x z < 0) /\
+      (cmp x y < 0 -> cmp y z = 0 -> cmp x z < 0) /\
+      (cmp x y < 0 -> cmp y z < 0 -> cmp x z < 0))
+
+  lemma cmp_eq: forall x y: 'a, cmp: 'a -> 'a -> int.
+    is_pre_order cmp -> (cmp x y = 0 <-> x = y)
+
+  scope Sys
+
+    val constant max_array_length : int
+    axiom non_neg_max_array_length : 0 < max_array_length
+
+  end
+
+  scope List
+
+    use export list.List
+    use export list.Length
+    use export list.Mem
+    use import list.Append    as A
+    use import list.Reverse   as R
+    use import list.RevAppend as RA
+
+    let function rev (l: list 'a) : list 'a =
+      R.reverse l
+
+    let function append (l1 l2: list 'a) : list 'a =
+      A.(++) l1 l2
+
+    let function rev_append (s t: list 'a) : list 'a =
+      RA.rev_append s t
+
+    val mem (x: 'a) (l: list 'a) : bool
+      ensures { result <-> mem x l }
+
+    val filter (p: 'a -> bool) (l: list 'a) : list 'a
+      ensures { forall x. mem x result -> mem x l /\ p x }
+      ensures { forall x. not (p x) -> not (mem x result) }
+
+  end
+
+end
+
+module Array
+  use int.Int
+  use export array.Init
+
+  function get (a: array 'a) (i: int) : 'a = a[i]
+
+  val get (a: array 'a) (i: int) : 'a
+    requires { [@expl:index in array bounds] 0 <= i < length a }
+    ensures  { result = get a i }
+
+  val set (a: array 'a) (i: int) (v: 'a) : unit
+    writes   { a }
+    requires { 0 <= i < length a }
+    ensures  { a.elts = Map.set (old a).elts i v }
+    ensures  { a = (old a)[i <- v] }
+end
