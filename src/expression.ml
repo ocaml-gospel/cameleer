@@ -208,7 +208,7 @@ type pat_with_exn = { pat_term : pattern option; pat_exn_name : qualid option }
 let rec pattern info P.({ppat_desc; _} as pat) =
   match ppat_desc with
   | Ppat_exception pat -> let q, pat = exception_name_of_pattern info pat in
-         { pat_term = pat; pat_exn_name = Some q }
+      { pat_term = pat; pat_exn_name = Some q }
   | _ -> { pat_term = Some (inner_pattern info pat); pat_exn_name = None }
 
 and inner_pattern info P.{ppat_desc; ppat_loc; _} =
@@ -302,11 +302,14 @@ let mk_binder_info_none =
 let binder_of_pattern =
   let counter = ref 0 in
   fun info P.{ppat_desc; ppat_loc; ppat_attributes; _} ->
-    let binder id pat_loc ghost_pat pty =
-      mk_binder (T.location pat_loc) (Some id) (is_ghost ghost_pat) pty in
+    let mk_attr {attr_name; _} =
+      ATstr (Ident.create_attribute attr_name.txt) in
+    let binder id pat_loc pat_attr pty =
+      mk_binder (T.location pat_loc) (Some id) (is_ghost pat_attr) pty in
     let mk_id_pat (id, pat) =
       let field_str = Longident.last_exn id.txt in
-      let id_field = T.mk_id ~id_loc:(T.location id.loc) field_str in
+      let id_ats = List.map mk_attr pat.ppat_attributes in
+      let id_field = T.mk_id ~id_ats ~id_loc:(T.location id.loc) field_str in
       let id_pat = id_of_pat pat in
       (id_field, id_pat) in
     match ppat_desc with
@@ -595,143 +598,143 @@ let rec expression_desc info expr_loc expr_desc =
     | Uast.Sexp_ident {txt = Lident "raise"; _} -> true
     | _ -> false in
   match expr_desc with
-    | Uast.Sexp_ident {txt;loc} ->
-        Eident (longident ~id_loc:(T.location loc) txt)
-    | Uast.Sexp_constant c ->
-        Econst (T.constant c)
-    | Uast.Sexp_let (Nonrecursive, [svb], expr) ->
-        let_match info (expression info expr) svb
-    | Uast.Sexp_let (Recursive, svb_list, expr) ->
-        let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
-        let expr_in = expression info expr in
-        mk_erec (List.map (mk_fun_def false rs_kind) id_fun_expr_list) expr_in
-    | Sexp_let _ ->
-        assert false (* TODO *)
-    | Uast.Sexp_function _ ->
-        assert false (* TODO *)
-    | Uast.Sexp_fun (Nolabel, None, pat, expr_fun, spec) ->
-        let spec = match spec with Some s -> S.fun_spec s | _ -> empty_spec in
-        let binder, binder_info = binder_of_pattern info pat in
-        let expr_fun = special_binder (expression info expr_fun) binder_info in
-        mk_efun_visible [binder] None spec expr_fun
-    | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
-        Eand (arg_expr arg1, arg_expr arg2)
-    | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
-        Eor (arg_expr arg1, arg_expr arg2)
-    | Uast.Sexp_apply (s, [arg]) when is_not s.spexp_desc ->
-        Enot (arg_expr arg)
-    | Uast.Sexp_apply (s, [_, arg]) when is_raise s.spexp_desc ->
-        apply_raise info arg.spexp_desc
-    | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
-        let id_loc = T.location s.loc in
-        mk_eidapp (longident ~id_loc s.txt) (List.map arg_expr arg_expr_list)
-    | Uast.Sexp_apply (expr, arg_expr_list) ->
-        let mk_app acc (_, e) = mk_expr (Eapply (acc, expression info e)) in
-        let e_acc = expression info expr in
-        (List.fold_left mk_app e_acc arg_expr_list).expr_desc (* :O *)
-    | Uast.Sexp_match (expr, case_list) ->
-        let reg_branch, exn_branch = case info case_list in
-        mk_ematch (expression info expr) reg_branch exn_branch
-    | Uast.Sexp_try (expr, case_list) ->
-        let exn_branch = List.map (case_exn info) case_list in
-        mk_ematch_no_reg (expression info expr) exn_branch
-    | Uast.Sexp_tuple exp_list ->
-        mk_etuple (List.map (expression info) exp_list)
-    | Uast.Sexp_sequence (e1, e2) ->
-        mk_eseq (expression info e1) (expression info e2)
-    | Uast.Sexp_constraint (e, cty) ->
-        mk_ecast (expression info e) (core_type cty)
-    | Uast.Sexp_construct ({txt = Lident "true"; _}, None) ->
-        Etrue
-    | Uast.Sexp_construct ({txt = Lident "false"; _}, None) ->
-        Efalse
-    | Uast.Sexp_construct ({txt = Lident "()"; _}, None) ->
-        mk_eunit
-    | Uast.Sexp_construct (id, None) ->
-        mk_eidapp_no_args (longident id.txt)
-    | Uast.Sexp_construct (id, Some {spexp_desc = Sexp_tuple expr_list; _}) ->
-        let s = string_of_longident id.txt in
-        let args = construct_arith info s expr_list in
-        mk_eidapp (longident id.txt) args
-    | Uast.Sexp_construct (id, Some e) ->
-        mk_eidapp (longident id.txt) [expression info e]
-    | Uast.Sexp_record (field_list, e) ->
-        let update_expr = Opt.map (expression info) e in
-        mk_erecord (List.map field_expr field_list) update_expr
-    | Uast.Sexp_field (expr, field) ->
-        mk_eidapp (longident field.txt) [expression info expr]
-    | Uast.Sexp_ifthenelse (e1, e2, e3) ->
-        let expr3 = Opt.map (expression info) e3 in
-        mk_eif (expression info e1) (expression info e2) expr3
-    | Uast.Sexp_assert {spexp_desc; _} when is_false spexp_desc ->
-        Eabsurd
-    | Sexp_assert e ->
-        Eassert (Expr.Assert, term info e)
-    | Sexp_fun _ ->
-        assert false (* TODO *)
-    | Sexp_variant _ ->
-        assert false (* TODO *)
-    | Sexp_setfield (lvalue, l, rvalue) ->
-        let lexpr = expression info lvalue and rexpr = expression info rvalue in
-        let id = longident ~id_loc:T.(location l.loc) l.txt in
-        mk_eassign lexpr id rexpr
-    | Sexp_array expr_list ->
-        mk_array info expr_list
-    | Sexp_while (e_test, e_body, None) ->
-        mk_ewhile (expression info e_test) [] [] (expression info e_body)
-    | Sexp_while (e_test, e_body, Some loop_annotation) ->
-        let mk_variant t = (T.term false t, None) in
-        let inv = List.map (T.term false) loop_annotation.loop_invariant in
-        let var = List.map mk_variant loop_annotation.loop_variant in
-        mk_ewhile (expression info e_test) inv var (expression info e_body)
-    | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, None) ->
-        let id = id_of_pat pat in
-        let expr_lower = expression info expr_lower in
-        let expr_upper = expression info expr_upper in
-        let flag = direction_flag flag in
-        let expr_body = expression info expr_body in
-        mk_efor id expr_lower flag expr_upper [] expr_body
-    | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, Some loop_spec) ->
-        let id = id_of_pat pat in
-        let expr_lower = expression info expr_lower in
-        let expr_upper = expression info expr_upper in
-        let flag = direction_flag flag in
-        let expr_body = expression info expr_body in
-        let invariant = List.map (T.term false) loop_spec.loop_invariant in
-        mk_efor id expr_lower flag expr_upper invariant expr_body
-    | Sexp_letexception (exn_constructor, expr) ->
-        let id, pty, mask = exception_constructor exn_constructor in
-        mk_eexn id pty mask (expression info expr)
-    | Sexp_coerce _ ->
-        assert false (* TODO *)
-    | Sexp_send _ ->
-        assert false (* TODO *)
-    | Sexp_new _ ->
-        assert false (* TODO *)
-    | Sexp_setinstvar _ ->
-        assert false (* TODO *)
-    | Sexp_override _ ->
-        assert false (* TODO *)
-    | Sexp_letmodule _ ->
-        assert false (* TODO *)
-    | Sexp_lazy _ ->
-        assert false (* TODO *)
-    | Sexp_poly _ ->
-        assert false (* TODO *)
-    | Sexp_object _ ->
-        assert false (* TODO *)
-    | Sexp_newtype _ ->
-        assert false (* TODO *)
-    | Sexp_pack _ ->
-        assert false (* TODO *)
-    | Sexp_open _ ->
-        assert false (* TODO *)
-    | Sexp_extension _ ->
-        assert false (* TODO *)
-    | Sexp_unreachable ->
-        assert false (* TODO *)
-    | Sexp_letop _ ->
-        assert false (* TODO *)
+  | Uast.Sexp_ident {txt;loc} ->
+      Eident (longident ~id_loc:(T.location loc) txt)
+  | Uast.Sexp_constant c ->
+      Econst (T.constant c)
+  | Uast.Sexp_let (Nonrecursive, [svb], expr) ->
+      let_match info (expression info expr) svb
+  | Uast.Sexp_let (Recursive, svb_list, expr) ->
+      let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
+      let expr_in = expression info expr in
+      mk_erec (List.map (mk_fun_def false rs_kind) id_fun_expr_list) expr_in
+  | Sexp_let _ ->
+      assert false (* TODO *)
+  | Uast.Sexp_function _ ->
+      assert false (* TODO *)
+  | Uast.Sexp_fun (Nolabel, None, pat, expr_fun, spec) ->
+      let spec = match spec with Some s -> S.fun_spec s | _ -> empty_spec in
+      let binder, binder_info = binder_of_pattern info pat in
+      let expr_fun = special_binder (expression info expr_fun) binder_info in
+      mk_efun_visible [binder] None spec expr_fun
+  | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
+      Eand (arg_expr arg1, arg_expr arg2)
+  | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
+      Eor (arg_expr arg1, arg_expr arg2)
+  | Uast.Sexp_apply (s, [arg]) when is_not s.spexp_desc ->
+      Enot (arg_expr arg)
+  | Uast.Sexp_apply (s, [_, arg]) when is_raise s.spexp_desc ->
+      apply_raise info arg.spexp_desc
+  | Uast.Sexp_apply ({spexp_desc = Sexp_ident s; _}, arg_expr_list) ->
+      let id_loc = T.location s.loc in
+      mk_eidapp (longident ~id_loc s.txt) (List.map arg_expr arg_expr_list)
+  | Uast.Sexp_apply (expr, arg_expr_list) ->
+      let mk_app acc (_, e) = mk_expr (Eapply (acc, expression info e)) in
+      let e_acc = expression info expr in
+      (List.fold_left mk_app e_acc arg_expr_list).expr_desc (* :O *)
+  | Uast.Sexp_match (expr, case_list) ->
+      let reg_branch, exn_branch = case info case_list in
+      mk_ematch (expression info expr) reg_branch exn_branch
+  | Uast.Sexp_try (expr, case_list) ->
+      let exn_branch = List.map (case_exn info) case_list in
+      mk_ematch_no_reg (expression info expr) exn_branch
+  | Uast.Sexp_tuple exp_list ->
+      mk_etuple (List.map (expression info) exp_list)
+  | Uast.Sexp_sequence (e1, e2) ->
+      mk_eseq (expression info e1) (expression info e2)
+  | Uast.Sexp_constraint (e, cty) ->
+      mk_ecast (expression info e) (core_type cty)
+  | Uast.Sexp_construct ({txt = Lident "true"; _}, None) ->
+      Etrue
+  | Uast.Sexp_construct ({txt = Lident "false"; _}, None) ->
+      Efalse
+  | Uast.Sexp_construct ({txt = Lident "()"; _}, None) ->
+      mk_eunit
+  | Uast.Sexp_construct (id, None) ->
+      mk_eidapp_no_args (longident id.txt)
+  | Uast.Sexp_construct (id, Some {spexp_desc = Sexp_tuple expr_list; _}) ->
+      let s = string_of_longident id.txt in
+      let args = construct_arith info s expr_list in
+      mk_eidapp (longident id.txt) args
+  | Uast.Sexp_construct (id, Some e) ->
+      mk_eidapp (longident id.txt) [expression info e]
+  | Uast.Sexp_record (field_list, e) ->
+      let update_expr = Opt.map (expression info) e in
+      mk_erecord (List.map field_expr field_list) update_expr
+  | Uast.Sexp_field (expr, field) ->
+      mk_eidapp (longident field.txt) [expression info expr]
+  | Uast.Sexp_ifthenelse (e1, e2, e3) ->
+      let expr3 = Opt.map (expression info) e3 in
+      mk_eif (expression info e1) (expression info e2) expr3
+  | Uast.Sexp_assert {spexp_desc; _} when is_false spexp_desc ->
+      Eabsurd
+  | Sexp_assert e ->
+      Eassert (Expr.Assert, term info e)
+  | Sexp_fun _ ->
+      assert false (* TODO *)
+  | Sexp_variant _ ->
+      assert false (* TODO *)
+  | Sexp_setfield (lvalue, l, rvalue) ->
+      let lexpr = expression info lvalue and rexpr = expression info rvalue in
+      let id = longident ~id_loc:T.(location l.loc) l.txt in
+      mk_eassign lexpr id rexpr
+  | Sexp_array expr_list ->
+      mk_array info expr_list
+  | Sexp_while (e_test, e_body, None) ->
+      mk_ewhile (expression info e_test) [] [] (expression info e_body)
+  | Sexp_while (e_test, e_body, Some loop_annotation) ->
+      let mk_variant t = (T.term false t, None) in
+      let inv = List.map (T.term false) loop_annotation.loop_invariant in
+      let var = List.map mk_variant loop_annotation.loop_variant in
+      mk_ewhile (expression info e_test) inv var (expression info e_body)
+  | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, None) ->
+      let id = id_of_pat pat in
+      let expr_lower = expression info expr_lower in
+      let expr_upper = expression info expr_upper in
+      let flag = direction_flag flag in
+      let expr_body = expression info expr_body in
+      mk_efor id expr_lower flag expr_upper [] expr_body
+  | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, Some loop_spec) ->
+      let id = id_of_pat pat in
+      let expr_lower = expression info expr_lower in
+      let expr_upper = expression info expr_upper in
+      let flag = direction_flag flag in
+      let expr_body = expression info expr_body in
+      let invariant = List.map (T.term false) loop_spec.loop_invariant in
+      mk_efor id expr_lower flag expr_upper invariant expr_body
+  | Sexp_letexception (exn_constructor, expr) ->
+      let id, pty, mask = exception_constructor exn_constructor in
+      mk_eexn id pty mask (expression info expr)
+  | Sexp_coerce _ ->
+      assert false (* TODO *)
+  | Sexp_send _ ->
+      assert false (* TODO *)
+  | Sexp_new _ ->
+      assert false (* TODO *)
+  | Sexp_setinstvar _ ->
+      assert false (* TODO *)
+  | Sexp_override _ ->
+      assert false (* TODO *)
+  | Sexp_letmodule _ ->
+      assert false (* TODO *)
+  | Sexp_lazy _ ->
+      assert false (* TODO *)
+  | Sexp_poly _ ->
+      assert false (* TODO *)
+  | Sexp_object _ ->
+      assert false (* TODO *)
+  | Sexp_newtype _ ->
+      assert false (* TODO *)
+  | Sexp_pack _ ->
+      assert false (* TODO *)
+  | Sexp_open _ ->
+      assert false (* TODO *)
+  | Sexp_extension _ ->
+      assert false (* TODO *)
+  | Sexp_unreachable ->
+      assert false (* TODO *)
+  | Sexp_letop _ ->
+      assert false (* TODO *)
 
 and expression info Uast.({spexp_desc; spexp_attributes; _} as e) =
   let expr_loc = T.location e.spexp_loc in
@@ -832,9 +835,9 @@ and s_value_binding info svb =
         mk_binder T.dummy_loc (Some (T.mk_id "()")) ghost pty in
   let pair_args binder_spec binder_code expr =
     let id_spec, id_code, ghost = match binder_spec, binder_code with
-    | (_, Some id_spec, g1, _), (_, Some id_code, g2, _) ->
-        id_spec, id_code, g1 || g2
-    | _ -> assert false in
+      | (_, Some id_spec, g1, _), (_, Some id_code, g2, _) ->
+          id_spec, id_code, g1 || g2
+      | _ -> assert false in
     let e_lhs = mk_expr ~expr_loc:(id_spec.id_loc) (Eident (Qident id_spec)) in
     mk_expr ~expr_loc:(expr.expr_loc) (mk_elet_none id_code ghost e_lhs expr) in
   let rec args_pos = function (* TODO: remove *)
@@ -852,8 +855,8 @@ and s_value_binding info svb =
   let subst_args_expr args expr = function
     | None -> args, expr
     | Some {sp_hd_args; _} -> if List.length args <> List.length sp_hd_args then
-        Loc.errorm ~loc:(args_pos sp_hd_args)
-          "The number of arguments in spec and in the code do not match.";
+          Loc.errorm ~loc:(args_pos sp_hd_args)
+            "The number of arguments in spec and in the code do not match.";
         let spec_args = List.map2 mk_arg args sp_hd_args in
         spec_args, List.fold_right2 pair_args spec_args args expr in
   let rec loop acc expr = match expr.Uast.spexp_desc with

@@ -90,9 +90,12 @@ let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) =
   let ephemeral, invariant, spec_fields = match tspec with
     | None -> false, [], []
     | Some s -> s.ty_ephemeral, s.ty_invariant, s.ty_field in
+  let mk_attr {attr_name; _} =
+    ATstr (Ident.create_attribute attr_name.txt) in
+  let id_ats = List.map mk_attr td.tattributes in
   {
     td_loc    = T.location td.tloc;
-    td_ident  = T.(mk_id tname.txt ~id_loc:(location tname.loc));
+    td_ident  = T.(mk_id tname.txt ~id_ats ~id_loc:(location tname.loc));
     td_params = List.map td_params td.tparams;
     td_vis    = td_private tmanifest td.tprivate tkind;
     td_mut    = ephemeral;
