@@ -3716,6 +3716,8 @@
   </goal>
  </transf>
  </goal>
+ <goal name="BinTree.union&#39;vc" expl="VC for union">
+ </goal>
  <goal name="BinTree.subset&#39;vc" expl="VC for subset" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="subset&#39;vc.0" expl="variant decrease" proved="true">
@@ -4090,8 +4092,6 @@
   </transf>
   </goal>
  </transf>
- </goal>
- <goal name="BinTree.union&#39;vc" expl="VC for union">
  </goal>
 </theory>
 </file>

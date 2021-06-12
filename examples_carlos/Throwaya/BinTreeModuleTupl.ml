@@ -347,7 +347,7 @@ module BinTree (Ord: OrderedType) = struct
       ensures avl r
       ensures height t - 1 <= height r <= height t*)
       
-  (*let rec union s1 s2 =
+  let rec union s1 s2 =
       match (s1, s2) with
         (Empty, t2) -> t2
       | (t1, Empty) -> t1
@@ -362,7 +362,7 @@ module BinTree (Ord: OrderedType) = struct
               let (l1, _, r1) = split v2 s1 in
               join (union l1 l2) v2 (union r1 r2)
             end
-  (* *)*)
+  (* *)
               
               
   (*@ predicate subset (s1 s2: t) = forall x : elt. mem2 x s1 -> mem2 x s2*)
