@@ -46,6 +46,7 @@ let _ =
     let fbase = Filename.chop_extension fname in
     let cout = open_out (fbase ^ "_viper.vpr") in
     let fout = Format.formatter_of_out_channel cout in
+    Format.fprintf fout "%a@." Vdecl.Print.pp_stdlib ();
     Format.fprintf fout "%a@." Vdecl.Print.pp_program vp;
     close_out cout;
     exit 0 end;

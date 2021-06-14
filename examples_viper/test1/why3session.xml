@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="2" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="test1.ml"/>
+<theory name="Test1" proved="true">
+ <goal name="foo&#39;vc" expl="VC for foo" proved="true">
+ <proof prover="2"><result status="valid" time="0.04" steps="11119"/></proof>
+ </goal>
+ <goal name="incr&#39;vc" expl="VC for incr" proved="true">
+ <proof prover="2"><result status="valid" time="0.03" steps="11029"/></proof>
+ </goal>
+ <goal name="is_zero&#39;vc" expl="VC for is_zero" proved="true">
+ <proof prover="2"><result status="valid" time="0.05" steps="11029"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
