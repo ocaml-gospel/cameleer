@@ -2377,8 +2377,8 @@
   </goal>
  </transf>
  </goal>
- <goal name="BinTree.join&#39;vc" expl="VC for join">
- <transf name="split_vc" >
+ <goal name="BinTree.join&#39;vc" expl="VC for join" proved="true">
+ <transf name="split_vc" proved="true" >
   <goal name="join&#39;vc.0" expl="precondition" proved="true">
   <proof prover="0"><result status="valid" time="0.02" steps="22"/></proof>
   </goal>
@@ -2519,9 +2519,21 @@
    </goal>
   </transf>
   </goal>
-  <goal name="join&#39;vc.20" expl="precondition">
-  <transf name="split_vc" >
-   <goal name="join&#39;vc.20.0" expl="precondition">
+  <goal name="join&#39;vc.20" expl="precondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="join&#39;vc.20.0" expl="precondition" proved="true">
+   <transf name="assert" proved="true" arg1="(compare v x6 &lt; 0)">
+    <goal name="join&#39;vc.20.0.0" expl="asserted formula" proved="true">
+    <proof prover="0"><result status="valid" time="0.85" steps="9698"/></proof>
+    </goal>
+    <goal name="join&#39;vc.20.0.1" expl="precondition" proved="true">
+    <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,height,bst,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H16,H13,H11,H10,H9,H8,H6,H5,H4,H1,H3,H2">
+     <goal name="join&#39;vc.20.0.1.0" expl="precondition" proved="true">
+     <proof prover="0"><result status="valid" time="0.02" steps="183"/></proof>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>
@@ -2890,7 +2902,18 @@
     <proof prover="0"><result status="valid" time="0.03" steps="82"/></proof>
     </goal>
     <goal name="concat&#39;vc.8.0.3" expl="postcondition">
-    <proof prover="1" timelimit="5"><result status="timeout" time="5.00" steps="8985406"/></proof>
+    <transf name="inline_goal" >
+     <goal name="concat&#39;vc.8.0.3.0" expl="postcondition">
+     <transf name="split_all_full" >
+      <goal name="concat&#39;vc.8.0.3.0.0" expl="postcondition">
+      <transf name="inline_goal" >
+       <goal name="concat&#39;vc.8.0.3.0.0.0" expl="postcondition">
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
     </goal>
    </transf>
    </goal>
@@ -4090,8 +4113,6 @@
   </transf>
   </goal>
  </transf>
- </goal>
- <goal name="BinTree.union&#39;vc" expl="VC for union">
  </goal>
 </theory>
 </file>
