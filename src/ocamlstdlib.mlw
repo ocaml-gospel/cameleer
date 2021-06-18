@@ -259,7 +259,7 @@ module Stdlib
     val pop (q: t 'a) : 'a
       writes  { q }
       raises  { Empty -> q.view = empty /\ q.view = (old q).view }
-      ensures { (old q).view == cons result q.view }
+      ensures { (old q).view = cons result q.view }
 
     val add (x: 'a) (q: t 'a) : unit
       writes  { q }
@@ -1085,6 +1085,12 @@ end
 module FsetSum
 
   use export set.FsetSum
+
+end
+
+module SeqOfList
+
+  use export seq.OfList
 
 end
 
