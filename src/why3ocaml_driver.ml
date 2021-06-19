@@ -32,6 +32,7 @@ let () =
       ("=", "infix =");
       (* FIXME: this is only true for integers *)
       ("==", "infix ==");
+      ("!=", "infix !=");
       (* FIXME: this is only true for integers *)
       ("mixfix {}", "empty");
       ("mixfix {:_:}", "singleton");
