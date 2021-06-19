@@ -599,7 +599,7 @@ let s_structure, s_signature =
     match funct.Uast.spmod_desc with
     | Smod_ident {txt = Ldot (Lident x, y); loc} ->
         let subst =
-          if x = "Map" then
+          if x = "Map" || x = "Set" then
             let qord = Qident (T.mk_id "Ord") in
             let qtsym = Qdot (qord, T.mk_id "t") in
             let idtsym = T.(PTtyapp (Qdot (qarg, mk_id "t"), [])) in
