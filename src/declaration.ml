@@ -640,7 +640,6 @@ let s_structure, s_signature =
     | Smod_ident { txt = Ldot (Lident x, y); loc } ->
         let subst =
           if x = "Map" || x = "Set" then
-d types.
             let qord = Qident (T.mk_id "Ord") in
             let qtsym = Qdot (qord, T.mk_id "t") in
             let idtsym = T.(PTtyapp (Qdot (qarg, mk_id "t"), [])) in
