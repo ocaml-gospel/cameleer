@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="mergesort.ml"/>
+<theory name="Mergesort" proved="true">
+ <goal name="Make.sorted_mem" proved="true">
+ <proof prover="0"><result status="valid" time="0.72" steps="137749"/></proof>
+ </goal>
+ <goal name="Make.sorted_append" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="sorted_append.0" proved="true">
+  <proof prover="0"><result status="valid" time="0.34" steps="67847"/></proof>
+  </goal>
+  <goal name="sorted_append.1" proved="true">
+  <proof prover="0"><result status="valid" time="0.14" steps="34538"/></proof>
+  </goal>
+  <goal name="sorted_append.2" proved="true">
+  <proof prover="0"><result status="valid" time="0.15" steps="36868"/></proof>
+  </goal>
+  <goal name="sorted_append.3" proved="true">
+  <proof prover="0"><result status="valid" time="0.14" steps="42236"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="Make.merge&#39;vc" expl="VC for merge" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="merge&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="26404"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="23559"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.2" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="26850"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.07" steps="23570"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.4" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="merge&#39;vc.4.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="23977"/></proof>
+   </goal>
+   <goal name="merge&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="24597"/></proof>
+   </goal>
+   <goal name="merge&#39;vc.4.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="24597"/></proof>
+   </goal>
+   <goal name="merge&#39;vc.4.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.22" steps="37325"/></proof>
+   </goal>
+   <goal name="merge&#39;vc.4.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.23" steps="38019"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="merge&#39;vc.5" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="merge&#39;vc.5.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="25988"/></proof>
+   </goal>
+   <goal name="merge&#39;vc.5.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="25978"/></proof>
+   </goal>
+   <goal name="merge&#39;vc.5.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="25978"/></proof>
+   </goal>
+   <goal name="merge&#39;vc.5.3" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="27900"/></proof>
+   </goal>
+   <goal name="merge&#39;vc.5.4" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.14" steps="37157"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="Make.split&#39;vc" expl="VC for split" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="split&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="0"><result status="valid" time="0.12" steps="25800"/></proof>
+  </goal>
+  <goal name="split&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="24325"/></proof>
+  </goal>
+  <goal name="split&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="27805"/></proof>
+  </goal>
+  <goal name="split&#39;vc.3" expl="precondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="split&#39;vc.3.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="25527"/></proof>
+   </goal>
+   <goal name="split&#39;vc.3.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.05" steps="24345"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="split&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="28178"/></proof>
+  </goal>
+  <goal name="split&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.12" steps="25711"/></proof>
+  </goal>
+  <goal name="split&#39;vc.6" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.08" steps="31043"/></proof>
+  </goal>
+  <goal name="split&#39;vc.7" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="split&#39;vc.7.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="split&#39;vc.7.0.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.05" steps="25008"/></proof>
+    </goal>
+    <goal name="split&#39;vc.7.0.1" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.07" steps="24569"/></proof>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="split&#39;vc.7.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="split&#39;vc.7.1.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.10" steps="27860"/></proof>
+    </goal>
+    <goal name="split&#39;vc.7.1.1" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.05" steps="24572"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="split&#39;vc.8" expl="check division by zero" proved="true">
+  <proof prover="0"><result status="valid" time="0.06" steps="21270"/></proof>
+  </goal>
+  <goal name="split&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="23897"/></proof>
+  </goal>
+  <goal name="split&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.09" steps="21322"/></proof>
+  </goal>
+  <goal name="split&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.04" steps="22875"/></proof>
+  </goal>
+  <goal name="split&#39;vc.12" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.08" steps="25352"/></proof>
+  </goal>
+  <goal name="split&#39;vc.13" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.12" steps="23602"/></proof>
+  </goal>
+  <goal name="split&#39;vc.14" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.10" steps="28713"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="Make.mergesort&#39;vc" expl="VC for mergesort" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="mergesort&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.11" steps="29897"/></proof>
+  </goal>
+  <goal name="mergesort&#39;vc.1" expl="variant decrease" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="mergesort&#39;vc.1.0" expl="variant decrease" proved="true">
+   <proof prover="0"><result status="valid" time="0.07" steps="27770"/></proof>
+   </goal>
+   <goal name="mergesort&#39;vc.1.1" expl="variant decrease" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="27834"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="mergesort&#39;vc.2" expl="variant decrease" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="mergesort&#39;vc.2.0" expl="variant decrease" proved="true">
+   <proof prover="0"><result status="valid" time="0.10" steps="27946"/></proof>
+   </goal>
+   <goal name="mergesort&#39;vc.2.1" expl="variant decrease" proved="true">
+   <proof prover="0"><result status="valid" time="0.09" steps="28010"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="mergesort&#39;vc.3" expl="precondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="mergesort&#39;vc.3.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="24399"/></proof>
+   </goal>
+   <goal name="mergesort&#39;vc.3.1" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.05" steps="24402"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="mergesort&#39;vc.4" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="mergesort&#39;vc.4.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="23942"/></proof>
+   </goal>
+   <goal name="mergesort&#39;vc.4.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="24253"/></proof>
+   </goal>
+   <goal name="mergesort&#39;vc.4.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="24429"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="mergesort&#39;vc.5" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="mergesort&#39;vc.5.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.08" steps="24943"/></proof>
+   </goal>
+   <goal name="mergesort&#39;vc.5.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.06" steps="24905"/></proof>
+   </goal>
+   <goal name="mergesort&#39;vc.5.2" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.33" steps="83946"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
