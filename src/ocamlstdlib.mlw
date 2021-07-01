@@ -264,7 +264,6 @@ module Stdlib
     val copy (q : t 'a) : t 'a
       ensures { result.view == q.view }
 
-
   end
 
 end
