@@ -1,0 +1,27 @@
+.why3doc a:visited { color: #416DFF; text-decoration: none }
+.why3doc a:link { color: #416DFF; text-decoration: none }
+.why3doc a:hover { color: red; text-decoration: none; background-color: #5FFF88 }
+.why3doc a:active { color: red; text-decoration: underline }
+.why3doc .comment { color: #990000 }
+.why3doc .keyword1 { color: purple; font-weight: bold }
+.why3doc .keyword2 { color: blue; font-weight: bold }
+.why3doc .superscript { font-size: smaller }
+.why3doc .subscript { font-size: smaller }
+.why3doc .warning { color: red; font-weight: bold }
+.why3doc .info { margin-left: 3em; margin-right: 3em }
+.why3doc .info > p:first-child { margin-top: 0 }
+.why3doc code { color: #465F91 }
+.why3doc h1 { font-size: 20pt; border: 1px solid #000000; margin: 10pt 0; text-align: center; background-color: #90BDFF; padding: 10pt }
+.why3doc h2 { font-size: 18pt; border: 1px solid #000000; margin: 8pt 0; text-align: left; background-color: #90DDFF; padding: 8pt }
+.why3doc h3 { font-size: 15pt; border: 1px solid #000000; margin: 6pt 0; text-align: left; background-color: #90EDFF; padding: 6pt }
+.why3doc h4 { font-size: 12pt; border: 1px solid #000000; margin: 4pt 0; text-align: left; background-color: #90FDFF; padding: 4pt }
+.why3doc h5 { font-size: 11pt; border: 1px solid #000000; margin: 2pt 0; text-align: left; background-color: #90FEFF; padding: 2pt }
+.why3doc h6 { font-size: 10pt; border: 1px solid #000000; margin: 0pt 0; text-align: left; background-color: #90FFFF; padding: 0pt }
+.why3doc .typetable { border-style: hidden }
+.why3doc .indextable { border-style: hidden }
+.why3doc .paramstable { border-style: hidden; padding: 5pt 5pt }
+.why3doc body { background-color: white }
+.why3doc tr { background-color: white }
+.why3doc td.typefieldcomment { background-color: #FFFFFF }
+.why3doc pre { margin-top: 0; margin-bottom: 0.5ex }
+.why3doc div.sig_block { margin-left: 2em }

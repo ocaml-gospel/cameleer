@@ -265,7 +265,7 @@ module BinTree (Ord: OrderedType) = struct
       ensures max (height t1) (height t2) <= height r <= 1 + max (height t1) (height t2)*)
     
       
-  let concat t1 t2 =
+  (*let concat t1 t2 =
       match (t1, t2) with
         (Empty, t) -> t
       | (t, Empty) -> t
@@ -276,7 +276,7 @@ module BinTree (Ord: OrderedType) = struct
       requires forall j:elt. (mem2 j t1 -> not mem2 j t2) && (mem2 j t2 -> not mem2 j t1)
       ensures forall j: elt. occ j t1 + occ j t2 = occ j r
       ensures avl r
-      ensures max (height t1) (height t2) <= height r <= 1 + max (height t1) (height t2)*)
+      ensures max (height t1) (height t2) <= height r <= 1 + max (height t1) (height t2)*)*)
       
   let rec split x = function
         Empty ->

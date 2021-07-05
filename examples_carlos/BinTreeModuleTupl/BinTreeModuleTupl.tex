@@ -1,0 +1,1364 @@
+\documentclass{article}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{rotating}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+
+\newcommand{\provername}[1]{\cellcolor{yellow!25}
+\begin{sideways}\textbf{#1}~~\end{sideways}}
+\newcommand{\explanation}[1]{\cellcolor{yellow!13}lemma \texttt{#1}}
+\newcommand{\transformation}[1]{\cellcolor{yellow!13}transformation \texttt{#1}}
+\newcommand{\subgoal}[2]{\cellcolor{yellow!13}subgoal #2}
+\newcommand{\valid}[1]{\cellcolor{green!13}#1}
+\newcommand{\unknown}[1]{\cellcolor{red!20}#1}
+\newcommand{\invalid}[1]{\cellcolor{red!50}#1}
+\newcommand{\timeout}[1]{\cellcolor{red!20}(#1)}
+\newcommand{\outofmemory}[1]{\cellcolor{red!20}(#1)}
+\newcommand{\noresult}{\multicolumn{1}{>{\columncolor[gray]{0.8}}c|}{~}}
+\newcommand{\failure}{\cellcolor{red!20}failure}
+\newcommand{\highfailure}{\cellcolor{red!50}FAILURE}
+
+\begin{document}
+
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|c|c|c|}
+\hline \multicolumn{12}{|c|}{Proof obligations } & \provername{Alt-Ergo 2.4.0} & \provername{CVC4 1.8} & \provername{Z3 4.8.6} \\ 
+\hline
+\explanation{VC for occ\_nonneg} & & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\hline
+\explanation{BinTree.height\_nonneg}  & \explanation{height\_nonneg.0}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for height} & & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for occ\_uniq2}  & \explanation{assertion} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{assertion} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &   &  & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.57} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for create}  & \explanation{postcondition}  &   &   &  & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.30} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.09} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for bal}  & \explanation{unreachable point} & & & & & & & & & & & \valid{0.54} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.14} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \noresult& \valid{0.15} & \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \noresult& \noresult& \valid{0.16} \\ 
+\cline{5-6}
+ &  & & & & & \noresult& \noresult& \valid{0.12} \\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \noresult& \valid{0.63} & \noresult\\ 
+\cline{2-5}
+ & \explanation{unreachable point}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.09} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{1.36} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.11} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{2.69} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &   &  & & & \noresult& \valid{0.03} & \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.22} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.19} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.36} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \noresult& \valid{0.23} & \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \noresult& \valid{0.70} & \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{3.35} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{unreachable point}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.11} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.09} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.10} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{2.80} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \noresult& \valid{1.03} & \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{unreachable point} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.31} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.20} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \noresult& \valid{0.34} & \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \noresult& \valid{0.35} & \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.12} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.31} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \noresult& \valid{0.59} & \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \noresult& \noresult& \valid{0.47} \\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.11} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.12} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \noresult& \valid{0.13} & \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &   &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.10} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.10} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.16} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \noresult& \valid{0.19} & \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &   &  & \noresult& \valid{0.39} & \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \noresult& \noresult& \valid{0.53} \\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.00} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.16} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \noresult& \valid{0.53} & \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \noresult& \valid{1.92} & \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.15} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.14} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.15} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.18} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.12} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.15} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.12} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.15} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.17} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.12} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.10} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.41} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.13} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.14} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.09} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.44} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &   &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &  & \valid{0.04} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &   &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &   &  & \valid{0.02} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &   &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &  & \valid{0.04} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &   &  & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.14} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.28} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.14} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.37} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.15} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.31} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &  & & & \valid{0.36} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &   &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &  & \valid{0.04} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &   &  & \valid{0.04} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &  & \valid{0.04} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &   &  & \valid{0.02} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &   &  & \valid{0.02} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition} & & & & & & & & & & & \valid{0.53} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for min\_tree}  & \explanation{unreachable point}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.33} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{1.11} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for max\_tree}  & \explanation{unreachable point} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.39} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{1.10} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for is\_minimum\_min} & & & & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for is\_maximum\_max}  & \explanation{unreachable point}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for remove\_min\_elt}  & \explanation{unreachable point}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{assertion} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.10} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \noresult& \valid{0.45} & \noresult\\ 
+\cline{3-5}
+ &  &   &   &   &  & & & \noresult& \valid{0.30} & \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.22} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.10} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.18} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for remove\_max\_elt}  & \explanation{unreachable point}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{assertion} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \noresult& \valid{0.55} & \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \noresult& \valid{2.14} & \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \valid{0.20} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.13} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.16} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for add\_min\_element}  & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.09} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.45} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.23} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.10} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for add\_max\_element}  & \explanation{precondition} & & & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.21} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.33} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for join}  & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.13} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.20} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &   &   &  & & & \noresult& \noresult& \valid{0.04} \\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.14} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.16} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.85} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \noresult& \valid{0.86} & \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \noresult& \valid{0.86} & \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \noresult& \noresult& \valid{5.25} \\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \noresult& \noresult& \valid{3.85} \\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.27} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.34} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for merge}  & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.12} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.16} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \noresult& \valid{0.52} & \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for split}  & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \noresult& \valid{0.32} & \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.85} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for mem}  & \explanation{variant decrease}  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for add}  & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.14} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.10} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \noresult& \noresult& \valid{0.09} \\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.14} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.39} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for remove}  & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition} & & & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.08} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.07} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.35} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \noresult& \valid{0.32} & \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.28} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.74} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.80} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.25} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \valid{0.22} & \noresult& \noresult\\ 
+\hline
+\explanation{VC for subset}  & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.05} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.26} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.50} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{variant decrease}  &  & & & & & & & & & \valid{0.04} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{precondition}  &  & & & & & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{3-5}
+ &  &  & & & & & & & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{2-5}
+ & \explanation{postcondition}  &   &   &   &   &   &   &  & \valid{0.01} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &   &   &   &  & \noresult& \valid{0.13} & \noresult\\ 
+\cline{4-6}
+ &  &  &  & & & & & & & \noresult& \valid{0.26} & \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \noresult& \valid{0.37} & \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \noresult& \valid{0.52} & \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \noresult& \valid{0.49} & \noresult\\ 
+\cline{3-5}
+ &  &   &   &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.06} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &   &   &  & \valid{0.34} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &  & & & & & \valid{0.03} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &  & & & & & \valid{0.86} & \noresult& \noresult\\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{0.01} & \noresult& \noresult\\ 
+\cline{5-7}
+ &  &  &  &   &  & & & \valid{0.02} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &   &   &   &  & \valid{0.04} & \noresult& \noresult\\ 
+\cline{9-11}
+ &  &  &  &  &  &  &  &   &  & \valid{1.25} & \noresult& \noresult\\ 
+\cline{8-10}
+ &  &  &  &  &  &  &   &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{9-11}
+ &  &  &  &  &  &  &  &   &  & \valid{0.18} & \noresult& \noresult\\ 
+\cline{10-12}
+ &  &  &  &  &  &  &  &  &   &  & \noresult& \noresult& \valid{0.10} \\ 
+\cline{4-6}
+ &  &  &   &   &  & & & \valid{2.55} & \noresult& \noresult\\ 
+\cline{6-8}
+ &  &  &  &  &   &  & \valid{0.03} & \noresult& \noresult\\ 
+\cline{7-9}
+ &  &  &  &  &  &   &   &   &   &  & \valid{1.32} & \noresult& \noresult\\ 
+\cline{10-12}
+ &  &  &  &  &  &  &  &  &  & \valid{0.02} & \noresult& \noresult\\ 
+\cline{9-11}
+ &  &  &  &  &  &  &  &   &  & \valid{0.06} & \noresult& \noresult\\ 
+\cline{10-12}
+ &  &  &  &  &  &  &  &  &   &  & \valid{0.16} & \noresult& \noresult\\ 
+\cline{11-13}
+ &  &  &  &  &  &  &  &  &  &   &  & \valid{0.06} & \noresult& \noresult\\ 
+\cline{12-14}
+ &  &  &  &  &  &  &  &  &  &  &  & \valid{0.84} & \noresult& \noresult\\ 
+\hline \end{tabular}
+\end{document}

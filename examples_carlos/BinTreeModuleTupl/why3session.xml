@@ -5,9 +5,9 @@
 <prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="6000"/>
 <prover id="1" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="6000"/>
 <prover id="6" name="CVC4" version="1.8" timelimit="5" steplimit="0" memlimit="6000"/>
-<file format="ocaml">
+<file format="ocaml" proved="true">
 <path name=".."/><path name="BinTreeModuleTupl.ml"/>
-<theory name="BinTreeModuleTupl">
+<theory name="BinTreeModuleTupl" proved="true">
  <goal name="BinTree.occ_nonneg&#39;vc" expl="VC for occ_nonneg" proved="true">
  <proof prover="0"><result status="valid" time="0.02" steps="45"/></proof>
  </goal>
@@ -2807,129 +2807,6 @@
     </goal>
     <goal name="merge&#39;vc.9.1.3" expl="postcondition" proved="true">
     <proof prover="0"><result status="valid" time="0.08" steps="422"/></proof>
-    </goal>
-   </transf>
-   </goal>
-  </transf>
-  </goal>
- </transf>
- </goal>
- <goal name="BinTree.concat&#39;vc" expl="VC for concat">
- <transf name="split_vc" >
-  <goal name="concat&#39;vc.0" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="22"/></proof>
-  </goal>
-  <goal name="concat&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="37"/></proof>
-  </goal>
-  <goal name="concat&#39;vc.2" expl="precondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="concat&#39;vc.2.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.03" steps="54"/></proof>
-   </goal>
-   <goal name="concat&#39;vc.2.1" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="32"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="concat&#39;vc.3" expl="precondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="concat&#39;vc.3.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="32"/></proof>
-   </goal>
-   <goal name="concat&#39;vc.3.1" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="32"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="concat&#39;vc.4" expl="precondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="concat&#39;vc.4.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.04" steps="173"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="concat&#39;vc.5" expl="precondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="concat&#39;vc.5.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.08" steps="658"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="concat&#39;vc.6" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="concat&#39;vc.6.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="43"/></proof>
-   </goal>
-   <goal name="concat&#39;vc.6.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="46"/></proof>
-   </goal>
-   <goal name="concat&#39;vc.6.2" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="47"/></proof>
-   </goal>
-   <goal name="concat&#39;vc.6.3" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.10" steps="846"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="concat&#39;vc.7" expl="postcondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="concat&#39;vc.7.0" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="24"/></proof>
-   </goal>
-   <goal name="concat&#39;vc.7.1" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.01" steps="24"/></proof>
-   </goal>
-   <goal name="concat&#39;vc.7.2" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.01" steps="24"/></proof>
-   </goal>
-   <goal name="concat&#39;vc.7.3" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.02" steps="40"/></proof>
-   </goal>
-  </transf>
-  </goal>
-  <goal name="concat&#39;vc.8" expl="postcondition">
-  <transf name="split_vc" >
-   <goal name="concat&#39;vc.8.0" expl="postcondition">
-   <transf name="split_vc" >
-    <goal name="concat&#39;vc.8.0.0" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.02" steps="46"/></proof>
-    </goal>
-    <goal name="concat&#39;vc.8.0.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.03" steps="83"/></proof>
-    </goal>
-    <goal name="concat&#39;vc.8.0.2" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.03" steps="82"/></proof>
-    </goal>
-    <goal name="concat&#39;vc.8.0.3" expl="postcondition">
-    <transf name="inline_goal" >
-     <goal name="concat&#39;vc.8.0.3.0" expl="postcondition">
-     <transf name="split_all_full" >
-      <goal name="concat&#39;vc.8.0.3.0.0" expl="postcondition">
-      <transf name="inline_goal" >
-       <goal name="concat&#39;vc.8.0.3.0.0.0" expl="postcondition">
-       </goal>
-      </transf>
-      </goal>
-     </transf>
-     </goal>
-    </transf>
-    </goal>
-   </transf>
-   </goal>
-   <goal name="concat&#39;vc.8.1" expl="postcondition" proved="true">
-   <transf name="split_vc" proved="true" >
-    <goal name="concat&#39;vc.8.1.0" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.02" steps="46"/></proof>
-    </goal>
-    <goal name="concat&#39;vc.8.1.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.03" steps="84"/></proof>
-    </goal>
-    <goal name="concat&#39;vc.8.1.2" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.03" steps="82"/></proof>
-    </goal>
-    <goal name="concat&#39;vc.8.1.3" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.04" steps="193"/></proof>
     </goal>
    </transf>
    </goal>
