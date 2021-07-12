@@ -5,9 +5,9 @@
 <prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="6000"/>
 <prover id="1" name="Z3" version="4.8.6" timelimit="5" steplimit="0" memlimit="6000"/>
 <prover id="6" name="CVC4" version="1.8" timelimit="5" steplimit="0" memlimit="6000"/>
-<file format="ocaml">
+<file format="ocaml" proved="true">
 <path name=".."/><path name="BinTreeModuleTupl.ml"/>
-<theory name="BinTreeModuleTupl">
+<theory name="BinTreeModuleTupl" proved="true">
  <goal name="BinTree.occ_nonneg&#39;vc" expl="VC for occ_nonneg" proved="true">
  <proof prover="0"><result status="valid" time="0.02" steps="45"/></proof>
  </goal>
@@ -619,7 +619,11 @@
     <proof prover="0"><result status="valid" time="0.02" steps="31"/></proof>
     </goal>
     <goal name="bal&#39;vc.27.0.1" expl="precondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.31" steps="671832"/></proof>
+    <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,bst,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,H21,H20,H19,H18,H14,H12,H11,H8,H7,H4,H3,H2,H1,H15">
+     <goal name="bal&#39;vc.27.0.1.0" expl="precondition" proved="true">
+     <proof prover="6"><result status="valid" time="0.23" steps="44963"/></proof>
+     </goal>
+    </transf>
     </goal>
    </transf>
    </goal>
@@ -1174,7 +1178,11 @@
      <proof prover="0"><result status="valid" time="0.02" steps="31"/></proof>
      </goal>
      <goal name="bal&#39;vc.59.1.0.1" expl="postcondition" proved="true">
-     <proof prover="6"><result status="valid" time="0.40" steps="34649"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,mem2,height,avl,bst,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,create&#39;spec,create&#39;def,H24,H23,H22,H21,H17,H1,H18,H15,H14,H12,H11,H10,H7,H6,H5,H2,H20">
+      <goal name="bal&#39;vc.59.1.0.1.0" expl="postcondition" proved="true">
+      <proof prover="0"><result status="valid" time="0.04" steps="350"/></proof>
+      </goal>
+     </transf>
      </goal>
     </transf>
     </goal>
@@ -1867,7 +1875,11 @@
      <proof prover="0"><result status="valid" time="0.02" steps="26"/></proof>
      </goal>
      <goal name="remove_min_elt&#39;vc.12.0.0.1" expl="asserted formula" proved="true">
-     <proof prover="1"><result status="valid" time="0.33" steps="719461"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),min,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create&#39;spec,min_tree&#39;spec,is_minimum_min,H15,H2,H1,H,H8,H9,H7,H6,H4">
+      <goal name="remove_min_elt&#39;vc.12.0.0.1.0" expl="asserted formula" proved="true">
+      <proof prover="0"><result status="valid" time="0.10" steps="567"/></proof>
+      </goal>
+     </transf>
      </goal>
     </transf>
     </goal>
@@ -1998,7 +2010,11 @@
    </transf>
    </goal>
    <goal name="remove_max_elt&#39;vc.11.1" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.26" steps="640827"/></proof>
+   <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),rev,append,rev_append,height,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,H14,H1,H12,H7,H11,H9,H8,H4,H3,H2">
+    <goal name="remove_max_elt&#39;vc.11.1.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.07" steps="532"/></proof>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>
@@ -2016,7 +2032,11 @@
     <goal name="remove_max_elt&#39;vc.12.0.1" expl="postcondition" proved="true">
     <transf name="split_all_full" proved="true" >
      <goal name="remove_max_elt&#39;vc.12.0.1.0" expl="postcondition" proved="true">
-     <proof prover="6"><result status="valid" time="0.25" steps="33160"/></proof>
+     <transf name="remove" proved="true" arg1="get1,set,([]&#39;),(!),mem,is_none,rev_append1,([]),rev,append,occ,bst_no_height,is_minimum,is_maximum,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_sign_pos,Div_sign_neg,Rounds_toward_zero,Length_nonnegative,Append_length,mem_decomp,reverse_cons,cons_reverse,reverse_reverse,Reverse_length,height_nonneg,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H15,H2,H1,H,H8,H9,H7,H6,H4,Abs_le2,Abs_le1,Abs_le,Div_bound1,Div_bound,Mod_bound1,Mod_bound,mem_append2,mem_append1,mem_append,is_none&#39;spec1,is_none&#39;spec,reverse_mem1,reverse_mem,create&#39;spec3,create&#39;spec2,create&#39;spec1">
+      <goal name="remove_max_elt&#39;vc.12.0.1.0.0" expl="postcondition" proved="true">
+      <proof prover="0"><result status="valid" time="0.13" steps="512"/></proof>
+      </goal>
+     </transf>
      </goal>
     </transf>
     </goal>
@@ -2144,7 +2164,11 @@
     <goal name="add_min_element&#39;vc.15.0.1" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="add_min_element&#39;vc.15.0.1.0" expl="postcondition" proved="true">
-     <proof prover="6"><result status="valid" time="0.35" steps="43743"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),get1,set,([]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,([]),(%),rev,append,rev_append,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,is_nil&#39;spec,Length_nonnegative,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,is_pre_order1,height_nonneg,occ_uniq2,create&#39;def,min_tree&#39;spec,is_minimum_min,H2,H1,H,H11,H8,H9,H7,H4">
+      <goal name="add_min_element&#39;vc.15.0.1.0.0" expl="postcondition" proved="true">
+      <proof prover="0" timelimit="1"><result status="valid" time="0.23" steps="2364"/></proof>
+      </goal>
+     </transf>
      </goal>
     </transf>
     </goal>
@@ -2266,7 +2290,11 @@
     <proof prover="0"><result status="valid" time="0.02" steps="41"/></proof>
     </goal>
     <goal name="add_max_element&#39;vc.15.0.1" expl="postcondition" proved="true">
-    <proof prover="6"><result status="valid" time="0.45" steps="56928"/></proof>
+    <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),set,length1,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Length_nil,Reverse_length,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,H2,H1,H11,H8,H9,H7,H4">
+     <goal name="add_max_element&#39;vc.15.0.1.0" expl="postcondition" proved="true">
+     <proof prover="0"><result status="valid" time="0.33" steps="3859"/></proof>
+     </goal>
+    </transf>
     </goal>
    </transf>
    </goal>
@@ -2366,7 +2394,11 @@
     <goal name="join&#39;vc.13.0.0" expl="precondition" proved="true">
     <transf name="inline_all" proved="true" >
      <goal name="join&#39;vc.13.0.0.0" expl="precondition" proved="true">
-     <proof prover="6"><result status="valid" time="0.96" steps="105330"/></proof>
+     <transf name="remove" proved="true" arg1="length1,mem,(++),reverse,rev_append,height,bst,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,Length_nonnegative,Append_assoc,Append_l_nil,Append_length,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,Reverse_length,rev_append_append_l,rev_append_length,rev_append_append_r,same_location_eq,array&#39;invariant,non_neg_max_array_length,is_pre_order1,height_nonneg,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,H15,H12,H10,H9,H7,H6,H5,H2,H1,H4,Abs_le2,Abs_le1,Abs_le,Div_bound1,Div_bound,Mod_bound1,Mod_bound,is_nil&#39;spec1,is_nil&#39;spec,Length_nil1,Length_nil,mem_append2,mem_append1,mem_append,is_none&#39;spec1,is_none&#39;spec,([&lt;-])&#39;spec1,([&lt;-])&#39;spec,make_spec1,make_spec,cmp_eq1,cmp_eq,reverse_mem1,reverse_mem,occ_uniq2,create&#39;spec3,create&#39;spec2,create&#39;spec1,create&#39;spec">
+      <goal name="join&#39;vc.13.0.0.0.0" expl="precondition" proved="true">
+      <proof prover="1" timelimit="1"><result status="valid" time="0.04" steps="69531"/></proof>
+      </goal>
+     </transf>
      </goal>
     </transf>
     </goal>
@@ -2430,7 +2462,11 @@
     <proof prover="0"><result status="valid" time="0.85" steps="9698"/></proof>
     </goal>
     <goal name="join&#39;vc.20.0.1" expl="precondition" proved="true">
-    <proof prover="1"><result status="valid" time="0.17" steps="422596"/></proof>
+    <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,height,bst,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H16,H13,H11,H10,H9,H8,H6,H5,H4,H1,H3,H2">
+     <goal name="join&#39;vc.20.0.1.0" expl="precondition" proved="true">
+     <proof prover="0"><result status="valid" time="0.02" steps="183"/></proof>
+     </goal>
+    </transf>
     </goal>
    </transf>
    </goal>
@@ -2741,7 +2777,11 @@
   <goal name="split&#39;vc.3" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="split&#39;vc.3.0" expl="precondition" proved="true">
-   <proof prover="1"><result status="valid" time="0.18" steps="409862"/></proof>
+   <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,height,bst,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H9,H5,H3,H7,H6,H2,H1">
+    <goal name="split&#39;vc.3.0.0" expl="precondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.02" steps="141"/></proof>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>
@@ -2785,7 +2825,11 @@
   <goal name="split&#39;vc.9" expl="precondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="split&#39;vc.9.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.05" steps="379"/></proof>
+   <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,height,bst,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H5,H4,H1,H8,H7,H3,H2">
+    <goal name="split&#39;vc.9.0.0" expl="precondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.02" steps="126"/></proof>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>
@@ -2850,7 +2894,11 @@
    <proof prover="0"><result status="valid" time="0.03" steps="1033"/></proof>
    </goal>
    <goal name="split&#39;vc.11.2" expl="postcondition" proved="true">
-   <proof prover="0"><result status="valid" time="4.30" steps="58214"/></proof>
+   <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),fst,snd,([]),(%),get,rev,append,height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,non_neg_max_array_length,height_nonneg,occ_uniq2,create&#39;spec,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,H2,H1,H16,H14,H12,H11,H10,H9,H8,H7">
+    <goal name="split&#39;vc.11.2.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.03" steps="258"/></proof>
+    </goal>
+   </transf>
    </goal>
    <goal name="split&#39;vc.11.3" expl="postcondition" proved="true">
    <proof prover="6"><result status="valid" time="0.32" steps="22177"/></proof>
@@ -2869,7 +2917,11 @@
    <proof prover="0"><result status="valid" time="0.07" steps="417"/></proof>
    </goal>
    <goal name="split&#39;vc.12.3" expl="postcondition" proved="true">
-   <proof prover="1"><result status="valid" time="3.88" steps="8154059"/></proof>
+   <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),fst,snd,([]),height,bst,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,height_nonneg,create&#39;spec,min_tree&#39;spec,is_maximum_max,H3,H17,H15,H14,H12,H11,H10,H9,H8,H7,H6">
+    <goal name="split&#39;vc.12.3.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.04" steps="433"/></proof>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>
@@ -3207,24 +3259,40 @@
     <goal name="add&#39;vc.15.1.1" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="add&#39;vc.15.1.1.0" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.01" steps="24"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),min,get1,set,([]&#39;),([&lt;-]&#39;),(!),mem,is_none,(++),fst,snd,([]),(%),get,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,same_location_eq,array&#39;invariant,make_spec,create&#39;spec,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H2,H1,H,H13,H11,H9,H8,H7,H6,H4">
+      <goal name="add&#39;vc.15.1.1.0.0" expl="postcondition" proved="true">
+      <proof prover="1" timelimit="1"><result status="valid" time="0.09" steps="15880"/></proof>
+      </goal>
+     </transf>
      </goal>
     </transf>
     </goal>
     <goal name="add&#39;vc.15.1.2" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="add&#39;vc.15.1.2.0" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.01" steps="34"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),set,is_nil,(++),is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,Abs_pos,Min_r,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_sign_pos,Div_sign_neg,Append_assoc,Append_length,create&#39;spec,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H2,H1,H,H16,H13,H11,H9,H8,H7,H6,H4">
+      <goal name="add&#39;vc.15.1.2.0.0" expl="postcondition" proved="true">
+      <proof prover="0"><result status="valid" time="0.01" steps="22"/></proof>
+      </goal>
+     </transf>
      </goal>
      <goal name="add&#39;vc.15.1.2.1" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="1.61" steps="27878"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),min,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create&#39;def,min_tree&#39;spec,is_minimum_min,H2,H1,H,H16,H13,H11,H9,H8,H7,H6,H4">
+      <goal name="add&#39;vc.15.1.2.1.0" expl="postcondition" proved="true">
+      <proof prover="0"><result status="valid" time="0.14" steps="1151"/></proof>
+      </goal>
+     </transf>
      </goal>
     </transf>
     </goal>
     <goal name="add&#39;vc.15.1.3" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="add&#39;vc.15.1.3.0" expl="postcondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.02" steps="34"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),min,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,occ,bst_no_height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,occ_nonneg,height_nonneg,occ_uniq2,create&#39;def,min_tree&#39;spec,is_minimum_min,H2,H1,H,H13,H11,H9,H8,H7,H6,H4">
+      <goal name="add&#39;vc.15.1.3.0.0" expl="postcondition" proved="true">
+      <proof prover="0"><result status="valid" time="0.01" steps="18"/></proof>
+      </goal>
+     </transf>
      </goal>
      <goal name="add&#39;vc.15.1.3.1" expl="postcondition" proved="true">
      <proof prover="0"><result status="valid" time="0.39" steps="6155"/></proof>
@@ -3483,8 +3551,8 @@
   </goal>
  </transf>
  </goal>
- <goal name="BinTree.subset&#39;vc" expl="VC for subset">
- <transf name="split_vc" >
+ <goal name="BinTree.subset&#39;vc" expl="VC for subset" proved="true">
+ <transf name="split_vc" proved="true" >
   <goal name="subset&#39;vc.0" expl="variant decrease" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.0.0" expl="variant decrease" proved="true">
@@ -3587,8 +3655,8 @@
    </goal>
   </transf>
   </goal>
-  <goal name="subset&#39;vc.12" expl="postcondition">
-  <transf name="split_vc" >
+  <goal name="subset&#39;vc.12" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
    <goal name="subset&#39;vc.12.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="subset&#39;vc.12.0.0" expl="postcondition" proved="true">
@@ -3600,7 +3668,11 @@
        <goal name="subset&#39;vc.12.0.0.0.0.0" expl="postcondition" proved="true">
        <transf name="inline_goal" proved="true" >
         <goal name="subset&#39;vc.12.0.0.0.0.0.0" expl="postcondition" proved="true">
-        <proof prover="0"><result status="valid" time="0.01" steps="28"/></proof>
+        <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,occ,height,avl,bst,is_minimum,is_maximum,subset,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,Length_nonnegative,Append_assoc,Append_l_nil,Append_length,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,non_neg_max_array_length,is_pre_order1,is_pre_order,occ_nonneg,height_nonneg,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H6,H5,H1,H2,Abs_le2,Abs_le1,Abs_le,Div_bound1,Div_bound,Mod_bound1,Mod_bound,is_nil&#39;spec1,is_nil&#39;spec,Length_nil1,Length_nil,mem_append2,mem_append1,mem_append,is_none&#39;spec1,is_none&#39;spec,([&lt;-])&#39;spec1,([&lt;-])&#39;spec,make_spec1,make_spec,cmp_eq1,cmp_eq,reverse_mem1,reverse_mem,occ_uniq21,occ_uniq2,create&#39;spec3,create&#39;spec2,create&#39;spec1,create&#39;spec">
+         <goal name="subset&#39;vc.12.0.0.0.0.0.0.0" expl="postcondition" proved="true">
+         <proof prover="0"><result status="valid" time="0.01" steps="10"/></proof>
+         </goal>
+        </transf>
         </goal>
        </transf>
        </goal>
@@ -3667,8 +3739,8 @@
     </goal>
    </transf>
    </goal>
-   <goal name="subset&#39;vc.12.1" expl="postcondition">
-   <transf name="split_vc" >
+   <goal name="subset&#39;vc.12.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
     <goal name="subset&#39;vc.12.1.0" expl="postcondition" proved="true">
     <transf name="split_vc" proved="true" >
      <goal name="subset&#39;vc.12.1.0.0" expl="postcondition" proved="true">
@@ -3679,7 +3751,11 @@
     <goal name="subset&#39;vc.12.1.1" expl="postcondition" proved="true">
     <transf name="case" proved="true" arg1="(subset (Node w3 w2 Empty 0) w1)">
      <goal name="subset&#39;vc.12.1.1.0" expl="true case (postcondition)" proved="true">
-     <proof prover="1"><result status="valid" time="0.14" steps="318165"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,avl,bst,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H5,H4,H1,h">
+      <goal name="subset&#39;vc.12.1.1.0.0" expl="true case (postcondition)" proved="true">
+      <proof prover="0"><result status="valid" time="0.06" steps="1447"/></proof>
+      </goal>
+     </transf>
      </goal>
      <goal name="subset&#39;vc.12.1.1.1" expl="false case (postcondition)" proved="true">
      <transf name="assert" proved="true" arg1="(exists x. mem2 x (Node w3 w2 Empty 0) /\ not mem2 x w1)">
@@ -3689,7 +3765,11 @@
       <goal name="subset&#39;vc.12.1.1.1.1" expl="false case (postcondition)" proved="true">
       <transf name="introduce_exists" proved="true" >
        <goal name="subset&#39;vc.12.1.1.1.1.0" expl="false case (postcondition)" proved="true">
-       <proof prover="1"><result status="valid" time="0.49" steps="1109374"/></proof>
+       <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,avl,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,cmp_eq,non_neg_max_array_length,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H4,H1,h1">
+        <goal name="subset&#39;vc.12.1.1.1.1.0.0" expl="false case (postcondition)" proved="true">
+        <proof prover="0"><result status="valid" time="0.34" steps="3624"/></proof>
+        </goal>
+       </transf>
        </goal>
       </transf>
       </goal>
@@ -3714,42 +3794,55 @@
      </goal>
     </transf>
     </goal>
-    <goal name="subset&#39;vc.12.1.4" expl="postcondition">
-    <transf name="case" arg1="(subset (Node x3 x2 Empty 0) x7)">
+    <goal name="subset&#39;vc.12.1.4" expl="postcondition" proved="true">
+    <transf name="case" proved="true" arg1="(subset (Node x3 x2 Empty 0) x7)">
      <goal name="subset&#39;vc.12.1.4.0" expl="true case (postcondition)" proved="true">
-     <proof prover="0"><result status="valid" time="1.99" steps="30257"/></proof>
+     <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,is_pre_order2,rev,append,rev_append,height,avl,bst,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,is_pre_order,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H7,H6,H5,H3,H2">
+      <goal name="subset&#39;vc.12.1.4.0.0" expl="true case (postcondition)" proved="true">
+      <proof prover="0" timelimit="1"><result status="valid" time="0.01" steps="74"/></proof>
+      </goal>
+     </transf>
      </goal>
-     <goal name="subset&#39;vc.12.1.4.1" expl="false case (postcondition)">
-     <transf name="assert" arg1="(exists x. mem2 x (Node x3 x2 Empty 0) /\ not mem2 x x7)">
+     <goal name="subset&#39;vc.12.1.4.1" expl="false case (postcondition)" proved="true">
+     <transf name="assert" proved="true" arg1="(exists x. mem2 x (Node x3 x2 Empty 0) /\ not mem2 x x7)">
       <goal name="subset&#39;vc.12.1.4.1.0" expl="asserted formula" proved="true">
       <proof prover="0"><result status="valid" time="0.02" steps="136"/></proof>
       </goal>
-      <goal name="subset&#39;vc.12.1.4.1.1" expl="false case (postcondition)">
-      <transf name="introduce_exists" >
-       <goal name="subset&#39;vc.12.1.4.1.1.0" expl="false case (postcondition)">
-       <transf name="case" arg1="(x = x3)">
+      <goal name="subset&#39;vc.12.1.4.1.1" expl="false case (postcondition)" proved="true">
+      <transf name="introduce_exists" proved="true" >
+       <goal name="subset&#39;vc.12.1.4.1.1.0" expl="false case (postcondition)" proved="true">
+       <transf name="case" proved="true" arg1="(x = x3)">
         <goal name="subset&#39;vc.12.1.4.1.1.0.0" expl="false case (true case. postcondition)" proved="true">
         <transf name="assert" proved="true" arg1="(not mem2 x3 x2)">
          <goal name="subset&#39;vc.12.1.4.1.1.0.0.0" expl="asserted formula" proved="true">
          <proof prover="0"><result status="valid" time="0.04" steps="311"/></proof>
          </goal>
          <goal name="subset&#39;vc.12.1.4.1.1.0.0.1" expl="false case (true case. postcondition)" proved="true">
-         <proof prover="1"><result status="valid" time="0.18" steps="395899"/></proof>
+         <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,min,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,avl,is_minimum,is_maximum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,Div_mult,Mod_mult,is_nil&#39;spec,Length_nonnegative,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_length,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,non_neg_max_array_length,is_pre_order1,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,max_tree&#39;spec,is_minimum_min,is_maximum_max,H3,H1,h3,h">
+          <goal name="subset&#39;vc.12.1.4.1.1.0.0.1.0" expl="false case (true case. postcondition)" proved="true">
+          <proof prover="0"><result status="valid" time="1.25" steps="19690"/></proof>
+          </goal>
+         </transf>
          </goal>
         </transf>
         </goal>
-        <goal name="subset&#39;vc.12.1.4.1.1.0.1" expl="false case (postcondition)">
-        <transf name="assert" arg1="(mem2 x x4)">
+        <goal name="subset&#39;vc.12.1.4.1.1.0.1" expl="false case (postcondition)" proved="true">
+        <transf name="assert" proved="true" arg1="(mem2 x x4)">
          <goal name="subset&#39;vc.12.1.4.1.1.0.1.0" expl="asserted formula" proved="true">
          <proof prover="0"><result status="valid" time="0.03" steps="309"/></proof>
          </goal>
-         <goal name="subset&#39;vc.12.1.4.1.1.0.1.1" expl="false case (postcondition)">
-         <transf name="assert" arg1="(not mem2 x x6)">
+         <goal name="subset&#39;vc.12.1.4.1.1.0.1.1" expl="false case (postcondition)" proved="true">
+         <transf name="assert" proved="true" arg1="(not mem2 x x6)">
           <goal name="subset&#39;vc.12.1.4.1.1.0.1.1.0" expl="asserted formula" proved="true">
           <proof prover="0"><result status="valid" time="0.18" steps="1456"/></proof>
           </goal>
-          <goal name="subset&#39;vc.12.1.4.1.1.0.1.1.1" expl="false case (postcondition)">
-          <proof prover="1" timelimit="30"><undone/></proof>
+          <goal name="subset&#39;vc.12.1.4.1.1.0.1.1.1" expl="false case (postcondition)" proved="true">
+          <transf name="remove" proved="true" arg1="zero,one,(-),(&gt;),(&lt;=),(&gt;=),abs,max,get1,set,([]&#39;),([&lt;-]&#39;),(!),is_nil,length1,mem,is_none,(++),reverse,rev_append1,fst,snd,([]),(%),get,rev,append,rev_append,height,is_minimum,Assoc1,Unit_def_l,Unit_def_r,Inv_def_l,Inv_def_r,Comm1,Assoc,Mul_distr_l,Mul_distr_r,Comm,Unitary,NonTrivialRing,Refl,Trans,Antisymm,Total,ZeroLessOne,CompatOrderAdd,CompatOrderMult,Abs_le,Abs_pos,Min_r,Max_l,Min_comm,Max_comm,Min_assoc,Max_assoc,Div_mod,Div_bound,Mod_bound,Div_sign_pos,Div_sign_neg,Mod_sign_pos,Mod_sign_neg,Rounds_toward_zero,Div_1,Mod_1,Div_inf,Mod_inf,is_nil&#39;spec,Length_nil,is_none&#39;spec,Append_assoc,Append_l_nil,Append_length,mem_append,mem_decomp,reverse_append,reverse_cons,cons_reverse,reverse_reverse,reverse_mem,Reverse_length,rev_append_append_l,rev_append_def,rev_append_append_r,same_location_eq,array&#39;invariant,([&lt;-])&#39;spec,make_spec,cmp_eq,is_pre_order1,height_nonneg,occ_uniq2,create&#39;spec,create&#39;def,min_tree&#39;spec,is_minimum_min,H6,H3,H1,h4,h2
+">
+           <goal name="subset&#39;vc.12.1.4.1.1.0.1.1.1.0" expl="false case (postcondition)" proved="true">
+           <proof prover="1"><result status="valid" time="0.10" steps="238609"/></proof>
+           </goal>
+          </transf>
           </goal>
          </transf>
          </goal>

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.28)  5 JUL 2021 15:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.5.28)  6 JUL 2021 01:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -93,106 +93,42 @@ Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 \rot@float@box=\box49
 \rot@mess@toks=\toks18
 )
-(/usr/local/texlive/2021/texmf-dist/tex/latex/tools/tabularx.sty
-Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
-\TX@col@width=\dimen143
-\TX@old@table=\dimen144
-\TX@old@col=\dimen145
-\TX@target=\dimen146
-\TX@delta=\dimen147
-\TX@cols=\count188
-\TX@ftn=\toks19
-)
-(/usr/local/texlive/2021/texmf-dist/tex/latex/adjustbox/adjustbox.sty
-Package: adjustbox 2020/08/19 v1.3 Adjusting TeX boxes (trim, clip, ...)
-
-(/usr/local/texlive/2021/texmf-dist/tex/latex/xkeyval/xkeyval.sty
-Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
-
-(/usr/local/texlive/2021/texmf-dist/tex/generic/xkeyval/xkeyval.tex
-(/usr/local/texlive/2021/texmf-dist/tex/generic/xkeyval/xkvutils.tex
-\XKV@toks=\toks20
-\XKV@tempa@toks=\toks21
-)
-\XKV@depth=\count189
-File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
-))
-(/usr/local/texlive/2021/texmf-dist/tex/latex/adjustbox/adjcalc.sty
-Package: adjcalc 2012/05/16 v1.1 Provides advanced setlength with multiple back
--ends (calc, etex, pgfmath)
-)
-(/usr/local/texlive/2021/texmf-dist/tex/latex/adjustbox/trimclip.sty
-Package: trimclip 2020/08/19 v1.2 Trim and clip general TeX material
-
-(/usr/local/texlive/2021/texmf-dist/tex/latex/collectbox/collectbox.sty
-Package: collectbox 2012/05/17 v0.4b Collect macro arguments as boxes
-\collectedbox=\box50
-)
-\tc@llx=\dimen148
-\tc@lly=\dimen149
-\tc@urx=\dimen150
-\tc@ury=\dimen151
-Package trimclip Info: Using driver 'tc-pdftex.def'.
-
-(/usr/local/texlive/2021/texmf-dist/tex/latex/adjustbox/tc-pdftex.def
-File: tc-pdftex.def 2019/01/04 v2.2 Clipping driver for pdftex
-))
-\adjbox@Width=\dimen152
-\adjbox@Height=\dimen153
-\adjbox@Depth=\dimen154
-\adjbox@Totalheight=\dimen155
-\adjbox@pwidth=\dimen156
-\adjbox@pheight=\dimen157
-\adjbox@pdepth=\dimen158
-\adjbox@ptotalheight=\dimen159
-
-(/usr/local/texlive/2021/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty
-Package: ifoddpage 2016/04/23 v1.1 Conditionals for odd/even page detection
-\c@checkoddpage=\count190
-)
-(/usr/local/texlive/2021/texmf-dist/tex/latex/varwidth/varwidth.sty
-Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
-\@vwid@box=\box51
-\sift@deathcycles=\count191
-\@vwid@loff=\dimen160
-\@vwid@roff=\dimen161
-))
 (/usr/local/texlive/2021/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2021-03-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count192
-\l__pdf_internal_box=\box52
+\l__color_backend_stack_int=\count188
+\l__pdf_internal_box=\box50
 )
 (./BinTreeModuleTupl.aux)
 \openout1 = `BinTreeModuleTupl.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
 
 (/usr/local/texlive/2021/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count193
-\scratchdimen=\dimen162
-\scratchbox=\box53
-\nofMPsegments=\count194
-\nofMParguments=\count195
-\everyMPshowfont=\toks22
-\MPscratchCnt=\count196
-\MPscratchDim=\dimen163
-\MPnumerator=\count197
-\makeMPintoPDFobject=\count198
-\everyMPtoPDFconversion=\toks23
+\scratchcounter=\count189
+\scratchdimen=\dimen143
+\scratchbox=\box51
+\nofMPsegments=\count190
+\nofMParguments=\count191
+\everyMPshowfont=\toks19
+\MPscratchCnt=\count192
+\MPscratchDim=\dimen144
+\MPnumerator=\count193
+\makeMPintoPDFobject=\count194
+\everyMPtoPDFconversion=\toks20
 ) (/usr/local/texlive/2021/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -203,37 +139,31 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 25.
+(Font)              <7> on input line 1367.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 25.
-
-Overfull \hbox (257.29196pt too wide) in paragraph at lines 25--1364
-[][] 
- []
-
-[1
-
-{/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \vbox (7548.59119pt too high) has occurred while \output is active []
+(Font)              <5> on input line 1367.
 
 
-[2] (./BinTreeModuleTupl.aux) ) 
+LaTeX Warning: Float too large for page by 4134.66pt on input line 1369.
+
+[1{/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(./BinTreeModuleTupl.aux) ) 
 Here is how much of TeX's memory you used:
- 2991 strings out of 478994
- 45107 string characters out of 5858184
- 1556477 words of memory out of 5000000
- 20466 multiletter control sequences out of 15000+600000
+ 1880 strings out of 478994
+ 26359 string characters out of 5858184
+ 1636918 words of memory out of 5000000
+ 19392 multiletter control sequences out of 15000+600000
  403906 words of font info for 29 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 83i,9n,88p,239b,156s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2021/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmtt10.pfb>
-Output written on BinTreeModuleTupl.pdf (2 pages, 101975 bytes).
+ 83i,12n,88p,239b,285s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2021/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmtt10.pfb>
+Output written on BinTreeModuleTupl.pdf (1 page, 102925 bytes).
 PDF statistics:
- 23 PDF objects out of 1000 (max. 8388607)
- 15 compressed objects within 1 object stream
+ 20 PDF objects out of 1000 (max. 8388607)
+ 13 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
