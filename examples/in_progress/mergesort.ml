@@ -15,21 +15,17 @@ module type PRE_ORD = sig
   val leq : t -> t -> bool
   (*@ b = leq x y
         ensures b <-> le x y *)
-
-  (*@ predicate sorted_list (l: t list) *)
-  (*@ axiom sorted_nil: sorted_list [] *)
-  (*@ axiom sorted_singleton: forall x. sorted_list (x :: []) *)
-  (*@ axiom sorted_cons: forall x y l.
-        le x y -> sorted_list (y :: l) -> sorted_list (x :: (y :: l)) *)
-  (*@ axiom sorted_list_inversion: forall l.
-        sorted_list l ->
-          (l = []) \/ (exists x. l = x :: []) \/
-          (exists x y ll. le x y /\ sorted_list (y :: ll) /\ l = x :: y :: l) *)
 end
 
 module Make (E: PRE_ORD) = struct
 
   type elt = E.t
+
+  let[@logic] rec sorted_list = function
+    | [] | [_] -> true
+    | x :: (y :: r) -> E.leq x y && sorted_list (y :: r)
+  (*@ sorted_list l
+        variant l *)
 
   (*@ lemma sorted_mem: forall x l.
         (forall y. List.mem y l -> le x y) /\ sorted_list l <->
@@ -40,35 +36,43 @@ module Make (E: PRE_ORD) = struct
           (forall x y. List.mem x l1 -> List.mem y l2 -> le x y)) <->
         sorted_list (l1 ++ l2) *)
 
-  let rec merge l1 l2 = match l1, l2 with
-    | [], l | l, [] -> l
+  let rec merge_aux acc l1 l2 =
+    match l1, l2 with
+    | [], l | l, [] -> List.rev_append acc l
     | x :: xs, y :: ys ->
-        if E.leq x y then x :: (merge xs l2)
-        else y :: (merge l1 ys)
+        if E.leq x y then merge_aux (x :: acc) xs l2
+                     else merge_aux (y :: acc) l1 ys
+  (*@ r = merge_aux acc l1 l2
+        requires sorted_list (List.rev acc) && sorted_list l1 && sorted_list l2
+        requires forall x y. List.mem x acc -> List.mem y l1 -> le x y
+        requires forall x y. List.mem x acc -> List.mem y l2 -> le x y
+        ensures  sorted_list r
+        ensures  permut r (acc @ l1 @ l2)
+        variant  l1, l2 *)
+
+  let merge l1 l2 = merge_aux [] l1 l2
   (*@ r = merge l1 l2
         requires sorted_list l1 && sorted_list l2
-        variant  l1, l2
-        ensures  sorted_list r
-        ensures  permut r (l1 @ l2) *)
+        ensures  sorted_list r  && permut r (l1 @ l2) *)
 
   let split l0 =
-    let rec split_aux (pref: elt list) (n0 : int [@ghost]) n l =
+    let n0 = List.length l0 / 2 in
+    let rec split_aux (pref: elt list) n l =
       if n = 0 then List.rev pref, l
       else match l with
         | [] -> assert false
-        | x :: xs -> split_aux (x :: pref) n0 (n-1) xs
-    (*@ (l1, l2) = split_aux pref n0 n l
+        | x :: xs -> split_aux (x :: pref) (n-1) xs
+    (*@ (l1, l2) = split_aux pref n l
           requires 0 <= n <= List.length l
           requires n <= n0 <= List.length l0
           requires List.length pref = n0 - n
           requires l0 = List.rev pref @ l
-          variant  n
           ensures  permut l0 (l1 @ l2)
           ensures  List.length l1 = n0 &&
-                   List.length l2 = List.length l0 - n0 *)
+                   List.length l2 = List.length l0 - n0
+          variant  n *)
     in
-    let n = List.length l0 / 2 in
-    split_aux [] n n l0
+    split_aux [] n0 l0
   (*@ (l1, l2) = split l0
         requires List.length l0 >= 2
         ensures  permut l0 (l1 @ l2)
