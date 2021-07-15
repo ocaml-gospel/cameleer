@@ -136,7 +136,8 @@ let merge_asc_rev compare xs ys =
   merge_asc_rev [] xs ys
 (*@ r = merge_asc_rev compare xs ys
       requires is_pre_order compare
-      requires sorted_list compare xs && sorted_list compare ys *)
+      requires sorted_list compare xs && sorted_list compare ys
+      ensures  sorted_list compare (List.rev r) *)
 
 let merge_desc_rev compare =
   let rec merge_desc_rev revacc xs ys =
@@ -168,7 +169,7 @@ let merge compare n1 n2 r1 r2 =
   (n1 + n2), run
 (*@ (n, r) = merge compare n1 n2 r1 r2
       requires is_pre_order compare
-      requires wf_run compare r1 && wf_run compare r2
+      requires wf_run_len compare n1 r1 && wf_run_len compare n2 r2
       ensures  wf_run_len compare n r *)
 
 type 'a stack = (int * 'a run) list

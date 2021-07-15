@@ -449,8 +449,8 @@
   </goal>
  </transf>
  </goal>
- <goal name="merge_asc_rev&#39;vc" expl="VC for merge_asc_rev" proved="true">
- <transf name="split_vc" proved="true" >
+ <goal name="merge_asc_rev&#39;vc" expl="VC for merge_asc_rev">
+ <transf name="split_vc" >
   <goal name="merge_asc_rev&#39;vc.0" expl="variant decrease" proved="true">
   <proof prover="2"><result status="valid" time="0.11" steps="33034"/></proof>
   </goal>
@@ -518,6 +518,11 @@
   <goal name="merge_asc_rev&#39;vc.16" expl="precondition" proved="true">
   <proof prover="2"><result status="valid" time="0.07" steps="29372"/></proof>
   </goal>
+  <goal name="merge_asc_rev&#39;vc.17" expl="postcondition">
+  <proof prover="0"><result status="timeout" time="1.00"/></proof>
+  <proof prover="1"><result status="timeout" time="1.00" steps="3203542"/></proof>
+  <proof prover="2"><result status="timeout" time="1.00" steps="540768"/></proof>
+  </goal>
  </transf>
  </goal>
  <goal name="merge_desc_rev&#39;vc" expl="VC for merge_desc_rev" proved="true">
@@ -527,65 +532,97 @@
  <transf name="split_vc" >
   <goal name="merge&#39;vc.0" expl="precondition" proved="true">
   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3182444"/></proof>
-  <proof prover="2"><result status="valid" time="0.05" steps="26259"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3025964"/></proof>
+  <proof prover="2"><result status="valid" time="0.06" steps="26272"/></proof>
   </goal>
   <goal name="merge&#39;vc.1" expl="precondition" proved="true">
   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3202385"/></proof>
-  <proof prover="2"><result status="valid" time="0.08" steps="27365"/></proof>
+  <proof prover="2"><result status="valid" time="0.08" steps="28891"/></proof>
   </goal>
   <goal name="merge&#39;vc.2" expl="precondition" proved="true">
   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3313825"/></proof>
-  <proof prover="2"><result status="valid" time="0.06" steps="26416"/></proof>
+  <proof prover="2"><result status="valid" time="0.06" steps="26429"/></proof>
   </goal>
   <goal name="merge&#39;vc.3" expl="precondition" proved="true">
   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3431574"/></proof>
-  <proof prover="2"><result status="valid" time="0.09" steps="30142"/></proof>
+  <proof prover="2"><result status="valid" time="0.09" steps="30425"/></proof>
   </goal>
   <goal name="merge&#39;vc.4" expl="precondition" proved="true">
   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3025964"/></proof>
-  <proof prover="2"><result status="valid" time="0.06" steps="26433"/></proof>
+  <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3182444"/></proof>
+  <proof prover="2"><result status="valid" time="0.05" steps="26446"/></proof>
   </goal>
   <goal name="merge&#39;vc.5" expl="precondition" proved="true">
   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3441388"/></proof>
-  <proof prover="2"><result status="valid" time="0.09" steps="30568"/></proof>
+  <proof prover="2"><result status="valid" time="0.09" steps="30541"/></proof>
   </goal>
   <goal name="merge&#39;vc.6" expl="postcondition">
   <transf name="split_vc" >
    <goal name="merge&#39;vc.6.0" expl="postcondition">
-   <proof prover="0"><result status="timeout" time="1.00"/></proof>
-   <proof prover="1"><result status="timeout" time="1.00" steps="3621242"/></proof>
-   <proof prover="2"><result status="timeout" time="1.00" steps="861776"/></proof>
+   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3542079"/></proof>
+   <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="357766"/></proof>
+   <transf name="unfold" arg1="wf_run_len">
+    <goal name="merge&#39;vc.6.0.0" expl="VC for merge">
+    <transf name="split_vc" >
+     <goal name="merge&#39;vc.6.0.0.0" expl="VC for merge">
+     <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="4099466"/></proof>
+     <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="819107"/></proof>
+     </goal>
+     <goal name="merge&#39;vc.6.0.0.1" expl="VC for merge">
+     <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="4160509"/></proof>
+     <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="886721"/></proof>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
    </goal>
    <goal name="merge&#39;vc.6.1" expl="postcondition">
-   <proof prover="0"><result status="timeout" time="1.00"/></proof>
-   <proof prover="1"><result status="timeout" time="1.00" steps="3807696"/></proof>
-   <proof prover="2"><result status="timeout" time="1.00" steps="849045"/></proof>
+   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3554050"/></proof>
+   <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="363436"/></proof>
    </goal>
    <goal name="merge&#39;vc.6.2" expl="postcondition">
    <proof prover="0"><result status="timeout" time="1.00"/></proof>
-   <proof prover="1"><result status="timeout" time="1.00" steps="3711593"/></proof>
-   <proof prover="2"><result status="timeout" time="1.00" steps="464270"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00" steps="3544963"/></proof>
+   <proof prover="2"><result status="timeout" time="1.00" steps="268890"/></proof>
    </goal>
    <goal name="merge&#39;vc.6.3" expl="postcondition">
-   <proof prover="0"><result status="timeout" time="1.00"/></proof>
-   <proof prover="1"><result status="timeout" time="1.00" steps="3266438"/></proof>
-   <proof prover="2"><result status="timeout" time="1.00" steps="429143"/></proof>
+   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3596038"/></proof>
+   <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="861776"/></proof>
+   <transf name="unfold" arg1="wf_run_len">
+    <goal name="merge&#39;vc.6.3.0" expl="VC for merge">
+    <transf name="split_vc" >
+     <goal name="merge&#39;vc.6.3.0.0" expl="VC for merge">
+     <proof prover="0"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><result status="timeout" time="1.00" steps="3194681"/></proof>
+     <proof prover="2"><result status="timeout" time="1.00" steps="398073"/></proof>
+     </goal>
+     <goal name="merge&#39;vc.6.3.0.1" expl="VC for merge">
+     <proof prover="0"><result status="timeout" time="1.00"/></proof>
+     <proof prover="1"><result status="timeout" time="1.00" steps="3474603"/></proof>
+     <proof prover="2"><result status="timeout" time="1.00" steps="453639"/></proof>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
    </goal>
    <goal name="merge&#39;vc.6.4" expl="postcondition">
    <proof prover="0"><result status="timeout" time="1.00"/></proof>
-   <proof prover="1"><result status="timeout" time="1.00" steps="3680973"/></proof>
-   <proof prover="2"><result status="timeout" time="1.00" steps="464263"/></proof>
+   <proof prover="1"><result status="timeout" time="1.00" steps="3683752"/></proof>
+   <proof prover="2"><result status="timeout" time="1.00" steps="269665"/></proof>
    </goal>
    <goal name="merge&#39;vc.6.5" expl="postcondition">
-   <proof prover="0"><result status="timeout" time="1.00"/></proof>
-   <proof prover="1"><result status="timeout" time="1.00" steps="3888425"/></proof>
-   <proof prover="2"><result status="timeout" time="1.00" steps="848965"/></proof>
+   <proof prover="0" obsolete="true"><result status="timeout" time="1.00"/></proof>
+   <proof prover="1" obsolete="true"><result status="timeout" time="1.00" steps="3830532"/></proof>
+   <proof prover="2" obsolete="true"><result status="timeout" time="1.00" steps="351296"/></proof>
    </goal>
   </transf>
   </goal>
@@ -632,14 +669,7 @@
   <proof prover="2"><result status="valid" time="0.06" steps="30876"/></proof>
   </goal>
   <goal name="timsort&#39;vc.5" expl="precondition" proved="true">
-  <transf name="split_vc" proved="true" >
-   <goal name="timsort&#39;vc.5.0" expl="precondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.15" steps="38487"/></proof>
-   </goal>
-   <goal name="timsort&#39;vc.5.1" expl="precondition" proved="true">
-   <proof prover="2"><result status="valid" time="0.26" steps="63677"/></proof>
-   </goal>
-  </transf>
+  <proof prover="2"><result status="valid" time="0.16" steps="34316"/></proof>
   </goal>
   <goal name="timsort&#39;vc.6" expl="variant decrease" proved="true">
   <proof prover="2"><result status="valid" time="0.12" steps="36063"/></proof>
@@ -673,7 +703,14 @@
   <proof prover="2"><result status="valid" time="0.08" steps="30915"/></proof>
   </goal>
   <goal name="timsort&#39;vc.9" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.16" steps="38769"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="timsort&#39;vc.9.0" expl="precondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.15" steps="32247"/></proof>
+   </goal>
+   <goal name="timsort&#39;vc.9.1" expl="precondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.12" steps="34346"/></proof>
+   </goal>
+  </transf>
   </goal>
   <goal name="timsort&#39;vc.10" expl="variant decrease" proved="true">
   <proof prover="2"><result status="valid" time="0.14" steps="35996"/></proof>
@@ -685,7 +722,7 @@
   <proof prover="2"><result status="valid" time="0.09" steps="30954"/></proof>
   </goal>
   <goal name="timsort&#39;vc.13" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.16" steps="38710"/></proof>
+  <proof prover="2"><result status="valid" time="0.13" steps="32346"/></proof>
   </goal>
   <goal name="timsort&#39;vc.14" expl="variant decrease" proved="true">
   <proof prover="2"><result status="valid" time="0.14" steps="36002"/></proof>
@@ -697,7 +734,7 @@
   <proof prover="2"><result status="valid" time="0.06" steps="31004"/></proof>
   </goal>
   <goal name="timsort&#39;vc.17" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.22" steps="39148"/></proof>
+  <proof prover="2"><result status="valid" time="0.14" steps="32420"/></proof>
   </goal>
   <goal name="timsort&#39;vc.18" expl="variant decrease" proved="true">
   <proof prover="2"><result status="valid" time="0.13" steps="36348"/></proof>
@@ -721,7 +758,7 @@
   <proof prover="2"><result status="valid" time="0.07" steps="32023"/></proof>
   </goal>
   <goal name="timsort&#39;vc.25" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.14" steps="38423"/></proof>
+  <proof prover="2"><result status="valid" time="0.22" steps="33507"/></proof>
   </goal>
   <goal name="timsort&#39;vc.26" expl="variant decrease" proved="true">
   <proof prover="2"><result status="valid" time="0.14" steps="36790"/></proof>
@@ -791,7 +828,7 @@
   <proof prover="2"><result status="valid" time="0.06" steps="30846"/></proof>
   </goal>
   <goal name="timsort&#39;vc.36" expl="precondition" proved="true">
-  <proof prover="2"><result status="valid" time="0.13" steps="37009"/></proof>
+  <proof prover="2"><result status="valid" time="0.16" steps="32227"/></proof>
   </goal>
   <goal name="timsort&#39;vc.37" expl="variant decrease">
   <proof prover="0"><result status="timeout" time="1.00"/></proof>
