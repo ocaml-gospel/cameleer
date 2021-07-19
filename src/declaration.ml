@@ -97,7 +97,7 @@ let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) =
     td_vis    = td_private tmanifest td.tprivate tkind;
     td_mut    = ephemeral;
     td_inv    = List.map (Uterm.term false) invariant;
-    td_wit    = [];
+    td_wit    = None;
     td_def    = td_def info spec_fields tmanifest tkind
   }
 

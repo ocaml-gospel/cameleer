@@ -41,12 +41,14 @@ module Translate = struct
   type param  = ident option * pty
   type binder = ident option * pty option
 
+  type permission = PTotal | PFrac
+
   type term =
     | Ttrue
     | Tfalse
     | Tconst of int
     | Tident of qualid
-    | Tacc   of term (* * fractional permission *)
+    | Tacc   of term * permission
     | Tidapp of qualid * term list
     | Tinfix of term * ident * term
     | Tbinop of term * binop * term
@@ -153,8 +155,9 @@ module Translate = struct
     | _ -> assert false (* TODO *)
 
   let mk_representation_predicate td_name fields =
-    let mk_acc_pr {f_ident; _} =
-      Tacc (Tident (Qdot (Qident { id_str = "this" }, f_ident ))) in
+    let mk_acc_pr {f_ident; f_mutable; _} =
+      let perm = if f_mutable then PTotal else PFrac in
+      Tacc (Tident (Qdot (Qident { id_str = "this" }, f_ident)), perm) in
     let mk_body = function
       | [] -> assert false
       | [f] -> mk_acc_pr f
@@ -174,12 +177,51 @@ module Translate = struct
     td_def   = td_def tmanifest tkind;
   }
 
-  let ppat_desc = function
-    | Parsetree.Ppat_var {txt; _} -> { id_str = txt }
-    | _ -> assert false (* TODO *)
+  let pty_int =
+    PTtyapp (Qident { id_str = "int" }, [])
 
-  let pattern p =
+  let rec pattern p =
     ppat_desc p.Parsetree.ppat_desc
+
+  and ppat_desc = function
+    | Parsetree.Ppat_any ->
+        assert false (* TODO *)
+    | Ppat_var {txt; _} ->
+        { id_str = txt }, pty_int
+    | Ppat_alias _ ->
+        assert false (* TODO *)
+    | Ppat_constant _ ->
+        assert false (* TODO *)
+    | Ppat_interval _ ->
+        assert false (* TODO *)
+    | Ppat_tuple _ ->
+        assert false (* TODO *)
+    | Ppat_construct _ ->
+        assert false (* TODO *)
+    | Ppat_variant _ ->
+        assert false (* TODO *)
+    | Ppat_record _ ->
+        assert false (* TODO *)
+    | Ppat_array _ ->
+        assert false (* TODO *)
+    | Ppat_or _ ->
+        assert false (* TODO *)
+    | Ppat_constraint (p, cty) ->
+        ignore cty; (* TODO *)
+        let p, _ = pattern p in
+        p, core_type cty
+    | Ppat_type _ ->
+        assert false (* TODO *)
+    | Ppat_lazy _ ->
+        assert false (* TODO *)
+    | Ppat_unpack _ ->
+        assert false (* TODO *)
+    | Ppat_exception _ ->
+        assert false (* TODO *)
+    | Ppat_extension _ ->
+        assert false (* TODO *)
+    | Ppat_open _ ->
+        assert false (* TODO *)
 
   let rec qualid = function
     | U.Qpreid id  -> Qident { id_str = id.pid_str }
@@ -270,11 +312,11 @@ module Translate = struct
     match expr_desc with
     | Uast.Sexp_ident {txt; _} ->
         Evar (longident txt)
-    | Uast.Sexp_constant Pconst_integer (n, None) ->
+    | Sexp_constant Pconst_integer (n, None) ->
         Econst (int_of_string n)
     | Sexp_fun (Nolabel, None, pat, expr, s) ->
         let arg_list, expr = loop_fun_arg [] expr in
-        let mk_arg a = Some (pattern a), None in
+        let mk_arg a = let p, ty = pattern a in Some p, Some ty in
         let arg_list = List.map mk_arg (pat :: arg_list) in
         let spec = spec s in
         Efun (arg_list, s_expression expr, spec)
@@ -292,6 +334,9 @@ module Translate = struct
     | Sexp_setfield (e1, {txt; _}, e2) ->
         let lhs = Efield (s_expression e1, longident txt) in
         Eassign (lhs, s_expression e2)
+    | Sexp_constraint (expr, cty) ->
+        ignore cty;
+        s_expression expr
     | _ -> assert false (* TODO *)
 
   let s_value_binding Uast.{spvb_expr; _} =
@@ -303,14 +348,53 @@ module Translate = struct
         ignore (rec_flag); (* TODO *)
         let td = type_decl td in
         let pr_repr = match td.td_def with
-          | TDrecord fields -> mk_representation_predicate td.td_ident fields in
+          TDrecord fields -> mk_representation_predicate td.td_ident fields in
         [Dtype td; Dlogic pr_repr]
     | Str_value (rec_flag, [{spvb_pat; spvb_expr; spvb_vspec; _}]) ->
         ignore rec_flag; (* TODO *)
-        let fun_id = pattern spvb_pat in
+        let fun_id, pty = pattern spvb_pat in
+        ignore pty; (* TODO *)
         let fun_expr = s_expression spvb_expr in
         let fun_spec = val_spec spvb_vspec in
         [Dmethod (fun_id, bind_spec fun_spec fun_expr)]
+    | Str_eval _ ->
+        assert false (* TODO *)
+    | Str_value _ ->
+        assert false (* TODO *)
+    | Str_primitive _ ->
+        assert false (* TODO *)
+    | Str_typext _ ->
+        assert false (* TODO *)
+    | Str_exception _ ->
+        assert false (* TODO *)
+    | Str_module _ ->
+        assert false (* TODO *)
+    | Str_recmodule _ ->
+        assert false (* TODO *)
+    | Str_modtype _ ->
+        assert false (* TODO *)
+    | Str_open _ ->
+        assert false (* TODO *)
+    | Str_class _ ->
+        assert false (* TODO *)
+    | Str_class_type _ ->
+        assert false (* TODO *)
+    | Str_include _ ->
+        assert false (* TODO *)
+    | Str_attribute _ ->
+        []
+    | Str_extension _ ->
+        assert false (* TODO *)
+    | Str_function _ ->
+        assert false (* TODO *)
+    | Str_prop _ ->
+        assert false (* TODO *)
+    | Str_ghost_type _ ->
+        assert false (* TODO *)
+    | Str_ghost_val  _ ->
+        assert false (* TODO *)
+    | Str_ghost_open _ ->
+        assert false (* TODO *)
     | _ -> assert false (* TODO *)
 
   let s_structure_item Uast.{sstr_desc; _} =
@@ -341,7 +425,8 @@ module Print = struct
     | Tfalse -> fprintf fmt "false"
     | Tident id -> fprintf fmt "%a" pp_ident id
     | Tconst n -> fprintf fmt "%d" n
-    | Tacc t -> fprintf fmt "acc(%a)" pp_term t
+    | Tacc (t, PTotal) -> fprintf fmt "acc(%a)" pp_term t
+    | Tacc (t, PFrac) -> fprintf fmt "acc(%a, 1/2)" pp_term t
     | Tidapp (id, [term]) ->
         fprintf fmt "%a.%a" pp_term term pp_ident id
     | Tidapp (id, term_list) ->
@@ -360,11 +445,15 @@ module Print = struct
     match ld_def with
     | None -> fprintf fmt "@[<hov 2>predicate %s (%a)"
         ld_ident.id_str pp_params ld_params
-    | Some ld_def -> fprintf fmt "@[<hov 2>predicate %s (%a){@\n%a@]@\n}"
+    | Some ld_def -> fprintf fmt "@[<hov 2>predicate %s (%a) {@\n%a@]@\n}"
         ld_ident.id_str pp_params ld_params pp_term ld_def
 
-  let pp_field fmt {f_ident; _} =
-    fprintf fmt "field %s: Int" f_ident.id_str
+  let pp_field fmt {f_ident; f_pty; _} =
+    match f_pty with
+    | PTtyapp (Qident {id_str = "int"}, _) ->
+        fprintf fmt "field %s: Int" f_ident.id_str
+    | _ ->
+        fprintf fmt "field %s: Ref" f_ident.id_str
 
   let pp_type_def fmt = function
     | TDrecord field_list ->
@@ -393,9 +482,14 @@ module Print = struct
     | None -> assert false (* TODO *)
     | Some id -> fprintf fmt "%s: Ref" id.id_str
 
-  let pp_repr_pred fmt (x, _) = match x with
-    | None -> assert false (* TODO *)
-    | Some x -> fprintf fmt "acc(%s.contents)" x.id_str
+  let pp_repr_pred fmt (x, pty) = match x, pty with
+    | None, None -> assert false (* TODO *)
+    | Some x, Some pty -> begin match pty with
+      | PTtyapp (Qident {id_str}, _) ->
+          fprintf fmt "%s_representation_predicate (%s)" id_str x.id_str
+      | _ ->
+          fprintf fmt "acc(%s.contents)" x.id_str end
+    | _ -> assert false (* TODO *)
 
   let pp_contract arg_list fmt = function
     | [] ->
@@ -415,7 +509,14 @@ module Print = struct
 
   let pp_method_body fmt = function
     | Efun (binder_list, e, spec) ->
-        fprintf fmt "@[(%a)@]@\n%a@\n{@\n%a@\n}"
+        let fmt_header = "@[<h>(%a)@ returns (res: Int)@]@\n" in
+        let fmt_spec = "%a@\n{@[<hov 2>@\n" in
+        let fmt_body = "res := %a@]@\n}" in
+        let fmt_all = fmt_header ^^ fmt_spec ^^ fmt_body in
+        fprintf fmt (* "@[<h>(%a)@ returns (res: Int)@]@\n\
+                     *  %a@\n{@[<hov 2>@\n\
+                     *  res := %a@]@\n}" *)
+          fmt_all
           (pp_list comma pp_binder) binder_list (pp_spec binder_list) spec
           pp_expr e
     | _ -> assert false (* TODO *)
@@ -431,5 +532,5 @@ module Print = struct
     List.iter (fun td -> fprintf fmt "%a@\n@\n" pp_decl td) vp
 
   let pp_stdlib fmt () =
-    fprintf fmt "field contents: Int"
+    fprintf fmt "field contents: Int //for OCaml references@\n"
 end
