@@ -47,7 +47,7 @@ let rec add_decl od =
   | Odecl.Omodule (loc, id, dl) ->
       Why3.Typing.open_scope id.id_loc id;
       List.iter add_decl dl;
-      Why3.Typing.close_scope ~import:true loc
+      Why3.Typing.close_scope ~import:false loc
 
 open Format
 

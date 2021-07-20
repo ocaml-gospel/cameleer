@@ -37,6 +37,9 @@ module Stdlib
   val (==) (x y: 'a) : bool
     ensures { result <-> same_location x y }
 
+  val (|>) (x: 'a) (f: 'a -> 'b) : 'b
+    ensures { result = f x }
+
   predicate is_pre_order (cmp: 'a -> 'a -> int) =
     (forall x. cmp x x = 0) /\
     (forall x y. cmp x y = 0 <-> cmp y x = 0) /\
@@ -287,6 +290,12 @@ end
 module SeqPermut
 
   use export seq.Permut
+
+end
+
+module SeqOfList
+
+  use export seq.OfList
 
 end
 

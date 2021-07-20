@@ -40,6 +40,7 @@ let () = List.iter (fun (x, y) -> Hstr.add driver x y)
       "@", "infix ++";
       "!", "prefix !";
       ":=", "infix :=";
+      "|>", "infix |>";
     ]
 
 let query_syntax str =
