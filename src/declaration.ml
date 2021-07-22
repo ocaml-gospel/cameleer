@@ -397,6 +397,8 @@ let subst info ctr_list =
 let s_structure, s_signature =
   let mod_type_table : (string, O.odecl list) Hashtbl.t = Hashtbl.create 16 in
 
+  let mod_expr_table : (string, O.odecl list) Hashtbl.t = Hashtbl.create 16 in
+
   let rec s_signature info s_sig =
     List.flatten (List.map (s_signature_item info) s_sig)
   and s_signature_item info Uast.{ sdesc; sloc } =
@@ -587,8 +589,10 @@ let s_structure, s_signature =
       (* TODO *)
     in
     let scope_loc = T.location spmb_loc in
-    let scope_id = T.(mk_id ~id_loc:(location loc) mod_bind_name) in
-    [ O.mk_omodule scope_loc scope_id (s_module_expr spmb_expr) ]
+    let scope_id  = T.(mk_id ~id_loc:(location loc) mod_bind_name) in
+    let scope_body = s_module_expr spmb_expr in
+    Hashtbl.add mod_expr_table mod_bind_name scope_body;
+    [O.mk_omodule scope_loc scope_id scope_body]
 
   and s_mod_apply _info funct arg =
     let qarg = match arg.spmod_desc with
@@ -596,7 +600,36 @@ let s_structure, s_signature =
           let id_loc = T.location loc in
           E.longident ~id_loc txt
       | _ -> assert false (* TODO *) in
+    let _qfunct = match funct.spmod_desc with
+      | Smod_ident {loc; txt} ->
+          let id_loc = T.location loc in
+          E.longident ~id_loc txt
+      | _ -> assert false (* TODO *) in
+    let _extract_functor_arg = function
+      | O.Omodule (_, id, l) :: _-> id, l
+      | _ -> assert false in
+    let _mk_subst id_arg_mod = function
+      | O.Odecl (_, Ptree.Dtype [{td_ident; _}]) ->
+          let qarg_mod_type = Qident id_arg_mod in
+          let qtsym = Qdot (qarg_mod_type, td_ident) in
+          let idtsym = PTtyapp (Qdot (qarg, td_ident), []) in
+          [CStsym (qtsym, [], idtsym)]
+      | O.Odecl (_, Dtype _) -> assert false (* TODO *)
+      | O.Odecl (_, Dlet (id, _, _, _)) ->
+          let qarg_mod_type = Qident id_arg_mod in
+          let lqvsym = Qdot (qarg_mod_type, id) in
+          let rqvsym = Qdot (qarg, id) in
+          [CSvsym (lqvsym, rqvsym)]
+      | _ -> [] in
     match funct.Uast.spmod_desc with
+    | Smod_ident {txt = Lident _s; _} ->
+        (* let odecl_list = Hashtbl.find mod_expr_table s in
+         * let id, l = extract_functor_arg odecl_list in
+         * let subst = List.fold_left (fun acc d -> mk_subst id d :: acc) [] l in
+         * let loc = T.location loc in
+         * ignore ([O.mk_odecl loc (Ptree.Dcloneexport
+         *                            (loc, qfunct, List.flatten subst))]); *)
+        [] (* TODO *)
     | Smod_ident {txt = Ldot (Lident x, y); loc} ->
         let subst =
           if x = "Map" || x = "Set" then
@@ -619,8 +652,10 @@ let s_structure, s_signature =
         let x_y = T.mk_id (x ^ "_" ^ y) in
         let qualid = Qdot (Qident (T.mk_id "ocamlstdlib"), x_y) in
         let loc = T.location loc in
-        [O.mk_odecl loc (Ptree.Dcloneexport (qualid, subst))]
-    | Smod_ident _ -> assert false (* TODO *)
+        [O.mk_odecl loc (Ptree.Dcloneexport (loc, qualid, subst))]
+    | Smod_ident {txt = Ldot (Lapply _, _); _} -> assert false (* TODO *)
+    | Smod_ident {txt = Ldot (Ldot _, _); _} -> assert false (* TODO *)
+    | Smod_ident {txt = Lapply _; _} -> assert false (* TODO *)
     | Smod_structure _ -> assert false (* TODO *)
     | Smod_functor _ -> assert false (* TODO *)
     | Smod_apply _ -> assert false (* TODO *)
