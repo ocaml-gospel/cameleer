@@ -408,8 +408,9 @@ module Print = struct
   open Translate
   open Format
 
-  let comma  fmt () = fprintf fmt ",@ "
-  let andand fmt () = fprintf fmt " &&@ "
+  let newline fmt () = fprintf fmt "@\n"
+  let comma   fmt () = fprintf fmt ",@ "
+  let andand  fmt () = fprintf fmt " &&@ "
 
   let rec pp_list sep pp_elt fmt = function
     | [] -> ()
@@ -507,18 +508,34 @@ module Print = struct
         fprintf fmt "@[requires %a@]@\n@[ensures %a@]"
           (pp_contract arg_list) sp_pre (pp_contract arg_list) sp_post
 
+  let pp_unfold fmt = function
+    | _, Some (PTtyvar _) -> ()
+    | _, Some (PTtyapp (Qdot _, _)) -> ()
+    | Some s, Some (PTtyapp (Qident id, _)) ->
+        fprintf fmt "unfold %s_representation_predicate(%s)" id.id_str s.id_str
+    | _ -> ()
+
+  let pp_fold fmt = function
+    | _, Some (PTtyvar _) -> ()
+    | _, Some (PTtyapp (Qdot _, _)) -> ()
+    | Some s, Some (PTtyapp (Qident id, _)) ->
+        fprintf fmt "fold %s_representation_predicate(%s)" id.id_str s.id_str
+    | _ -> ()
+
   let pp_method_body fmt = function
     | Efun (binder_list, e, spec) ->
-        let fmt_header = "@[<h>(%a)@ returns (res: Int)@]@\n" in
-        let fmt_spec = "%a@\n{@[<hov 2>@\n" in
-        let fmt_body = "res := %a@]@\n}" in
-        let fmt_all = fmt_header ^^ fmt_spec ^^ fmt_body in
-        fprintf fmt (* "@[<h>(%a)@ returns (res: Int)@]@\n\
-                     *  %a@\n{@[<hov 2>@\n\
-                     *  res := %a@]@\n}" *)
-          fmt_all
+        (* let fmt_header = "@[<h>(%a)@ returns (res: Int)@]@\n" in
+         * let fmt_spec = "%a@\n{@[<hov 2>@\n" in
+         * let fmt_body = "res := %a@]@\n}" in
+         * let fmt_all = fmt_header ^^ fmt_spec ^^ fmt_body in *)
+        fprintf fmt "@[<h>(%a)@ returns (res: Int)@]@\n\
+                     %a@\n{@\n\
+                     %a@\n\
+                     res := %a@\n\
+                     %a@\n}"
           (pp_list comma pp_binder) binder_list (pp_spec binder_list) spec
-          pp_expr e
+          (pp_list newline pp_unfold) binder_list pp_expr e
+          (pp_list newline pp_fold) binder_list
     | _ -> assert false (* TODO *)
 
   let pp_decl fmt = function
