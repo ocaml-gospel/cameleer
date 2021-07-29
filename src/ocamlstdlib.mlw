@@ -12,6 +12,7 @@ module Stdlib
   use export ref.Ref
   use export ref.Refint
 
+
   let invalid_arg (s: string)
     raises  { Invalid_argument }
     returns { _ -> false }
@@ -179,6 +180,7 @@ module Stdlib
     use import list.Append    as A
     use import list.Reverse   as R
     use import list.RevAppend as RA
+    use import list.Map       as LM
 
     let function rev (l: list 'a) : list 'a =
       R.reverse l
@@ -204,6 +206,8 @@ module Stdlib
     val list_exists (p: 'a -> bool) (l: list 'a) : bool
       ensures { result <-> exists x. mem x l /\ p x }
 
+    val map (f: 'a -> 'b ) (l: list 'a) : list 'b
+      ensures { result = LM.map f l }
   end
 
   use import set.Fset as FS
@@ -263,6 +267,43 @@ module Stdlib
 
     val copy (q : t 'a) : t 'a
       ensures { result.view == q.view }
+
+  end
+
+  scope Stack
+
+    type t 'a = abstract {
+      mutable view: seq 'a;
+    }
+
+    use seq.Seq
+
+    exception Empty
+
+    val create () : t 'a
+      ensures { result.view = empty }
+
+    val is_empty (q: t 'a) : bool
+      ensures { result <-> q.view = empty }
+
+    val pop (q: t 'a) : 'a
+      writes  { q }
+      raises  { Empty -> q.view = empty /\ q.view = (old q).view }
+      ensures { (old q).view = cons result q.view }
+
+    val top (q: t 'a) : 'a
+      raises  { Empty -> q.view = empty }
+      ensures { result = Seq.get q.view 0 }
+
+    val push (x: 'a) (q: t 'a) : unit
+      writes  { q }
+      ensures { q.view = cons x (old q).view }
+
+    val copy (q : t 'a) : t 'a
+      ensures { result.view == q.view }
+
+
+
 
   end
 
@@ -336,12 +377,18 @@ module Hashtbl_Make
               | Nil -> h.view = (old h).view[k <- Cons v Nil]
               | Cons _ r -> h.view = (old h).view[k <- Cons v r] end }
 
+  val copy (h: t 'a) : t 'a
+    ensures { result = h }
+
 end
 
 module Map_Make
 
   use map.Map, set.Fset
   use Stdlib
+  use export list.List
+  use export list.Nth
+  use seq.OfList
 
   scope Ord
     type t
@@ -362,12 +409,12 @@ module Map_Make
   val is_empty (s: t 'a) : bool
     ensures { result <-> is_empty s.dom }
 
-  val mem (k: key) (s: t 'a) : bool
+  val function mem (k: key) (s: t 'a) : bool
     ensures { result <-> mem k s.dom }
 
   val find (k: key) (s: t 'a) : 'a
-    raises  { Not_found -> not mem k s.dom }
-    ensures { mem k s.dom /\ result = s.view k }
+    raises  { Not_found -> not Fset.mem k s.dom }
+    ensures { Fset.mem k s.dom /\ result = s.view k }
 
   val add (k: key) (v: 'a) (s: t 'a) : t 'a
     ensures { result.dom = add k s.dom }
@@ -375,8 +422,8 @@ module Map_Make
 
   val function find_opt (x: key) (m: t 'a) : option 'a
     ensures { match result with
-              | None   -> not mem x m.dom
-              | Some r -> mem x m.dom /\ r = m.view x end }
+              | None   -> not Fset.mem x m.dom
+              | Some r -> Fset.mem x m.dom /\ r = m.view x end }
 
   val update (x: key) (f: option 'a -> option 'a) (m: t 'a) : t 'a
     ensures { match f (find_opt x m) with
@@ -384,12 +431,27 @@ module Map_Make
               | Some z -> result.dom  = add x m.dom /\
                           result.view = m.view[x <- z] end }
 
+  val cardinal (m: t 'a) : int
+    ensures { result = Fset.cardinal m.dom }
+
+  val remove (k: key) (s: t 'a) : t 'a
+    ensures { forall e. Fset.mem e s.dom /\ e <> k <-> Fset.mem e result.dom }
+    ensures { result.view = s.view }
+    ensures { not (Fset.mem k result.dom) }
+
+  val bindings (m: t 'a) : list (key, 'a )
+    ensures { forall a, b. a = m.view b /\ Fset.mem b m.dom <-> List.mem (b, a) result }
+    ensures { forall a. Fset.mem a m.dom -> exists p. List.mem p result /\ fst p = a }
+    ensures { forall i j. 0 <= i < List.length result -> 0 <= j < List.length result ->
+                      i <> j -> nth i result <> nth j result }
+
 end
 
 module Set_Make
 
   use map.Map, set.Fset
   use Stdlib
+  use list.List
 
   scope Ord
     type t
@@ -418,6 +480,23 @@ module Set_Make
 
   val add (x: elt) (s: t) : t
     ensures { result.dom = add x s.dom }
+
+  val remove  (x: elt) (s: t) : t
+    ensures { result.dom = remove x s.dom }
+
+  val cardinal (s : t) : int
+    ensures { result = cardinal s.dom }
+
+  val elements (s : t) : list elt
+    ensures { forall e. List.mem e result <-> mem e s.dom}
+    ensures { List.length result = cardinal s.dom}
+
+  val exists_ (f : elt -> bool) (s : t) : bool
+    ensures { result <-> exists e. mem e s.dom /\ f e }
+
+  val filter (f : elt -> bool) (s : t) : t
+    ensures { forall e. mem e result.dom <-> (mem e s.dom /\ f e) }
+
 
 end
 
@@ -578,9 +657,15 @@ module SeqOfList
 
 end
 
-module SeqOfList
+module ListOfSeq
 
-  use export seq.OfList
+  use export seq.ToList
+
+end
+
+module FsetSum
+
+  use export set.FsetSum
 
 end
 
