@@ -335,7 +335,7 @@ module Translate = struct
         let lhs = Efield (s_expression e1, longident txt) in
         Eassign (lhs, s_expression e2)
     | Sexp_constraint (expr, cty) ->
-        ignore cty;
+        ignore cty; (* TODO *)
         s_expression expr
     | _ -> assert false (* TODO *)
 
