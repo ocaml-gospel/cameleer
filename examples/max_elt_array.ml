@@ -1,7 +1,7 @@
 let max a =
   let x = ref 0 in
   let y = ref (Array.length a - 1) in
-  while not (!x = !y) do
+  while !x <> !y do
   (*@ variant   !y - !x
       invariant 0 <= !x <= !y < Array.length a
       invariant forall i. (0 <= i < !x \/ !y < i < Array.length a) ->

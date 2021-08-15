@@ -37,6 +37,12 @@ module Stdlib
   val (==) (x y: 'a) : bool
     ensures { result <-> same_location x y }
 
+  val (!=) (x y: 'a) : bool
+    ensures { result <-> not same_location x y }
+
+  val (~=) (x y: int) : bool
+    ensures { result <-> not x = y }
+
   val (|>) (x: 'a) (f: 'a -> 'b) : 'b
     ensures { result = f x }
 

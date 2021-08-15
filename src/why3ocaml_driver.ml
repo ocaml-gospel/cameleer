@@ -7,16 +7,13 @@
    library. The translation plugin should then consume such file, similarly to
    how Why3 extraction mechanism deals with drivers. *)
 
-module I  = Gospel.Identifier
-module Ty = Gospel.Ttypes
 open Gospel.Utils
 
 type syntax_map = string Hstr.t
 
 let driver: syntax_map = Hstr.create 16
 let () = List.iter (fun (x, y) -> Hstr.add driver x y)
-    [
-      "integer", "int";
+    [ "integer", "int";
       "int", "int";
       "+", "infix +";
       "*", "infix *";
@@ -41,7 +38,7 @@ let () = List.iter (fun (x, y) -> Hstr.add driver x y)
       "!", "prefix !";
       ":=", "infix :=";
       "|>", "infix |>";
-    ]
+      "<>", "infix ~="; ]
 
 let query_syntax str =
   Hstr.find_opt driver str
