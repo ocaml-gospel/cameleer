@@ -34,25 +34,25 @@ let empty_subst = {
   subst_pr = Mqual.empty;
 }
 
-let add_ts_subst k td subst =
+let add_ts_subst k subst td =
   { subst with subst_ts = Mstr.add k td subst.subst_ts }
 
-let add_td_subst k td subst =
+let add_td_subst k subst td =
   { subst with subst_td = Mstr.add k td subst.subst_td }
 
-let add_fs_subst k q subst =
+let add_fs_subst k subst q =
   { subst with subst_fs = Mstr.add k q subst.subst_fs }
 
-let add_fd_subst k q subst =
+let add_fd_subst k subst q =
   { subst with subst_fd = Mqual.add k q subst.subst_fd }
 
-let add_ps_subst k q subst =
+let add_ps_subst k subst q =
   { subst with subst_ps = Mstr.add k q subst.subst_ps }
 
-let add_pd_subst k q subst =
+let add_pd_subst k subst q =
   { subst with subst_pd = Mqual.add k q subst.subst_pd }
 
-let add_pr_subst k pr subst =
+let add_pr_subst k subst pr =
   { subst with subst_pr = Mqual.add k pr subst.subst_pr }
 
 (* FIXME: this is so ugly... *)

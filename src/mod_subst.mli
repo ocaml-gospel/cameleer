@@ -22,12 +22,12 @@ type subst = private {
 
 val empty_subst : subst
 
-val add_ts_subst : Mstr.key  -> Ptree.type_decl -> subst -> subst
-val add_td_subst : Mstr.key  -> Ptree.type_decl -> subst -> subst
-val add_fs_subst : Mstr.key  -> Ptree.qualid    -> subst -> subst
-val add_fd_subst : Mqual.key -> Ptree.qualid    -> subst -> subst
-val add_ps_subst : Mstr.key  -> Ptree.qualid    -> subst -> subst
-val add_pd_subst : Mqual.key -> Ptree.qualid    -> subst -> subst
-val add_pr_subst : Mqual.key -> Decl.prop_kind  -> subst -> subst
+val add_ts_subst : Mstr.key  -> subst -> Ptree.type_decl -> subst
+val add_td_subst : Mstr.key  -> subst -> Ptree.type_decl -> subst
+val add_fs_subst : Mstr.key  -> subst -> Ptree.qualid    -> subst
+val add_fd_subst : Mqual.key -> subst -> Ptree.qualid    -> subst
+val add_ps_subst : Mstr.key  -> subst -> Ptree.qualid    -> subst
+val add_pd_subst : Mqual.key -> subst -> Ptree.qualid    -> subst
+val add_pr_subst : Mqual.key -> subst -> Decl.prop_kind  -> subst
 
 (* val subst_decl : subst -> Ptree.decl -> Ptree.decl list *)
