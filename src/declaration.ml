@@ -42,68 +42,95 @@ let param_of_cty cty =
   let loc = T.location cty.ptyp_loc in
   (loc, None, false, E.core_type cty)
 
+let field_of_label_decl lbl_decl =
+  let is_ghost attributes =
+    List.exists (fun {attr_name; _} -> attr_name.txt = "ghost") attributes in
+  let pld_mutable = lbl_decl.pld_mutable in
+  let pld_id = lbl_decl.pld_name in
+  let f_loc = T.location lbl_decl.pld_loc in
+  let f_id  = T.(mk_id ~id_loc:(location pld_id.loc) pld_id.txt) in
+  let f_pty = E.core_type lbl_decl.pld_type in
+  let mut = match pld_mutable with Mutable -> true | _ -> false in
+  let ghost = is_ghost lbl_decl.pld_attributes in
+  mk_field f_loc f_id f_pty ~mut ~ghost
+
 (** Translate a list of OCaml constructors declaration into the corresponding
     Why3's Ptree algebraic constructors list. *)
-let constructor_declaration info {pcd_loc; pcd_name; pcd_args; _} =
+let constructor_declaration info er {pcd_loc; pcd_name; pcd_args; _} =
+  let add_field acc lbl = field_of_label_decl lbl :: acc in
+  let id_loc = T.location pcd_name.loc in
+  let id = T.mk_id ~id_loc pcd_name.txt in
+  let loc = T.location pcd_loc in
   match pcd_args with
-  | Pcstr_tuple cty_list -> let id_loc = T.location pcd_name.loc in
-      let id = T.mk_id ~id_loc pcd_name.txt in
+  | Pcstr_tuple cty_list ->
       let construct_arith = List.length cty_list in
       Hashtbl.add info.O.info_arith_construct pcd_name.txt (construct_arith);
-      (T.location pcd_loc, id, List.map param_of_cty cty_list)
-  | Pcstr_record _ -> assert false
+      (loc, id, List.map param_of_cty cty_list)
+  | Pcstr_record lbl_list ->
+      let id_pty = (String.uncapitalize_ascii pcd_name.txt) ^ "_rec" in
+      let id_pty = T.mk_id ~id_loc id_pty in
+      let fields = List.fold_left add_field [] lbl_list in
+      let fields = List.rev fields in
+      Hashtbl.add er id_pty fields;
+      let pty = PTtyapp (Qident id_pty, []) in
+      let param = (loc, None, false, pty) in
+      (loc, id, [param])
+
+type embedded_record = {
+  er_typ : type_def;
+  er_rec : (ident * field list) list;
+}
+
+let mk_embedded_record ?(er_rec=[]) er_typ =
+  { er_typ; er_rec }
 
 (** Convert a [Uast] type definition into a Why3's Ptree [type_def]. We
     follow the manifest-kind logic defined in the OCaml [Parsetree]. *)
 let td_def info spec_fields td_manifest td_kind =
-  let is_ghost attributes =
-    List.exists (fun {attr_name; _} -> attr_name.txt = "ghost") attributes in
   let field Uast.{f_preid; f_pty; f_mutable; _} =
     let id_loc = T.location f_preid.pid_loc in
     let id  = T.(mk_id ~id_loc f_preid.pid_str) in
     let pty = T.pty f_pty in
     mk_field id.id_loc id pty ~mut:f_mutable ~ghost:true in
-  let field_of_label_decl lbl_decl =
-    let pld_mutable = lbl_decl.pld_mutable in
-    let pld_id = lbl_decl.pld_name in
-    let f_loc = T.location lbl_decl.pld_loc in
-    let f_id  = T.(mk_id ~id_loc:(location pld_id.loc) pld_id.txt) in
-    let f_pty = E.core_type lbl_decl.pld_type in
-    let mut = match pld_mutable with Mutable -> true | _ -> false in
-    let ghost = is_ghost lbl_decl.pld_attributes in
-    mk_field f_loc f_id f_pty ~mut ~ghost in
   let add_reg_field lbl acc = field_of_label_decl lbl :: acc in
+  let add_rec id lbl acc = (id, lbl) :: acc in
   match td_manifest, td_kind with
   | None, Ptype_abstract ->
-      TDrecord (List.map field spec_fields)
+      mk_embedded_record (TDrecord (List.map field spec_fields))
   | Some cty, Ptype_abstract ->
-      TDalias (E.core_type cty)
+      mk_embedded_record (TDalias (E.core_type cty))
   | None, Ptype_variant constr_decl_list ->
-      TDalgebraic (List.map (constructor_declaration info) constr_decl_list)
+      let er = Hashtbl.create 16 in
+      let alg = List.map (constructor_declaration info er) constr_decl_list in
+      let er_rec = Hashtbl.fold add_rec er [] in
+      mk_embedded_record (TDalgebraic alg) ~er_rec
   | None, Ptype_record lbl_list ->
       let model_fields = List.map field spec_fields in
       let all_fields = List.fold_right add_reg_field lbl_list model_fields in
-      TDrecord all_fields
+      mk_embedded_record (TDrecord all_fields)
   | _ -> assert false (* TODO *)
 
 let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) =
-  let ephemeral, invariant, spec_fields = match tspec with
+  let td_mut, invariant, spec_fields = match tspec with
     | None -> false, [], []
     | Some s -> s.ty_ephemeral, s.ty_invariant, s.ty_field in
-  {
-    td_loc    = T.location td.tloc;
-    td_ident  = T.(mk_id tname.txt ~id_loc:(location tname.loc));
-    td_params = List.map td_params td.tparams;
-    td_vis    = td_private tmanifest td.tprivate tkind;
-    td_mut    = ephemeral;
-    td_inv    = List.map (Uterm.term false) invariant;
-    td_wit    = None;
-    td_def    = td_def info spec_fields tmanifest tkind
-  }
+  let td_loc = T.location td.tloc in
+  let td_params = List.map td_params td.tparams in
+  let td_vis = td_private tmanifest td.tprivate tkind in
+  let td_inv = List.map (Uterm.term false) invariant in
+  let rec_decl (td_ident, field_list) = {
+    td_loc; td_ident; td_params; td_vis; td_mut; td_inv;
+    td_wit = None; td_def = TDrecord field_list; } in
+  let {er_typ; er_rec} = td_def info spec_fields tmanifest tkind in
+  let main_def = {
+    td_loc; td_params; td_vis; td_mut; td_inv; td_wit = None; td_def = er_typ;
+    td_ident = T.(mk_id tname.txt ~id_loc:(location tname.loc)); } in
+  let rec_def = List.fold_left (fun acc fl -> rec_decl fl :: acc) [] er_rec in
+  main_def :: rec_def
 
 let mk_type_decl info loc type_decl_list =
   let td_list = List.map (type_decl info) type_decl_list in
-  O.mk_dtype loc td_list
+  O.mk_dtype loc (List.flatten td_list)
 
 let logic_attr = "logic"
 let lemma_attr = "lemma"
@@ -254,18 +281,18 @@ let subst info ctr_list =
     | Uast.Wtype (id, s_type_decl) ->
         let td = type_decl info s_type_decl in
         let id_txt = E.string_of_longident id.txt in
-        add_ts_subst id_txt td subst
+        List.fold_left (add_ts_subst id_txt) subst td
     | Wtypesubst (id, s_type_decl) ->
         let td = type_decl info s_type_decl in
         let id_txt = E.string_of_longident id.txt in
-        add_td_subst id_txt td subst
+        List.fold_left (add_td_subst id_txt) subst td
     | Wpredicate (id, qr) ->
         let ql = T.preid id and qr = T.qualid qr in
-        add_ps_subst ql.id_str qr subst
+        add_ps_subst ql.id_str subst qr
     | Wfunction (id, qr) ->
         (* FIXME: don't really need that conversion to preid *)
         let ql = T.preid id and qr = T.qualid qr in
-        add_fs_subst ql.id_str qr subst
+        add_fs_subst ql.id_str subst qr
     (* | Wfunctionsubst (ql, qr) ->
      *     let ql = T.qualid ql and qr = T.qualid qr in
      *     add_fd_subst ql qr subst
