@@ -120,10 +120,10 @@ let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) =
   let td_inv = List.map (Uterm.term false) invariant in
   let rec_decl (td_ident, field_list) = {
     td_loc; td_ident; td_params; td_vis; td_mut; td_inv;
-    td_wit = None; td_def = TDrecord field_list; } in
+    td_wit = []; td_def = TDrecord field_list; } in
   let {er_typ; er_rec} = td_def info spec_fields tmanifest tkind in
   let main_def = {
-    td_loc; td_params; td_vis; td_mut; td_inv; td_wit = None; td_def = er_typ;
+    td_loc; td_params; td_vis; td_mut; td_inv; td_wit = []; td_def = er_typ;
     td_ident = T.(mk_id tname.txt ~id_loc:(location tname.loc)); } in
   let rec_def = List.fold_left (fun acc fl -> rec_decl fl :: acc) [] er_rec in
   main_def :: rec_def
