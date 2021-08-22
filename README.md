@@ -41,7 +41,7 @@ Why3. Check [here](https://www.lri.fr/~marche/MPRI-2-36-1/install.html) for a
 detailed explanation on how to install automated provers Alt-Ergo, CVC4, and Z3,
 as well as the Coq proof assistant.
 
-Do not forget to run `why3 config --detect` after installing all the provers.
+Do not forget to run `why3 config detect` after installing all the provers.
 
 Running Cameleer
 ----------------
