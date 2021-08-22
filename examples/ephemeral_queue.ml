@@ -26,13 +26,6 @@ let push x q =
 (*@ push x q
       ensures q.view = (old q.view) @ (x :: []) *)
 
-let [@ghost] head_list = function
-  | [] -> assert false
-  | x :: _ -> x
-(*@ r = head_list param
-      requires param <> []
-      ensures  match param with [] -> false | y :: _ -> r = y *)
-
 let [@ghost] tail_list = function
   | [] -> assert false
   | _ :: l -> l

@@ -55,16 +55,6 @@
   </goal>
  </transf>
  </goal>
- <goal name="head_list&#39;vc" expl="VC for head_list" proved="true">
- <transf name="split_vc" proved="true" >
-  <goal name="head_list&#39;vc.0" expl="unreachable point" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="4"/></proof>
-  </goal>
-  <goal name="head_list&#39;vc.1" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="10"/></proof>
-  </goal>
- </transf>
- </goal>
  <goal name="tail_list&#39;vc" expl="VC for tail_list" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="tail_list&#39;vc.0" expl="unreachable point" proved="true">
