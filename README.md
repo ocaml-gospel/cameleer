@@ -2,18 +2,6 @@ Cameleer
 ========
 A Deductive Verification Tool for OCaml Programs
 
-Dependency on the GOSPEL project
--------------------------------
-Cameleer depends on the GOSPEL specification language (https://github.com/ocaml-gospel/gospel). Since the GOSPEL opam
-package is yet to be release, one should first clone it and install it before
-`cameleer`:
-```
-git clone -b implementations_gospel https://github.com/ocaml-gospel/gospel
-opam pin add path/to/gospel
-```
-This will pin the `gospel` package and ask to install it. Press `RET` or type
-`y` to accept both the pin add procedure and the installation part.
-
 Install
 -------
 First, start by cloning the Cameleer project:
@@ -28,6 +16,8 @@ Next, pin add the `cameleer` package:
 ```
 Press `RET` or type `y` to accept both the pin add procedure and again to
 install `cameleer`.
+Cameleer depends on the GOSPEL specification language (https://github.com/ocaml-gospel/gospel). Since the GOSPEL opam
+package is yet to be released, this will pin that too for you (using a commit on the `implementations_gospel` branch).
 
 After installation succeeds, you can try `cameleer` by doing
 ```

@@ -23,3 +23,6 @@ depends: [
   "gospel"
   "ocaml" {>= "4.07"}
 ]
+pin-depends: [
+  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#c60766c5bc3d1a17db4319733c63e64f31c4f6be"
+]
