@@ -145,7 +145,7 @@ let is_lemma attributes =
 let is_ghost attributes =
   List.exists (fun {attr_name; _} -> attr_name.txt = ghost_attr) attributes
 
-let val_decl loc vd g =
+let val_decl loc vd ghost =
   let rec flat_ptyp_arrow ct = match ct.ptyp_desc with
     | Ptyp_var _ | Ptyp_tuple _ | Ptyp_constr _ -> [ct]
     | Ptyp_arrow (_, t1, t2) ->
@@ -182,8 +182,9 @@ let val_decl loc vd g =
         mk_ghost_param lb :: mk_param lb_args core_tys
     | lb :: lb_args, ct :: core_tys ->
         (mk_single_param lb ct) :: mk_param lb_args core_tys in
-  let mk_param_no_spec ct = let loc = T.location ct.ptyp_loc in
-    loc, None, false, E.core_type ct in
+  let mk_param_no_spec i ct = let loc = T.location ct.ptyp_loc in
+    let id = T.mk_id ("x" ^ string_of_int i) ~id_loc:loc in
+    loc, Some id, false, E.core_type ct in
   let mk_vals params ret pat mask =
     let vd_id_str = vd.Uast.vname.txt in
     let vd_id_loc = vd.Uast.vname.loc in
@@ -193,7 +194,7 @@ let val_decl loc vd g =
       let e_any = E.mk_expr e_any ~expr_loc:(T.location vd.Uast.vloc) in
       let kind = if is_logic vd.vattributes then Expr.RKfunc
         else Expr.RKnone in
-      O.mk_dlet loc id g kind e_any in
+      O.mk_dlet loc id ghost kind e_any in
     match vd.Uast.vspec with
     | None   -> mk_val (mk_id vd_id_str) params ret pat mask empty_spec
     | Some s -> mk_val (mk_id vd_id_str) params ret pat mask (vspec s) in
@@ -201,18 +202,20 @@ let val_decl loc vd g =
     let core_tys = flat_ptyp_arrow vd.Uast.vtype in
     let core_tys, last = Lists.chop_last core_tys in
     let params, pat, mask = match vd.Uast.vspec with
-      | None -> let param_list = List.map mk_param_no_spec core_tys in
+      | None | Some { sp_header = None; _ } ->
+          let param_list = List.mapi mk_param_no_spec core_tys in
           (* when there is no specification, there is no pattern
              in the return tuple *)
           let pat = T.(mk_pattern Pwild ~pat_loc:(location last.ptyp_loc)) in
           param_list, pat, Ity.MaskVisible
-      | Some s -> let params = mk_param s.Uast.sp_hd_args core_tys in
+      | Some { sp_header = Some hd; _ } ->
+          let params = mk_param hd.sp_hd_args core_tys in
           let mk_pat lb = let pat_loc = loc_of_lb_arg lb in
             Uterm.mk_pattern (Pvar (ident_of_lb_arg lb)) ~pat_loc in
           let mk_mask = function
             | Uast.Lnone  _ | Loptional _ | Lnamed _ | Lunit -> Ity.MaskVisible
             | Uast.Lghost _ -> Ity.MaskGhost in
-          let lb_list = s.Uast.sp_hd_ret in
+          let lb_list = hd.sp_hd_ret in
           let pat_list  = List.map mk_pat lb_list in
           let mask_list = List.map mk_mask lb_list in
           let pat, mask = match pat_list, mask_list with

@@ -859,11 +859,12 @@ and s_value_binding info svb =
         Loc.join (T.location pid_loc) (args_pos r)
     | _ -> assert false (* TODO: Lunit *) in
   let subst_args_expr args expr = function
-    | None -> args, expr
-    | Some {sp_hd_args; _} -> if List.length args <> List.length sp_hd_args then
-        Loc.errorm ~loc:(args_pos sp_hd_args)
+    | None  | Some { sp_header = None; _ } -> args, expr
+    | Some { sp_header = Some hd; _} ->
+        if List.length args <> List.length hd.sp_hd_args then
+        Loc.errorm ~loc:(args_pos hd.sp_hd_args)
           "The number of arguments in spec and in the code do not match.";
-        let spec_args = List.map2 mk_arg args sp_hd_args in
+        let spec_args = List.map2 mk_arg args hd.sp_hd_args in
         spec_args, List.fold_right2 pair_args spec_args args expr in
   let rec loop acc expr = match expr.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->

@@ -24,10 +24,10 @@ end
     the [sp_hd_ret] field to name the result value of the function. *)
 let sp_post sp_hd_ret sp_post =
   let term_loc = T.location sp_post.Uast.term_loc in
+  let mk_pvar lb = (* create a [Pvar] pattern out of a [Tt.lb_arg] *)
+    let pat_loc = loc_of_lb_arg lb in
+    T.mk_pattern (Pvar (ident_of_lb_arg lb)) ~pat_loc in
   let pvar_of_lb_arg_list lb_arg_list =
-    let mk_pvar lb = (* create a [Pvar] pattern out of a [Tt.lb_arg] *)
-      let pat_loc = loc_of_lb_arg lb in
-      T.mk_pattern (Pvar (ident_of_lb_arg lb)) ~pat_loc in
     List.map mk_pvar lb_arg_list in
   let pat = match pvar_of_lb_arg_list sp_hd_ret with
     | [p] -> p
@@ -62,18 +62,20 @@ let empty_spec = {
 
 let vspec spec =
   let sp_writes  = List.map (T.term false) spec.Uast.sp_writes in
-  let sp_checkrw = match sp_writes with [] -> false |  _ -> true in {
-  sp_pre     = List.map (T.term false) spec.Uast.sp_pre;
-  sp_post    = List.map (sp_post spec.Uast.sp_hd_ret) spec.Uast.sp_post;
-  sp_xpost   = List.map sp_xpost spec.sp_xpost;
-  sp_reads   = [];
-  sp_writes;
-  sp_alias   = [];
-  sp_variant = List.map (fun t -> T.term false t, None) spec.sp_variant;
-  sp_checkrw;
-  sp_diverge = spec.sp_diverge;
-  sp_partial = false;
-}
+  let sp_checkrw = match sp_writes with [] -> false |  _ -> true in
+  let sp_post = match spec.Uast.sp_header with
+    | None -> List.map sp_post_no_ret spec.sp_post
+    | Some hd -> List.map (sp_post hd.sp_hd_ret) spec.sp_post in
+  { sp_pre     = List.map (T.term false) spec.Uast.sp_pre;
+    sp_post;
+    sp_xpost   = List.map sp_xpost spec.sp_xpost;
+    sp_reads   = [];
+    sp_writes;
+    sp_alias   = [];
+    sp_variant = List.map (fun t -> T.term false t, None) spec.sp_variant;
+    sp_checkrw;
+    sp_diverge = spec.sp_diverge;
+    sp_partial = false; }
 
 let fun_spec spec = {
   sp_pre     = List.map (T.term false) spec.Uast.fun_req;
