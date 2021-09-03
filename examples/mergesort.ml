@@ -28,12 +28,12 @@ module Make (E: PRE_ORD) = struct
         variant l *)
 
   (*@ lemma sorted_mem: forall x l.
-        (forall y. List.mem y l -> le x y) /\ sorted_list l <->
+        (forall y. List.mem y l -> E.le x y) /\ sorted_list l <->
         sorted_list (x :: l) *)
 
   (*@ lemma sorted_append: forall l1 l2.
         (sorted_list l1 && sorted_list l2 &&
-          (forall x y. List.mem x l1 -> List.mem y l2 -> le x y)) <->
+          (forall x y. List.mem x l1 -> List.mem y l2 -> E.le x y)) <->
         sorted_list (l1 ++ l2) *)
 
   let rec merge_aux acc l1 l2 =
@@ -44,8 +44,8 @@ module Make (E: PRE_ORD) = struct
                      else merge_aux (y :: acc) l1 ys
   (*@ r = merge_aux acc l1 l2
         requires sorted_list (List.rev acc) && sorted_list l1 && sorted_list l2
-        requires forall x y. List.mem x acc -> List.mem y l1 -> le x y
-        requires forall x y. List.mem x acc -> List.mem y l2 -> le x y
+        requires forall x y. List.mem x acc -> List.mem y l1 -> E.le x y
+        requires forall x y. List.mem x acc -> List.mem y l2 -> E.le x y
         ensures  sorted_list r
         ensures  permut r (acc @ l1 @ l2)
         variant  l1, l2 *)
