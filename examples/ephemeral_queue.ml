@@ -46,9 +46,8 @@ let pop q =
   q.view <- tail_list q.view;
   q.size <- q.size - 1;
   x
-(*@ x = pop q
-      raises  Not_found -> is_empty (old q)
-      ensures x :: q.view = (old q).view *)
+(*@ raises  Not_found -> is_empty (old q)
+    ensures result :: q.view = (old q).view *)
 
 let transfer q1 q2 =
   while not (is_empty q1) do
