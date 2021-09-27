@@ -130,7 +130,7 @@ let mk_refine_modules info top_mod_name =
   Hashtbl.iter mk_module info.Odecl.info_refinement
 
 let read_channel env path file c =
-  if !debug then Format.eprintf "reading file '%s'@." file;
+  if !debug then Format.eprintf "Reading file '%s'@." file;
   let mod_name =
     let f = Filename.basename file in
     String.capitalize_ascii (Filename.chop_extension f) in

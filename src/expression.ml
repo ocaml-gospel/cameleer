@@ -418,6 +418,9 @@ let rec term info Uast.{spexp_desc = p_desc; spexp_loc; _} =
   let is_raise = function
     | Uast.Sexp_ident {txt = Lident "raise"; _} -> true
     | _ -> false in
+  let is_array_get = function
+    | Uast.Sexp_ident {txt = Ldot (Lident "Array", "get"); _} -> true
+    | _ -> false in
   let pexp_desc = function
     | Uast.Sexp_ident {txt;loc} ->
         Tident (longident ~id_loc:(T.location loc) txt)
@@ -443,6 +446,9 @@ let rec term info Uast.{spexp_desc = p_desc; spexp_loc; _} =
         assert false (* TODO *)
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_and s.spexp_desc ->
         Tbinop (arg_term arg1, Why3.Dterm.DTand, arg_term arg2)
+    | Uast.Sexp_apply (s, [arg1; arg2]) when is_array_get s.spexp_desc ->
+        let id_app = Qdot (Qident (T.mk_id "Array"), T.mk_id "mixfix []") in
+        Tidapp (id_app, [arg_term arg1; arg_term arg2])
     | Uast.Sexp_apply (s, [arg1; arg2]) when is_or s.spexp_desc ->
         ignore (arg1);
         ignore (arg2);

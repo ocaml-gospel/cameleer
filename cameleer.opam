@@ -25,5 +25,5 @@ depends: [
   "ppxlib" {>= "0.23.0"}
 ]
 pin-depends: [
-  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#6f4f54842b8481642ba398641028eb1f97e4971c"
+  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#1d1780e1cba2bdb31dd42dde68bbd14c4fe59ac8"
 ]
