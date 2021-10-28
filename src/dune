@@ -1,5 +1,6 @@
 (library
   (public_name cameleer)
+  (modules_without_implementation ocamlstdlib)
   (libraries ppxlib gospel why3))
 
 (install
