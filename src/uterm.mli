@@ -13,7 +13,8 @@ val mk_id :
 val mk_term : ?term_loc:Loc.position -> Ptree.term_desc -> Ptree.term
 
 val ident_of_tvsymbol : Ttypes.tvsymbol -> Ptree.ident
-val ident_of_lsymbol  : Tterm.lsymbol   -> Ptree.ident
+
+val ident_of_lsymbol : Tterm.lsymbol -> Ptree.ident
 
 val mk_pattern : ?pat_loc:Loc.position -> Ptree.pat_desc -> Ptree.pattern
 
@@ -23,8 +24,9 @@ val preid : Identifier.Preid.t -> Ptree.ident
 
 val qualid : Uast.qualid -> Ptree.qualid
 
-val pty : Uast.pty  -> Ptree.pty
-val ty  : Ttypes.ty -> Ptree.pty
+val pty : Uast.pty -> Ptree.pty
+
+val ty : Ttypes.ty -> Ptree.pty
 
 val pattern : Uast.pattern -> Ptree.pattern
 

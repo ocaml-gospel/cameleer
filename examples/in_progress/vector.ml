@@ -1,16 +1,17 @@
 (*@ open Sequence *)
 
 type 'a t = {
-         dummy: 'a;
-  mutable size: int;
-  mutable data: 'a array; (* 0 <= size <= Array.length data *)
-  mutable view: 'a sequence [@ghost];
+  dummy : 'a;
+  mutable size : int;
+  mutable data : 'a array;
+  (* 0 <= size <= Array.length data *)
+  mutable view : 'a sequence; [@ghost]
 }
 
 let make ?dummy n d =
   if n < 0 || n > Sys.max_array_length then invalid_arg "Vector.make";
   let dummy = match dummy with None -> d | Some x -> x in
-  { dummy = dummy; size = n; data = Array.make n dummy; view = empty }
+  { dummy; size = n; data = Array.make n dummy; view = empty }
 (*@ t = make ?dummy n d
       requires 0 <= n <= Sys.max_array_length
       raises   Invalid_argument _ -> not (0 <= n < Sys.max_array_length)
@@ -28,6 +29,6 @@ let make ?dummy n d =
 
 let init n ~dummy f =
   if n < 0 || n > Sys.max_array_length then invalid_arg "Vector.init";
-  { dummy = dummy; size = n; data = Array.init n f; view = empty }
+  { dummy; size = n; data = Array.init n f; view = empty }
 (*@ t = init n ~dummy f
       raises Invalid_argument _ -> not (0 <= n < Sys.max_array_length) *)

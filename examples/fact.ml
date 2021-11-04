@@ -1,7 +1,6 @@
 (** Two implementations of factorial. *)
 
-let [@logic] rec fact x =
-  if x = 0 then 1 else x * fact (x - 1)
+let[@logic] rec fact x = if x = 0 then 1 else x * fact (x - 1)
 (*@ r = fact_rec x
       requires x >= 0
       variant  x *)

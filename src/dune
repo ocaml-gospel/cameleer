@@ -1,10 +1,10 @@
 (library
-  (public_name cameleer)
-  (modules_without_implementation ocamlstdlib)
-  (libraries ppxlib gospel why3))
+ (public_name cameleer)
+ (modules_without_implementation ocamlstdlib)
+ (libraries ppxlib gospel why3))
 
 (install
-  (section share_root)
-  (files
-    (ocamlstdlib.mlw as why3/stdlib/ocamlstdlib.mlw))
-  (package cameleer))
+ (section share_root)
+ (files
+  (ocamlstdlib.mlw as why3/stdlib/ocamlstdlib.mlw))
+ (package cameleer))

@@ -1,7 +1,7 @@
 (* Compute imperatively the sum of the first elements of an array, until we meet
  * a negative number *)
 
-type iterator = {mutable i : int ; mutable sum : int}
+type iterator = { mutable i : int; mutable sum : int }
 
 (** Trying to prove the following function, with no specification attached,
     generates two verification conditions (VC): termination and index in array
@@ -9,15 +9,15 @@ type iterator = {mutable i : int ; mutable sum : int}
     first thing to do is to add a *loop invariant* to state the cursor index is
     within bounds of the array. *)
 let sum_until_negative_0 a =
-  let iter = { i = 0 ; sum = 0} in
+  let iter = { i = 0; sum = 0 } in
   let finished = ref false in
   while !finished do
     let element = a.(iter.i) in
-    if element < 0 then
-      finished := true
-    else
-      (iter.i <- iter.i + 1 ; iter.sum <- iter.sum + element)
-  done ;
+    if element < 0 then finished := true
+    else (
+      iter.i <- iter.i + 1;
+      iter.sum <- iter.sum + element)
+  done;
   iter.sum
 
 (** With the following invariant, we can indeed prove the value of `iter.i`
@@ -30,16 +30,16 @@ let sum_until_negative_0 a =
     out of bounds access. Let us refine our specification to prove this
     invariant, while also trying to prove the loop always terminates. *)
 let sum_until_negative_1 a =
-  let iter = { i = 0 ; sum = 0} in
+  let iter = { i = 0; sum = 0 } in
   let finished = ref false in
   while !finished do
     (*@ invariant 0 <= iter.i < Array.length a *)
     let element = a.(iter.i) in
-    if element < 0 then
-      finished := true
-    else
-      (iter.i <- iter.i + 1 ; iter.sum <- iter.sum + element)
-  done ;
+    if element < 0 then finished := true
+    else (
+      iter.i <- iter.i + 1;
+      iter.sum <- iter.sum + element)
+  done;
   iter.sum
 
 (*@ function bool_to_int (b: bool) : integer =
@@ -66,7 +66,7 @@ let sum_until_negative_1 a =
     never really flips. The next version of `sum_until_negative` fixes the
     specification and the code, providing a provably correct implementation. *)
 let sum_until_negative_2 a =
-  let iter = { i = 0 ; sum = 0} in
+  let iter = { i = 0; sum = 0 } in
   let finished = ref false in
   while !finished do
     (*@ variant   Array.length a - iter.i + !finished *)
@@ -74,11 +74,11 @@ let sum_until_negative_2 a =
                             0 <= iter.i <= j *)
     (*@ invariant 0 <= iter.i *)
     let element = a.(iter.i) in
-    if element < 0 then
-      finished := true
-    else
-      (iter.i <- iter.i + 1 ; iter.sum <- iter.sum + element)
-  done ;
+    if element < 0 then finished := true
+    else (
+      iter.i <- iter.i + 1;
+      iter.sum <- iter.sum + element)
+  done;
   iter.sum
 (*@ r = sum_until_negative_2 a
       requires exists i. 0 <= i < Array.length a && a.(i) < 0 *)
@@ -117,8 +117,8 @@ let sum_until_negative_2 a =
       forall f: (int -> int), a b c: int. a <= b <= c ->
       logic_sum f a c = logic_sum f a b + logic_sum f b c *)
 
-let [@lemma] rec shift_left (f: int -> int) (g: int -> int) a b c (d: int) =
-  if a < b then shift_left f g (a+1) b (c+1) d
+let[@lemma] rec shift_left (f : int -> int) (g : int -> int) a b c (d : int) =
+  if a < b then shift_left f g (a + 1) b (c + 1) d
 (*@ shift_left f g a b c d
     requires b - a = d - c
     requires forall i. a <= i < b -> f i  = g (c + i - a)
@@ -137,28 +137,28 @@ let [@lemma] rec shift_left (f: int -> int) (g: int -> int) a b c (d: int) =
     OCaml idiomatic style and raise an exception. We immediately catch `Finish`
     and take its argument as the function return value. *)
 let sum_until_negative_3 a =
-  let iter = { i = 0 ; sum = 0} in
+  let iter = { i = 0; sum = 0 } in
   let exception Finish of int in
-  try while iter.i < Array.length a  do
-    (*@ variant   Array.length a - iter.i *)
-    (*@ invariant 0 <= iter.i <= Array.length a *)
-    (*@ invariant forall j. 0 <= j < iter.i -> a.(j) >= 0 *)
-    (*@ invariant iter.sum =
-          logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 iter.i *)
-    if a.(iter.i) < 0 then
-      raise (Finish iter.sum)
-    else
-      (iter.sum <- iter.sum + a.(iter.i) ; iter.i <- iter.i + 1)
-  done;
-  iter.sum
+  try
+    while iter.i < Array.length a do
+      (*@ variant   Array.length a - iter.i *)
+      (*@ invariant 0 <= iter.i <= Array.length a *)
+      (*@ invariant forall j. 0 <= j < iter.i -> a.(j) >= 0 *)
+      (*@ invariant iter.sum =
+            logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 iter.i *)
+      if a.(iter.i) < 0 then raise (Finish iter.sum)
+      else (
+        iter.sum <- iter.sum + a.(iter.i);
+        iter.i <- iter.i + 1)
+    done;
+    iter.sum
   with Finish i -> i
 (*@ r = sum_until_negative_3 a
       requires negative_array a 0 (Array.length a)
       ensures  r =
        logic_sum (fun i -> if a.(i) < 0 then 0 else a.(i)) 0 (Array.length a) *)
 
-let main () =
-  sum_until_negative_3 [| 1 ; 2 ; 3 ; 4 ; -5 ; -6; -7; -8; |]
+let main () = sum_until_negative_3 [| 1; 2; 3; 4; -5; -6; -7; -8 |]
 (*@ r = main ()
       ensures r = 10 *)
 

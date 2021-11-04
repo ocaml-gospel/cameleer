@@ -1,6 +1,4 @@
-let [@logic] rec fact x =
-  if x = 0 then 1
-  else x * fact (x - 1)
+let[@logic] rec fact x = if x = 0 then 1 else x * fact (x - 1)
 (*@ r = fact x
       requires x >= 0
       variant  x *)
@@ -28,9 +26,11 @@ let routine n =
 
 let routine2 n =
   let u = ref 1 in
-  for r = 0 to n-1 do (*@ invariant !u = fact r *)
+  for r = 0 to n - 1 do
+    (*@ invariant !u = fact r *)
     let v = !u in
-    for s = 1 to r do (*@ invariant !u = s * fact r *)
+    for s = 1 to r do
+      (*@ invariant !u = s * fact r *)
       u := !u + v
     done
   done;

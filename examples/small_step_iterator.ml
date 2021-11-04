@@ -29,10 +29,11 @@ module CursorList (* : Cursor *) = struct
       | x :: r -> cons x (seq_of_list r) *)
 
   type 'a t = {
-    mutable visited   : 'a seq [@ghost];
-            collection: 'a list[@ghost];
-    mutable to_visit  : 'a list;
-  } (*@ invariant seq_of_list collection = visited ++ seq_of_list to_visit *)
+    mutable visited : 'a seq; [@ghost]
+    collection : 'a list; [@ghost]
+    mutable to_visit : 'a list;
+  }
+  (*@ invariant seq_of_list collection = visited ++ seq_of_list to_visit *)
 
   (*@ lemma seq_of_list_append: forall l1 l2: 'a list.
         seq_of_list (List.append l1 l2) == seq_of_list l1 ++ seq_of_list l2 *)
@@ -51,25 +52,24 @@ module CursorList (* : Cursor *) = struct
   (*@ predicate complete (t: 'a t) =
         length t.visited = length (seq_of_list t.collection) *)
 
-  let next c = match c.to_visit with
+  let next c =
+    match c.to_visit with
     | [] -> assert false
     | x :: r ->
-        c.visited <- snoc c.visited x; c.to_visit <- r;
+        c.visited <- snoc c.visited x;
+        c.to_visit <- r;
         x
   (*@ r = next c
         requires permitted c && not (complete c)
         ensures  permitted c
         ensures  c.visited = snoc (old c).visited r *)
 
-  let has_next c = match c.to_visit with
-    | [] -> false
-    | _ -> true
+  let has_next c = match c.to_visit with [] -> false | _ -> true
   (*@ b = has_next c
         requires permitted c
         ensures  b <-> not (complete c) *)
 
-  let create l =
-    { visited = empty; collection = l; to_visit = l }
+  let create l = { visited = empty; collection = l; to_visit = l }
   (*@ r = create l
         ensures r.visited = empty
         ensures r.collection = l *)
@@ -89,24 +89,26 @@ let sum_cursor l =
 (*@ r = sum_cursor l
       ensures r = sum (fun i -> (seq_of_list l)[i]) 0 (List.length l) *)
 
-module Mem (Eq: sig
-    type elt
-    val eq : elt -> elt -> bool
-    (*@ b = eq x y
-          ensures b <-> x = y *)
-  end) = struct
+module Mem (Eq : sig
+  type elt
 
+  val eq : elt -> elt -> bool
+  (*@ b = eq x y
+        ensures b <-> x = y *)
+end) =
+struct
   let mem_cursor l x =
     let c = CursorList.create l in
     let exception Found in
-    try while CursorList.has_next c do
-      (*@ variant length (seq_of_list l) - length c.visited
-          invariant permitted c
-          invariant forall i. 0 <= i < length c.visited -> c.visited[i] <> x *)
-      if Eq.eq (CursorList.next c) x then raise Found
-    done;
-    false
+    try
+      while CursorList.has_next c do
+        (*@ variant length (seq_of_list l) - length c.visited
+            invariant permitted c
+            invariant forall i. 0 <= i < length c.visited -> c.visited[i] <> x *)
+        if Eq.eq (CursorList.next c) x then raise Found
+      done;
+      false
     with Found -> true
-    (*@ b = mem_cursor l x
-          ensures b <-> List.mem x l *)
+  (*@ b = mem_cursor l x
+        ensures b <-> List.mem x l *)
 end

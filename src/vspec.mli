@@ -1,7 +1,8 @@
 open Why3
 open Gospel
 
-val loc_of_lb_arg   : Uast.labelled_arg -> Loc.position
+val loc_of_lb_arg : Uast.labelled_arg -> Loc.position
+
 val ident_of_lb_arg : Uast.labelled_arg -> Ptree.ident
 
 val empty_spec : Ptree.spec

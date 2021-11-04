@@ -43,6 +43,7 @@ module Set : sig
         forall x, y: 'a. mem y (singleton x) -> y = x *)
 
   (** removal *)
+
   (*@ function remove (x: 'a) (s: 'a fset) : 'a fset *)
   (*@ axiom remove_def: forall x: 'a, s: 'a fset, y: 'a.
       mem y (remove x s) <-> (mem y s /\ y <> x) *)
@@ -57,6 +58,7 @@ module Set : sig
         forall x: 'a, s: 'a fset. subset (remove x s) s *)
 
   (** union *)
+
   (*@ function union (s1 s2: 'a fset): 'a fset *)
   (*@ axiom union_def: forall s1 s2: 'a fset, x: 'a.
         mem x (union s1 s2) <-> mem x s1 \/ mem x s2 *)
@@ -73,6 +75,7 @@ module Set : sig
         add x (union s1 s2) = union s1 (add x s2) *)
 
   (** intersection *)
+
   (*@ function inter (s1 s2: 'a fset): 'a fset *)
   (*@ axiom inter_def: forall s1 s2: 'a fset, x: 'a.
         mem x (inter s1 s2) <-> mem x s1 /\ mem x s2 *)
@@ -83,6 +86,7 @@ module Set : sig
         forall s1 s2: 'a fset. subset (inter s1 s2) s2 *)
 
   (** difference *)
+
   (*@ function diff (s1 s2: 'a fset): 'a fset *)
   (*@ axiom diff_def: forall s1 s2: 'a fset, x: 'a.
         mem x (diff s1 s2) <-> mem x s1 /\ not (mem x s2) *)
@@ -109,6 +113,7 @@ module Set : sig
         forall s1 s2: 'a fset. disjoint (diff s1 s2) s2 *)
 
   (** `{ x | x in s /\ p x }` *)
+
   (*@ function filter (s: 'a fset) (p: 'a -> bool) : 'a fset *)
   (*@ axiom filter_def: forall s: 'a fset, p: ('a -> bool), x: 'a.
         mem x (filter s p) <-> mem x s /\ p x *)
@@ -117,6 +122,7 @@ module Set : sig
         forall s: 'a fset, p: ('a -> bool). subset (filter s p) s *)
 
   (** `{ f x | x in U }` *)
+
   (*@ function map (f: 'a -> 'b) (u: 'a fset) : 'b fset *)
   (*@ axiom map_def:
         forall f: ('a -> 'b), u: 'a fset, y: 'b.

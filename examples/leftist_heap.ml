@@ -24,7 +24,7 @@ module type S = sig
 
   (*@ predicate leftist (h: t) *)
 
-  val [@logic] size : t -> int
+  val size : t -> int [@@logic]
   (*@ r = size t
         ensures 0 <= r *)
 
@@ -47,12 +47,12 @@ module type S = sig
 
   (*@ predicate leftist_heap (h: t) *)
 
-  val [@logic] empty : t
+  val empty : t [@@logic]
   (*@ r = empty
         ensures size r = 0
         ensures forall x. occ x r = 0 *)
 
-  val [@logic] is_empty : t -> bool
+  val is_empty : t -> bool [@@logic]
   (*@ b = is_empty t
         requires leftist_heap t
         ensures  b <-> size t = 0 *)
@@ -74,7 +74,7 @@ module type S = sig
         ensures  forall y. y <> x -> occ y t = occ y r
         ensures  size r = size t + 1 *)
 
-  val filter :  (elt -> bool) -> t -> t
+  val filter : (elt -> bool) -> t -> t
   (*@ r = filter p t
         requires leftist_heap t
         ensures  leftist_heap r
@@ -102,18 +102,15 @@ module type S = sig
         ensures  occ x r = 0
         ensures  forall y. x <> y -> occ y r = occ y t
         ensures  size r = size t - occ x t *)
-
 end
 
-module Make (E: PRE_ORD) : S with type elt = E.t
-                             [@gospel "with predicate le = E.le"] = struct
+module Make (E : PRE_ORD) :
+  (S with type elt = E.t [@gospel "with predicate le = E.le"]) = struct
   type elt = E.t
 
   (*@ predicate le (x: elt) (y: elt) = E.le x y *)
 
-  type t =
-    | E
-    | N of int * elt * t * t
+  type t = E | N of int * elt * t * t
 
   (*@ function rank (h: t) : integer = match h with
         | E -> 0
@@ -124,9 +121,9 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         | N n _ l r ->
             n = rank h && leftist l && leftist r && rank l >= rank r *)
 
-  let [@logic] rec size = function
+  let[@logic] rec size = function
     | E -> 0
-    | N (_,_ , l, r) -> 1 + size l + size r
+    | N (_, _, l, r) -> 1 + size l + size r
   (*@ r = size param
         ensures 0 <= r
         ensures r = 0 <-> param = E *)
@@ -136,9 +133,11 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         | N _ e l r -> let occ_lr = occ x l + occ x r in
             if x = e then 1 + occ_lr else occ_lr *)
 
-  let [@lemma] rec occ_nonneg (y: elt) = function
+  let[@lemma] rec occ_nonneg (y : elt) = function
     | E -> ()
-    | N (_, _, l, r) -> occ_nonneg y l; occ_nonneg y r
+    | N (_, _, l, r) ->
+        occ_nonneg y l;
+        occ_nonneg y r
   (*@ occ_nonneg y param
         ensures 0 <= occ y param *)
 
@@ -149,7 +148,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         | E -> true
         | N _ x _ _ -> E.le e x *)
 
-  let [@lemma] le_root_trans (x: elt) (y: elt) = function
+  let[@lemma] le_root_trans (x : elt) (y : elt) = function
     | E -> ()
     | N (_, _, _, _) -> ()
   (*@ le_root_trans x y param
@@ -167,11 +166,11 @@ module Make (E: PRE_ORD) : S with type elt = E.t
   (*@ predicate is_minimum (x: elt) (h: t) =
         mem x h && forall e. mem e h -> le x e *)
 
-  let [@lemma] rec root_is_minimum = function
+  let[@lemma] rec root_is_minimum = function
     | E -> assert false
-    | N (_, _, l, r) ->
-        begin match l with E -> () | _ -> root_is_minimum l end;
-              match r with E -> () | _ -> root_is_minimum r
+    | N (_, _, l, r) -> (
+        (match l with E -> () | _ -> root_is_minimum l);
+        match r with E -> () | _ -> root_is_minimum r)
   (*@ root_is_minimum param
        requires is_heap param && 0 < size param
        ensures  is_minimum (minimum param) param
@@ -184,24 +183,19 @@ module Make (E: PRE_ORD) : S with type elt = E.t
   (*@ r = empty
         ensures r = E *)
 
-  let [@logic] is_empty = function
-    | E -> true
-    | N (_, _, _, _) -> false
+  let[@logic] is_empty = function E -> true | N (_, _, _, _) -> false
   (*@ b = is_empty param
         ensures b <-> param = E *)
 
   exception Empty
 
-  let _rank = function
-    | E -> 0
-    | N (r, _, _, _) -> r
+  let _rank = function E -> 0 | N (r, _, _, _) -> r
   (*@ r = _rank param
         requires leftist_heap param
         ensures  r = rank param *)
 
   let _make_node x a b =
-    if _rank a >= _rank b
-    then N (_rank b + 1, x, a, b)
+    if _rank a >= _rank b then N (_rank b + 1, x, a, b)
     else N (_rank a + 1, x, b, a)
   (*@ h = _make_node x a b
         requires leftist_heap a && leftist_heap b
@@ -212,11 +206,11 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         ensures  occ x h = 1 + occ x a + occ x b
         ensures  forall y. x <> y -> occ y h = occ y a + occ y b *)
 
-  let rec merge t1 t2 = match t1, t2 with
+  let rec merge t1 t2 =
+    match (t1, t2) with
     | t, E | E, t -> t
     | N (_, x, a1, b1), N (_, y, a2, b2) ->
-        if E.leq x y
-        then _make_node x a1 (merge b1 t2)
+        if E.leq x y then _make_node x a1 (merge b1 t2)
         else _make_node y a2 (merge t1 b2)
   (*@ h = merge t1 t2
         requires leftist_heap t1 && leftist_heap t2
@@ -225,8 +219,7 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         ensures  leftist_heap h
         variant  size t1 + size t2 *)
 
-  let insert x h =
-    merge (N(1,x,E,E)) h
+  let insert x h = merge (N (1, x, E, E)) h
   (*@ new_h = insert x h
         requires leftist_heap h
         ensures  leftist_heap new_h
@@ -251,26 +244,20 @@ module Make (E: PRE_ORD) : S with type elt = E.t
         ensures  forall x. not (p x) -> occ x h = 0
         ensures  forall x. p x -> occ x h = occ x param *)
 
-  let find_min_exn = function
-    | E -> raise Empty
-    | N (_, x, _, _) -> x
+  let find_min_exn = function E -> raise Empty | N (_, x, _, _) -> x
   (*@ r = find_min_exn param
         requires leftist_heap param
         raises   Empty -> is_empty param
         ensures  r = minimum param *)
 
-  let find_min = function
-    | E -> None
-    | N (_, x, _, _) -> Some x
+  let find_min = function E -> None | N (_, x, _, _) -> Some x
   (*@ r = find_min param
         requires leftist_heap param
         ensures  match r with
                  | None -> is_empty param
                  | Some x -> x = minimum param *)
 
-  let take = function
-    | E -> None
-    | N (_, x, l, r) -> Some (merge l r, x)
+  let take = function E -> None | N (_, x, l, r) -> Some (merge l r, x)
   (*@ r = take param
         requires leftist_heap param
         ensures  match r with
@@ -284,28 +271,22 @@ module Make (E: PRE_ORD) : S with type elt = E.t
 
   let delete_one eq x h =
     let rec aux = function
-      | E -> false, E
-      | N(_, y, l, r) as h ->
-        if eq x y then true, merge l r
-        else (
-          if E.leq y x
-          then (
+      | E -> (false, E)
+      | N (_, y, l, r) as h ->
+          if eq x y then (true, merge l r)
+          else if E.leq y x then
             let found_left, l1 = aux l in
-            let found, r1 = if found_left then true, r else aux r in
-            if found
-            then true, _make_node y l1 r1
-            else false, h
-          )
-          else false, h
-        )
-    (*@ (b, r) = aux param
-          requires leftist_heap param
-          variant  param
-          ensures  leftist_heap r
-          ensures  forall z. z <> x -> occ z param = occ z r
-          ensures  b <-> mem x param
-          ensures  if mem x param then occ x param = occ x r + 1
-                   else occ x param = occ x r *)
+            let found, r1 = if found_left then (true, r) else aux r in
+            if found then (true, _make_node y l1 r1) else (false, h)
+          else (false, h)
+      (*@ (b, r) = aux param
+            requires leftist_heap param
+            variant  param
+            ensures  leftist_heap r
+            ensures  forall z. z <> x -> occ z param = occ z r
+            ensures  b <-> mem x param
+            ensures  if mem x param then occ x param = occ x r + 1
+                     else occ x param = occ x r *)
     in
     snd (aux h)
   (*@ r = delete_one eq x h

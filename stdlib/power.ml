@@ -40,7 +40,7 @@ end
 module type Power = sig
   type t = int
 
-  val [@logic] power : int -> int -> int
+  val power : int -> int -> int [@@logic]
 
   (*@ function one : int = 1 *)
 

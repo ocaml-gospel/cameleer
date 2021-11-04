@@ -1,48 +1,44 @@
 type 'a t = {
-  mutable front: 'a list;
+  mutable front : 'a list;
   mutable rear : 'a list;
   mutable size : int;
-  mutable view : 'a list [@ghost];
-} (*@ invariant size = List.length view
-      invariant (front = [] -> rear = []) && view = front @ List.rev rear *)
-
-let create () = {
-  front = [];
-  rear  = [];
-  size  = 0;
-  view  = [];
+  mutable view : 'a list; [@ghost]
 }
+(*@ invariant size = List.length view
+    invariant (front = [] -> rear = []) && view = front @ List.rev rear *)
+
+let create () = { front = []; rear = []; size = 0; view = [] }
 (*@ q = create ()
         ensures q.view = [] *)
 
-let [@logic] is_empty q = q.size = 0
+let[@logic] is_empty q = q.size = 0
 (*@ b = is_empty q
       ensures b <-> q.view = [] *)
 
 let push x q =
-  if is_empty q then q.front <- [x] else q.rear <- x :: q.rear;
+  if is_empty q then q.front <- [ x ] else q.rear <- x :: q.rear;
   q.size <- q.size + 1;
-  q.view <- q.view @ [x]
+  q.view <- q.view @ [ x ]
 (*@ push x q
       ensures q.view = (old q.view) @ (x :: []) *)
 
-let [@ghost] tail_list = function
-  | [] -> assert false
-  | _ :: l -> l
+let[@ghost] tail_list = function [] -> assert false | _ :: l -> l
 (*@ r = tail_list param
       requires param <> []
       ensures  match param with [] -> false | _ :: l -> r = l *)
 
 let pop q =
-  let x = match q.front with
+  let x =
+    match q.front with
     | [] -> raise Not_found
-    | [x] ->
+    | [ x ] ->
         q.front <- List.rev q.rear;
-        q.rear  <- [];
+        q.rear <- [];
         x
     | x :: f ->
         q.front <- f;
-        x in
+        x
+  in
   q.view <- tail_list q.view;
   q.size <- q.size - 1;
   x

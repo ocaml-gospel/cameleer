@@ -20,7 +20,7 @@ let int_sqrt x =
         invariant !sum = sqr (!count + 1)
         variant   x - !count *)
     count := !count + 1;
-    sum := !sum + (2 * !count + 1)
+    sum := !sum + ((2 * !count) + 1)
   done;
   !count
 (*@ r = int_sqrt x

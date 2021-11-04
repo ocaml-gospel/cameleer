@@ -1,8 +1,8 @@
 type expr =
-  | Ecte   of int
-  | Eplus  of expr * expr
+  | Ecte of int
+  | Eplus of expr * expr
   | Eminus of expr * expr
-  | Emult  of expr * expr
+  | Emult of expr * expr
 
 (*@ function eval_expr (e: expr) : integer =
       match e with
@@ -25,10 +25,10 @@ type asm = Apush of int | Aadd | Asub | Amul
       | _ -> s *)
 
 let rec compile = function
-  | Ecte  n         -> [(Apush n)]
-  | Eplus  (e1, e2) -> compile e1 @ (compile e2 @ [Aadd])
-  | Eminus (e1, e2) -> compile e1 @ (compile e2 @ [Asub])
-  | Emult  (e1, e2) -> compile e1 @ (compile e2 @ [Amul])
+  | Ecte n -> [ Apush n ]
+  | Eplus (e1, e2) -> compile e1 @ compile e2 @ [ Aadd ]
+  | Eminus (e1, e2) -> compile e1 @ compile e2 @ [ Asub ]
+  | Emult (e1, e2) -> compile e1 @ compile e2 @ [ Amul ]
 (*@ r = compile param
       variant param
       ensures let r_eval = eval_expr param in

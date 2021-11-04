@@ -3,14 +3,15 @@ open Ptree
 open Wstdlib
 
 type mod_constraint =
-  | MCtype_sharing         of type_decl
-  | MCtype_destructive     of type_decl
-  | MCfunction_sharing     of qualid
+  | MCtype_sharing of type_decl
+  | MCtype_destructive of type_decl
+  | MCfunction_sharing of qualid
   | MCfunction_destructive of qualid
-  | MCprop                 of Decl.prop_kind
+  | MCprop of Decl.prop_kind
 
-module Mqual = Map.Make(struct
+module Mqual = Map.Make (struct
   type t = Ptree.qualid
+
   let compare = Stdlib.compare
 end)
 
@@ -21,18 +22,19 @@ type subst = {
   subst_fd : Ptree.qualid Mqual.t;
   subst_ps : Ptree.qualid Mstr.t;
   subst_pd : Ptree.qualid Mqual.t;
-  subst_pr : Decl.prop_kind Mqual.t
+  subst_pr : Decl.prop_kind Mqual.t;
 }
 
-let empty_subst = {
-  subst_ts = Mstr.empty;
-  subst_td = Mstr.empty;
-  subst_fs = Mstr.empty;
-  subst_fd = Mqual.empty;
-  subst_ps = Mstr.empty;
-  subst_pd = Mqual.empty;
-  subst_pr = Mqual.empty;
-}
+let empty_subst =
+  {
+    subst_ts = Mstr.empty;
+    subst_td = Mstr.empty;
+    subst_fs = Mstr.empty;
+    subst_fd = Mqual.empty;
+    subst_ps = Mstr.empty;
+    subst_pd = Mqual.empty;
+    subst_pr = Mqual.empty;
+  }
 
 let add_ts_subst k subst td =
   { subst with subst_ts = Mstr.add k td subst.subst_ts }

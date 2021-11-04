@@ -12,15 +12,14 @@ module type PRE_ORD = sig
         ensures b <-> le x y *)
 end
 
-module Make (E: PRE_ORD) = struct
-
+module Make (E : PRE_ORD) = struct
   type elt = E.t
 
   type tree = T of E.t * tree list
 
-  let [@ghost] [@logic] le_tree e = function T (x, _) -> E.leq e x
+  let[@ghost] [@logic] le_tree e = function T (x, _) -> E.leq e x
 
-  let [@ghost] [@logic] rec le_tree_list e = function
+  let[@ghost] [@logic] rec le_tree_list e = function
     | [] -> true
     | t :: r -> le_tree e t && le_tree_list e r
 
@@ -36,14 +35,16 @@ module Make (E: PRE_ORD) = struct
         | [] -> occ_list x l = 0
         | t :: r -> occ_list x l = occ x t + occ_list x r *)
 
-  let [@lemma] rec occ_nonneg = function
-    | T (_, l) -> occ_list_nonneg l
+  let[@lemma] rec occ_nonneg = function T (_, l) -> occ_list_nonneg l
+
   (*@ occ_nonneg param
         variant param
         ensures forall x. occ x param >= 0 *)
-  and [@lemma] occ_list_nonneg = function
+  and[@lemma] occ_list_nonneg = function
     | [] -> ()
-    | t :: r -> occ_nonneg t; occ_list_nonneg r
+    | t :: r ->
+        occ_nonneg t;
+        occ_list_nonneg r
   (*@ occ_list_nonneg param
         variant param
         ensures forall x. occ_list x param >= 0 *)
@@ -57,31 +58,38 @@ module Make (E: PRE_ORD) = struct
 
   (*@ function minimum_tree (t: tree) : elt = match t with T x _ -> x *)
 
-  let [@ghost] [@logic] rec heap_tree = function
+  let[@ghost] [@logic] rec heap_tree = function
     | T (x, l) -> le_tree_list x l && heap_tree_list l
-  and [@ghost] [@logic] heap_tree_list = function
+
+  and[@ghost] [@logic] heap_tree_list = function
     | [] -> true
     | t :: r -> heap_tree t && heap_tree_list r
 
   type t = E | N of tree
 
-  let [@logic] rec size  = function E -> 0 | N t -> size_tree t
-  and [@logic] size_tree = function T (_, l) -> 1 + size_list_tree l
-  and [@logic] size_list_tree = function
+  let[@logic] rec size = function E -> 0 | N t -> size_tree t
+
+  and[@logic] size_tree = function T (_, l) -> 1 + size_list_tree l
+
+  and[@logic] size_list_tree = function
     | [] -> 0
     | t :: r -> size_tree t + size_list_tree r
 
-  let [@lemma] rec size_nonneg = function E -> () | N t -> size_tree_nonneg t
+  let[@lemma] rec size_nonneg = function E -> () | N t -> size_tree_nonneg t
+
   (*@ size_nonneg param
         variant param
         ensures size param >= 0 *)
-  and [@lemma] size_tree_nonneg = function T (_, l) -> size_tree_list_nonneg l
+  and[@lemma] size_tree_nonneg = function T (_, l) -> size_tree_list_nonneg l
+
   (*@ size_tree_nonneg param
         variant param
         ensures size_tree param >= 1 *)
-  and [@lemma] size_tree_list_nonneg = function
+  and[@lemma] size_tree_list_nonneg = function
     | [] -> ()
-    | t :: r -> size_tree_nonneg t; size_tree_list_nonneg r
+    | t :: r ->
+        size_tree_nonneg t;
+        size_tree_list_nonneg r
   (*@ size_tree_list_nonneg param
         variant param
         ensures size_list_tree param >= 0 *)
@@ -113,66 +121,62 @@ module Make (E: PRE_ORD) = struct
         | E -> true
         | N t -> heap_tree t *)
 
-  let [@lemma] rec heap_mem_le = function
-    | E -> ()
-    | N t -> tree_mem_le t
+  let[@lemma] rec heap_mem_le = function E -> () | N t -> tree_mem_le t
+
   (*@ heap_mem_le param
         requires heap param
         variant  param
         ensures  forall x. le_root x param -> forall y. mem y param ->
                    E.le x y *)
-  and [@lemma] tree_mem_le = function T (_, l) -> tree_list_mem_le l
+  and[@lemma] tree_mem_le = function T (_, l) -> tree_list_mem_le l
+
   (*@ tree_mem_le param
         requires heap_tree param
         variant  param
         ensures  forall x. le_tree x param -> forall y. mem_tree y param ->
                    E.le x y *)
-  and [@lemma] tree_list_mem_le = function
+  and[@lemma] tree_list_mem_le = function
     | [] -> ()
-    | x :: r -> tree_mem_le x; tree_list_mem_le r
+    | x :: r ->
+        tree_mem_le x;
+        tree_list_mem_le r
   (*@ tree_list_mem_le param
         requires heap_tree_list param
         variant  param
         ensures  forall x. le_tree_list x param ->
                    forall y. mem_tree_list y param -> E.le x y *)
 
-  let [@lemma] root_is_minimum = function
-    | E -> assert false
-    | N _ -> ()
+  let[@lemma] root_is_minimum = function E -> assert false | N _ -> ()
   (*@ root_is_minimum param
         requires param <> E
         requires heap param
         ensures  is_minimum (minimum param) param *)
 
-  let [@logic] is_empty = function
-    | E -> true
-    | N _ -> false
+  let[@logic] is_empty = function E -> true | N _ -> false
   (*@ b = is_empty param
         ensures b <-> size param = 0 *)
 
   exception Empty
 
-  let find_min_exn = function
-    | E -> raise Empty
-    | N (T (x, _)) -> x
+  let find_min_exn = function E -> raise Empty | N (T (x, _)) -> x
   (*@ r = find_min_exn param
         requires heap param
         raises   Empty -> is_empty param
         ensures  r = minimum param *)
 
-  let merge t1 t2 = match t1, t2 with
+  let merge t1 t2 =
+    match (t1, t2) with
     | E, t | t, E -> t
     | N (T (x, l1)), N (T (y, l2)) ->
-        if E.leq x y then N (T (x, (T (y, l2)) :: l1))
-        else N (T (y, (T (x, l1) :: l2)))
+        if E.leq x y then N (T (x, T (y, l2) :: l1))
+        else N (T (y, T (x, l1) :: l2))
   (*@ t = merge t1 t2
         requires heap t1 && heap t2
         ensures  heap t
         ensures  size t = size t1 + size t2
         ensures  forall x. occ_t x t = occ_t x t1 + occ_t x t2 *)
 
-  let add x t =
-    merge (N (T (x, []))) t
+  let add x t = merge (N (T (x, []))) t
   (*@ h = add x t
         requires heap t
         ensures  heap h
@@ -182,9 +186,8 @@ module Make (E: PRE_ORD) = struct
 
   let rec merge_list = function
     | [] -> E
-    | [t] -> N t
-    | t1 :: t2 :: r ->
-        merge (merge (N t1) (N t2)) (merge_list r)
+    | [ t ] -> N t
+    | t1 :: t2 :: r -> merge (merge (N t1) (N t2)) (merge_list r)
   (*@ t = merge_list param
         requires heap_tree_list param
         variant  List.length param

@@ -17,13 +17,12 @@ module type PRE_ORD = sig
         ensures b <-> le x y *)
 end
 
-module InsertionSort (E: PRE_ORD) = struct
-
+module InsertionSort (E : PRE_ORD) = struct
   type elt = E.t
 
   let[@logic] rec sorted_list = function
-    | [] | [_] -> true
-    | x :: (y :: r) -> E.leq x y && sorted_list (y :: r)
+    | [] | [ _ ] -> true
+    | x :: y :: r -> E.leq x y && sorted_list (y :: r)
   (*@ sorted_list l
         variant l *)
 
@@ -37,8 +36,8 @@ module InsertionSort (E: PRE_ORD) = struct
         sorted_list (l1 ++ l2) *)
 
   let rec insert x = function
-    | [] -> [x]
-    | y :: l -> if E.leq x y then x :: y :: l else y :: (insert x l)
+    | [] -> [ x ]
+    | y :: l -> if E.leq x y then x :: y :: l else y :: insert x l
   (*@ l = insert x param
         requires sorted_list param
         variant  param

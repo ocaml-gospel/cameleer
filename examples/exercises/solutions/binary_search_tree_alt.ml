@@ -1,12 +1,11 @@
 module type OrderedType = sig
   type t
 
-  val[@logic] compare : t -> t -> int
+  val compare : t -> t -> int [@@logic]
   (*@ axiom is_pre_order: is_pre_order compare *)
 end
 
-
-module Make (Ord: OrderedType) = struct
+module Make (Ord : OrderedType) = struct
   type elt = Ord.t
 
   type t = E | T of t * elt * t
@@ -59,7 +58,8 @@ module Make (Ord: OrderedType) = struct
   (*@ axiom is_min_empty: forall x r. min (T E x r) = x *)
   (*@ axiom is_min_left: forall l x r. l <> E -> min (T l x r) = min l *)
 
-  let[@lemma] rec occ_min (t: t) = match t with
+  let[@lemma] rec occ_min (t : t) =
+    match t with
     | E -> assert false
     | T (E, _, _) -> ()
     | T (l, _, r) -> occ_min l
@@ -71,9 +71,10 @@ module Make (Ord: OrderedType) = struct
 
   let rec remove_min = function
     | E -> assert false
-    | T (E, v, r) -> v, r
-    | T (l, v, r) -> let m, l = remove_min l in
-        m, T (l, v, r)
+    | T (E, v, r) -> (v, r)
+    | T (l, v, r) ->
+        let m, l = remove_min l in
+        (m, T (l, v, r))
   (*@ m, r = remove_min t
         requires t <> E
         requires bst t
@@ -85,19 +86,19 @@ module Make (Ord: OrderedType) = struct
 
   let rec remove x = function
     | E -> E
-    | T (l, v, r) ->
+    | T (l, v, r) -> (
         if Ord.compare x v < 0 then T (remove x l, v, r)
         else if Ord.compare x v > 0 then T (l, v, remove x r)
         else
           match r with
           | E -> l
-          | r -> let min_elt, new_r = remove_min r in
-              T (l, min_elt, new_r)
-   (*@ r = remove x t
-         requires bst t
-         variant  t
-         ensures  bst t
-         ensures  forall y. y <> x -> occ y r = occ y t
-         ensures  occ x r = 0 *)
-
+          | r ->
+              let min_elt, new_r = remove_min r in
+              T (l, min_elt, new_r))
+  (*@ r = remove x t
+        requires bst t
+        variant  t
+        ensures  bst t
+        ensures  forall y. y <> x -> occ y r = occ y t
+        ensures  occ x r = 0 *)
 end
