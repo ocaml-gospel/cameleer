@@ -83,14 +83,7 @@
    <proof prover="1"><result status="valid" time="0.04" steps="17718"/></proof>
    </goal>
    <goal name="pop&#39;vc.3.1" expl="type invariant" proved="true">
-   <transf name="destruct_term" proved="true" arg1="(view q1)">
-    <goal name="pop&#39;vc.3.1.0" expl="type invariant" proved="true">
-    <proof prover="1"><result status="valid" time="0.04" steps="29665"/></proof>
-    </goal>
-    <goal name="pop&#39;vc.3.1.1" expl="type invariant" proved="true">
-    <proof prover="1"><result status="valid" time="0.07" steps="20762"/></proof>
-    </goal>
-   </transf>
+   <proof prover="1"><result status="valid" time="0.13" steps="28190"/></proof>
    </goal>
   </transf>
   </goal>
@@ -104,14 +97,7 @@
   <proof prover="0" timelimit="1"><result status="valid" time="0.02" steps="130"/></proof>
   </goal>
   <goal name="pop&#39;vc.7" expl="type invariant" proved="true">
-  <transf name="destruct_term" proved="true" arg1="(view q1)">
-   <goal name="pop&#39;vc.7.0" expl="type invariant" proved="true">
-   <proof prover="1"><result status="valid" time="0.04" steps="28368"/></proof>
-   </goal>
-   <goal name="pop&#39;vc.7.1" expl="type invariant" proved="true">
-   <proof prover="1"><result status="valid" time="0.08" steps="20921"/></proof>
-   </goal>
-  </transf>
+  <proof prover="1"><result status="valid" time="0.10" steps="27708"/></proof>
   </goal>
   <goal name="pop&#39;vc.8" expl="postcondition" proved="true">
   <proof prover="1"><result status="valid" time="0.10" steps="41320"/></proof>
