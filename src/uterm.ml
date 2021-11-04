@@ -115,6 +115,7 @@ let rec term in_post Uast.{term_desc = t_desc; term_loc} =
     | Uast.Tconst c            -> Tconst  (constant c)
     | Uast.Tpreid id           -> Tident  (qualid id)
     | Uast.Tidapp (q, tl)      -> Tidapp  (qualid q, List.map (term in_post) tl)
+    | Uast.Tfield (t, q)       -> Tidapp  (qualid q, [term in_post t])
     | Uast.Tapply (t1, t2)     -> Tapply  (term in_post t1, term in_post t2)
     | Uast.Tnot t              -> Tnot    (term in_post t)
     | Uast.Tattr (a, t)        -> Tattr   (attr a, term in_post t)
@@ -137,8 +138,6 @@ let rec term in_post Uast.{term_desc = t_desc; term_loc} =
         Tif (term in_post t1, term in_post t2, term in_post t3)
     | Uast.Tupdate (t, q_t_list) ->
         Tupdate (term in_post t, List.map qualid_term q_t_list)
-    | Uast.Tquant (q, bl, tt_list, t) ->
-        let mk_term_list t_list = List.map (term in_post) t_list in
-        let tt_list = List.map mk_term_list tt_list in
-        Tquant (quant q, List.map binder bl, tt_list, term in_post t) in
+    | Uast.Tquant (q, bl, t) ->
+        Tquant (quant q, List.map binder bl, [], term in_post t) in
   mk_term (term_desc t_desc)
