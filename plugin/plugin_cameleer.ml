@@ -27,11 +27,11 @@ let mk_info () =
   Odecl.add_info info "::" 2;
   info
 
-let read_file file nm c =
+let read_file filename nm c =
   let lb = Lexing.from_channel c in
-  Location.init lb file;
+  Location.init lb filename;
   let ocaml_structure = parse_ocaml_structure_lb lb in
-  parse_structure_gospel ocaml_structure nm
+  parse_structure_gospel ~filename ocaml_structure nm
 
 (* TODO: type-checking structure items *)
 (* let type_check name nm structs =
