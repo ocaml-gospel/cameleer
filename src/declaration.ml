@@ -56,7 +56,7 @@ let field_of_label_decl lbl_decl =
 
 (** Translate a list of OCaml constructors declaration into the corresponding
     Why3's Ptree algebraic constructors list. *)
-let constructor_declaration info er {pcd_loc; pcd_name; pcd_args; _} =
+let constructor_declaration info params er {pcd_loc; pcd_name; pcd_args; _} =
   let add_field acc lbl = field_of_label_decl lbl :: acc in
   let id_loc = T.location pcd_name.loc in
   let id = T.mk_id ~id_loc pcd_name.txt in
@@ -72,7 +72,8 @@ let constructor_declaration info er {pcd_loc; pcd_name; pcd_args; _} =
       let fields = List.fold_left add_field [] lbl_list in
       let fields = List.rev fields in
       Hashtbl.add er id_pty fields;
-      let pty = PTtyapp (Qident id_pty, []) in
+      let td_params = List.map (fun p -> PTtyvar p) params in
+      let pty = PTtyapp (Qident id_pty, td_params) in
       let param = (loc, None, false, pty) in
       (loc, id, [param])
 
@@ -86,23 +87,22 @@ let mk_embedded_record ?(er_rec=[]) er_typ =
 
 (** Convert a [Uast] type definition into a Why3's Ptree [type_def]. We
     follow the manifest-kind logic defined in the OCaml [Parsetree]. *)
-let td_def info spec_fields td_manifest td_kind =
+let td_def info params spec_fields td_manifest td_kind =
   let field Uast.{f_preid; f_pty; f_mutable; _} =
     let id_loc = T.location f_preid.pid_loc in
     let id  = T.(mk_id ~id_loc f_preid.pid_str) in
     let pty = T.pty f_pty in
     mk_field id.id_loc id pty ~mut:f_mutable ~ghost:true in
   let add_reg_field lbl acc = field_of_label_decl lbl :: acc in
-  let add_rec id lbl acc = (id, lbl) :: acc in
   match td_manifest, td_kind with
   | None, Ptype_abstract ->
       mk_embedded_record (TDrecord (List.map field spec_fields))
   | Some cty, Ptype_abstract ->
       mk_embedded_record (TDalias (E.core_type cty))
-  | None, Ptype_variant constr_decl_list ->
+  | None, Ptype_variant cstr_list ->
       let er = Hashtbl.create 16 in
-      let alg = List.map (constructor_declaration info er) constr_decl_list in
-      let er_rec = Hashtbl.fold add_rec er [] in
+      let alg = List.map (constructor_declaration info params er) cstr_list in
+      let er_rec = Hashtbl.fold (fun id lbl acc -> (id, lbl) :: acc) er [] in
       mk_embedded_record (TDalgebraic alg) ~er_rec
   | None, Ptype_record lbl_list ->
       let model_fields = List.map field spec_fields in
@@ -123,7 +123,7 @@ let type_decl info Uast.({tname; tspec; tmanifest; tkind; _} as td) =
   let rec_decl (td_ident, field_list) = {
     td_loc; td_ident; td_params; td_vis; td_mut; td_inv;
     td_wit = []; td_def = TDrecord field_list; } in
-  let {er_typ; er_rec} = td_def info spec_fields tmanifest tkind in
+  let {er_typ; er_rec} = td_def info td_params spec_fields tmanifest tkind in
   let main_def = {
     td_loc; td_params; td_vis; td_mut; td_inv; td_wit = []; td_def = er_typ;
     td_ident = T.(mk_id tname.txt ~id_ats ~id_loc:(location tname.loc));
