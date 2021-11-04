@@ -45,7 +45,7 @@ Things to Think About
      This means that GOSPEL should, in fact, be extended to support arbitrary
      OCaml expressions?
 
-   * Use an OCaml attribte to state that a field is ghost:
+   * Use an OCaml attribute to state that a field is ghost:
      ```
      type 'a t = {
        front: 'a list;
