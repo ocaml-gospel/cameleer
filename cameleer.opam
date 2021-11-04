@@ -19,7 +19,6 @@ build: [
 depends: [
   "dune" {>= "2.4.0"}
   "why3" {>= "1.4.0"}
-  (("lablgtk" & "conf-gtksourceview") | ("lablgtk3" & "lablgtk3-sourceview3"))
   "why3-ide" {>= "1.4.0"}
   "gospel"
   "fmt"
@@ -27,5 +26,5 @@ depends: [
   "ppxlib" {>= "0.23.0"}
 ]
 pin-depends: [
-  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#65e62964312f612e2207f4bda707de5f700179ac
+  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#1d1780e1cba2bdb31dd42dde68bbd14c4fe59ac8"
 ]
