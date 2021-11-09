@@ -646,7 +646,6 @@ let s_structure, s_signature =
             let lqvsym_cmp = Qdot (qord, T.mk_id "compare") in
             let rqvsym_cmp = T.(Qdot (qarg, mk_id "compare")) in
             [ CStsym (qtsym, [], idtsym); CSvsym (lqvsym_cmp, rqvsym_cmp) ]
-d types.
           else
             let qhash = Qident (T.mk_id "HashedType") in
             let qtsym = Qdot (qhash, T.mk_id "t") in
@@ -661,7 +660,6 @@ d types.
               CSvsym (lqvsym_hash, rqvsym_hash);
             ]
         in
-d types.
         let x_y = T.mk_id (x ^ "_" ^ y) in
         let qualid = Qdot (Qident (T.mk_id "ocamlstdlib"), x_y) in
         let loc = T.location loc in
