@@ -13,13 +13,13 @@ type 'a t = Empty | Node of 'a t * 'a * 'a t
       | Node l _ r -> 1 + max (height l) (height r) *)
 
 let[@logic] rec to_list a l u =
-  if u <= l then [] else a.(l) :: to_list a (l+1) u
+  if u <= l then [] else a.(l) :: to_list a (l + 1) u
 (*@ to_list a l u
       requires l >= 0 /\ u <= Array.length a
       variant  u - l *)
 
-let[@lemma] rec to_list_append (a: 'a array) (l: int) (m: int) (u: int) =
-  if l < m then to_list_append a (l+1) m u
+let[@lemma] rec to_list_append (a : 'a array) (l : int) (m : int) (u : int) =
+  if l < m then to_list_append a (l + 1) m u
 (*@ to_list_append a l m u
       requires 0 <= l <= m <= u <= Array.length a
       variant  m - l
@@ -28,10 +28,9 @@ let[@lemma] rec to_list_append (a: 'a array) (l: int) (m: int) (u: int) =
 (*@ open Power *)
 
 let rec tree_of_array_aux a lo hi =
-  if lo = hi then
-    Empty
+  if lo = hi then Empty
   else
-    let mid = lo + (hi - lo) / 2 in
+    let mid = lo + ((hi - lo) / 2) in
     let left = tree_of_array_aux a lo mid in
     let right = tree_of_array_aux a (mid + 1) hi in
     Node (left, a.(mid), right)
@@ -44,8 +43,7 @@ let rec tree_of_array_aux a lo hi =
                   let h = height r in
                   2 ^ (h - 1) <= n < 2 ^ h) *)
 
-let rec tree_of_array a =
-  tree_of_array_aux a 0 (Array.length a)
+let rec tree_of_array a = tree_of_array_aux a 0 (Array.length a)
 (*@ r = tree_of_array a
       ensures inorder r = to_list a 0 (Array.length a)
       ensures size r = Array.length a *)

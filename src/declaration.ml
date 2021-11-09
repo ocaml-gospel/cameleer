@@ -418,13 +418,13 @@ let s_structure, s_signature =
     | Sig_axiom p -> [ mk_axiom loc p ]
     | Sig_inductive ind_decl -> [ mk_ind loc ind_decl ]
     | Sig_typext _ -> assert false (* TODO *)
-    | Sig_module {mdname = {txt; loc}; mdtype; mdloc; _} ->
+    | Sig_module { mdname = { txt; loc }; mdtype; mdloc; _ } ->
         let id_loc = T.location loc in
         let loc = T.location mdloc in
         let id = T.mk_id (Option.get txt) ~id_loc in
         (* let info = update_path info md_name.I.id_str in *)
         let odecl_list, _ = s_module_type info mdtype in
-        [O.mk_omodule loc id odecl_list]
+        [ O.mk_omodule loc id odecl_list ]
     | Sig_recmodule _ -> assert false (* TODO *)
     | Sig_modtype _ -> assert false (* TODO *)
     | Sig_exception { ptyexn_constructor; _ } ->
@@ -573,8 +573,7 @@ let s_structure, s_signature =
           ignore subst_arg;
           (* TODO *)
           O.mk_functor decl_loc id arg body
-      | Smod_apply (funct, arg) ->
-          s_mod_apply info funct arg
+      | Smod_apply (funct, arg) -> s_mod_apply info funct arg
       | Smod_constraint (mod_expr, mod_type) ->
           let mod_type_name = mod_type_name mod_type.Uast.mdesc in
           let mod_type_name = Opt.map E.longident mod_type_name in
@@ -589,48 +588,56 @@ let s_structure, s_signature =
       (* TODO *)
     in
     let scope_loc = T.location spmb_loc in
-    let scope_id  = T.(mk_id ~id_loc:(location loc) mod_bind_name) in
+    let scope_id = T.(mk_id ~id_loc:(location loc) mod_bind_name) in
     let scope_body = s_module_expr spmb_expr in
     Hashtbl.add mod_expr_table mod_bind_name scope_body;
-    [O.mk_omodule scope_loc scope_id scope_body]
-
+    [ O.mk_omodule scope_loc scope_id scope_body ]
   and s_mod_apply _info funct arg =
-    let qarg = match arg.spmod_desc with
-      | Smod_ident {loc; txt} ->
+    let qarg =
+      match arg.spmod_desc with
+      | Smod_ident { loc; txt } ->
           let id_loc = T.location loc in
           E.longident ~id_loc txt
-      | _ -> assert false (* TODO *) in
-    let _qfunct = match funct.spmod_desc with
-      | Smod_ident {loc; txt} ->
+      | _ -> assert false
+      (* TODO *)
+    in
+    let _qfunct =
+      match funct.spmod_desc with
+      | Smod_ident { loc; txt } ->
           let id_loc = T.location loc in
           E.longident ~id_loc txt
-      | _ -> assert false (* TODO *) in
+      | _ -> assert false
+      (* TODO *)
+    in
     let _extract_functor_arg = function
-      | O.Omodule (_, id, l) :: _-> id, l
-      | _ -> assert false in
+      | O.Omodule (_, id, l) :: _ -> (id, l)
+      | _ -> assert false
+    in
     let _mk_subst id_arg_mod = function
-      | O.Odecl (_, Ptree.Dtype [{td_ident; _}]) ->
+      | O.Odecl (_, Ptree.Dtype [ { td_ident; _ } ]) ->
           let qarg_mod_type = Qident id_arg_mod in
           let qtsym = Qdot (qarg_mod_type, td_ident) in
           let idtsym = PTtyapp (Qdot (qarg, td_ident), []) in
-          [CStsym (qtsym, [], idtsym)]
+          [ CStsym (qtsym, [], idtsym) ]
       | O.Odecl (_, Dtype _) -> assert false (* TODO *)
       | O.Odecl (_, Dlet (id, _, _, _)) ->
           let qarg_mod_type = Qident id_arg_mod in
           let lqvsym = Qdot (qarg_mod_type, id) in
           let rqvsym = Qdot (qarg, id) in
-          [CSvsym (lqvsym, rqvsym)]
-      | _ -> [] in
+          [ CSvsym (lqvsym, rqvsym) ]
+      | _ -> []
+    in
     match funct.Uast.spmod_desc with
-    | Smod_ident {txt = Lident _s; _} ->
+    | Smod_ident { txt = Lident _s; _ } ->
         (* let odecl_list = Hashtbl.find mod_expr_table s in
          * let id, l = extract_functor_arg odecl_list in
          * let subst = List.fold_left (fun acc d -> mk_subst id d :: acc) [] l in
          * let loc = T.location loc in
          * ignore ([O.mk_odecl loc (Ptree.Dcloneexport
          *                            (loc, qfunct, List.flatten subst))]); *)
-        [] (* TODO *)
-    | Smod_ident {txt = Ldot (Lident x, y); loc} ->
+        []
+        (* TODO *)
+    | Smod_ident { txt = Ldot (Lident x, y); loc } ->
         let subst =
           if x = "Map" || x = "Set" then
             let qord = Qident (T.mk_id "Ord") in
@@ -638,7 +645,7 @@ let s_structure, s_signature =
             let idtsym = T.(PTtyapp (Qdot (qarg, mk_id "t"), [])) in
             let lqvsym_cmp = Qdot (qord, T.mk_id "compare") in
             let rqvsym_cmp = T.(Qdot (qarg, mk_id "compare")) in
-            [CStsym (qtsym, [], idtsym); CSvsym (lqvsym_cmp, rqvsym_cmp); ]
+            [ CStsym (qtsym, [], idtsym); CSvsym (lqvsym_cmp, rqvsym_cmp) ]
           else
             let qhash = Qident (T.mk_id "HashedType") in
             let qtsym = Qdot (qhash, T.mk_id "t") in
@@ -647,22 +654,26 @@ let s_structure, s_signature =
             let rqvsym_equal = T.(Qdot (qarg, mk_id "equal")) in
             let lqvsym_hash = T.(Qdot (qhash, mk_id "hash")) in
             let rqvsym_hash = T.(Qdot (qarg, mk_id "hash")) in
-            [CStsym (qtsym, [], idtsym); CSvsym (lqvsym_equal, rqvsym_equal);
-             CSvsym (lqvsym_hash, rqvsym_hash)] in
+            [
+              CStsym (qtsym, [], idtsym);
+              CSvsym (lqvsym_equal, rqvsym_equal);
+              CSvsym (lqvsym_hash, rqvsym_hash);
+            ]
+        in
         let x_y = T.mk_id (x ^ "_" ^ y) in
         let qualid = Qdot (Qident (T.mk_id "ocamlstdlib"), x_y) in
         let loc = T.location loc in
-        [O.mk_odecl loc (Ptree.Dcloneexport (qualid, subst))]
-    | Smod_ident {txt = Ldot (Lapply _, _); _} -> assert false (* TODO *)
-    | Smod_ident {txt = Ldot (Ldot _, _); _} -> assert false (* TODO *)
-    | Smod_ident {txt = Lapply _; _} -> assert false (* TODO *)
+        [ O.mk_odecl loc (Ptree.Dcloneexport (qualid, subst)) ]
+    | Smod_ident { txt = Ldot (Lapply _, _); _ } -> assert false (* TODO *)
+    | Smod_ident { txt = Ldot (Ldot _, _); _ } -> assert false (* TODO *)
+    | Smod_ident { txt = Lapply _; _ } -> assert false (* TODO *)
     | Smod_structure _ -> assert false (* TODO *)
     | Smod_functor _ -> assert false (* TODO *)
     | Smod_apply _ -> assert false (* TODO *)
     | Smod_constraint _ -> assert false (* TODO *)
     | Smod_unpack _ -> assert false (* TODO *)
-    | Smod_extension _ -> assert false (* TODO *)
-
+    | Smod_extension _ -> assert false
+  (* TODO *)
   and s_module_type info { mdesc; _ } =
     match mdesc with
     | Mod_ident id -> (
