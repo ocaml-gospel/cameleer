@@ -46,6 +46,7 @@ let () =
       (":=", "infix :=");
       ("|>", "infix |>");
       ("<>", "infix ~=");
+      ("~-", "prefix ~-");
     ]
 
 let query_syntax str = Hstr.find_opt driver str

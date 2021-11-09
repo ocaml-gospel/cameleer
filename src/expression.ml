@@ -538,6 +538,10 @@ and construct_arith info s term_list =
     let ttuple = Ttuple (List.map (term info) term_list) in
     [ Uterm.mk_term ttuple ]
 
+let array_empty =
+  let array = Qdot (Qident (T.mk_id "Array"), T.mk_id "empty") in
+  mk_eidapp array [ unit_expr ]
+
 let rec expression_desc info expr_loc expr_desc =
   let mk_expr e = mk_expr ~expr_loc e in
   let arg_expr (_, expr) = expression info expr in
@@ -651,6 +655,7 @@ let rec expression_desc info expr_loc expr_desc =
       let lexpr = expression info lvalue and rexpr = expression info rvalue in
       let id = longident ~id_loc:T.(location l.loc) l.txt in
       mk_eassign lexpr id rexpr
+  | Sexp_array [] -> array_empty
   | Sexp_array expr_list -> mk_array info expr_list
   | Sexp_while (e_test, e_body, None) ->
       mk_ewhile (expression info e_test) [] [] (expression info e_body)

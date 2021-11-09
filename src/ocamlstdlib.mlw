@@ -46,6 +46,10 @@ module Stdlib
   val (|>) (x: 'a) (f: 'a -> 'b) : 'b
     ensures { result = f x }
 
+  let (~-_) (x: int) = -x
+
+  let succ (x: int) = x + 1
+
   predicate is_pre_order (cmp: 'a -> 'a -> int) =
     (forall x. cmp x x = 0) /\
     (forall x y. cmp x y = 0 <-> cmp y x = 0) /\
@@ -107,6 +111,24 @@ module Stdlib
         a[i] <- f i
       done;
       a
+
+    val empty () : my_array 'a
+      ensures { result.length = 0 }
+
+    let blit (a1: my_array 'a) (ofs1: int)
+             (a2: my_array 'a) (ofs2: int) (len: int) : unit writes {a2}
+      requires { 0 <= ofs1 /\ 0 <= len /\ ofs1 + len <= length a1 }
+      requires { 0 <= ofs2 /\             ofs2 + len <= length a2 }
+      ensures  { forall i:int.
+        (0 <= i < ofs2 \/ ofs2 + len <= i < length a2) -> a2[i] = old a2[i] }
+      ensures  { forall i:int.
+        ofs2 <= i < ofs2 + len -> a2[i] = a1[ofs1 + i - ofs2] }
+    =
+      for i = 0 to len - 1 do
+        invariant { forall k. not (0 <= k < i) -> a2[ofs2 + k] = old a2[ofs2 + k] }
+        invariant { forall k. 0 <= k < i -> a2[ofs2 + k] = a1[ofs1 + k] }
+        a2[ofs2 + i] <- a1[ofs1 + i];
+      done
 
     val sort (cmp: 'a -> 'a -> int) (a: my_array 'a) : unit
       requires { is_pre_order cmp }
