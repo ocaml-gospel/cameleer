@@ -108,6 +108,9 @@ module Stdlib
       done;
       a
 
+    val empty () : my_array 'a
+      ensures { result.length = 0 }
+
     val sort (cmp: 'a -> 'a -> int) (a: my_array 'a) : unit
       requires { is_pre_order cmp }
       ensures  { forall i j. 0 <= i <= j < length a -> cmp a[i] a[j] <= 0 }
