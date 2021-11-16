@@ -77,6 +77,8 @@ module Stdlib
 
     function ([]) (a: my_array 'a) (i: int) : 'a = Seq.([]) a.elts i
 
+    function get (a: my_array 'a) (i: int) : 'a = a[i]
+
     val get (a: my_array 'a) (i: int) : 'a
       requires { [@expl:index in array bounds] 0 <= i < length a }
       ensures  { result = a[i] }
@@ -243,6 +245,8 @@ module Array
     } invariant { 0 <= length = Seq.length elts }
 
     function ([]) (a: my_array 'a) (i: int) : 'a = Seq.([]) a.elts i
+
+    function get (a: my_array 'a) (i: int) : 'a = a[i]
 
     val get (a: my_array 'a) (i: int) : 'a
       requires { [@expl:index in array bounds] 0 <= i < length a }
