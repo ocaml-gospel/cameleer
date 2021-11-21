@@ -154,6 +154,11 @@ module Stdlib
       ensures { result = to_list_range a 0 (length a) }
     = to_list_range a 0 (length a)
 
+    use seq.Mem
+
+    predicate mem (x: 'a) (a: my_array 'a) =
+      Mem.mem x a
+
   end
 
   type array 'a = my_array 'a
