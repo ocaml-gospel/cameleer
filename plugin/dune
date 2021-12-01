@@ -2,7 +2,7 @@
  (libraries ppxlib gospel why3 cameleer)
  (name plugin_cameleer)
  (modes plugin)
- (embed_in_plugin_libraries compiler-libs.common ocaml-compiler-libs.shadow
+ (embed_in_plugin_libraries sexplib0 compiler-libs.common ocaml-compiler-libs.shadow
    ppxlib.astlib ppxlib.stdppx ppxlib.ast ppxlib fmt gospel cameleer))
 
 (install
