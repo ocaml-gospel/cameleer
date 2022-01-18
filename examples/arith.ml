@@ -25,8 +25,8 @@ module Make (E : EqType) = struct
 
   type stmt =
     | SSkip
-    (* | SAssign of ident * aexpr
-     * | SSeq of stmt * stmt *)
+    (* | SAssign of ident * aexpr *)
+    | SSeq of stmt * stmt
     | SIf of ebool * stmt * stmt
     (* | SWhile of ebool * stmt *)
 
@@ -66,11 +66,11 @@ module Make (E : EqType) = struct
       (* | SAssign (x, a) ->
        *     let v = eval_0 s a in
        *     let s' = update s x v in
-       *     RVal s'
-       * | SSeq (s1, s2) -> (
-       *     match stmt_eval c s s1 with
-       *     | ROutOfFuel -> ROutOfFuel
-       *     | RVal s' -> stmt_eval c s' s2) *)
+       *     RVal s' *)
+      | SSeq (s1, s2) -> (
+          match stmt_eval c s s1 with
+          | ROutOfFuel -> ROutOfFuel
+          | RVal _ -> stmt_eval c s s2) (* FIXME: give good store *)
       | SIf (b, s1, s2) ->
           if eval_b s b then stmt_eval c s s1 else stmt_eval c s s2
       (* | SWhile (b, stmt) -> (
@@ -82,6 +82,20 @@ module Make (E : EqType) = struct
   (*@ stmt_eval c s stmt
         requires c >= 0
         variant  c, stmt *)
+
+  let[@lemma] rec stmt_semantics_more_fuel
+      (c1: int) (c2: int) (st: store) (stmt: stmt)
+  = match stmt with
+    | SSkip -> ()
+    | SSeq (s1, s2) -> stmt_semantics_more_fuel c1 c2 st s1;
+        stmt_semantics_more_fuel c1 c2 st s2
+    | SIf (b, s1, s2) ->
+        if eval_b st b then stmt_semantics_more_fuel c1 c2 st s1
+        else stmt_semantics_more_fuel c1 c2 st s2
+  (*@ variant  stmt
+      requires 0 <= c2 <= c1
+      ensures  forall st'. stmt_eval c2 st stmt = RVal st' ->
+                           stmt_eval c1 st stmt = RVal st' *)
 
   type stmt_sem = Terminates | Diverges
 
@@ -100,6 +114,11 @@ module Make (E : EqType) = struct
         stmt_semantics stmt1 st = Terminates ->
         stmt_semantics stmt2 st = Terminates ->
         stmt_semantics (SIf b stmt1 stmt2) st = Terminates *)
+
+  (*@ lemma stmt_semantics_seq : forall st stmt1 stmt2.
+      stmt_semantics stmt1 st = Terminates ->
+      stmt_semantics stmt2 st = Terminates ->
+      stmt_semantics (SSeq stmt1 stmt2) st = Terminates *)
 
   type opcode =
     | ONoop
@@ -386,11 +405,17 @@ module Make (E : EqType) = struct
         star_append st ba
           [ OBranch (a1, a2) ] [] [] ([ VBool (eval_b st b) ], [], st);
         ba @ [ OBranch (a1, a2) ]
+    | SSeq (stmt1, stmt2) ->
+        let a1 = compile_stmt st stmt1 in
+        let a2 = compile_stmt st stmt2 in
+        star_append st a1 a2 [] [] ([], [], st);
+        a1 @ a2
   (*@ r = compile_stmt st stmt
         variant stmt
         ensures match star [] r st with
                 | Error -> false
-                | Res (stack, code, _st) ->
+                | Res (stack, code, st') ->
+                    st' = st &&
                     stack = [] && code = [] &&
                     stmt_semantics stmt st = Terminates *)
 
