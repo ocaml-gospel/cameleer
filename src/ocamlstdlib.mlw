@@ -80,6 +80,10 @@ module Stdlib
 
     function get (a: my_array 'a) (i: int) : 'a = a[i]
 
+    val copy (a: my_array 'a) : my_array 'a
+      ensures  { result.length = a.length }
+      ensures  { forall i:int. 0 <= i < result.length -> result[i] = a[i] }
+
     val get (a: my_array 'a) (i: int) : 'a
       requires { [@expl:index in array bounds] 0 <= i < length a }
       ensures  { result = a[i] }
@@ -1033,6 +1037,11 @@ module Array
       ensures { result = to_list_range a 0 (length a) }
     = to_list_range a 0 (length a)
 
+    val copy (a: my_array 'a) : my_array 'a
+      ensures  { length result = length a }
+      ensures  { forall i:int. 0 <= i < length result -> result[i] = a[i] }
+
+
   (* end *)
 
   type array 'a = my_array 'a
@@ -1201,6 +1210,12 @@ end
 module Set
 
   use export set.Fset
+
+end
+
+module Bag
+
+  use export bag.Bag
 
 end
 
