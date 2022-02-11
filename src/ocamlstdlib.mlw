@@ -1,16 +1,21 @@
 module Stdlib
 
-  use export int.Int
-  use export int.ComputerDivision
-  use export int.MinMax
-  use export int.Abs
-  use export mach.int.Int
-  use export list.List
-  use export list.Append
+  use int.Int
+  (* use export int.MinMax *)
+  (* use export int.Abs *)
+  (* use export mach.int.Int *)
+  (* use export list.List *)
+  (* (\* use export list.Append *\) *)
   use export ocaml.Exceptions
-  use export option.Option
-  use export ref.Ref
-  use export ref.Refint
+  (* use export option.Option *)
+  (* use export ref.Ref *)
+  (* use export ref.Refint *)
+
+  use list.List
+  use list.Append
+
+  val (++) (l1 l2: list 'a) : list 'a
+    ensures { result = l1 ++ l2 }
 
   let invalid_arg (s: string)
     raises  { Invalid_argument }
@@ -19,15 +24,13 @@ module Stdlib
 
   val ignore (_: 'a) : unit
 
-  let function fst (x: ('a, 'b)) : 'a =
+  let fst (x: ('a, 'b)) : 'a =
     let r, _ = x in r
 
-  let function snd (x: ('a, 'b)) : 'b =
+  let snd (x: ('a, 'b)) : 'b =
     let _, r = x in r
 
   type result 'a 'b = Ok 'a | Error 'b
-
-  function (%) (x y: int) : int = mod x y
 
   predicate same_location 'a 'a
 
@@ -43,171 +46,170 @@ module Stdlib
   val function (~=) (x y: int) : bool
     ensures { result <-> not x = y }
 
-  val (|>) (x: 'a) (f: 'a -> 'b) : 'b
-    ensures { result = f x }
+  (* val (|>) (x: 'a) (f: 'a -> 'b) : 'b *)
+  (*   ensures { result = f x } *)
 
   let (~-_) (x: int) = -x
 
-  let succ (x: int) = x + 1
+  use int.ComputerDivision
+  let mod (x: int) (y: int)
+    requires { [@expl:check modulo by zero] y <> 0 }
+    ensures  { result = mod x y }
+  = mod x y
 
-  predicate is_pre_order (cmp: 'a -> 'a -> int) =
-    (forall x. cmp x x = 0) /\
-    (forall x y. cmp x y = 0 <-> cmp y x = 0) /\
-    (forall x y. cmp x y < 0 <-> cmp y x > 0) /\
-    (forall x y z.
-      (cmp x y = 0 -> cmp y z = 0 -> cmp x z = 0) /\
-      (cmp x y = 0 -> cmp y z < 0 -> cmp x z < 0) /\
-      (cmp x y < 0 -> cmp y z = 0 -> cmp x z < 0) /\
-      (cmp x y < 0 -> cmp y z < 0 -> cmp x z < 0))
+  (* let (/) (x: int) (y: int) *)
+  (*   requires { [@expl:check division by zero] y <> 0 } *)
+  (*   ensures  { result = div x y } *)
+  (* = div x y *)
 
-  lemma cmp_eq: forall x y: 'a, cmp: 'a -> 'a -> int.
-    is_pre_order cmp -> (cmp x y = 0 <-> x = y)
+  (* let succ (x: int) = x + 1 *)
 
-  val function compare (x y: 'a) : int
-  axiom compare_pre_order : is_pre_order (fun (x: 'a) (y: 'a) -> compare x y)
+  (* predicate is_pre_order (cmp: 'a -> 'a -> int) = *)
+  (*   (forall x. cmp x x = 0) /\ *)
+  (*   (forall x y. cmp x y = 0 <-> cmp y x = 0) /\ *)
+  (*   (forall x y. cmp x y < 0 <-> cmp y x > 0) /\ *)
+  (*   (forall x y z. *)
+  (*     (cmp x y = 0 -> cmp y z = 0 -> cmp x z = 0) /\ *)
+  (*     (cmp x y = 0 -> cmp y z < 0 -> cmp x z < 0) /\ *)
+  (*     (cmp x y < 0 -> cmp y z = 0 -> cmp x z < 0) /\ *)
+  (*     (cmp x y < 0 -> cmp y z < 0 -> cmp x z < 0)) *)
 
-  use import seq.Seq as Seq
+  (* lemma cmp_eq: forall x y: 'a, cmp: 'a -> 'a -> int. *)
+  (*   is_pre_order cmp -> (cmp x y = 0 <-> x = y) *)
 
-  scope import Array
+  (* val function compare (x y: 'a) : int *)
+  (* axiom compare_pre_order : is_pre_order (fun (x: 'a) (y: 'a) -> compare x y) *)
 
-    type my_array 'a = private {
-      mutable ghost elts : seq 'a;
-                  length : int;
-    } invariant { 0 <= length = Seq.length elts }
+  (* use import seq.Seq as Seq *)
 
-    function ([]) (a: my_array 'a) (i: int) : 'a = Seq.([]) a.elts i
+  (* scope import Array *)
 
-    function get (a: my_array 'a) (i: int) : 'a = a[i]
+  (*   type my_array 'a(\*  = private { *\) *)
+  (*   (\*   mutable ghost elts : seq 'a; *\) *)
+  (*   (\*               length : int; *\) *)
+  (*   (\* } invariant { 0 <= length = Seq.length elts } *\) *)
 
-    val get (a: my_array 'a) (i: int) : 'a
-      requires { [@expl:index in array bounds] 0 <= i < length a }
-      ensures  { result = a[i] }
+  (*   (\* function ([]) (a: my_array 'a) (i: int) : 'a = Seq.([]) a.elts i *\) *)
 
-    val set (a: my_array 'a) (i: int) (v: 'a) : unit
-      writes   { a }
-      requires { 0 <= i < length a }
-      ensures  { a.elts = (old a.elts)[i <- v] }
+  (*   (\* function get (a: my_array 'a) (i: int) : 'a = a[i] *\) *)
 
-    meta coercion function elts
+  (*   (\* val get (a: my_array 'a) (i: int) : 'a *\) *)
+  (*   (\*   requires { [@expl:index in array bounds] 0 <= i < length a } *\) *)
+  (*   (\*   ensures  { result = a[i] } *\) *)
 
-    val ([]) (a: my_array 'a) (i: int) : 'a
-      requires { [@expl:index in array bounds] 0 <= i < a.length }
-      ensures  { result = a[i] }
+  (*   (\* val set (a: my_array 'a) (i: int) (v: 'a) : unit *\) *)
+  (*   (\*   writes   { a } *\) *)
+  (*   (\*   requires { 0 <= i < length a } *\) *)
+  (*   (\*   ensures  { a.elts = (old a.elts)[i <- v] } *\) *)
 
-    val ([]<-) (a: my_array 'a) (i: int) (v: 'a) : unit writes {a}
-      requires { [@expl:index in array bounds] 0 <= i < a.length }
-      ensures  { a.elts = (old a.elts)[i <- v] }
+  (*   (\* meta coercion function elts *\) *)
 
-    val make (n: int) (v: 'a) : my_array 'a
-      requires { [@expl:array creation size] n >= 0 }
-      ensures  { forall i. 0 <= i < n -> result[i] = v }
-      ensures  { result.length = n }
+  (*   (\* val ([]) (a: my_array 'a) (i: int) : 'a *\) *)
+  (*   (\*   requires { [@expl:index in array bounds] 0 <= i < a.length } *\) *)
+  (*   (\*   ensures  { result = a[i] } *\) *)
 
-    let init (n: int) (f: int -> 'a) : my_array 'a
-      requires { [@expl:array creation size] n >= 0 }
-      ensures  { forall i. 0 <= i < n -> result[i] = f i }
-      ensures  { length result = n }
-    = let a = make n (f 0) in
-      for i = 1 to n - 1 do
-        invariant { forall j. 0 <= j < i -> a[j] = f j }
-        a[i] <- f i
-      done;
-      a
+  (*   (\* val ([]<-) (a: my_array 'a) (i: int) (v: 'a) : unit writes {a} *\) *)
+  (*   (\*   requires { [@expl:index in array bounds] 0 <= i < a.length } *\) *)
+  (*   (\*   ensures  { a.elts = (old a.elts)[i <- v] } *\) *)
 
-    val empty () : my_array 'a
-      ensures { result.length = 0 }
+  (*   (\* val make (n: int) (v: 'a) : my_array 'a *\) *)
+  (*   (\*   requires { [@expl:array creation size] n >= 0 } *\) *)
+  (*   (\*   ensures  { forall i. 0 <= i < n -> result[i] = v } *\) *)
+  (*   (\*   ensures  { result.length = n } *\) *)
 
-    let blit (a1: my_array 'a) (ofs1: int)
-             (a2: my_array 'a) (ofs2: int) (len: int) : unit writes {a2}
-      requires { 0 <= ofs1 /\ 0 <= len /\ ofs1 + len <= length a1 }
-      requires { 0 <= ofs2 /\             ofs2 + len <= length a2 }
-      ensures  { forall i:int.
-        (0 <= i < ofs2 \/ ofs2 + len <= i < length a2) -> a2[i] = old a2[i] }
-      ensures  { forall i:int.
-        ofs2 <= i < ofs2 + len -> a2[i] = a1[ofs1 + i - ofs2] }
-    =
-      for i = 0 to len - 1 do
-        invariant { forall k. not (0 <= k < i) -> a2[ofs2 + k] = old a2[ofs2 + k] }
-        invariant { forall k. 0 <= k < i -> a2[ofs2 + k] = a1[ofs1 + k] }
-        a2[ofs2 + i] <- a1[ofs1 + i];
-      done
+  (*   (\* let init (n: int) (f: int -> 'a) : my_array 'a *\) *)
+  (*   (\*   requires { [@expl:array creation size] n >= 0 } *\) *)
+  (*   (\*   ensures  { forall i. 0 <= i < n -> result[i] = f i } *\) *)
+  (*   (\*   ensures  { length result = n } *\) *)
+  (*   (\* = let a = make n (f 0) in *\) *)
+  (*   (\*   for i = 1 to n - 1 do *\) *)
+  (*   (\*     invariant { forall j. 0 <= j < i -> a[j] = f j } *\) *)
+  (*   (\*     a[i] <- f i *\) *)
+  (*   (\*   done; *\) *)
+  (*   (\*   a *\) *)
 
-    val sort (cmp: 'a -> 'a -> int) (a: my_array 'a) : unit
-      requires { is_pre_order cmp }
-      ensures  { forall i j. 0 <= i <= j < length a -> cmp a[i] a[j] <= 0 }
+  (*   (\* val empty () : my_array 'a *\) *)
+  (*   (\*   ensures { result.length = 0 } *\) *)
 
-    let rec function to_list_range (a: my_array 'a) (l u: int) : list 'a
-      requires { l >= 0 /\ u <= a.length }
-      variant  { u - l }
-    = if u <= l then Nil else Cons a[l] (to_list_range a (l+1) u)
+  (*   (\* let blit (a1: my_array 'a) (ofs1: int) *\) *)
+  (*   (\*          (a2: my_array 'a) (ofs2: int) (len: int) : unit writes {a2} *\) *)
+  (*   (\*   requires { 0 <= ofs1 /\ 0 <= len /\ ofs1 + len <= length a1 } *\) *)
+  (*   (\*   requires { 0 <= ofs2 /\             ofs2 + len <= length a2 } *\) *)
+  (*   (\*   ensures  { forall i:int. *\) *)
+  (*   (\*     (0 <= i < ofs2 \/ ofs2 + len <= i < length a2) -> a2[i] = old a2[i] } *\) *)
+  (*   (\*   ensures  { forall i:int. *\) *)
+  (*   (\*     ofs2 <= i < ofs2 + len -> a2[i] = a1[ofs1 + i - ofs2] } *\) *)
+  (*   (\* = *\) *)
+  (*   (\*   for i = 0 to len - 1 do *\) *)
+  (*   (\*     invariant { forall k. not (0 <= k < i) -> a2[ofs2 + k] = old a2[ofs2 + k] } *\) *)
+  (*   (\*     invariant { forall k. 0 <= k < i -> a2[ofs2 + k] = a1[ofs1 + k] } *\) *)
+  (*   (\*     a2[ofs2 + i] <- a1[ofs1 + i]; *\) *)
+  (*   (\*   done *\) *)
 
-    use list.Append
+  (*   (\* val sort (cmp: 'a -> 'a -> int) (a: my_array 'a) : unit *\) *)
+  (*   (\*   requires { is_pre_order cmp } *\) *)
+  (*   (\*   ensures  { forall i j. 0 <= i <= j < length a -> cmp a[i] a[j] <= 0 } *\) *)
 
-    let rec lemma to_list_append (a: my_array 'a) (l m u: int)
-      requires { 0 <= l <= m <= u <= a.length }
-      variant  { m - l }
-      ensures  { to_list_range a l m ++ to_list_range a m u =
-                 to_list_range a l u }
-    = if l < m then to_list_append a (l+1) m u
+  (*   (\* let rec function to_list_range (a: my_array 'a) (l u: int) : list 'a *\) *)
+  (*   (\*   requires { l >= 0 /\ u <= a.length } *\) *)
+  (*   (\*   variant  { u - l } *\) *)
+  (*   (\* = if u <= l then Nil else Cons a[l] (to_list_range a (l+1) u) *\) *)
 
-    let to_list (a: my_array 'a) : list 'a
-      ensures { result = to_list_range a 0 (length a) }
-    = to_list_range a 0 (length a)
+  (*   (\* use list.Append *\) *)
 
-    use seq.Mem
+  (*   (\* let rec lemma to_list_append (a: my_array 'a) (l m u: int) *\) *)
+  (*   (\*   requires { 0 <= l <= m <= u <= a.length } *\) *)
+  (*   (\*   variant  { m - l } *\) *)
+  (*   (\*   ensures  { to_list_range a l m ++ to_list_range a m u = *\) *)
+  (*   (\*              to_list_range a l u } *\) *)
+  (*   (\* = if l < m then to_list_append a (l+1) m u *\) *)
 
-    predicate mem (x: 'a) (a: my_array 'a) =
-      Mem.mem x a
+  (*   (\* let to_list (a: my_array 'a) : list 'a *\) *)
+  (*   (\*   ensures { result = to_list_range a 0 (length a) } *\) *)
+  (*   (\* = to_list_range a 0 (length a) *\) *)
 
-  end
+  (*   (\* use seq.Mem *\) *)
 
-  type array 'a = my_array 'a
+  (*   (\* predicate mem (x: 'a) (a: my_array 'a) = *\) *)
+  (*   (\*   Mem.mem x a *\) *)
 
-  scope Sys
+  (*   (\* let copy (a: my_array 'a) : my_array 'a *\) *)
+  (*   (\*   ensures { length result = length a } *\) *)
+  (*   (\*   ensures { forall i:int. 0 <= i < length result -> result[i] = a[i] } *\) *)
+  (*   (\* = *\) *)
+  (*   (\*   let len = length a in *\) *)
+  (*   (\*   if len = 0 then empty () *\) *)
+  (*   (\*   else begin *\) *)
+  (*   (\*     let b = make len a[0] in *\) *)
+  (*   (\*     for i = 1 to len - 1 do *\) *)
+  (*   (\*       invariant { forall k. 0 <= k < i -> b[k] = a[k] } *\) *)
+  (*   (\*       b[i] <- a[i] *\) *)
+  (*   (\*     done; *\) *)
+  (*   (\*     b *\) *)
+  (*   (\*   end *\) *)
 
-    val constant max_array_length : int
-    axiom non_neg_max_array_length : 0 < max_array_length
+  (* end *)
 
-  end
+  (* (\* type array 'a = my_array 'a *\) *)
+
+  (* scope Sys *)
+
+  (*   val constant max_array_length : int *)
+  (*   axiom non_neg_max_array_length : 0 < max_array_length *)
+
+  (* end *)
 
   scope List
+    use export ocaml_list.Sig
+  end
 
-    use export list.List
-    use export list.Length
-    use export list.Mem
-    use export list.NumOcc
-    use import list.Append    as A
-    use import list.Reverse   as R
-    use import list.RevAppend as RA
-
-    let function rev (l: list 'a) : list 'a =
-      R.reverse l
-
-    let function append (l1 l2: list 'a) : list 'a =
-      A.(++) l1 l2
-
-    let function rev_append (s t: list 'a) : list 'a =
-      RA.rev_append s t
-
-    val mem (x: 'a) (l: list 'a) : bool
-      ensures { result <-> mem x l }
-
-    val filter (p: 'a -> bool) (l: list 'a) : list 'a
-      ensures { forall x. mem x result <-> p x && mem x l }
-      ensures { forall x. mem x result -> num_occ x result = num_occ x l }
-
-    let find_all (p: 'a -> bool) (l: list 'a)
-      ensures { forall x. mem x result -> p x && mem x l }
-      ensures { forall x. mem x result -> num_occ x result = num_occ x l }
-    = filter p l
-
-    val list_exists (p: 'a -> bool) (l: list 'a) : bool
-      ensures { result <-> exists x. mem x l /\ p x }
-
+  scope Array
+    use export ocaml_array.Sig
   end
 
 end
 
+(*
 module Map
 
   use map.Map, set.Fset
@@ -341,17 +343,17 @@ module Permut
 
 end
 
-module Numof
+(* module Numof *)
 
-  use array.NumOfEq
-  use import int.NumOf as N
+(*   use array.NumOfEq *)
+(*   use import int.NumOf as N *)
 
-  use Stdlib
+(*   use Stdlib *)
 
-  function numof (a: Array.my_array 'a) (v: 'a) (l u: int) : int =
-    N.numof (fun i -> (Array.([]) a i) = v) l u
+(*   function numof (a: Array.my_array 'a) (v: 'a) (l u: int) : int = *)
+(*     N.numof (fun i -> (Array.([]) a i) = v) l u *)
 
-end
+(* end *)
 
 module Sum
 
@@ -378,3 +380,5 @@ end
 (*   use ocamlstdlib. *)
 
 (* end *)
+
+*)

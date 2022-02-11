@@ -3,7 +3,7 @@ open Ptree
 open Gospel
 open Parser_frontend
 
-let debug = ref false
+let debug = ref true
 
 open Why3.Typing
 open Wstdlib
@@ -21,7 +21,11 @@ let use_std_lib =
   let use_stdlib =
     Odecl.mk_duseimport dummy_pos ~import:false [ (stdlib, None) ]
   in
-  [ use_stdlib ]
+  let gospel_stdlib = Qdot (Qident (T.mk_id "gospel"), T.mk_id "Stdlib") in
+  let use_gospel_stdlib =
+    Odecl.mk_duseimport dummy_pos ~import:false [ (gospel_stdlib, None) ]
+  in
+  [ use_stdlib; use_gospel_stdlib ]
 
 let mk_info () =
   let info = Odecl.empty_info () in
@@ -57,6 +61,39 @@ let rec pp_qualid fmt = function
   | Qdot (q, id) -> fprintf fmt "%a.%s" pp_qualid q id.id_str
 
 open Mod_subst
+
+let rec pp_qualid fmt = function
+  | Qident id -> fprintf fmt "%s" id.id_str
+  | Qdot (q, id) -> fprintf fmt "%a.%s" pp_qualid q id.id_str
+
+let rec pp_clone_subst fmt = function
+  | [] -> ()
+  | o :: r ->
+      match o with
+      | CSvsym (q1, q2) ->
+          fprintf fmt "vsym %a := %a;@ " pp_qualid q1 pp_qualid q2;
+          pp_clone_subst fmt r
+      | CStsym (q, _, _) ->
+          fprintf fmt "tsym %a;@ " pp_qualid q;
+          pp_clone_subst fmt r
+      | CSpsym (q1, q2) ->
+          fprintf fmt "psym %a := %a;@ " pp_qualid q1 pp_qualid q2;
+          pp_clone_subst fmt r
+      | CSfsym (q1, q2) ->
+          fprintf fmt "fsym %a := %a;@ " pp_qualid q1 pp_qualid q2;
+          pp_clone_subst fmt r
+      | CSxsym (q1, q2) ->
+          fprintf fmt "xsym %a := %a;@ " pp_qualid q1 pp_qualid q2;
+          pp_clone_subst fmt r
+      | CSlemma q ->
+          fprintf fmt "lemma %a;@ " pp_qualid q;
+          pp_clone_subst fmt r
+      | CSprop _ ->
+          fprintf fmt "CSprop@ ";
+          pp_clone_subst fmt r
+      | _ ->
+          fprintf fmt "<other>;@ ";
+          pp_clone_subst fmt r
 
 let mk_refine_modules info top_mod_name =
   let rec merge_qualid q = function
@@ -146,6 +183,8 @@ let mk_refine_modules info top_mod_name =
     let mk_subst = mk_clone_subst mod_refinee mod_refiner subst in
     let acc = [ CSprop Decl.Paxiom ] in
     let clone_subst = List.fold_left mk_subst acc odecl_ref in
+    (** Debug: *)
+    eprintf "@[%a@]@." pp_clone_subst clone_subst;
     let odecl_clone = Odecl.mk_cloneexport top_mod_qualid clone_subst in
     add_decl odecl_clone;
     close_module Loc.dummy_position

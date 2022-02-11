@@ -18,7 +18,7 @@ let () =
     (fun (x, y) -> Hstr.add driver x y)
     [
       ("integer", "int");
-      ("int", "int");
+      ("int", "int63");
       ("+", "infix +");
       ("*", "infix *");
       ("-", "infix -");

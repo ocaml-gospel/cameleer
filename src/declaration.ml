@@ -319,8 +319,9 @@ let mk_import_name_list popen_lid =
     | _ -> assert false
   in
   let mname = T.mk_id mname_txt ~id_loc in
-  (* let str = String.uncapitalize_ascii mname_txt in *)
-  let id_fname = T.mk_id "ocamlstdlib" ~id_loc in
+  let str = String.uncapitalize_ascii mname_txt in
+  (* let id_fname = T.mk_id "ocamlstdlib" ~id_loc in *)
+  let id_fname = T.mk_id str ~id_loc in
   let fname = Qident id_fname in
   (fname, mname)
 
