@@ -592,11 +592,13 @@ let rec expression_desc info expr_loc expr_desc =
   | Uast.Sexp_constant c -> Econst (T.constant c)
   | Uast.Sexp_let (Nonrecursive, [ svb ], expr) ->
       let_match info (expression info expr) svb
+  | Sexp_let (Nonrecursive, svbs, expr) ->
+      let mk_let svb acc = mk_expr (let_match info acc svb) in
+      (List.fold_right mk_let svbs (expression info expr)).expr_desc
   | Uast.Sexp_let (Recursive, svb_list, expr) ->
       let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
       let expr_in = expression info expr in
       mk_erec (List.map (mk_fun_def false rs_kind) id_fun_expr_list) expr_in
-  | Sexp_let _ -> assert false (* TODO *)
   | Uast.Sexp_function _ -> assert false (* TODO *)
   | Uast.Sexp_fun (Nolabel, None, pat, expr_fun, spec) ->
       let spec = match spec with Some s -> S.fun_spec s | _ -> empty_spec in
