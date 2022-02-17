@@ -7,7 +7,6 @@ end
 
 module Make (Ord : OrderedType) = struct
   type elt = Ord.t
-
   type t = E | T of t * elt * t
 
   (*@ function occ (x: elt) (t: t) : integer = match t with

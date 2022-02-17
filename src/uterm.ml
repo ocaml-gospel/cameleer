@@ -9,14 +9,12 @@ module Ty = Ttypes
 module P = Parsetree
 
 let dummy_loc = Loc.dummy_position
-
 let location Location.{ loc_start = b; loc_end = e; _ } = Loc.extract (b, e)
 
 let mk_id ?(id_ats = []) ?(id_loc = dummy_loc) id_str =
   { id_str; id_ats; id_loc }
 
 let mk_term ?(term_loc = dummy_loc) term_desc = { term_desc; term_loc }
-
 let mk_pattern ?(pat_loc = dummy_loc) pat_desc = { pat_desc; pat_loc }
 
 let ident_of_tvsymbol Ty.{ tv_name = name } =

@@ -5,9 +5,7 @@ open Odecl
 module P = Parsetree
 
 val string_of_longident : Longident.t -> string
-
 val empty_spec : Ptree.spec
-
 val mk_expr : ?expr_loc:Loc.position -> Ptree.expr_desc -> Ptree.expr
 
 val mk_fun_def :

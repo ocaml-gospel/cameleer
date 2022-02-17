@@ -6,7 +6,6 @@ type odecl = private
   | Omodule of Loc.position * Ptree.ident * odecl list
 
 val mk_odecl : Loc.position -> Ptree.decl -> odecl
-
 val mk_omodule : Loc.position -> Ptree.ident -> odecl list -> odecl
 
 type path = string list
@@ -30,11 +29,8 @@ type info = private {
 }
 
 val empty_info : unit -> info
-
 val add_info : info -> string -> int -> unit
-
 val add_info_refinement : info -> string -> info_refinement -> unit
-
 val mk_dtype : Loc.position -> Ptree.type_decl list -> odecl
 
 val mk_dlogic :
@@ -47,7 +43,6 @@ val mk_dlet :
   Loc.position -> Ptree.ident -> bool -> Expr.rs_kind -> Ptree.expr -> odecl
 
 val mk_drec : Loc.position -> Ptree.fundef list -> odecl
-
 val mk_dexn : Loc.position -> Ptree.ident -> Ptree.pty -> Ity.mask -> odecl
 
 val mk_duseimport :

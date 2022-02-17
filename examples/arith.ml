@@ -1,4 +1,3 @@
-
 module type EqType = sig
   type t
 
@@ -28,10 +27,9 @@ module Make (E : EqType) = struct
     (* | SAssign of ident * aexpr *)
     | SSeq of stmt * stmt
     | SIf of ebool * stmt * stmt
-    (* | SWhile of ebool * stmt *)
+  (* | SWhile of ebool * stmt *)
 
   type prog = aexpr
-
   type store = ident -> int
 
   let[@logic] update s x v y = if E.eq x y then v else s x
@@ -43,6 +41,7 @@ module Make (E : EqType) = struct
     | ENeg b -> not (eval_b st b)
     | EEq (a1, a2) -> eval_0 st a1 = eval_0 st a2
     | ELeq (a1, a2) -> eval_0 st a1 <= eval_0 st a2
+
   (*@ eval_b st b
         variant b *)
   and[@logic] eval_0 store = function
@@ -70,24 +69,25 @@ module Make (E : EqType) = struct
       | SSeq (s1, s2) -> (
           match stmt_eval c s s1 with
           | ROutOfFuel -> ROutOfFuel
-          | RVal _ -> stmt_eval c s s2) (* FIXME: give good store *)
+          | RVal _ -> stmt_eval c s s2 (* FIXME: give good store *))
       | SIf (b, s1, s2) ->
           if eval_b s b then stmt_eval c s s1 else stmt_eval c s s2
-      (* | SWhile (b, stmt) -> (
-       *     if not (bexp_eval s b) then RVal s
-       *     else
-       *       match stmt_eval c s stmt with
-       *       | ROutOfFuel -> ROutOfFuel
-       *       | RVal s' -> stmt_eval (c - 1) s' (SWhile (b, stmt))) *)
+  (* | SWhile (b, stmt) -> (
+   *     if not (bexp_eval s b) then RVal s
+   *     else
+   *       match stmt_eval c s stmt with
+   *       | ROutOfFuel -> ROutOfFuel
+   *       | RVal s' -> stmt_eval (c - 1) s' (SWhile (b, stmt))) *)
   (*@ stmt_eval c s stmt
         requires c >= 0
         variant  c, stmt *)
 
-  let[@lemma] rec stmt_semantics_more_fuel
-      (c1: int) (c2: int) (st: store) (stmt: stmt)
-  = match stmt with
+  let[@lemma] rec stmt_semantics_more_fuel (c1 : int) (c2 : int) (st : store)
+      (stmt : stmt) =
+    match stmt with
     | SSkip -> ()
-    | SSeq (s1, s2) -> stmt_semantics_more_fuel c1 c2 st s1;
+    | SSeq (s1, s2) ->
+        stmt_semantics_more_fuel c1 c2 st s1;
         stmt_semantics_more_fuel c1 c2 st s2
     | SIf (b, s1, s2) ->
         if eval_b st b then stmt_semantics_more_fuel c1 c2 st s1
@@ -138,26 +138,14 @@ module Make (E : EqType) = struct
   and code = opcode list
 
   type value = VInt of int | VBool of bool
-
   type stack = value list
-
   type state = stack * code * store
-
   type res = Error | Res of state
 
   let[@ghost] [@logic] rec opcode_size = function
-    | ONoop
-    | OTrue
-    | OFalse
-    | OPush _
-    | OFetch _
-    | OSub
-    | OAdd
-    | OMul
-    | OAnd
-    | ONeg
-    | OEq
-    | OLeq -> 1
+    | ONoop | OTrue | OFalse | OPush _ | OFetch _ | OSub | OAdd | OMul | OAnd
+    | ONeg | OEq | OLeq ->
+        1
     | OBranch (c1, c2) -> 1 + code_size c1 + code_size c2
 
   and[@ghost] [@logic] code_size = function
@@ -165,12 +153,13 @@ module Make (E : EqType) = struct
     | o :: r -> opcode_size o + code_size r
 
   let[@lemma] rec opcode_size_nonneg = function
-    | OTrue | OFalse | OPush _ | OFetch _ | OSub | OAdd | OMul | OAnd | ONeg | OEq
-    | OLeq | ONoop ->
+    | OTrue | OFalse | OPush _ | OFetch _ | OSub | OAdd | OMul | OAnd | ONeg
+    | OEq | OLeq | ONoop ->
         ()
     | OBranch (c1, c2) ->
         code_size_nonneg c1;
         code_size_nonneg c2
+
   (*@ opcode_size_nonneg o
         ensures opcode_size o >= 0 *)
   and[@lemma] code_size_nonneg = function
@@ -247,8 +236,8 @@ module Make (E : EqType) = struct
   (*@ star_nil_bool b st
         ensures star (VBool b :: []) [] st = Res (VBool b :: [], [], st) *)
 
-  let[@ghost] star_mul (c1 : code) (c2 : code) (st : store) (x1 : int) (x2 : int)
-    =
+  let[@ghost] star_mul (c1 : code) (c2 : code) (st : store) (x1 : int)
+      (x2 : int) =
     ()
   (*@ star_mul c1 c2 st x1 x2
         requires star [] (c1 @ (c2 @ (OMul :: []))) st
@@ -258,8 +247,8 @@ module Make (E : EqType) = struct
         ensures  star [] (c1 @ (c2 @ (OMul :: []))) st
                = star (VInt (x2 * x1) :: []) [] st *)
 
-  let[@lemma] rec star_append (store : store) (p1 : code) (p2 : code) (s1 : stack)
-      (s2 : stack) (s : state) =
+  let[@lemma] rec star_append (store : store) (p1 : code) (p2 : code)
+      (s1 : stack) (s2 : stack) (s : state) =
     match p1 with
     | [] -> ()
     | ONoop :: r -> star_append store r p2 s1 s2 s
@@ -321,7 +310,10 @@ module Make (E : EqType) = struct
     | EAnd (b1, b2) ->
         let a1 = compile_bool st b1 in
         let a2 = compile_bool st b2 in
-        star_append st a2 (a1 @ [ OAnd ]) [] [] ([ VBool (eval_b st b2) ], [], st);
+        star_append st a2
+          (a1 @ [ OAnd ])
+          [] []
+          ([ VBool (eval_b st b2) ], [], st);
         star_append st a1 [ OAnd ] []
           [ VBool (eval_b st b2) ]
           ([ VBool (eval_b st b1) ], [], st);
@@ -350,6 +342,7 @@ module Make (E : EqType) = struct
         star_append st a [ ONeg ] [] [] ([ VBool (eval_b st b) ], [], st);
         star_nil_bool (not (eval_b st b)) st;
         a @ [ ONeg ]
+
   (*@ r = compile_bool st b
         variant b
         ensures match star [] r st with
@@ -403,7 +396,9 @@ module Make (E : EqType) = struct
         let a1 = compile_stmt st stmt1 in
         let a2 = compile_stmt st stmt2 in
         star_append st ba
-          [ OBranch (a1, a2) ] [] [] ([ VBool (eval_b st b) ], [], st);
+          [ OBranch (a1, a2) ]
+          [] []
+          ([ VBool (eval_b st b) ], [], st);
         ba @ [ OBranch (a1, a2) ]
     | SSeq (stmt1, stmt2) ->
         let a1 = compile_stmt st stmt1 in
@@ -418,5 +413,4 @@ module Make (E : EqType) = struct
                     st' = st &&
                     stack = [] && code = [] &&
                     stmt_semantics stmt st = Terminates *)
-
 end

@@ -29,7 +29,6 @@ end
 
 module Make (X : XOR) : CIPHER with type elt = X.t = struct
   type elt = X.t
-
   type t = elt list
 
   (*@ function xor (x y: elt) : elt = X.xor x y *)
