@@ -57,9 +57,7 @@ end
 
 module AST = struct
   type op = Add | Mul
-
   type expr = Const of int | Var of string | Node of op * expr list
-
   type env = string -> int option
 
   let[@logic] unit (op : op) : int = match op with Add -> 0 | Mul -> 1

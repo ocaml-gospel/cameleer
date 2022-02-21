@@ -1,5 +1,4 @@
 type ident = string
-
 type literal = FVar of ident | FConst of bool
 
 type formula =
@@ -22,9 +21,7 @@ type formula_nnf =
   | L_nnf of literal
 
 type disj = FOr_cnf of disj * disj | FNeg_cnf of literal | L_cnf of literal
-
 type formula_cnf = FAnd_cnf of formula_cnf * formula_cnf | D of disj
-
 type valuation = ident -> bool
 
 let[@logic] eval_literal (v : valuation) (f : literal) : bool =

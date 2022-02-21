@@ -19,9 +19,9 @@ include struct
     | lb -> T.preid (get_id_of_lb_arg lb)
 end
 
-(** Converts a GOSPEL postcondition of the form [Uast.term] into a Why3's
-    Ptree postcondition of the form [Loc.position * (pattern * term)]. It uses
-    the [sp_hd_ret] field to name the result value of the function. *)
+(** Converts a GOSPEL postcondition of the form [Uast.term] into a Why3's Ptree
+    postcondition of the form [Loc.position * (pattern * term)]. It uses the
+    [sp_hd_ret] field to name the result value of the function. *)
 let sp_post sp_hd_ret sp_post =
   let term_loc = T.location sp_post.Uast.term_loc in
   let mk_pvar lb =

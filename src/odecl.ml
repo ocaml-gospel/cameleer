@@ -8,7 +8,6 @@ type odecl =
   | Omodule of Loc.position * ident * odecl list
 
 let mk_odecl loc d = Odecl (loc, d)
-
 let mk_omodule loc id mod_expr = Omodule (loc, id, mod_expr)
 
 type path = string list
@@ -41,7 +40,6 @@ let add_info_refinement info id info_refinement =
   Hashtbl.add info.info_refinement id info_refinement
 
 let mk_dtype loc td_list = mk_odecl loc (Dtype td_list)
-
 let mk_coercion loc f = mk_odecl loc (Dmeta (T.mk_id "coercion", [ Mfs f ]))
 
 let mk_dlogic loc coerc f =
@@ -54,7 +52,6 @@ let mk_dlet loc id ghost rs_kind expr =
   mk_odecl loc (Dlet (id, ghost, rs_kind, expr))
 
 let mk_drec loc fd_list = mk_odecl loc (Drec fd_list)
-
 let mk_dexn loc id pty mask = mk_odecl loc (Dexn (id, pty, mask))
 
 let mk_duseimport loc ?(import = true) q_list =

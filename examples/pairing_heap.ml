@@ -14,7 +14,6 @@ end
 
 module Make (E : PRE_ORD) = struct
   type elt = E.t
-
   type tree = T of E.t * tree list
 
   let[@ghost] [@logic] le_tree e = function T (x, _) -> E.leq e x
@@ -68,7 +67,6 @@ module Make (E : PRE_ORD) = struct
   type t = E | N of tree
 
   let[@logic] rec size = function E -> 0 | N t -> size_tree t
-
   and[@logic] size_tree = function T (_, l) -> 1 + size_list_tree l
 
   and[@logic] size_list_tree = function

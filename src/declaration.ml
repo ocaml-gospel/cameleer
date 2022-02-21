@@ -85,8 +85,8 @@ type embedded_record = { er_typ : type_def; er_rec : (ident * field list) list }
 
 let mk_embedded_record ?(er_rec = []) er_typ = { er_typ; er_rec }
 
-(** Convert a [Uast] type definition into a Why3's Ptree [type_def]. We
-    follow the manifest-kind logic defined in the OCaml [Parsetree]. *)
+(** Convert a [Uast] type definition into a Why3's Ptree [type_def]. We follow
+    the manifest-kind logic defined in the OCaml [Parsetree]. *)
 let td_def info params spec_fields td_manifest td_kind =
   let field Uast.{ f_preid; f_pty; f_mutable; _ } =
     let id_loc = T.location f_preid.pid_loc in
@@ -156,9 +156,7 @@ let mk_type_decl info loc type_decl_list =
   O.mk_dtype loc (List.flatten td_list)
 
 let logic_attr = "logic"
-
 let lemma_attr = "lemma"
-
 let ghost_attr = "ghost"
 
 let is_logic attributes =

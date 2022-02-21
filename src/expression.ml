@@ -42,29 +42,19 @@ let empty_spec =
 (** Smart constructors for Ptree pty *)
 
 let mk_pttyvar id = PTtyvar id
-
 let mk_pttyapp id args = PTtyapp (id, args)
-
 let mk_ptarrow pty1 pty2 = PTarrow (pty1, pty2)
-
 let mk_pttuple pty_list = PTtuple pty_list
-
 let mk_binder loc id ghost pty : Ptree.binder = (loc, id, ghost, pty)
 
 (** Smart constructors for Ptree pattern *)
 
 let mk_pwild = Pwild
-
 let mk_pvar id = Pvar id
-
 let mk_ptuple pat_list = Ptuple pat_list
-
 let mk_papp id args = Papp (id, args)
-
 let mk_papp_no_args id = mk_papp id []
-
 let mk_por pat1 pat2 = Por (pat1, pat2)
-
 let mk_pas ?(ghost = false) pat id = Pas (pat, id, ghost)
 
 (** Smart constructors for Ptree expressions *)
@@ -86,11 +76,8 @@ let mk_elet_none id ghost expr expr_in =
   Elet (id, ghost, Expr.RKnone, expr, expr_in)
 
 let mk_ematch expr case_list exn_list = Ematch (expr, case_list, exn_list)
-
 let mk_ematch_no_exn expr reg_branch = mk_ematch expr reg_branch []
-
 let mk_ematch_no_reg expr exn_branch = mk_ematch expr [] exn_branch
-
 let mk_erec fd_list expr = Erec (fd_list, expr)
 
 let mk_efun binder_list pty pat mask spec expr =
@@ -100,17 +87,11 @@ let mk_efun_visible binder_list pty spec expr =
   mk_efun binder_list pty (T.mk_pattern Pwild) Ity.MaskVisible spec expr
 
 let mk_eraise id expr = Eraise (id, expr)
-
 let mk_eidapp id expr_list = Eidapp (id, expr_list)
-
 let mk_eidapp_no_args id = mk_eidapp id []
-
 let mk_etuple expr_list = Etuple expr_list
-
 let mk_eseq expr1 expr2 = Esequence (expr1, expr2)
-
 let mk_ecast expr pty = Ecast (expr, pty)
-
 let mk_eunit = Etuple []
 
 let mk_erecord field_list = function
@@ -132,7 +113,6 @@ let mk_efor id expr_lower flag expr_upper invariant expr_body =
   Efor (id, expr_lower, flag, expr_upper, invariant, expr_body)
 
 let mk_eexn id pty mask expr = Eexn (id, pty, mask, expr)
-
 let unit_pty = PTtuple []
 
 let is_ghost attributes =
@@ -592,11 +572,13 @@ let rec expression_desc info expr_loc expr_desc =
   | Uast.Sexp_constant c -> Econst (T.constant c)
   | Uast.Sexp_let (Nonrecursive, [ svb ], expr) ->
       let_match info (expression info expr) svb
+  | Sexp_let (Nonrecursive, svbs, expr) ->
+      let mk_let svb acc = mk_expr (let_match info acc svb) in
+      (List.fold_right mk_let svbs (expression info expr)).expr_desc
   | Uast.Sexp_let (Recursive, svb_list, expr) ->
       let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb_list svb_list in
       let expr_in = expression info expr in
       mk_erec (List.map (mk_fun_def false rs_kind) id_fun_expr_list) expr_in
-  | Sexp_let _ -> assert false (* TODO *)
   | Uast.Sexp_function _ -> assert false (* TODO *)
   | Uast.Sexp_fun (Nolabel, None, pat, expr_fun, spec) ->
       let spec = match spec with Some s -> S.fun_spec s | _ -> empty_spec in

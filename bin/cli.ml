@@ -1,17 +1,11 @@
 open Format
 
 let fname = ref None
-
 let debug = ref false
-
 let batch = ref false
-
 let extract = ref false
-
 let prover = ref None
-
 let path = Queue.create ()
-
 let version = "0.1~dev"
 
 let spec =
@@ -47,11 +41,8 @@ let set_file f =
   | _ -> usage ()
 
 let () = Arg.parse spec set_file usage_msg
-
 let fname = match !fname with None -> usage () | Some f -> f
-
 let debug = if !debug then "--debug=print_modules" else ""
-
 let path = Queue.fold (fun acc s -> sprintf "-L %s %s" s acc) "" path
 
 let execute_ide fname path debug =
@@ -65,7 +56,6 @@ let execute_batch fname path debug prover =
     (sprintf "why3 prove %s %s %s -P %s -a split_vc" fname path debug prover)
 
 let batch = !batch
-
 let extract = !extract
 
 let _ =

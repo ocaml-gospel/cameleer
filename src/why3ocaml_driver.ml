@@ -1,11 +1,11 @@
 (** Temporary "driver" from OCaml symbols into WhyML.
 
-   This is a very simple workaround, in order to support translation of very
-   simple OCaml programs. In the future, this should resemble the drivers
-   technology of Why3, i.e., one should be able to provide a driver file mapping
-   OCaml symbols into a corresponding counterpart from the Why3 standard
-   library. The translation plugin should then consume such file, similarly to
-   how Why3 extraction mechanism deals with drivers. *)
+    This is a very simple workaround, in order to support translation of very
+    simple OCaml programs. In the future, this should resemble the drivers
+    technology of Why3, i.e., one should be able to provide a driver file
+    mapping OCaml symbols into a corresponding counterpart from the Why3
+    standard library. The translation plugin should then consume such file,
+    similarly to how Why3 extraction mechanism deals with drivers. *)
 
 open Gospel.Utils
 
