@@ -346,8 +346,9 @@ let exception_constructor exn_construct =
     | Pext_decl (Pcstr_record _, _) ->
         Loc.errorm
           "Record expressions in exceptions declaration is not supported."
-    | _ -> assert false
-    (* TODO? *)
+    | Pext_decl _ -> assert false (* TODO *)
+    | Pext_rebind _ -> assert false
+    (* TODO *)
   in
   (id_exn, pty, Ity.MaskVisible)
 (* TODO: account for a different mask *)

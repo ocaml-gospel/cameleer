@@ -20,7 +20,7 @@ let mk_pattern ?(pat_loc = dummy_loc) pat_desc = { pat_desc; pat_loc }
 let ident_of_tvsymbol Ty.{ tv_name = name } =
   mk_id name.id_str ~id_loc:(location name.id_loc)
 
-let ident_of_lsymbol Tterm.{ ls_name = name; _ } =
+let ident_of_lsymbol Symbols.{ ls_name = name; _ } =
   mk_id name.id_str ~id_loc:(location name.id_loc)
 
 let constant = function
