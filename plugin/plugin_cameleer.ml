@@ -29,6 +29,45 @@ let mk_info () =
   Odecl.add_info info "::" 2;
   info
 
+(* let (* rec *) translation_for_scaml typed_structure =
+  (*ignore(typed_structure);
+  failwith "Not implemented yet"*)
+  typed_structure
+
+let read_file filename nm c =
+  let lb = Lexing.from_channel c in
+  Location.init lb filename;
+  let ocaml_structure = parse_ocaml_structure_lb lb in
+  let ocaml_structure_in_compilerlibs =
+    Ppxlib.Selected_ast.To_ocaml.copy_structure ocaml_structure
+  in
+  let open Compile_common in
+  let typed_structure, _ =
+    (* val with_info :
+    native:bool ->
+    tool_name:string ->
+    source_file:string ->
+    output_prefix:string -> dump_ext:string -> (info -> 'a) -> 'a *)
+    with_info
+      ~native:false
+      ~tool_name:"Cameleer for SCaml"
+      ~source_file:"filename"
+      ~output_prefix:""
+      ~dump_ext:"txt"
+      (fun info -> typecheck_impl info ocaml_structure_in_compilerlibs)
+  in
+  let translated_typed_structure = translation_for_scaml typed_structure in
+  (*
+  let translated_untype_structure = ...
+  *)
+  let translated_typed_structure =
+    Untypeast.untype_structure translated_typed_structure
+  in
+  let ocaml_structure =
+    Ppxlib.Selected_ast.Of_ocaml.copy_structure translated_typed_structure
+  in
+  parse_structure_gospel ~filename ocaml_structure nm *)
+
 let read_file filename nm c =
   let lb = Lexing.from_channel c in
   Location.init lb filename;

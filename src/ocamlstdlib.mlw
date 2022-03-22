@@ -206,6 +206,19 @@ module Stdlib
 
   end
 
+  scope Random
+
+    use export random.State
+    use import random.Random as R
+
+    let function int () : int =
+      any int
+
+    let function bool () : bool =
+      any bool
+
+  end
+
 end
 
 module Map
