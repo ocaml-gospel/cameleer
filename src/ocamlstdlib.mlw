@@ -206,16 +206,108 @@ module Stdlib
 
   end
 
-  scope Random
+  type tz = Tz int
+  let function eq_tz (t1:tz) (t2:tz) =
+    match (t1, t2) with Tz n1, Tz n2 -> n1 == n2 | _ -> false end
 
-    use export random.State
-    use import random.Random as R
+  exception Fail
+  let failwith ()
+    raises { Fail }
+    returns { _ -> false }
+  = raise (Fail)
 
-    let function int () : int =
-      any int
+  scope Option
 
-    let function bool () : bool =
-      any bool
+    use export option.Option
+
+    let function get (o: option 'a) : 'a
+      requires { match o with None -> false | Some _ -> true end }
+      raises { Invalid_argument _ -> false }
+    = match o with None -> invalid_arg "Option.get" | Some a -> a end
+
+  end
+
+  type address = Address string
+  let function eq_addr (a1:address) (a2:address) =
+    match (a1, a2) with Address s1, Address s2 -> s1 == s2 | _ -> false end
+
+  type rep = RepInt | RepUnit | RepPair (rep, rep)
+
+  let function any_rep () : rep =
+    any rep
+
+  type param = ParamInt int | ParamUnit | ParamPair (param, param)
+
+  let rec typecheck (r:rep) (p:param) : bool
+    variant { r }
+  = match (r, p) with
+  | RepInt, ParamInt _ | RepUnit, ParamUnit -> true
+  | RepPair (r1, r2) , ParamPair (p1, p2) -> typecheck r1 p1 && typecheck r2 p2
+  | RepInt, ParamUnit | RepInt, ParamPair _ | RepUnit, ParamInt _ | RepUnit, ParamPair _ | RepPair _, ParamInt _ | RepPair _, ParamUnit -> false
+  end
+
+  type contract = Contract (address, rep)
+
+  type operation = Transfer_tokens param tz contract
+  type operations = list operation
+
+  scope Contract
+
+    type t = contract
+
+    let function contract (addr:address) (p : param) : option contract =
+      let r = any_rep () in
+      if typecheck r p then Some (Contract (addr, r)) else None
+
+  end
+
+  scope Operation
+
+    type t = operation
+
+    let function transfer_tokens (p:param) (t:tz) (c:contract) : operation =
+      Transfer_tokens p t c
+
+  end
+
+  scope Env
+
+    type t = { env_amount : tz; env_source : address; env_sender : address }
+
+    let env = None : option t
+
+    let get (env : option t) : t
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   {  Invalid_argument _ -> false }
+    = Option.get env
+
+    let amount (env: t) : tz =
+      env_amount env
+
+    let source (env: t) : address =
+      env_source env
+
+    let sender (env: t) : address =
+      env_sender env
+
+  end
+
+  scope Global
+
+    let function get_amount (env : option Env.t) : tz
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
+    = Env.env_amount (Env.get env)
+
+    let function get_source (env : option Env.t) : address
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
+    = Env.env_source (Env.get env)
+
+    let function get_sender (env : option Env.t) : address
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
+    = Env.env_sender (Env.get env)
 
   end
 
