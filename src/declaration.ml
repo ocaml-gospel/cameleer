@@ -317,8 +317,8 @@ let mk_import_name_list popen_lid =
     | _ -> assert false
   in
   let mname = T.mk_id mname_txt ~id_loc in
-  (* let str = String.uncapitalize_ascii mname_txt in *)
-  let id_fname = T.mk_id "ocamlstdlib" ~id_loc in
+  let id_str = String.uncapitalize_ascii mname_txt in
+  let id_fname = T.mk_id id_str ~id_loc in
   let fname = Qident id_fname in
   (fname, mname)
 
@@ -441,7 +441,8 @@ let s_structure, s_signature =
     | Sig_ghost_open _ -> assert false (* TODO *)
     | Sig_typesubst _ -> assert false (* TODO *)
     | Sig_modtypesubst _ -> assert false (* TODO *)
-    | Sig_modsubst _ -> assert false (* TODO *)
+    | Sig_modsubst _ -> assert false
+  (* TODO *)
   and s_structure_item info Uast.{ sstr_desc; sstr_loc } =
     s_structure_item_desc info (T.location sstr_loc) sstr_desc
   and s_structure_item_desc info loc str_item_desc =
