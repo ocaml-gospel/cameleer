@@ -208,11 +208,11 @@ and inner_pattern info P.{ ppat_desc; ppat_loc; _ } =
         let pats = List.map (inner_pattern info) pat_list in
         mk_ptuple pats
     | Ppat_construct (id, None) -> mk_papp_no_args (longident id.txt)
-    | Ppat_construct (id, Some { ppat_desc = Ppat_tuple pat_list; _ }) ->
+    | Ppat_construct (id, Some (_, { ppat_desc = Ppat_tuple pat_list; _ })) ->
         let s = string_of_longident id.txt in
         let args = pat_arith info s pat_list in
         mk_papp (longident id.txt) args
-    | Ppat_construct (id, Some p) ->
+    | Ppat_construct (id, Some (_, p)) ->
         let pat = inner_pattern info p in
         mk_papp (longident id.txt) [ pat ]
     | Ppat_or (pat1, pat2) ->
@@ -244,6 +244,7 @@ and inner_pattern info P.{ ppat_desc; ppat_loc; _ } =
   mk_pat pat_desc
 
 and exception_name_of_pattern info P.{ ppat_desc; _ } =
+  let inner_pattern info (_, p) = inner_pattern info p in
   match ppat_desc with
   | Ppat_any -> (Qident (T.mk_id "_"), None)
   | Ppat_var s ->
@@ -340,10 +341,10 @@ let exception_constructor exn_construct =
   let id_exn = T.mk_id txt_exn ~id_loc:(T.location loc_exn) in
   let pty =
     match exn_construct.pext_kind with
-    | Pext_decl (Pcstr_tuple [ cty ], None) -> core_type cty
-    | Pext_decl (Pcstr_tuple cty_list, None) ->
+    | Pext_decl (_, Pcstr_tuple [ cty ], None) -> core_type cty
+    | Pext_decl (_, Pcstr_tuple cty_list, None) ->
         PTtuple (List.map core_type cty_list)
-    | Pext_decl (Pcstr_record _, _) ->
+    | Pext_decl (_, Pcstr_record _, _) ->
         Loc.errorm
           "Record expressions in exceptions declaration is not supported."
     | Pext_decl _ -> assert false (* TODO *)
