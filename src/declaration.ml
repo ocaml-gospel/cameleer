@@ -438,8 +438,10 @@ let s_structure, s_signature =
         (* TODO *)
         [ mk_type_decl info loc type_decl_list ]
     | Sig_ghost_val _ -> assert false (* TODO *)
-    | Sig_ghost_open _ -> assert false
-  (* TODO *)
+    | Sig_ghost_open _ -> assert false (* TODO *)
+    | Sig_typesubst _ -> assert false (* TODO *)
+    | Sig_modtypesubst _ -> assert false (* TODO *)
+    | Sig_modsubst _ -> assert false (* TODO *)
   and s_structure_item info Uast.{ sstr_desc; sstr_loc } =
     s_structure_item_desc info (T.location sstr_loc) sstr_desc
   and s_structure_item_desc info loc str_item_desc =
