@@ -207,6 +207,12 @@ and inner_pattern info P.{ ppat_desc; ppat_loc; _ } =
     | Ppat_tuple pat_list ->
         let pats = List.map (inner_pattern info) pat_list in
         mk_ptuple pats
+    | Ppat_construct ({txt = Lident "false"; loc}, None) ->
+        let id_loc = T.location loc in
+        mk_papp (Qident (T.mk_id ~id_loc "False")) []
+    | Ppat_construct ({txt = Lident "true"; loc}, None) ->
+        let id_loc = T.location loc in
+        mk_papp (Qident (T.mk_id ~id_loc "True")) []
     | Ppat_construct (id, None) -> mk_papp_no_args (longident id.txt)
     | Ppat_construct (id, Some { ppat_desc = Ppat_tuple pat_list; _ }) ->
         let s = string_of_longident id.txt in
