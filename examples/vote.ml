@@ -1,54 +1,78 @@
-open SCaml
 
 type config =
   { title          : string
   ; beginning_time : timestamp
   ; finish_time    : timestamp
-  } [@@deriving typerep]
+  }
 
 type action =
   | Vote of string
   | Init of config
-  [@@deriving typerep]
 
 type storage =
   { config     : config
   ; candidates : (string, int) map
   ; voters     : address set
-  } [@@deriving typerep]
+  }
 
-let init config =
-  { config
-  ; candidates = Map [ ("Yes", Int 0); ("No", Int 0) ]
+let [@logic] init (conf : config) =
+  { config = conf
+  ; candidates = Map [ ("Yes", 0); ("No", 0) ]
   ; voters     = Set []
   }
 
-let vote name storage =
-  let now = Global.get_now () in
+let [@logic] vote (env : Env.t option) (name : string) (storage : storage) =
+  let now = Global.get_now env in
 
-  assert (now >= storage.config.beginning_time && storage.config.finish_time > now);
+  if (compare now storage.config.beginning_time >= 0 && compare storage.config.finish_time now > 0) then () else failwith ();
 
-  let addr = Global.get_source () in
+  let addr = Global.get_source env in
 
-  assert (not (Set.mem addr storage.voters));
+  if (Set.mem addr storage.voters) then failwith () else ();
 
   let x = match Map.get name storage.candidates with
     | Some i -> i
-    | None -> Int 0
+    | None -> 0
   in
   ([] : operation list),
-  { storage with
-    candidates = Map.update name (Some (x + Int 1)) storage.candidates
-  ; voters     = Set.update addr true storage.voters
+  { config = storage.config
+  ; candidates = Map.update name (Some (x + 1)) storage.candidates
+  ; voters = Set.update addr true storage.voters
   }
+(*@ ops, stg = vote env name storage
+    requires match env with None -> false | Some _ -> true
+    requires compare (Global.get_now env) storage.config.beginning_time >= 0
+    requires compare storage.config.finish_time (Global.get_now env) > 0
+    requires if Set.mem (Global.get_source env) storage.voters then false else true
+    ensures ops = Nil
+    ensures
+      stg =
+        let addr = Global.get_source env in
+        let x = match Map.get name storage.candidates with Some i -> i | None -> 0 in
+        { storage with
+          candidates = Map.update name (Some (x + 1)) storage.candidates
+          ; voters     = Set.update addr true storage.voters
+        }
+    raises  Fail -> false *)
 
-let main action storage = match action with
-  | Vote name -> vote name storage
+let [@logic] main (env : Env.t option) (action : action) (storage : storage) = match action with
+  | Vote name -> vote env name storage
   | Init config -> ([], init config)
+(*@ ops, stg = main env action storage
+    requires match env with None -> false | Some _ -> true
+    requires compare (Global.get_now env) storage.config.beginning_time >= 0
+    requires compare storage.config.finish_time (Global.get_now env) > 0
+    requires if Set.mem (Global.get_source env) storage.voters then false else true
+    ensures
+      let o, s =
+        match action with
+        | Vote name -> vote env name storage
+        | Init config -> ([], init config)
+      in ops = o && stg = s *)
 
 (* Just for test.  For real voting dApp, this function is not required *)
 (* XXX optimized out! *)
-let [@entry] test () () =
+let [@entry] test (env : Env.t option) () () =
   let conf =
     { title="test"
     ; beginning_time= Timestamp "2019-09-11T08:30:23Z"
@@ -56,6 +80,28 @@ let [@entry] test () () =
     }
   in
   let storage = init conf in
-  let _, storage = main (Init conf) storage in
-  let ops, _ = main (Vote "hello") storage in (* XXX we need ignore *)
+  let _, storage = main env (Init conf) storage in
+  let ops, _ = main env (Vote "hello") storage in (* XXX we need ignore *)
   ops, ()
+(*@ ops, stg = test env u1 u2
+    requires match env with None -> false | Some _ -> true
+    requires
+      let conf =
+        { title="test"
+        ; beginning_time= Timestamp "2019-09-11T08:30:23Z"
+        ; finish_time= Timestamp "2219-09-11T08:30:23Z"
+        }
+      in
+      let storage = init conf in
+      compare (Global.get_now env) storage.config.beginning_time >= 0 &&
+      compare storage.config.finish_time (Global.get_now env) > 0 &&
+      not Set.mem (Global.get_source env) storage.voters
+    ensures
+      ops =
+        let conf =  { title="test"
+                      ; beginning_time= Timestamp "2019-09-11T08:30:23Z"
+                      ; finish_time= Timestamp "2219-09-11T08:30:23Z"
+                    } in
+        let s = init conf in
+        let _, s = main env (Init conf) s in
+        let o, _ = main env (Vote "hello") s in o *)

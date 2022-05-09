@@ -204,7 +204,16 @@ module Stdlib
     val list_exists (p: 'a -> bool) (l: list 'a) : bool
       ensures { result <-> exists x. mem x l /\ p x }
 
+    let rec function assoc_opt (x: 'a) (l: list ('a, 'b)) : option 'b
+      variant { l }
+    = match l with
+      | Nil -> None
+      | Cons (a, b) t -> if a == x then Some b else assoc_opt x t
+      end
+
   end
+
+  use export string.String
 
   type tz = Tz int
   let function eq_tz (t1:tz) (t2:tz) =
@@ -224,6 +233,94 @@ module Stdlib
       requires { match o with None -> false | Some _ -> true end }
       raises { Invalid_argument _ -> false }
     = match o with None -> invalid_arg "Option.get" | Some a -> a end
+
+  end
+
+  type set 'a = Set (list 'a)
+
+  scope Set
+
+    type t 'a = set 'a
+
+    let function mem (x : 'a) (sxs : set 'a) =
+      match sxs with
+      | Set xs -> List.mem x xs
+      end
+
+    let function update (x : 'a) (b : bool) (sxs : set 'a) =
+      match sxs with
+      | Set xs -> Set (
+        if b then
+          let rec add (st : list 'a) (ys : list 'a)
+            variant { ys }
+          = match ys with
+            | Nil -> List.rev (Cons x st)
+            | Cons y ys ->
+              if compare x y < 0 then List.rev (List.rev_append (Cons y ys) (Cons x st))
+              else if x == y then xs
+              else add (Cons y st) ys
+            end
+          in add Nil xs
+        else
+          let rec remove (st : list 'a) (ys : list 'a)
+            variant { ys }
+          = match ys with
+            | Nil -> xs
+            | Cons y ys ->
+              if compare x y < 0 then xs
+              else if x == y then List.rev (List.rev_append ys st)
+              else remove (Cons y st) ys
+            end
+          in remove Nil xs
+      )
+      end
+
+  end
+
+  type map 'k 'v = Map (list ('k, 'v))
+
+  scope Map
+
+    type t 'k 'v = map 'k 'v
+
+    let function get (k : 'k) (mxs : map 'k 'v) =
+      match mxs with Map xs -> List.assoc_opt k xs | _ -> None end
+
+    let function update (k : 'k) (vo : option 'v) (mkvs : map 'k 'v) : map 'k 'v =
+      match mkvs with
+      | Map kvs -> Map (
+        match vo with
+        | None ->
+          let rec remove st rkvs
+            variant { rkvs }
+          = match rkvs with
+            | Nil -> kvs
+            | Cons kv rkvs ->
+              match kv with
+              | (k', _) ->
+                if compare k k' < 0 then kvs
+                else if k == k' then List.rev (List.rev_append rkvs st)
+                else remove (Cons kv st) rkvs
+              end
+            end
+          in remove Nil kvs
+        | Some v ->
+          let rec add st rkvs
+            variant { rkvs }
+          = match rkvs with
+            | Nil -> List.rev (Cons (k, v) st)
+            | Cons kv rkvs ->
+              match kv with
+              | (k', _) ->
+                if compare k k' < 0 then List.rev_append (Cons kv rkvs) (Cons (k,v) st)
+                else if k == k' then List.rev_append rkvs (Cons (k,v) st)
+                else add (Cons kv st) rkvs
+              end
+            end
+          in add Nil kvs
+        end
+      )
+      end
 
   end
 
@@ -280,9 +377,17 @@ module Stdlib
 
   end
 
+  type timestamp = Timestamp string
+
+  scope Timestamp
+
+    type t = timestamp
+
+  end
+
   scope Env
 
-    type t = { env_amount : tz; env_source : address; env_sender : address }
+    type t = { env_now : timestamp; env_amount : tz; env_source : address; env_sender : address }
 
     let env = None : option t
 
@@ -290,6 +395,9 @@ module Stdlib
       requires {  match env with None -> false | Some _ -> true end }
       raises   {  Invalid_argument _ -> false }
     = Option.get env
+
+    let now (env: t) : timestamp =
+      env_now env
 
     let amount (env: t) : tz =
       env_amount env
@@ -303,6 +411,11 @@ module Stdlib
   end
 
   scope Global
+
+    let function get_now (env : option Env.t) : timestamp
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
+    = Env.env_now (Env.get env)
 
     let function get_amount (env : option Env.t) : tz
       requires {  match env with None -> false | Some _ -> true end }
@@ -322,6 +435,8 @@ module Stdlib
   end
 
 end
+
+(*
 
 module Map
 
@@ -487,6 +602,8 @@ module Set
   use export set.Fset
 
 end
+
+*)
 
 (* module Correct *)
 
