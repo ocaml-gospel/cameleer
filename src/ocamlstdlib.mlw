@@ -223,12 +223,15 @@ module Stdlib
   let failwith ()
     raises { Fail }
     returns { _ -> false }
-  = raise (Fail)
+  = raise Fail
 
   scope Option
 
     use export option.Option
 
+    (*let get (ao: option 'a) : 'a
+      raises { Invalid_argument _ -> ao = None }
+    = match ao with None -> invalid_arg "Option.get" | Some a -> a end*)
     let function get (o: option 'a) : 'a
       requires { match o with None -> false | Some _ -> true end }
       raises { Invalid_argument _ -> false }
@@ -391,9 +394,13 @@ module Stdlib
 
     let env = None : option t
 
+    (*let get (env: option t) : t
+      raises    { Invalid_argument _ -> Option.is_none env }
+      ensures   { not Option.is_none env -> Some result = env }
+    = Option.get env*)
     let get (env : option t) : t
-      requires {  match env with None -> false | Some _ -> true end }
-      raises   {  Invalid_argument _ -> false }
+      requires { match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
     = Option.get env
 
     let now (env: t) : timestamp =
@@ -416,21 +423,37 @@ module Stdlib
       requires {  match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_now (Env.get env)
+    (*let function get_now (env : option Env.t) : timestamp
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
+    = Env.env_now (Env.get env)*)
 
     let function get_amount (env : option Env.t) : tz
       requires {  match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_amount (Env.get env)
+    (*let function get_amount (env : option Env.t) : tz
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
+    = Env.env_amount (Env.get env)*)
 
     let function get_source (env : option Env.t) : address
       requires {  match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_source (Env.get env)
+    (*let function get_source (env : option Env.t) : address
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
+    = Env.env_source (Env.get env)*)
 
     let function get_sender (env : option Env.t) : address
       requires {  match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_sender (Env.get env)
+    (*let function get_sender (env : option Env.t) : address
+      requires {  match env with None -> false | Some _ -> true end }
+      raises   { Invalid_argument _ -> false }
+    = Env.env_sender (Env.get env)*)
 
   end
 
