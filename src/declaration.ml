@@ -306,8 +306,9 @@ let mk_axiom loc a =
   O.mk_dprop loc Decl.Paxiom prop_id prop_term
 
 let mk_ind loc ind =
-  let mk_case Uast.{in_case_loc; in_case_name; in_case_def} =
-    T.(location in_case_loc, preid in_case_name, term false in_case_def) in
+  let mk_case Uast.{ in_case_loc; in_case_name; in_case_def } =
+    T.(location in_case_loc, preid in_case_name, term false in_case_def)
+  in
   let in_ident = T.preid ind.Uast.in_name in
   let in_params = List.map param ind.in_params in
   let in_def = List.map mk_case ind.in_def in
@@ -452,8 +453,7 @@ let s_structure, s_signature =
         ignore rec_flag;
         (* TODO *)
         [ mk_type_decl info loc type_decl_list ]
-    | Sig_ghost_val s_val ->
-        [ val_decl loc s_val true ]
+    | Sig_ghost_val s_val -> [ val_decl loc s_val true ]
     | Sig_ghost_open _ -> assert false (* TODO *)
     | Sig_typesubst _ -> assert false (* TODO *)
     | Sig_modtypesubst _ -> assert false (* TODO *)

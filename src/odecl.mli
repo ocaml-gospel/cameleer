@@ -40,8 +40,11 @@ val mk_dprop :
   Loc.position -> Decl.prop_kind -> Ptree.ident -> Ptree.term -> odecl
 
 val mk_ind :
-  Loc.position -> Ptree.ident -> Ptree.param list
-  -> (Loc.position * Ptree.ident * Ptree.term) list ->  odecl
+  Loc.position ->
+  Ptree.ident ->
+  Ptree.param list ->
+  (Loc.position * Ptree.ident * Ptree.term) list ->
+  odecl
 
 val mk_dlet :
   Loc.position -> Ptree.ident -> bool -> Expr.rs_kind -> Ptree.expr -> odecl

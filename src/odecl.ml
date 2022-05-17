@@ -49,7 +49,7 @@ let mk_dlogic loc coerc f =
 let mk_dprop loc prop_kind id t = mk_odecl loc (Dprop (prop_kind, id, t))
 
 let mk_ind loc in_ident in_params in_def =
-  let ind_decl = { in_loc = loc; in_ident ; in_params; in_def } in
+  let ind_decl = { in_loc = loc; in_ident; in_params; in_def } in
   mk_odecl loc (Dind (Decl.Ind, [ ind_decl ]))
 
 let mk_dlet loc id ghost rs_kind expr =

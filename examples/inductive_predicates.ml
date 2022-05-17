@@ -1,10 +1,9 @@
-module Arith (X: sig
-    type elt
+module Arith (X : sig
+  type elt
 
-    val eq : elt -> elt -> bool
-  end) =
+  val eq : elt -> elt -> bool
+end) =
 struct
-
   type arith =
     | AConst of int
     | AVar of X.elt
@@ -30,14 +29,10 @@ struct
   let rec interpreter store = function
     | AConst n -> n
     | AVar x -> store x
-    | AMul (a1, a2) ->
-        interpreter store a1 * interpreter store a2
-    | APlus (a1, a2) ->
-        interpreter store a1 + interpreter store a2
-    | AMinus (a1, a2) ->
-        interpreter store a1 - interpreter store a2
+    | AMul (a1, a2) -> interpreter store a1 * interpreter store a2
+    | APlus (a1, a2) -> interpreter store a1 + interpreter store a2
+    | AMinus (a1, a2) -> interpreter store a1 - interpreter store a2
   (*@ r = interpreter s a
         variant a
         ensures sems_arith a s r *)
-
 end
