@@ -458,7 +458,6 @@ let s_structure, s_signature =
     | Sig_typesubst _ -> assert false (* TODO *)
     | Sig_modtypesubst _ -> assert false (* TODO *)
     | Sig_modsubst _ -> assert false (* TODO *)
-    | Sig_inductive _ -> assert false (* TODO *)
   and s_structure_item info Uast.{ sstr_desc; sstr_loc } =
     s_structure_item_desc info (T.location sstr_loc) sstr_desc
   and s_structure_item_desc info loc str_item_desc =
