@@ -310,9 +310,7 @@ module Make (E : EqType) = struct
     | EAnd (b1, b2) ->
         let a1 = compile_bool st b1 in
         let a2 = compile_bool st b2 in
-        star_append st a2
-          (a1 @ [ OAnd ])
-          [] []
+        star_append st a2 (a1 @ [ OAnd ]) [] []
           ([ VBool (eval_b st b2) ], [], st);
         star_append st a1 [ OAnd ] []
           [ VBool (eval_b st b2) ]
