@@ -301,8 +301,17 @@ let prop p =
   (T.preid p.Uast.prop_name, T.term false p.prop_term, kind)
 
 let mk_axiom loc a =
-  let prop_name, prop_term = (T.preid a.Uast.ax_name, T.term false a.ax_term) in
-  O.mk_dprop loc Decl.Paxiom prop_name prop_term
+  let prop_id = T.preid a.Uast.ax_name in
+  let prop_term = T.term false a.ax_term in
+  O.mk_dprop loc Decl.Paxiom prop_id prop_term
+
+let mk_ind loc ind =
+  let mk_case Uast.{in_case_loc; in_case_name; in_case_def} =
+    T.(location in_case_loc, preid in_case_name, term false in_case_def) in
+  let in_ident = T.preid ind.Uast.in_name in
+  let in_params = List.map param ind.in_params in
+  let in_def = List.map mk_case ind.in_def in
+  O.mk_ind loc in_ident in_params in_def
 
 let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
@@ -404,8 +413,10 @@ let s_structure, s_signature =
         let f, coerc = function_ f in
         O.mk_dlogic loc coerc [ f ]
     | Sig_axiom p -> [ mk_axiom loc p ]
+    | Sig_inductive ind_decl -> [ mk_ind loc ind_decl ]
     | Sig_typext _ -> assert false (* TODO *)
-    | Sig_module _ -> assert false (* TODO *)
+    | Sig_module _ ->
+        Loc.errorm ~loc "Module declarations in module types not supported"
     | Sig_recmodule _ -> assert false (* TODO *)
     | Sig_modtype _ -> assert false (* TODO *)
     | Sig_exception { ptyexn_constructor; _ } ->
@@ -441,7 +452,8 @@ let s_structure, s_signature =
         ignore rec_flag;
         (* TODO *)
         [ mk_type_decl info loc type_decl_list ]
-    | Sig_ghost_val _ -> assert false (* TODO *)
+    | Sig_ghost_val s_val ->
+        [ val_decl loc s_val true ]
     | Sig_ghost_open _ -> assert false (* TODO *)
     | Sig_typesubst _ -> assert false (* TODO *)
     | Sig_modtypesubst _ -> assert false (* TODO *)
@@ -525,6 +537,7 @@ let s_structure, s_signature =
         [ O.mk_duseimport loc [ (Qdot (fname, mname), Some mname) ] ]
     | Uast.Str_ghost_val _ -> assert false (* TODO *)
     | Uast.Str_attribute _ -> []
+    | Uast.Str_inductive ind_decl -> [ mk_ind loc ind_decl ]
     | _ -> assert false
   (* TODO *)
   and s_module_binding info { spmb_name = { txt; loc }; spmb_expr; spmb_loc; _ }
