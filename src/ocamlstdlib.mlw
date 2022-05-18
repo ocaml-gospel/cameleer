@@ -206,6 +206,22 @@ module Stdlib
 
   end
 
+  use import set.Fset as FS
+
+  type set 'a = FS.fset 'a
+
+  scope Set
+
+    type t 'a = set 'a
+
+    predicate mem (x: 'a) (s: t 'a) = FS.mem x s
+
+    use list.Elements
+
+    function of_list (l: list 'a) : set 'a = elements l
+
+  end
+
 end
 
 module Map
