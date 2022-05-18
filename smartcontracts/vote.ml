@@ -44,7 +44,7 @@ let vote (env : Env.t option) (name : string) (storage : storage) =
       match env with None -> false | Some _ -> true
     ensures
       (compare (Global.get_now env) storage.config.beginning_time >= 0 && compare storage.config.finish_time (Global.get_now env) > 0) && not Set.mem (Global.get_source env) storage.voters ->
-      ops = Nil &&
+      ops = [] &&
       stg =
         let addr = Global.get_source env in
         let x = match Map.get name storage.candidates with Some i -> i | None -> 0 in
@@ -68,11 +68,11 @@ let main (env : Env.t option) (action : action) (storage : storage) = match acti
         let addr = Global.get_source env in
         let x = match Map.get name storage.candidates with Some i -> i | None -> 0 in
         let newstg = { storage with candidates = Map.update name (Some (x + 1)) storage.candidates ; voters = Set.update addr true storage.voters } in
-        (Nil, newstg) in
+        ([], newstg) in
       let o, s =
         match action with
         | Vote name -> vote env name storage
-        | Init config -> (Nil, init config)
+        | Init config -> ([], init config)
       in ops = o && stg = s
     raises
       Fail ->
@@ -109,7 +109,7 @@ let [@entry] test (env : Env.t option) () () =
           let addr = Global.get_source env in
           let x = match Map.get name storage.candidates with Some i -> i | None -> 0 in
           let newstg = { storage with candidates = Map.update name (Some (x + 1)) storage.candidates ; voters = Set.update addr true storage.voters } in
-          (Nil, newstg) in
+          ([], newstg) in
         let main = fun env action storage ->
           match action with
           | Vote name -> vote env name storage

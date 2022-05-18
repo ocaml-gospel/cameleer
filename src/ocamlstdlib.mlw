@@ -34,10 +34,10 @@ module Stdlib
   axiom same_location_eq: forall x y: 'a.
     same_location x y -> x = y
 
-  val (==) (x y: 'a) : bool
+  val function (==) (x y: 'a) : bool
     ensures { result <-> same_location x y }
 
-  val (!=) (x y: 'a) : bool
+  val function (!=) (x y: 'a) : bool
     ensures { result <-> not same_location x y }
 
   val function (~=) (x y: int) : bool
@@ -216,8 +216,6 @@ module Stdlib
   use export string.String
 
   type tz = Tz int
-  let function eq_tz (t1:tz) (t2:tz) =
-    match (t1, t2) with Tz n1, Tz n2 -> n1 == n2 | _ -> false end
 
   exception Fail
   let failwith ()
@@ -229,12 +227,9 @@ module Stdlib
 
     use export option.Option
 
-    (*let get (ao: option 'a) : 'a
-      raises { Invalid_argument _ -> ao = None }
-    = match ao with None -> invalid_arg "Option.get" | Some a -> a end*)
-    let function get (o: option 'a) : 'a
-      requires { match o with None -> false | Some _ -> true end }
-      raises { Invalid_argument _ -> false }
+    let get (o: option 'a) : 'a
+      ensures { not is_none o -> match o with None -> false | Some a -> result = a end }
+      raises { Invalid_argument _ -> is_none o }
     = match o with None -> invalid_arg "Option.get" | Some a -> a end
 
   end
@@ -328,8 +323,6 @@ module Stdlib
   end
 
   type address = Address string
-  let function eq_addr (a1:address) (a2:address) =
-    match (a1, a2) with Address s1, Address s2 -> s1 == s2 | _ -> false end
 
   type rep = RepInt | RepUnit | RepPair (rep, rep)
 
@@ -394,10 +387,6 @@ module Stdlib
 
     let env = None : option t
 
-    (*let get (env: option t) : t
-      raises    { Invalid_argument _ -> Option.is_none env }
-      ensures   { not Option.is_none env -> Some result = env }
-    = Option.get env*)
     let get (env : option t) : t
       requires { match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
@@ -423,37 +412,21 @@ module Stdlib
       requires {  match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_now (Env.get env)
-    (*let function get_now (env : option Env.t) : timestamp
-      requires {  match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Env.env_now (Env.get env)*)
 
     let function get_amount (env : option Env.t) : tz
       requires {  match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_amount (Env.get env)
-    (*let function get_amount (env : option Env.t) : tz
-      requires {  match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Env.env_amount (Env.get env)*)
 
     let function get_source (env : option Env.t) : address
       requires {  match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_source (Env.get env)
-    (*let function get_source (env : option Env.t) : address
-      requires {  match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Env.env_source (Env.get env)*)
 
     let function get_sender (env : option Env.t) : address
       requires {  match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_sender (Env.get env)
-    (*let function get_sender (env : option Env.t) : address
-      requires {  match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Env.env_sender (Env.get env)*)
 
   end
 
