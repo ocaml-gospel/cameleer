@@ -215,6 +215,7 @@ module Stdlib
 
   use export string.String
 
+  type nat = Nat int
   type tz = Tz int
 
   exception Fail
@@ -409,24 +410,32 @@ module Stdlib
   scope Global
 
     let function get_now (env : option Env.t) : timestamp
-      requires {  match env with None -> false | Some _ -> true end }
+      requires { match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_now (Env.get env)
 
     let function get_amount (env : option Env.t) : tz
-      requires {  match env with None -> false | Some _ -> true end }
+      requires { match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_amount (Env.get env)
 
     let function get_source (env : option Env.t) : address
-      requires {  match env with None -> false | Some _ -> true end }
+      requires { match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_source (Env.get env)
 
     let function get_sender (env : option Env.t) : address
-      requires {  match env with None -> false | Some _ -> true end }
+      requires { match env with None -> false | Some _ -> true end }
       raises   { Invalid_argument _ -> false }
     = Env.env_sender (Env.get env)
+
+  end
+
+  type key = string
+
+  scope Key
+
+    type t = key
 
   end
 
