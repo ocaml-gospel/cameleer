@@ -213,10 +213,37 @@ module Stdlib
 
   end
 
-  use export string.String
+  scope String
+
+    use export string.String
+    use import string.Char as C
+
+    val eq (s1 s2: string) : bool
+      ensures { result <-> C.eq_string s1 s2 }
+
+    val lt (s1 s2: string) : bool
+      ensures { result <-> lt s1 s2 }
+
+    val le (s1 s2: string) : bool
+      ensures { result <-> le s1 s2 }
+
+  end
 
   type nat = Nat int
+
   type tz = Tz int
+
+  scope Tz
+
+    type t = tz
+    
+    let function eq (t1:tz) (t2:tz) : bool =
+      match t1, t2 with
+      | Tz n1, Tz n2 -> n1 = n2
+      | _, _ -> false
+      end
+  
+  end
 
   exception Fail
   let failwith ()
@@ -325,6 +352,18 @@ module Stdlib
 
   type address = Address string
 
+  scope Address
+
+    type t = address
+
+    let function eq (a1:address) (a2:address) : bool =
+      match a1, a2 with
+      | Address s1, Address s2 -> String.eq s1 s2
+      | _, _ -> false
+      end
+  
+  end
+
   type rep = RepInt | RepUnit | RepPair (rep, rep)
 
   let function any_rep () : rep =
@@ -379,6 +418,18 @@ module Stdlib
   scope Timestamp
 
     type t = timestamp
+
+    let function lt (t1:timestamp) (t2:timestamp) : bool =
+      match t1, t2 with
+      | Timestamp s1, Timestamp s2 -> String.lt s1 s2
+      | _, _ -> false
+      end
+
+    let function le (t1:timestamp) (t2:timestamp) : bool =
+      match t1, t2 with
+      | Timestamp s1, Timestamp s2 -> String.le s1 s2
+      | _, _ -> false
+      end
 
   end
 
@@ -440,178 +491,3 @@ module Stdlib
   end
 
 end
-
-(*
-
-module Map
-
-  use map.Map, set.Fset
-  use Stdlib
-
-  scope Make
-
-    scope O
-      type t
-
-      val function compare (x y: t) : int
-      axiom compare_pre_order : is_pre_order compare
-    end
-
-    type key = O.t
-    type t 'a = abstract {
-      dom  : fset key;
-      model: key -> 'a;
-    }
-
-    val constant empty: t 'a
-      ensures { result.dom = empty }
-
-    val is_empty (s: t 'a) : bool
-      ensures { result <-> is_empty s.dom }
-
-  end
-end
-
-module Array
-  use int.Int
-  use seq.Seq
-  use Stdlib
-
-  (* scope import MyArray *)
-
-    type my_array 'a = private {
-      mutable ghost elts : seq 'a;
-                  length : int;
-    } invariant { 0 <= length = Seq.length elts }
-
-    function ([]) (a: my_array 'a) (i: int) : 'a = Seq.([]) a.elts i
-
-    function get (a: my_array 'a) (i: int) : 'a = a[i]
-
-    val get (a: my_array 'a) (i: int) : 'a
-      requires { [@expl:index in array bounds] 0 <= i < length a }
-      ensures  { result = a[i] }
-
-    val set (a: my_array 'a) (i: int) (v: 'a) : unit
-      writes   { a }
-      requires { 0 <= i < length a }
-      ensures  { a.elts = (old a.elts)[i <- v] }
-
-    meta coercion function elts
-
-    val ([]) (a: my_array 'a) (i: int) : 'a
-      requires { [@expl:index in array bounds] 0 <= i < a.length }
-      ensures  { result = a[i] }
-
-    val ([]<-) (a: my_array 'a) (i: int) (v: 'a) : unit writes {a}
-      requires { [@expl:index in array bounds] 0 <= i < a.length }
-      ensures  { a.elts = (old a.elts)[i <- v] }
-
-    val make (n: int) (v: 'a) : my_array 'a
-      requires { [@expl:array creation size] n >= 0 }
-      ensures  { forall i. 0 <= i < n -> result[i] = v }
-      ensures  { result.length = n }
-
-    let init (n: int) (f: int -> 'a) : my_array 'a
-      requires { [@expl:array creation size] n >= 0 }
-      ensures  { forall i. 0 <= i < n -> result[i] = f i }
-      ensures  { length result = n }
-    = let a = make n (f 0) in
-      for i = 1 to n - 1 do
-        invariant { forall j. 0 <= j < i -> a[j] = f j }
-        a[i] <- f i
-      done;
-      a
-
-    val sort (cmp: 'a -> 'a -> int) (a: my_array 'a) : unit
-      requires { is_pre_order cmp }
-      ensures  { forall i j. 0 <= i <= j < length a -> cmp a[i] a[j] <= 0 }
-
-    let rec function to_list_range (a: my_array 'a) (l u: int) : list 'a
-      requires { l >= 0 /\ u <= a.length }
-      variant  { u - l }
-    = if u <= l then Nil else Cons a[l] (to_list_range a (l+1) u)
-
-    use list.Append
-
-    let rec lemma to_list_append (a: my_array 'a) (l m u: int)
-      requires { 0 <= l <= m <= u <= a.length }
-      variant  { m - l }
-      ensures  { to_list_range a l m ++ to_list_range a m u =
-                 to_list_range a l u }
-    = if l < m then to_list_append a (l+1) m u
-
-    let to_list (a: my_array 'a) : list 'a
-      ensures { result = to_list_range a 0 (length a) }
-    = to_list_range a 0 (length a)
-
-  (* end *)
-
-  type array 'a = my_array 'a
-
-end
-
-module Seq
-
-  use export seq.Seq
-  use export seq.Mem
-
-end
-
-module SeqPermut
-
-  use export seq.Permut
-
-end
-
-module SeqOfList
-
-  use export seq.OfList
-
-end
-
-module Permut
-
-  use export list.Permut
-
-end
-
-module Numof
-
-  use array.NumOfEq
-  use import int.NumOf as N
-
-  use Stdlib
-
-  function numof (a: Array.my_array 'a) (v: 'a) (l u: int) : int =
-    N.numof (fun i -> (Array.([]) a i) = v) l u
-
-end
-
-module Sum
-
-  use export int.Sum
-
-end
-
-module Power
-
-  use int.Power
-
-  function (^) (x y: int) : int = power x y
-
-end
-
-module Set
-
-  use export set.Fset
-
-end
-
-*)
-
-(* module Correct *)
-
-(*   use ocamlstdlib. *)
-
-(* end *)

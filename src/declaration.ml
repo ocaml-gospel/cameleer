@@ -131,7 +131,7 @@ let type_decl info Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
       td_vis;
       td_mut;
       td_inv;
-      td_wit = [];
+      td_wit = None;
       td_def = TDrecord field_list;
     }
   in
@@ -143,7 +143,7 @@ let type_decl info Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
       td_vis;
       td_mut;
       td_inv;
-      td_wit = [];
+      td_wit = None;
       td_def = er_typ;
       td_ident = T.(mk_id tname.txt ~id_ats ~id_loc:(location tname.loc));
     }
@@ -184,14 +184,18 @@ let val_decl loc vd ghost =
     let id = Vspec.ident_of_lb_arg lb_arg in
     let id_loc = id.id_loc in
     let pty = E.core_type ct in
+    (* since why3 1.5.0, I no longer have access to extraction attrubutes, as
+     * the [ocaml] module is now oppaque *)
+    let named_arg = Ident.create_attribute "ocaml:named" in
+    let optional_arg = Ident.create_attribute "ocaml:optional" in
     let id, ghost, pty =
       match lb_arg with
       | Lunit -> (id, false, pty)
       | Lnone _ -> (id, false, pty)
       | Lghost (_, ty) -> (id, true, T.pty ty)
-      | Lnamed _ -> (add_at_id Ocaml.Print.named_arg id, false, pty)
+      | Lnamed _ -> (add_at_id named_arg id, false, pty)
       | Loptional _ ->
-          let id = add_at_id Ocaml.Print.optional_arg id in
+          let id = add_at_id optional_arg id in
           (id, false, PTtyapp (Qident (T.mk_id "option" ~id_loc), [ pty ]))
     in
     (id_loc, Some id, ghost, pty)
@@ -297,8 +301,18 @@ let prop p =
   (T.preid p.Uast.prop_name, T.term false p.prop_term, kind)
 
 let mk_axiom loc a =
-  let prop_name, prop_term = (T.preid a.Uast.ax_name, T.term false a.ax_term) in
-  O.mk_dprop loc Decl.Paxiom prop_name prop_term
+  let prop_id = T.preid a.Uast.ax_name in
+  let prop_term = T.term false a.ax_term in
+  O.mk_dprop loc Decl.Paxiom prop_id prop_term
+
+let mk_ind loc ind =
+  let mk_case Uast.{ in_case_loc; in_case_name; in_case_def } =
+    T.(location in_case_loc, preid in_case_name, term false in_case_def)
+  in
+  let in_ident = T.preid ind.Uast.in_name in
+  let in_params = List.map param ind.in_params in
+  let in_def = List.map mk_case ind.in_def in
+  O.mk_ind loc in_ident in_params in_def
 
 let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
@@ -317,8 +331,8 @@ let mk_import_name_list popen_lid =
     | _ -> assert false
   in
   let mname = T.mk_id mname_txt ~id_loc in
-  (* let str = String.uncapitalize_ascii mname_txt in *)
-  let id_fname = T.mk_id "ocamlstdlib" ~id_loc in
+  let id_str = String.uncapitalize_ascii mname_txt in
+  let id_fname = T.mk_id id_str ~id_loc in
   let fname = Qident id_fname in
   (fname, mname)
 
@@ -400,8 +414,10 @@ let s_structure, s_signature =
         let f, coerc = function_ f in
         O.mk_dlogic loc coerc [ f ]
     | Sig_axiom p -> [ mk_axiom loc p ]
+    | Sig_inductive ind_decl -> [ mk_ind loc ind_decl ]
     | Sig_typext _ -> assert false (* TODO *)
-    | Sig_module _ -> assert false (* TODO *)
+    | Sig_module _ ->
+        Loc.errorm ~loc "Module declarations in module types not supported"
     | Sig_recmodule _ -> assert false (* TODO *)
     | Sig_modtype _ -> assert false (* TODO *)
     | Sig_exception { ptyexn_constructor; _ } ->
@@ -437,9 +453,11 @@ let s_structure, s_signature =
         ignore rec_flag;
         (* TODO *)
         [ mk_type_decl info loc type_decl_list ]
-    | Sig_ghost_val _ -> assert false (* TODO *)
-    | Sig_ghost_open _ -> assert false
-  (* TODO *)
+    | Sig_ghost_val s_val -> [ val_decl loc s_val true ]
+    | Sig_ghost_open _ -> assert false (* TODO *)
+    | Sig_typesubst _ -> assert false (* TODO *)
+    | Sig_modtypesubst _ -> assert false (* TODO *)
+    | Sig_modsubst _ -> assert false (* TODO *)
   and s_structure_item info Uast.{ sstr_desc; sstr_loc } =
     s_structure_item_desc info (T.location sstr_loc) sstr_desc
   and s_structure_item_desc info loc str_item_desc =
@@ -518,6 +536,7 @@ let s_structure, s_signature =
         [ O.mk_duseimport loc [ (Qdot (fname, mname), Some mname) ] ]
     | Uast.Str_ghost_val _ -> assert false (* TODO *)
     | Uast.Str_attribute _ -> []
+    | Uast.Str_inductive ind_decl -> [ mk_ind loc ind_decl ]
     | _ -> assert false
   (* TODO *)
   and s_module_binding info { spmb_name = { txt; loc }; spmb_expr; spmb_loc; _ }

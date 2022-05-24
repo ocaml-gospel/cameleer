@@ -48,6 +48,10 @@ let mk_dlogic loc coerc f =
 
 let mk_dprop loc prop_kind id t = mk_odecl loc (Dprop (prop_kind, id, t))
 
+let mk_ind loc in_ident in_params in_def =
+  let ind_decl = { in_loc = loc; in_ident; in_params; in_def } in
+  mk_odecl loc (Dind (Decl.Ind, [ ind_decl ]))
+
 let mk_dlet loc id ghost rs_kind expr =
   mk_odecl loc (Dlet (id, ghost, rs_kind, expr))
 
@@ -61,4 +65,4 @@ let mk_functor loc id arg body = mk_omodule loc id arg :: body
 
 let mk_cloneexport ?odecl_loc id clone_subst =
   let loc = match odecl_loc with Some l -> l | None -> Loc.dummy_position in
-  mk_odecl loc (Dcloneexport (id, clone_subst))
+  mk_odecl loc (Dcloneexport (loc, id, clone_subst))

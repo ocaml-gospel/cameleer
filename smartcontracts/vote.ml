@@ -24,11 +24,11 @@ let [@logic] init (conf : config) =
 let vote (env : Env.t option) (name : string) (storage : storage) =
   let now = Global.get_now env in
 
-  if (compare now storage.config.beginning_time >= 0 && compare storage.config.finish_time now > 0) then () else failwith ();
+  if (Timestamp.le storage.config.beginning_time now && Timestamp.lt now storage.config.finish_time) then () else failwith ();
 
   let addr = Global.get_source env in
 
-  if (Set.mem addr storage.voters) then failwith () else ();
+  if not (Set.mem addr storage.voters) then () else failwith ();
 
   let x = match Map.get name storage.candidates with
     | Some i -> i
@@ -43,7 +43,10 @@ let vote (env : Env.t option) (name : string) (storage : storage) =
     requires
       match env with None -> false | Some _ -> true
     ensures
-      (compare (Global.get_now env) storage.config.beginning_time >= 0 && compare storage.config.finish_time (Global.get_now env) > 0) && not Set.mem (Global.get_source env) storage.voters ->
+      let now = Global.get_now env in
+      Timestamp.le storage.config.beginning_time now && 
+      Timestamp.lt now storage.config.finish_time && 
+      not Set.mem (Global.get_source env) storage.voters ->
       ops = [] &&
       stg =
         let addr = Global.get_source env in
@@ -54,14 +57,20 @@ let vote (env : Env.t option) (name : string) (storage : storage) =
         }
     raises
       Fail ->
-      not (compare (Global.get_now env) storage.config.beginning_time >= 0 && compare storage.config.finish_time (Global.get_now env) > 0) || Set.mem (Global.get_source env) storage.voters *)
+      let now = Global.get_now env in
+      not ( Timestamp.le storage.config.beginning_time now && 
+            Timestamp.lt now storage.config.finish_time && 
+            not Set.mem (Global.get_source env) storage.voters ) *)
 
 let [@logic] pvote (env : Env.t option) (name : string) (storage : storage) = vote env name storage
 (*@ ops, stg = pvote env name storage
     requires
       match env with None -> false | Some _ -> true
     requires
-      (compare (Global.get_now env) storage.config.beginning_time >= 0 && compare storage.config.finish_time (Global.get_now env) > 0) && not Set.mem (Global.get_source env) storage.voters
+      let now = Global.get_now env in
+      Timestamp.le storage.config.beginning_time now && 
+      Timestamp.lt now storage.config.finish_time && 
+      not Set.mem (Global.get_source env) storage.voters
     ensures
       ops = [] &&
       stg =
@@ -81,7 +90,10 @@ let main (env : Env.t option) (action : action) (storage : storage) = match acti
     requires
       match env with None -> false | Some _ -> true
     ensures
-      (compare (Global.get_now env) storage.config.beginning_time >= 0 && compare storage.config.finish_time (Global.get_now env) > 0) && not Set.mem (Global.get_source env) storage.voters ->
+      let now = Global.get_now env in
+      Timestamp.le storage.config.beginning_time now && 
+      Timestamp.lt now storage.config.finish_time && 
+      not Set.mem (Global.get_source env) storage.voters ->
       let o, s =
         match action with
         | Vote name -> pvote env name storage
@@ -89,14 +101,20 @@ let main (env : Env.t option) (action : action) (storage : storage) = match acti
       in ops = o && stg = s
     raises
       Fail ->
-      not (compare (Global.get_now env) storage.config.beginning_time >= 0 && compare storage.config.finish_time (Global.get_now env) > 0) || Set.mem (Global.get_source env) storage.voters *)
+      let now = Global.get_now env in
+      not ( Timestamp.le storage.config.beginning_time now && 
+            Timestamp.lt now storage.config.finish_time && 
+            not Set.mem (Global.get_source env) storage.voters ) *)
 
 let [@logic] pmain (env : Env.t option) (action : action) (storage : storage) = main env action storage
 (*@ ops, stg = pmain env action storage
     requires
       match env with None -> false | Some _ -> true
     requires
-      (compare (Global.get_now env) storage.config.beginning_time >= 0 && compare storage.config.finish_time (Global.get_now env) > 0) && not Set.mem (Global.get_source env) storage.voters
+      let now = Global.get_now env in
+      Timestamp.le storage.config.beginning_time now && 
+      Timestamp.lt now storage.config.finish_time && 
+      not Set.mem (Global.get_source env) storage.voters
     ensures
       let o, s =
         match action with
@@ -130,8 +148,9 @@ let [@entry] test (env : Env.t option) () () =
         }
       in
       let storage = init conf in
-      compare (Global.get_now env) storage.config.beginning_time >= 0 &&
-      compare storage.config.finish_time (Global.get_now env) > 0 &&
+      let now = Global.get_now env in
+      Timestamp.le storage.config.beginning_time now && 
+      Timestamp.lt now storage.config.finish_time && 
       not Set.mem (Global.get_source env) storage.voters ->
       ops =
         let conf =  { title="test"
@@ -150,4 +169,7 @@ let [@entry] test (env : Env.t option) () () =
         }
       in
       let storage = init conf in
-      not (compare (Global.get_now env) storage.config.beginning_time >= 0 && compare storage.config.finish_time (Global.get_now env) > 0) || Set.mem (Global.get_source env) storage.voters *)
+      let now = Global.get_now env in
+      not ( Timestamp.le storage.config.beginning_time now && 
+            Timestamp.lt now storage.config.finish_time && 
+            not Set.mem (Global.get_source env) storage.voters ) *)

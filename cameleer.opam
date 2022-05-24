@@ -19,11 +19,11 @@ build: [
 depends: [
   "dune" {>= "2.4.0"}
   "why3" {>= "1.4.0"}
-  "why3-ide" {>= "1.4.0"}
+  "why3-ide" {>= "1.5.0"}
   "gospel"
   "fmt"
   "ocaml" {>= "4.07"}
-  "ppxlib" {>= "0.23.0"}
+  "ppxlib" {>= "0.26.0"}
   "sexplib"
   "ppx_deriving"
   "ppx_sexp_conv"
@@ -35,5 +35,5 @@ conflicts: [
 ]
 
 pin-depends: [
-  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#33218db330e9e54aefe213f0f9385abc5deae8bf"
+  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#2e928ead075e9b281544adad063c992f97cfaa02"
 ]

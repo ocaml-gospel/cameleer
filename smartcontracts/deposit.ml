@@ -9,7 +9,7 @@ let [@entry] main env parameter storage =
     | Left _ -> []
     | Right amount ->
       let sender = Global.get_sender env in
-      if sender == storage then
+      if Address.eq sender storage then
         let source_contract = Option.get (Contract.contract sender ParamUnit) in
         [ Operation.transfer_tokens ParamUnit amount source_contract ]
       else failwith ()
@@ -22,7 +22,7 @@ let [@entry] main env parameter storage =
           let f = fun param env storage ->
             match param with
             | Left _ -> true
-            | Right _ -> (Global.get_sender env) == storage
+            | Right _ -> Address.eq (Global.get_sender env) storage
           in
           let g = fun env ->
             match (Contract.contract (Global.get_sender env) ParamUnit) with
@@ -47,4 +47,4 @@ let [@entry] main env parameter storage =
           Fail ->
             match param with
             | Left _ -> false
-            | Right _ -> (Global.get_sender env) != storage *)
+            | Right _ -> not (Address.eq (Global.get_sender env) storage) *)
