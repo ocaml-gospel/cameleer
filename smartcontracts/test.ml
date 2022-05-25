@@ -1,3 +1,3 @@
-let main () = lt (Timestamp "true") (Timestamp "false")
-(*@ b = main ()
-    ensures b = false *)
+let main () = (String.lt "aba" "abb")
+(*@ n = main ()
+    ensures n *)

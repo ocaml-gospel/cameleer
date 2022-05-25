@@ -4,8 +4,7 @@ let [@entry] main env (param : unit) (storage : unit) =
   let ops =
     if Tz.eq amount (Tz 0) then []
     else
-      let source = Global.get_source env in
-      let source_contract = Option.get (Contract.contract source ParamUnit) in
+      let source_contract = Option.get (Contract.contract (Global.get_source env) ParamUnit) in
       [ Operation.transfer_tokens ParamUnit amount source_contract ]
     in
     ops, ()

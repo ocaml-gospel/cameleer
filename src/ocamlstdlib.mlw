@@ -1,9 +1,9 @@
 module Stdlib
 
   use export int.Int
-  use export int.ComputerDivision
-  use export int.MinMax
   use export int.Abs
+  use export int.MinMax
+  use export int.ComputerDivision
   use export mach.int.Int
   use export list.List
   use export list.Append
@@ -179,6 +179,7 @@ module Stdlib
     use import list.Append    as A
     use import list.Reverse   as R
     use import list.RevAppend as RA
+    use import list.HdTl as HT
 
     let function rev (l: list 'a) : list 'a =
       R.reverse l
@@ -204,11 +205,11 @@ module Stdlib
     val list_exists (p: 'a -> bool) (l: list 'a) : bool
       ensures { result <-> exists x. mem x l /\ p x }
 
-    let rec function assoc_opt (x: 'a) (l: list ('a, 'b)) : option 'b
+    let rec function assoc_opt (eq: 'a -> 'a -> bool) (x: 'a) (l: list ('a, 'b)) : option 'b
       variant { l }
     = match l with
       | Nil -> None
-      | Cons (a, b) t -> if a == x then Some b else assoc_opt x t
+      | Cons (a, b) tl -> if eq x a then Some b else assoc_opt eq x tl
       end
 
   end
@@ -309,8 +310,8 @@ module Stdlib
 
     type t 'k 'v = map 'k 'v
 
-    let function get (k : 'k) (mxs : map 'k 'v) =
-      match mxs with Map xs -> List.assoc_opt k xs | _ -> None end
+    let function get (eq: 'k -> 'k -> bool) (k : 'k) (mxs : map 'k 'v) =
+      match mxs with Map xs -> List.assoc_opt eq k xs | _ -> None end
 
     let function update (k : 'k) (vo : option 'v) (mkvs : map 'k 'v) : map 'k 'v =
       match mkvs with
@@ -375,10 +376,18 @@ module Stdlib
 
   type rep = RepInt | RepUnit | RepPair (rep, rep)
 
-  let function any_rep () : rep =
-    any rep
+  (*let function any_rep () : rep =
+    any rep*)
 
   type param = ParamInt int | ParamUnit | ParamPair (param, param)
+
+  let rec type_of (p:param) : rep
+    variant { p }
+  = match p with
+    | ParamInt _ -> RepInt
+    | ParamUnit -> RepUnit
+    | ParamPair (p1, p2) -> RepPair (type_of p1, type_of p2)
+    end
 
   (*let rec typecheck (r:rep) (p:param) : bool
     variant { r }
@@ -392,14 +401,6 @@ module Stdlib
 
   type operation = Transfer_tokens param tz contract
   type operations = list operation
-
-  let rec type_of (p:param) : rep
-    variant { p }
-  = match p with
-    | ParamInt _ -> RepInt
-    | ParamUnit -> RepUnit
-    | ParamPair (p1, p2) -> RepPair (type_of p1, type_of p2)
-    end
 
   scope Contract
 
@@ -508,3 +509,48 @@ module Stdlib
   end
 
 end
+
+(*module Stdlib
+
+  type const 'a = 'a
+
+  type ocaml_int = int
+  type ocaml_string = string
+
+  type nat = Nat (const ocaml_int)
+  type tz = Tz (const int)
+
+  use export ocaml.Exceptions
+
+  let invalid_arg (s: string)
+    raises  { Invalid_argument }
+    returns { _ -> false }
+  = raise (Invalid_argument s)
+
+  use export option.Option
+
+  scope Option
+    
+    let function value (o: option 'a) (a: 'a) : 'a = match o with Some a -> a | None -> a end
+
+    let get (o: option 'a) : 'a
+      ensures { not is_none o -> match o with None -> false | Some a -> result = a end }
+      raises  { Invalid_argument _ -> is_none o }
+    = match o with Some a -> a | None -> invalid_arg "Option.get" end
+
+    let function map (o: option 'a) (f: 'a -> 'b) : option 'b = match o with Some a -> Some (f a) | None -> None end
+
+  end
+
+  type ('a, 'b) sum = Left of 'a | Right of 'b [@@deriving typerep]
+
+  scope Sum
+    type ('a, 'b) t = ('a, 'b) sum = Left of 'a | Right of 'b
+    [@@deriving typerep]
+
+    let get_left = function Left a -> a | _ -> invalid_arg "Sum.get_left"
+
+    let get_right = function Right a -> a | _ -> invalid_arg "Sum.get_right"
+  end
+
+end*)
