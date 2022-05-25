@@ -364,6 +364,15 @@ module Stdlib
   
   end
 
+  type key_hash = Key_hash string
+
+  scope Key_hash
+
+    type t = Key_hash
+
+  end
+
+
   type rep = RepInt | RepUnit | RepPair (rep, rep)
 
   let function any_rep () : rep =
@@ -488,6 +497,14 @@ module Stdlib
 
     type t = key
 
+  end
+
+  type signature = Signature string
+
+  scope Signature
+
+    type t = signature
+    
   end
 
 end
