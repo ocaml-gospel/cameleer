@@ -10,13 +10,10 @@ let [@entry] main env (param : unit) (storage : unit) =
     ops, ()
 (*@ ops, stg = main env param storage
       requires  match env with None -> false | Some _ -> true
-      ensures   let f = fun env ->
-                  match (Contract.contract (Global.get_source env) ParamUnit) with None -> false | Some _ -> true
-                in f env ->
-                if Tz.eq (Global.get_amount env) (Tz 0) then ops = []
+      ensures   if Tz.eq (Global.get_amount env) (Tz 0) then ops = []
                 else
-                  let sco = Contract.contract (Global.get_source env) ParamUnit in
-                  match sco with
+                  match Contract.contract (Global.get_source env) ParamUnit with
                   | Some sc -> ops = (Operation.transfer_tokens ParamUnit (Global.get_amount env) sc) :: []
-                  | None -> false
-      raises    Invalid_argument _ -> match (Contract.contract (Global.get_source env) ParamUnit) with None -> true | Some _ -> false *)
+                  | None -> true
+      raises Invalid_argument _ -> 
+        match (Contract.contract (Global.get_source env) ParamUnit) with None -> true | Some _ -> false *)

@@ -24,12 +24,11 @@ let [@logic] init (conf : config) =
 let vote (env : Env.t option) (name : string) (storage : storage) =
   let now = Global.get_now env in
 
-  (*if (Timestamp.le storage.config.beginning_time now && Timestamp.lt now storage.config.finish_time) then () else failwith (); *)
   myassert (Timestamp.le storage.config.beginning_time now && Timestamp.lt now storage.config.finish_time);
 
   let addr = Global.get_source env in
 
-  if not (Set.mem addr storage.voters) then () else failwith ();
+  myassert (not (Set.mem addr storage.voters));
 
   let x = match Map.get String.eq name storage.candidates with
     | Some i -> i
@@ -91,15 +90,16 @@ let main (env : Env.t option) (action : action) (storage : storage) = match acti
     requires
       match env with None -> false | Some _ -> true
     ensures
-      let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
-      not Set.mem (Global.get_source env) storage.voters ->
-      let o, s =
-        match action with
-        | Vote name -> pvote env name storage
-        | Init config -> ([], init config)
-      in ops = o && stg = s
+        let rec compare_candidates new old =
+            match new, old with
+            | [], [] -> true
+            | (idnew, cntnew)::tlnew, (idold, cntold)::tlold ->
+                let diff = cntnew - cntold in
+                idnew=idold && (diff = 0 || diff = 1) &&
+                compare_candidates tlnew tlold
+            | _ -> false
+        in
+        compare_candidates stg.candidate storage.candidate
     raises
       Fail ->
       let now = Global.get_now env in

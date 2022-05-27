@@ -179,7 +179,6 @@ module Stdlib
     use import list.Append    as A
     use import list.Reverse   as R
     use import list.RevAppend as RA
-    use import list.HdTl as HT
 
     let function rev (l: list 'a) : list 'a =
       R.reverse l
@@ -219,7 +218,7 @@ module Stdlib
     use export string.String
     use import string.Char as C
 
-    val eq (s1 s2: string) : bool
+    val function eq (s1 s2: string) : bool
       ensures { result <-> C.eq_string s1 s2 }
 
     val lt (s1 s2: string) : bool
@@ -252,6 +251,11 @@ module Stdlib
     returns { _ -> false }
   = raise Fail
 
+  let myassert (b: bool) 
+    raises { Fail -> not b }
+    returns { _ -> b }
+  = if b then () else failwith ()
+
   scope Option
 
     use export option.Option
@@ -274,7 +278,7 @@ module Stdlib
       | Set xs -> List.mem x xs
       end
 
-    let function update (x : 'a) (b : bool) (sxs : set 'a) =
+    let function update (eq: 'a -> 'a -> bool) (lt: 'a -> 'a -> bool) (x : 'a) (b : bool) (sxs : set 'a) =
       match sxs with
       | Set xs -> Set (
         if b then
@@ -283,8 +287,8 @@ module Stdlib
           = match ys with
             | Nil -> List.rev (Cons x st)
             | Cons y ys ->
-              if compare x y < 0 then List.rev (List.rev_append (Cons y ys) (Cons x st))
-              else if x == y then xs
+              if lt x y then List.rev (List.rev_append (Cons y ys) (Cons x st))
+              else if eq x y then xs
               else add (Cons y st) ys
             end
           in add Nil xs
@@ -294,8 +298,8 @@ module Stdlib
           = match ys with
             | Nil -> xs
             | Cons y ys ->
-              if compare x y < 0 then xs
-              else if x == y then List.rev (List.rev_append ys st)
+              if lt x y then xs
+              else if eq x y then List.rev (List.rev_append ys st)
               else remove (Cons y st) ys
             end
           in remove Nil xs
@@ -313,7 +317,7 @@ module Stdlib
     let function get (eq: 'k -> 'k -> bool) (k : 'k) (mxs : map 'k 'v) =
       match mxs with Map xs -> List.assoc_opt eq k xs | _ -> None end
 
-    let function update (k : 'k) (vo : option 'v) (mkvs : map 'k 'v) : map 'k 'v =
+    let function update (eq: 'k -> 'k -> bool) (lt: 'k -> 'k -> bool) (k : 'k) (vo : option 'v) (mkvs : map 'k 'v) : map 'k 'v =
       match mkvs with
       | Map kvs -> Map (
         match vo with
@@ -325,8 +329,8 @@ module Stdlib
             | Cons kv rkvs ->
               match kv with
               | (k', _) ->
-                if compare k k' < 0 then kvs
-                else if k == k' then List.rev (List.rev_append rkvs st)
+                if lt k k' then kvs
+                else if eq k k' then List.rev (List.rev_append rkvs st)
                 else remove (Cons kv st) rkvs
               end
             end
@@ -339,8 +343,8 @@ module Stdlib
             | Cons kv rkvs ->
               match kv with
               | (k', _) ->
-                if compare k k' < 0 then List.rev_append (Cons kv rkvs) (Cons (k,v) st)
-                else if k == k' then List.rev_append rkvs (Cons (k,v) st)
+                if lt k k' then List.rev_append (Cons kv rkvs) (Cons (k,v) st)
+                else if eq k k' then List.rev_append rkvs (Cons (k,v) st)
                 else add (Cons kv st) rkvs
               end
             end
@@ -360,6 +364,12 @@ module Stdlib
     let function eq (a1:address) (a2:address) : bool =
       match a1, a2 with
       | Address s1, Address s2 -> String.eq s1 s2
+      | _, _ -> false
+      end
+
+    let function lt (a1:address) (a2:address) : bool =
+      match a1, a2 with
+      | Address s1, Address s2 -> String.lt s1 s2
       | _, _ -> false
       end
   
