@@ -17,8 +17,6 @@ let [@entry] main env parameter storage =
   ops, storage
 
 (*@ ops, stg = main env param storage
-      requires
-          match env with None -> false | Some _ -> true
       ensures
           let sco = Contract.contract (Global.get_sender env) ParamUnit in
           match param, sco with

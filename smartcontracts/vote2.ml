@@ -21,7 +21,7 @@ let [@logic] init (conf : config) =
   ; voters     = Set []
   }
 
-let vote (env : Env.t option) (name : string) (storage : storage) =
+let vote (env : Env.t) (name : string) (storage : storage) =
   let now = Global.get_now env in
 
   myassert (Timestamp.le storage.config.beginning_time now && Timestamp.lt now storage.config.finish_time);
@@ -40,21 +40,15 @@ let vote (env : Env.t option) (name : string) (storage : storage) =
   ; voters = Set.update Address.eq Address.lt addr true storage.voters
   }
 (*@ ops, stg = vote env name storage
-    requires
-      match env with None -> false | Some _ -> true
     ensures
       let now = Global.get_now env in
       Timestamp.le storage.config.beginning_time now && 
       Timestamp.lt now storage.config.finish_time && 
       not Set.mem (Global.get_source env) storage.voters ->
-      ops = [] &&
-      stg =
-        let addr = Global.get_source env in
-        let x = match Map.get String.eq name storage.candidates with Some i -> i | None -> 0 in
-        { storage with
-          candidates = Map.update String.eq String.lt name (Some (x + 1)) storage.candidates
-          ; voters     = Set.update Address.eq Address.lt addr true storage.voters
-        }
+      let lo = match storage.candidates with Map l -> l in
+      let ln = match stg.candidates with Map l -> l in
+      let upd = fun p -> (p.fst, p.snd + 1) in
+      forall p. List.mem p lo -> List.mem p ln || List.mem (upd p) ln
     raises
       Fail ->
       let now = Global.get_now env in
@@ -62,10 +56,8 @@ let vote (env : Env.t option) (name : string) (storage : storage) =
             Timestamp.lt now storage.config.finish_time && 
             not Set.mem (Global.get_source env) storage.voters ) *)
 
-let [@logic] pvote (env : Env.t option) (name : string) (storage : storage) = vote env name storage
+let [@logic] pvote (env : Env.t) (name : string) (storage : storage) = vote env name storage
 (*@ ops, stg = pvote env name storage
-    requires
-      match env with None -> false | Some _ -> true
     requires
       let now = Global.get_now env in
       Timestamp.le storage.config.beginning_time now && 
@@ -83,23 +75,12 @@ let [@logic] pvote (env : Env.t option) (name : string) (storage : storage) = vo
     raises
       Fail -> false *)
 
-let main (env : Env.t option) (action : action) (storage : storage) = match action with
+let main (env : Env.t) (action : action) (storage : storage) = match action with
   | Vote name -> vote env name storage
   | Init config -> ([], init config)
 (*@ ops, stg = main env action storage
-    requires
-      match env with None -> false | Some _ -> true
     ensures
-        let rec compare_candidates new old =
-            match new, old with
-            | [], [] -> true
-            | (idnew, cntnew)::tlnew, (idold, cntold)::tlold ->
-                let diff = cntnew - cntold in
-                idnew=idold && (diff = 0 || diff = 1) &&
-                compare_candidates tlnew tlold
-            | _ -> false
-        in
-        compare_candidates stg.candidate storage.candidate
+        true
     raises
       Fail ->
       let now = Global.get_now env in
@@ -107,10 +88,8 @@ let main (env : Env.t option) (action : action) (storage : storage) = match acti
             Timestamp.lt now storage.config.finish_time && 
             not Set.mem (Global.get_source env) storage.voters ) *)
 
-let [@logic] pmain (env : Env.t option) (action : action) (storage : storage) = main env action storage
+let [@logic] pmain (env : Env.t) (action : action) (storage : storage) = main env action storage
 (*@ ops, stg = pmain env action storage
-    requires
-      match env with None -> false | Some _ -> true
     requires
       let now = Global.get_now env in
       Timestamp.le storage.config.beginning_time now && 
@@ -127,7 +106,7 @@ let [@logic] pmain (env : Env.t option) (action : action) (storage : storage) = 
 
 (* Just for test.  For real voting dApp, this function is not required *)
 (* XXX optimized out! *)
-let [@entry] test (env : Env.t option) () () =
+let [@entry] test (env : Env.t) () () =
   let conf =
     { title="test"
     ; beginning_time= Timestamp "2019-09-11T08:30:23Z"
@@ -139,8 +118,6 @@ let [@entry] test (env : Env.t option) () () =
   let ops, _ = main env (Vote "hello") storage in (* XXX we need ignore *)
   ops, ()
 (*@ ops, stg = test env u1 u2
-    requires
-      match env with None -> false | Some _ -> true
     ensures
       let conf =
         { title="test"
@@ -174,3 +151,14 @@ let [@entry] test (env : Env.t option) () () =
       not ( Timestamp.le storage.config.beginning_time now && 
             Timestamp.lt now storage.config.finish_time && 
             not Set.mem (Global.get_source env) storage.voters ) *)
+
+    (* let rec compare_candidates new old =
+            match new, old with
+            | [], [] -> true
+            | (idnew, cntnew)::tlnew, (idold, cntold)::tlold ->
+                let diff = cntnew - cntold in
+                idnew=idold && (diff = 0 || diff = 1) &&
+                compare_candidates tlnew tlold
+            | _ -> false
+        in
+        compare_candidates stg.candidate storage.candidate *)

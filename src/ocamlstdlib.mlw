@@ -189,7 +189,7 @@ module Stdlib
     let function rev_append (s t: list 'a) : list 'a =
       RA.rev_append s t
 
-    val mem (x: 'a) (l: list 'a) : bool
+    val function mem (x: 'a) (l: list 'a) : bool
       ensures { result <-> mem x l }
 
     val filter (p: 'a -> bool) (l: list 'a) : list 'a
@@ -457,13 +457,6 @@ module Stdlib
 
     type t = { env_now : timestamp; env_amount : tz; env_source : address; env_sender : address }
 
-    let env = None : option t
-
-    let get (env : option t) : t
-      requires { match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Option.get env
-
     let now (env: t) : timestamp =
       env_now env
 
@@ -480,25 +473,17 @@ module Stdlib
 
   scope Global
 
-    let function get_now (env : option Env.t) : timestamp
-      requires { match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Env.env_now (Env.get env)
+    let function get_now (env : Env.t) : timestamp
+    = Env.env_now env
 
-    let function get_amount (env : option Env.t) : tz
-      requires { match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Env.env_amount (Env.get env)
+    let function get_amount (env : Env.t) : tz
+    = Env.env_amount env
 
-    let function get_source (env : option Env.t) : address
-      requires { match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Env.env_source (Env.get env)
+    let function get_source (env : Env.t) : address
+    = Env.env_source env
 
-    let function get_sender (env : option Env.t) : address
-      requires { match env with None -> false | Some _ -> true end }
-      raises   { Invalid_argument _ -> false }
-    = Env.env_sender (Env.get env)
+    let function get_sender (env : Env.t) : address
+    = Env.env_sender env
 
   end
 
