@@ -231,6 +231,30 @@ module Stdlib
 
   type nat = Nat int
 
+  scope Nat
+
+    type t = nat
+
+    let function eq (n1: nat) (n2: nat) : bool =
+        match n1, n2 with
+        | Nat n1, Nat n2 -> n1 == n2
+        | _, _ -> false
+    end
+
+    let function lt (n1: nat) (n2: nat) : bool =
+        match n1, n2 with
+        | Nat n1, Nat n2 -> n1 < n2
+        | _, _ -> false
+    end
+
+    let function add (n1: nat) (n2: nat) : nat =
+        match n1, n2 with
+        | Nat n1, Nat n2 -> Nat (n1 + n2)
+    end
+
+
+  end
+
   type tz = Tz int
 
   scope Tz
