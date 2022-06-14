@@ -231,6 +231,30 @@ module Stdlib
 
   type nat = Nat int
 
+  scope Nat
+
+    type t = nat
+
+    let function eq (n1: nat) (n2: nat) : bool =
+        match n1, n2 with
+        | Nat n1, Nat n2 -> n1 == n2
+        | _, _ -> false
+    end
+
+    let function lt (n1: nat) (n2: nat) : bool =
+        match n1, n2 with
+        | Nat n1, Nat n2 -> n1 < n2
+        | _, _ -> false
+    end
+
+    let function add (n1: nat) (n2: nat) : nat =
+        match n1, n2 with
+        | Nat n1, Nat n2 -> Nat (n1 + n2)
+    end
+
+
+  end
+
   type tz = Tz int
 
   scope Tz
@@ -352,6 +376,29 @@ module Stdlib
         end
       )
       end
+
+    let function add (eq: 'k -> 'k -> bool) (lt: 'k -> 'k -> bool) (k: 'k) (v: 'v) (m: map 'k 'v) : map 'k 'v =
+          let old_value = get eq k m in
+            match old_value with
+            | None ->
+                 let rec insert (eq: 'k -> 'k -> bool) (lt: 'k -> 'k -> bool) (k: 'k) (v: 'v)
+                    (l: list ('k, 'v)): list ('k, 'v) =
+                        variant { l }
+                        match l with
+                        | Nil -> List.rev (Cons (k, v) Nil)
+                        | Cons (kl, vl) rest ->
+                                        if lt k kl then Cons (k, v) l
+                                        else if eq k kl then Cons (k, v) l
+                                        else Cons (kl, vl) (insert eq lt k v rest)
+                        end in
+                            match m with
+                            | Map l -> Map (insert eq lt k v l)
+                            end
+
+            | Some _ ->
+                    update eq lt k (Some v) m
+    end
+
 
   end
 
