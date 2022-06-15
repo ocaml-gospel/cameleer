@@ -41,14 +41,15 @@ let vote (env : Env.t) (name : string) (storage : storage) =
   }
 (*@ ops, stg = vote env name storage
     ensures
-      let now = Global.get_now env in
+      forall nm. let now = Global.get_now env in
       Timestamp.le storage.config.beginning_time now && 
       Timestamp.lt now storage.config.finish_time && 
       not Set.mem (Global.get_source env) storage.voters ->
-      let lo = match storage.candidates with Map l -> l in
-      let ln = match stg.candidates with Map l -> l in
-      let upd = fun p -> (p.fst, p.snd + 1) in
-      forall p. List.mem p lo -> List.mem p ln || List.mem (upd p) ln
+      match (Map.get String.eq nm storage.candidates), (Map.get String.eq nm stg.candidates) with
+      | Some pv, Some cv ->
+        if String.eq name nm then pv + 1 = cv else pv = cv
+      | None, Some cv -> String.eq name nm && cv = 1
+      | _, _ -> true
     raises
       Fail ->
       let now = Global.get_now env in
@@ -64,14 +65,11 @@ let [@logic] pvote (env : Env.t) (name : string) (storage : storage) = vote env 
       Timestamp.lt now storage.config.finish_time && 
       not Set.mem (Global.get_source env) storage.voters
     ensures
-      ops = [] &&
-      stg =
-        let addr = Global.get_source env in
-        let x = match Map.get String.eq name storage.candidates with Some i -> i | None -> 0 in
-        { storage with
-          candidates = Map.update String.eq String.lt name (Some (x + 1)) storage.candidates
-          ; voters     = Set.update Address.eq Address.lt addr true storage.voters
-        }
+      forall nm. match (Map.get String.eq nm storage.candidates), (Map.get String.eq nm stg.candidates) with
+      | Some pv, Some cv ->
+        if String.eq name nm then pv + 1 = cv else pv = cv
+      | None, Some cv -> String.eq name nm && cv = 1
+      | _, _ -> true
     raises
       Fail -> false *)
 

@@ -189,7 +189,7 @@ module Stdlib
     let function rev_append (s t: list 'a) : list 'a =
       RA.rev_append s t
 
-    val function mem (x: 'a) (l: list 'a) : bool
+    val mem (x: 'a) (l: list 'a) : bool
       ensures { result <-> mem x l }
 
     val filter (p: 'a -> bool) (l: list 'a) : list 'a
@@ -341,8 +341,18 @@ module Stdlib
     let function get (eq: 'k -> 'k -> bool) (k : 'k) (mxs : map 'k 'v) =
       match mxs with Map xs -> List.assoc_opt eq k xs | _ -> None end
 
-    let function update (eq: 'k -> 'k -> bool) (lt: 'k -> 'k -> bool) (k : 'k) (vo : option 'v) (mkvs : map 'k 'v) : map 'k 'v =
-      match mkvs with
+    let function update (eq: 'k -> 'k -> bool) (lt: 'k -> 'k -> bool) (k : 'k) (vo : option 'v) (mkvs : map 'k 'v) : map 'k 'v 
+      returns { mr ->
+        match vo with 
+        | None -> Option.is_none (get eq k mr)
+        | Some v -> 
+          match get eq k mr with
+          | Some v' -> v = v'
+          | _ -> false
+          end
+        end
+      }
+    = match mkvs with
       | Map kvs -> Map (
         match vo with
         | None ->
