@@ -41,31 +41,37 @@ let vote (env : Env.t) (name : string) (storage : storage) =
   }
 (*@ ops, stg = vote env name storage
     ensures
-      forall nm. let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
+      let now = Global.get_now env in
+      Timestamp.le storage.config.beginning_time now &&
+      Timestamp.lt now storage.config.finish_time &&
       not Set.mem (Global.get_source env) storage.voters ->
-      match (Map.get String.eq nm storage.candidates), (Map.get String.eq nm stg.candidates) with
+      forall nm. match (Map.get String.eq nm stg.candidates) with
+      | Some cv -> true
+      | None -> false
+      -> match (Map.get String.eq nm storage.candidates), (Map.get String.eq nm stg.candidates) with
       | Some pv, Some cv ->
         if String.eq name nm then pv + 1 = cv else pv = cv
       | None, Some cv -> String.eq name nm && cv = 1
-      | _, _ -> true
+      | _, _ -> false
     raises
       Fail ->
       let now = Global.get_now env in
-      not ( Timestamp.le storage.config.beginning_time now && 
-            Timestamp.lt now storage.config.finish_time && 
+      not ( Timestamp.le storage.config.beginning_time now &&
+            Timestamp.lt now storage.config.finish_time &&
             not Set.mem (Global.get_source env) storage.voters ) *)
 
 let [@logic] pvote (env : Env.t) (name : string) (storage : storage) = vote env name storage
 (*@ ops, stg = pvote env name storage
     requires
       let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
+      Timestamp.le storage.config.beginning_time now &&
+      Timestamp.lt now storage.config.finish_time &&
       not Set.mem (Global.get_source env) storage.voters
     ensures
-      forall nm. match (Map.get String.eq nm storage.candidates), (Map.get String.eq nm stg.candidates) with
+      forall nm. match (Map.get String.eq nm stg.candidates) with
+      | Some cv -> true
+      | None -> false
+      -> match (Map.get String.eq nm storage.candidates), (Map.get String.eq nm stg.candidates) with
       | Some pv, Some cv ->
         if String.eq name nm then pv + 1 = cv else pv = cv
       | None, Some cv -> String.eq name nm && cv = 1
@@ -76,31 +82,8 @@ let [@logic] pvote (env : Env.t) (name : string) (storage : storage) = vote env 
 let main (env : Env.t) (action : action) (storage : storage) = match action with
   | Vote name -> vote env name storage
   | Init config -> ([], init config)
-(*@ ops, stg = main env action storage
-    ensures
-        true
-    raises
-      Fail ->
-      let now = Global.get_now env in
-      not ( Timestamp.le storage.config.beginning_time now && 
-            Timestamp.lt now storage.config.finish_time && 
-            not Set.mem (Global.get_source env) storage.voters ) *)
 
 let [@logic] pmain (env : Env.t) (action : action) (storage : storage) = main env action storage
-(*@ ops, stg = pmain env action storage
-    requires
-      let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
-      not Set.mem (Global.get_source env) storage.voters
-    ensures
-      let o, s =
-        match action with
-        | Vote name -> pvote env name storage
-        | Init config -> ([], init config)
-      in ops = o && stg = s
-    raises
-      Fail -> false *)
 
 (* Just for test.  For real voting dApp, this function is not required *)
 (* XXX optimized out! *)
@@ -115,48 +98,3 @@ let [@entry] test (env : Env.t) () () =
   let _, storage = main env (Init conf) storage in
   let ops, _ = main env (Vote "hello") storage in (* XXX we need ignore *)
   ops, ()
-(*@ ops, stg = test env u1 u2
-    ensures
-      let conf =
-        { title="test"
-        ; beginning_time= Timestamp "2019-09-11T08:30:23Z"
-        ; finish_time= Timestamp "2219-09-11T08:30:23Z"
-        }
-      in
-      let storage = init conf in
-      let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
-      not Set.mem (Global.get_source env) storage.voters ->
-      ops =
-        let conf =  { title="test"
-                      ; beginning_time= Timestamp "2019-09-11T08:30:23Z"
-                      ; finish_time= Timestamp "2219-09-11T08:30:23Z"
-                    } in
-        let s = init conf in
-        let _, s = pmain env (Init conf) s in
-        let o, _ = pmain env (Vote "hello") s in o
-    raises
-      Fail ->
-      let conf =
-        { title="test"
-        ; beginning_time= Timestamp "2019-09-11T08:30:23Z"
-        ; finish_time= Timestamp "2219-09-11T08:30:23Z"
-        }
-      in
-      let storage = init conf in
-      let now = Global.get_now env in
-      not ( Timestamp.le storage.config.beginning_time now && 
-            Timestamp.lt now storage.config.finish_time && 
-            not Set.mem (Global.get_source env) storage.voters ) *)
-
-    (* let rec compare_candidates new old =
-            match new, old with
-            | [], [] -> true
-            | (idnew, cntnew)::tlnew, (idold, cntold)::tlold ->
-                let diff = cntnew - cntold in
-                idnew=idold && (diff = 0 || diff = 1) &&
-                compare_candidates tlnew tlold
-            | _ -> false
-        in
-        compare_candidates stg.candidate storage.candidate *)
