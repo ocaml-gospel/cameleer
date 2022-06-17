@@ -82,8 +82,14 @@ let [@logic] pvote (env : Env.t) (name : string) (storage : storage) = vote env 
 let main (env : Env.t) (action : action) (storage : storage) = match action with
   | Vote name -> vote env name storage
   | Init config -> ([], init config)
+(*@ ops, stg = main env action storage
+    raises
+      Fail -> true *)
 
 let [@logic] pmain (env : Env.t) (action : action) (storage : storage) = main env action storage
+(*@ ops, stg = main env action storage
+    raises
+      Fail -> true *)
 
 (* Just for test.  For real voting dApp, this function is not required *)
 (* XXX optimized out! *)
@@ -98,3 +104,6 @@ let [@entry] test (env : Env.t) () () =
   let _, storage = main env (Init conf) storage in
   let ops, _ = main env (Vote "hello") storage in (* XXX we need ignore *)
   ops, ()
+(*@ ops, stg = main env action storage
+    raises
+      Fail -> true *)
