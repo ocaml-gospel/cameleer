@@ -216,6 +216,10 @@ module Stdlib
 
     predicate mem (x: 'a) (s: t 'a) = FS.mem x s
 
+    constant empty: set 'a = FS.empty
+
+    function singleton (x: 'a) : t 'a = FS.singleton x
+
     use list.Elements
 
     function of_list (l: list 'a) : set 'a = elements l
