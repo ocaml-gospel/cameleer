@@ -226,6 +226,14 @@ module Stdlib
 
   end
 
+  scope Power
+
+    use int.Power
+
+    function pow (x y: int) : int = power x y
+
+  end
+
 end
 
 module Map
