@@ -260,13 +260,13 @@ module Stdlib
   scope Tz
 
     type t = tz
-    
+
     let function eq (t1:tz) (t2:tz) : bool =
       match t1, t2 with
       | Tz n1, Tz n2 -> n1 = n2
       | _, _ -> false
       end
-  
+
   end
 
   exception Fail
@@ -275,7 +275,7 @@ module Stdlib
     returns { _ -> false }
   = raise Fail
 
-  let myassert (b: bool) 
+  let myassert (b: bool)
     raises { Fail -> not b }
     returns { _ -> b }
   = if b then () else failwith ()
@@ -341,11 +341,11 @@ module Stdlib
     let function get (eq: 'k -> 'k -> bool) (k : 'k) (mxs : map 'k 'v) =
       match mxs with Map xs -> List.assoc_opt eq k xs | _ -> None end
 
-    let function update (eq: 'k -> 'k -> bool) (lt: 'k -> 'k -> bool) (k : 'k) (vo : option 'v) (mkvs : map 'k 'v) : map 'k 'v 
+    let function update (eq: 'k -> 'k -> bool) (lt: 'k -> 'k -> bool) (k : 'k) (vo : option 'v) (mkvs : map 'k 'v) : map 'k 'v
       returns { mr ->
-        match vo with 
+        match vo with
         | None -> Option.is_none (get eq k mr)
-        | Some v -> 
+        | Some v ->
           match get eq k mr with
           | Some v' -> v = v'
           | _ -> false
@@ -429,7 +429,7 @@ module Stdlib
       | Address s1, Address s2 -> String.lt s1 s2
       | _, _ -> false
       end
-  
+
   end
 
   type key_hash = Key_hash string
@@ -448,13 +448,13 @@ module Stdlib
 
   type param = ParamInt int | ParamUnit | ParamPair (param, param)
 
-  let rec type_of (p:param) : rep
+  (*let rec type_of (p:param) : rep
     variant { p }
   = match p with
     | ParamInt _ -> RepInt
     | ParamUnit -> RepUnit
     | ParamPair (p1, p2) -> RepPair (type_of p1, type_of p2)
-    end
+    end*)
 
   (*let rec typecheck (r:rep) (p:param) : bool
     variant { r }
@@ -473,8 +473,8 @@ module Stdlib
 
     type t = contract
 
-    let function contract (addr:address) (p : param) : option contract =
-      let r = type_of p in
+    let function contract (addr:address) (r:rep) : option contract =
+      (*let r = type_of p in*)
       if any bool then Some (Contract (addr, r)) else None
       (*let r = any_rep () in
       if typecheck r p then Some (Contract (addr, r)) else None*)
@@ -557,7 +557,7 @@ module Stdlib
   scope Signature
 
     type t = signature
-    
+
   end
 
 end
@@ -582,7 +582,7 @@ end
   use export option.Option
 
   scope Option
-    
+
     let function value (o: option 'a) (a: 'a) : 'a = match o with Some a -> a | None -> a end
 
     let get (o: option 'a) : 'a

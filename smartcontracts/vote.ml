@@ -43,8 +43,8 @@ let vote (env : Env.t) (name : string) (storage : storage) =
 (*@ ops, stg = vote env name storage
     ensures
       let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
+      Timestamp.le storage.config.beginning_time now &&
+      Timestamp.lt now storage.config.finish_time &&
       not Set.mem (Global.get_source env) storage.voters ->
       ops = [] &&
       stg =
@@ -57,16 +57,16 @@ let vote (env : Env.t) (name : string) (storage : storage) =
     raises
       Fail ->
       let now = Global.get_now env in
-      not ( Timestamp.le storage.config.beginning_time now && 
-            Timestamp.lt now storage.config.finish_time && 
+      not ( Timestamp.le storage.config.beginning_time now &&
+            Timestamp.lt now storage.config.finish_time &&
             not Set.mem (Global.get_source env) storage.voters ) *)
 
 let [@logic] pvote (env : Env.t) (name : string) (storage : storage) = vote env name storage
 (*@ ops, stg = pvote env name storage
     requires
       let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
+      Timestamp.le storage.config.beginning_time now &&
+      Timestamp.lt now storage.config.finish_time &&
       not Set.mem (Global.get_source env) storage.voters
     ensures
       ops = [] &&
@@ -86,8 +86,8 @@ let main (env : Env.t) (action : action) (storage : storage) = match action with
 (*@ ops, stg = main env action storage
     ensures
       let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
+      Timestamp.le storage.config.beginning_time now &&
+      Timestamp.lt now storage.config.finish_time &&
       not Set.mem (Global.get_source env) storage.voters ->
       let o, s =
         match action with
@@ -97,16 +97,16 @@ let main (env : Env.t) (action : action) (storage : storage) = match action with
     raises
       Fail ->
       let now = Global.get_now env in
-      not ( Timestamp.le storage.config.beginning_time now && 
-            Timestamp.lt now storage.config.finish_time && 
+      not ( Timestamp.le storage.config.beginning_time now &&
+            Timestamp.lt now storage.config.finish_time &&
             not Set.mem (Global.get_source env) storage.voters ) *)
 
 let [@logic] pmain (env : Env.t) (action : action) (storage : storage) = main env action storage
 (*@ ops, stg = pmain env action storage
     requires
       let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
+      Timestamp.le storage.config.beginning_time now &&
+      Timestamp.lt now storage.config.finish_time &&
       not Set.mem (Global.get_source env) storage.voters
     ensures
       let o, s =
@@ -140,8 +140,8 @@ let [@entry] test (env : Env.t) () () =
       in
       let storage = init conf in
       let now = Global.get_now env in
-      Timestamp.le storage.config.beginning_time now && 
-      Timestamp.lt now storage.config.finish_time && 
+      Timestamp.le storage.config.beginning_time now &&
+      Timestamp.lt now storage.config.finish_time &&
       not Set.mem (Global.get_source env) storage.voters ->
       ops =
         let conf =  { title="test"
@@ -161,6 +161,6 @@ let [@entry] test (env : Env.t) () () =
       in
       let storage = init conf in
       let now = Global.get_now env in
-      not ( Timestamp.le storage.config.beginning_time now && 
-            Timestamp.lt now storage.config.finish_time && 
+      not ( Timestamp.le storage.config.beginning_time now &&
+            Timestamp.lt now storage.config.finish_time &&
             not Set.mem (Global.get_source env) storage.voters ) *)
