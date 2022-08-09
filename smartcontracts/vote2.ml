@@ -89,7 +89,7 @@ let main (env : Env.t) (action : action) (storage : storage) = match action with
 let [@logic] pmain (env : Env.t) (action : action) (storage : storage) = main env action storage
 (*@ ops, stg = main env action storage
     raises
-      Fail -> true *)
+      Fail -> false *)
 
 (* Just for test.  For real voting dApp, this function is not required *)
 (* XXX optimized out! *)

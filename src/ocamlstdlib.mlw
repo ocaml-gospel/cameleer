@@ -285,7 +285,7 @@ module Stdlib
     use export option.Option
 
     let get (o: option 'a) : 'a
-      ensures { not is_none o -> match o with None -> false | Some a -> result = a end }
+      ensures { match o with None -> false | Some a -> result = a end }
       raises { Invalid_argument _ -> is_none o }
     = match o with None -> invalid_arg "Option.get" | Some a -> a end
 

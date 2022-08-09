@@ -23,7 +23,7 @@ let [@entry] main env parameter storage =
           | Left _, _ ->  ops = []
           | Right amount, Some sc ->
               Address.eq (Global.get_sender env) storage -> ops = (Operation.transfer_tokens ParamUnit amount sc) :: []
-          | Right _, None -> true
+          | Right _, None -> false
       raises
           Invalid_argument _ ->
             match (Contract.contract (Global.get_sender env) RepUnit) with
