@@ -448,18 +448,20 @@ module Stdlib
 
   type param = ParamInt int | ParamUnit | ParamPair (param, param)
 
-  (*let rec type_of (p:param) : rep
+  let rec function type_of (p:param) : rep
     variant { p }
   = match p with
     | ParamInt _ -> RepInt
     | ParamUnit -> RepUnit
     | ParamPair (p1, p2) -> RepPair (type_of p1, type_of p2)
-    end*)
+    end
 
-  (*let rec typecheck (r:rep) (p:param) : bool
-    variant { r }
+  (*let rec function typecheck (r:rep) (p:param) : bool
+    variant { r, p }
+    ensures
+      { type_of p = r }
   = match (r, p) with
-  | RepInt, ParamInt _ | RepUnit, ParamUnit -> true
+  | RepInt, ParamInt _ -> true | RepUnit, ParamUnit -> true
   | RepPair (r1, r2) , ParamPair (p1, p2) -> typecheck r1 p1 && typecheck r2 p2
   | RepInt, ParamUnit | RepInt, ParamPair _ | RepUnit, ParamInt _ | RepUnit, ParamPair _ | RepPair _, ParamInt _ | RepPair _, ParamUnit -> false
   end*)
@@ -485,8 +487,14 @@ module Stdlib
 
     type t = operation
 
-    let function transfer_tokens (p:param) (t:tz) (c:contract) : operation =
-      Transfer_tokens p t c
+    let function transfer_tokens (p:param) (t:tz) (c:contract) : operation
+      requires
+        { match c with
+          | Contract (_, r) ->
+            match type_of p with r -> true | _ -> false end
+          | _ -> false
+          end }
+    = Transfer_tokens p t c
 
   end
 
