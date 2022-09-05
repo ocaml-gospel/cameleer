@@ -71,7 +71,3 @@ module XBit : XOR = struct
   let[@logic] xor t1 t2 =
     match (t1, t2) with Zero, Zero | One, One -> Zero | _ -> One
 end
-
-module CBool = Make (XBool)
-module CBool2 = Make (XBool2)
-module CBit = Make (XBit)

@@ -580,7 +580,7 @@ let rec expression_desc info expr_loc expr_desc =
   | Uast.Sexp_constant c -> Econst (T.constant c)
   | Uast.Sexp_let (Nonrecursive, [ svb ], expr) ->
       let_match info (expression info expr) svb
-  | Sexp_let (Nonrecursive, svbs, expr) ->
+  | Uast.Sexp_let (Nonrecursive, svbs, expr) ->
       let mk_let svb acc = mk_expr (let_match info acc svb) in
       (List.fold_right mk_let svbs (expression info expr)).expr_desc
   | Uast.Sexp_let (Recursive, svb_list, expr) ->
