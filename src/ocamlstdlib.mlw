@@ -264,7 +264,21 @@ module Stdlib
     let function eq (t1:tz) (t2:tz) : bool =
       match t1, t2 with
       | Tz n1, Tz n2 -> n1 = n2
-      | _, _ -> false
+      end
+
+    let function lt (t1:tz) (t2:tz) : bool =
+      match t1, t2 with
+      | Tz n1, Tz n2 -> n1 < n2
+      end
+
+      let function le (t1:tz) (t2:tz) : bool =
+      match t1, t2 with
+      | Tz n1, Tz n2 -> n1 <= n2
+      end
+
+    let function sub (t1:tz) (t2:tz) : tz =
+      match t1, t2 with
+      | Tz n1, Tz n2 -> Tz (n1 - n2)
       end
 
   end
@@ -440,61 +454,19 @@ module Stdlib
 
   end
 
+  type key = string
 
-  type rep = RepInt | RepUnit | RepPair (rep, rep)
+  scope Key
 
-  (*let function any_rep () : rep =
-    any rep*)
-
-  type param = ParamInt int | ParamUnit | ParamPair (param, param)
-
-  let rec function type_of (p:param) : rep
-    variant { p }
-  = match p with
-    | ParamInt _ -> RepInt
-    | ParamUnit -> RepUnit
-    | ParamPair (p1, p2) -> RepPair (type_of p1, type_of p2)
-    end
-
-  (*let rec function typecheck (r:rep) (p:param) : bool
-    variant { r, p }
-    ensures
-      { type_of p = r }
-  = match (r, p) with
-  | RepInt, ParamInt _ -> true | RepUnit, ParamUnit -> true
-  | RepPair (r1, r2) , ParamPair (p1, p2) -> typecheck r1 p1 && typecheck r2 p2
-  | RepInt, ParamUnit | RepInt, ParamPair _ | RepUnit, ParamInt _ | RepUnit, ParamPair _ | RepPair _, ParamInt _ | RepPair _, ParamUnit -> false
-  end*)
-
-  type contract = Contract (address, rep)
-
-  type operation = Transfer_tokens param tz contract
-  type operations = list operation
-
-  scope Contract
-
-    type t = contract
-
-    let function contract (addr:address) (r:rep) : option contract =
-      (*let r = type_of p in*)
-      if any bool then Some (Contract (addr, r)) else None
-      (*let r = any_rep () in
-      if typecheck r p then Some (Contract (addr, r)) else None*)
+    type t = key
 
   end
 
-  scope Operation
+  type signature = Signature string
 
-    type t = operation
+  scope Signature
 
-    let function transfer_tokens (p:param) (t:tz) (c:contract) : operation
-      requires
-        { match c with
-          | Contract (_, r) ->
-            match type_of p with r -> true | _ -> false end
-          | _ -> false
-          end }
-    = Transfer_tokens p t c
+    type t = signature
 
   end
 
@@ -552,19 +524,148 @@ module Stdlib
 
   end
 
-  type key = string
+  type rep =
+    | RepString
+    (*| RepNat*)
+    | RepInt
+    (*| RepBytes*)
+    | RepBool
+    | RepUnit
+    | RepList rep
+    (* XXX fields and annots must be moved to t *)
+    | RepPair (rep, rep)
+    (*| TyPairN of (string option * t) list (* length > 2 *) (* XXX We now need pair compaction somewhere else *)*)
+    | RepOption rep
+    (*| RepOr (rep, rep)*)
+    | RepSet rep (* comparable *)
+    | RepMap rep (* comparable *) rep
+    (*| RepBigMap (rep (* comparable *), rep)*)
+    (*| RepMutez*)
+    (*| RepKeyHash*)
+    | RepTimestamp
+    | RepAddress
+    (*| RepChainID*)
+    | RepKey
+    | RepSignature
+    | RepOperation
+    | RepContract
+    (*| RepLambda (rep, rep)
+    | RepNever (* from 008 *)
+    | RepBLS12_381_Fr (* from 008 *)
+    | RepBLS12_381_G1 (* from 008 *)
+    | RepBLS12_381_G2 (* from 008 *)
+    | RepSapling_state (RepInt) (* from 008 *)
+    | RepSapling_transaction (RepInt) (* from 008 *)
+    | RepTicket rep*)
 
-  scope Key
+  type param =
+    | ParamString string
+    (*| ParamNat *)
+    | ParamInt int
+    (*| ParamBytes *)
+    | ParamBool bool
+    | ParamUnit unit
+    | ParamList (list param)
+    (* XXX fields and annots must be moved to t *)
+    | ParamPair (param, param)
+    | ParamOption (option param)
+    (*| ParamOr *)
+    | ParamSet (set param) (* comparable *)
+    | ParamMap (map param param)
+    (*| ParamBigMap *)
+    (*| ParamMutez*)
+    (*| ParamKeyHash*)
+    | ParamTimestamp timestamp
+    | ParamAddress address
+    (*| ParamChainID*)
+    | ParamKey key
+    | ParamSignature signature
+    | ParamOperation operation
+    | ParamContract contract
+    (*| ParamLambda (rep, rep)
+    | ParamNever (* from 008 *)
+    | ParamBLS12_381_Fr (* from 008 *)
+    | ParamBLS12_381_G1 (* from 008 *)
+    | ParamBLS12_381_G2 (* from 008 *)
+    | ParamSapling_state rep (* from 008 *)
+    | ParamSapling_transaction rep (* from 008 *)
+    | ParamTicket rep*)
 
-    type t = key
+  with contract = Self rep | Of_address rep address
+
+  with operation = Transfer_tokens param tz contract
+  type operations = list operation
+
+  scope Contract
+
+    type t = contract
+
+    let function self (r:rep) : contract = Self r
+
+    let function contract (r:rep) (addr:address) : option contract =
+      if any bool then Some (Of_address r addr) else None
 
   end
 
-  type signature = Signature string
+  let rec function typecheck (r:rep) (p:param) : bool
+    variant { p }
+    = match r, p with
+    | RepString, ParamString _ -> true
+    (*| RepNat*)
+    | RepInt, ParamInt _ -> true
+    (*| RepBytes*)
+    | RepBool, ParamBool _ -> true
+    | RepUnit, ParamUnit _ -> true
+    | RepList r0, ParamList p0 ->
+      match p0 with
+      | Nil -> true
+      | Cons x xs -> typecheck r0 x && typecheck (RepList r0) (ParamList xs)
+      end
+    (* XXX fields and annots must be moved to t *)
+    | RepPair (r0, r1), ParamPair (p0, p1) ->
+      typecheck r0 p0 && typecheck r1 p1
+    (*| TyPairN of (string option * t) list (* length > 2 *) (* XXX We now need pair compaction somewhere else *)*)
+    | RepOption _, ParamOption (None) -> true
+    | RepOption r0, ParamOption (Some p0) -> typecheck r0 p0
+    (*| RepOr (rep, rep)*)
+    | RepSet r0 (* comparable *), ParamSet (Set p0) ->
+      match p0 with
+      | Nil -> true
+      | Cons x xs -> typecheck r0 x && typecheck (RepSet r0) (ParamSet (Set xs))
+      end
+    | RepMap r0 (* comparable *) r1, ParamMap (Map p0) ->
+      match p0 with
+      | Nil -> true
+      | Cons (x, y) xs -> typecheck r0 x && typecheck r1 y && typecheck (RepMap r0 r1) (ParamMap (Map xs))
+      end
+    (*| RepBigMap (rep (* comparable *), rep)*)
+    (*| RepMutez*)
+    (*| RepKeyHash*)
+    | RepTimestamp, ParamTimestamp _ -> true
+    | RepAddress, ParamAddress _ -> true
+    (*| RepChainID*)
+    | RepKey, ParamKey _ -> true
+    | RepSignature, ParamSignature _ -> true
+    | RepOperation, ParamOperation _ -> true
+    | RepContract, ParamContract _ -> true
+    (*| RepLambda (rep, rep)
+    | RepNever (* from 008 *)
+    | RepBLS12_381_Fr (* from 008 *)
+    | RepBLS12_381_G1 (* from 008 *)
+    | RepBLS12_381_G2 (* from 008 *)
+    | RepSapling_state (RepInt) (* from 008 *)
+    | RepSapling_transaction (RepInt) (* from 008 *)
+    | RepTicket rep*)
+    | _, _ -> false
+    end
 
-  scope Signature
+  scope Operation
 
-    type t = signature
+    type t = operation
+
+    let function transfer_tokens (p:param) (t:tz) (c:contract) : operation
+      requires { match c with Self r -> typecheck r p | Of_address r _ -> typecheck r p end }
+    = Transfer_tokens p t c
 
   end
 
