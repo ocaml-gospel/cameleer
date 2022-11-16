@@ -218,7 +218,11 @@ module Stdlib
 
     constant empty: set 'a = FS.empty
 
+    function add (x: 'a) (s: t 'a) : t 'a = FS.add x s
+
     function singleton (x: 'a) : t 'a = FS.singleton x
+
+    predicate subset (s1 s2: t 'a) = FS.subset s1 s2
 
     use list.Elements
 
