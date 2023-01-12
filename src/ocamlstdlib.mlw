@@ -12,7 +12,6 @@ module Stdlib
   use export ref.Ref
   use export ref.Refint
 
-
   let invalid_arg (s: string)
     raises  { Invalid_argument }
     returns { _ -> false }
@@ -305,6 +304,15 @@ module Stdlib
 
     val copy (q : t 'a) : t 'a
       ensures { result.view == q.view }
+
+  end
+
+  scope String
+
+    type t
+
+    val function compare (x y: t) : int
+    axiom compare_pre_order : is_pre_order compare
 
   end
 
