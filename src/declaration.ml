@@ -638,13 +638,14 @@ let s_structure, s_signature =
         []
         (* TODO *)
     | Smod_ident { txt = Ldot (Lident x, y); loc } ->
+        let id_loc = T.location loc in
         let subst =
           if x = "Map" || x = "Set" then
-            let qord = Qident (T.mk_id "Ord") in
-            let qtsym = Qdot (qord, T.mk_id "t") in
-            let idtsym = T.(PTtyapp (Qdot (qarg, mk_id "t"), [])) in
-            let lqvsym_cmp = Qdot (qord, T.mk_id "compare") in
-            let rqvsym_cmp = T.(Qdot (qarg, mk_id "compare")) in
+            let qord = Qident (T.mk_id ~id_loc "Ord") in
+            let qtsym = Qdot (qord, T.mk_id ~id_loc "t") in
+            let idtsym = T.(PTtyapp (Qdot (qarg, mk_id ~id_loc "t"), [])) in
+            let lqvsym_cmp = Qdot (qord, T.mk_id ~id_loc "compare") in
+            let rqvsym_cmp = T.(Qdot (qarg, mk_id ~id_loc "compare")) in
             [ CStsym (qtsym, [], idtsym); CSvsym (lqvsym_cmp, rqvsym_cmp) ]
           else
             let qhash = Qident (T.mk_id "HashedType") in
@@ -660,10 +661,9 @@ let s_structure, s_signature =
               CSvsym (lqvsym_hash, rqvsym_hash);
             ]
         in
-        let x_y = T.mk_id (x ^ "_" ^ y) in
-        let qualid = Qdot (Qident (T.mk_id "ocamlstdlib"), x_y) in
-        let loc = T.location loc in
-        [ O.mk_odecl loc (Ptree.Dcloneexport (loc, qualid, subst)) ]
+        let x_y = T.mk_id ~id_loc (x ^ "_" ^ y) in
+        let qualid = Qdot (Qident (T.mk_id ~id_loc "ocamlstdlib"), x_y) in
+        [ O.mk_odecl id_loc (Ptree.Dcloneexport (id_loc, qualid, subst)) ]
     | Smod_ident { txt = Ldot (Lapply _, _); _ } -> assert false (* TODO *)
     | Smod_ident { txt = Ldot (Ldot _, _); _ } -> assert false (* TODO *)
     | Smod_ident { txt = Lapply _; _ } -> assert false (* TODO *)
