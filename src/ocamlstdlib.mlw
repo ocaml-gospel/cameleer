@@ -309,7 +309,16 @@ module Stdlib
 
   scope String
 
-    type t
+    type t = string
+
+    val function compare (x y: t) : int
+    axiom compare_pre_order : is_pre_order compare
+
+  end
+
+  scope Int
+
+    type t = int
 
     val function compare (x y: t) : int
     axiom compare_pre_order : is_pre_order compare
