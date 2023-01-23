@@ -66,6 +66,11 @@ module Stdlib
   val function compare (x y: 'a) : int
   axiom compare_pre_order : is_pre_order (fun (x: 'a) (y: 'a) -> compare x y)
 
+  use string.String
+
+  val int_of_string (s: string) : int
+    ensures { result = to_int s }
+
   use import seq.Seq as Seq
 
   scope import Array
