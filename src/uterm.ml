@@ -95,7 +95,7 @@ let rec pattern Uast.{ pat_desc = p_desc; pat_loc } =
   mk_pat (pat_desc p_desc)
 
 let binder (id, ty) =
-  (location id.Preid.pid_loc, Some (preid id), false, Opt.map pty ty)
+  (location id.Preid.pid_loc, Some (preid id), false, Option.map pty ty)
 
 let rec term in_post Uast.{ term_desc = t_desc; term_loc } =
   let term_loc = location term_loc in

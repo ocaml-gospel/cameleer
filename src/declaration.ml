@@ -284,8 +284,8 @@ let function_ f =
   let ld_loc = T.location f.Uast.fun_loc in
   let ld_ident = T.preid f.fun_name in
   let ld_params = List.map param f.fun_params in
-  let ld_type = Opt.map T.pty f.fun_type in
-  let ld_def = Opt.map (T.term false) f.fun_def in
+  let ld_type = Option.map T.pty f.fun_type in
+  let ld_def = Option.map (T.term false) f.fun_def in
   let fun_spec = f.fun_spec in
   let coercion =
     match fun_spec with
@@ -524,8 +524,8 @@ let s_structure, s_signature =
        spmb_expr; _} *) ->
         s_module_binding info mod_binding
     | Uast.Str_modtype { mtdname = { txt; loc }; mtdtype; mtdloc; _ } ->
-        (* FIXME: do not use that [Opt.get] *)
-        let scope_decls, _ = s_module_type info (Opt.get mtdtype) in
+        (* FIXME: do not use that [Option.get] *)
+        let scope_decls, _ = s_module_type info (Option.get mtdtype) in
         Hashtbl.add mod_type_table txt scope_decls;
         let scope_loc = T.location mtdloc in
         let id_loc = T.location loc in
@@ -569,14 +569,14 @@ let s_structure, s_signature =
           let id_loc = T.location loc in
           let id = T.mk_id ~id_loc arg_name in
           let body = s_module_expr body in
-          let arg, subst_arg = s_module_type info (Opt.get arg) in
+          let arg, subst_arg = s_module_type info (Option.get arg) in
           ignore subst_arg;
           (* TODO *)
           O.mk_functor decl_loc id arg body
       | Smod_apply (funct, arg) -> s_mod_apply info funct arg
       | Smod_constraint (mod_expr, mod_type) ->
           let mod_type_name = mod_type_name mod_type.Uast.mdesc in
-          let mod_type_name = Opt.map E.longident mod_type_name in
+          let mod_type_name = Option.map E.longident mod_type_name in
           let path = [ mod_bind_name ] in
           let mod_type, subst = s_module_type info mod_type in
           let info_ref = mk_info_refinement mod_type_name mod_type subst path in

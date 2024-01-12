@@ -258,7 +258,7 @@ and exception_name_of_pattern info P.{ ppat_desc; _ } =
       (Qident (T.mk_id s.txt ~id_loc), None)
   | Ppat_construct (id, pat) ->
       let id_loc = T.location id.loc in
-      (longident id.txt ~id_loc, Opt.map (inner_pattern info) pat)
+      (longident id.txt ~id_loc, Option.map (inner_pattern info) pat)
   | _ -> assert false
 (* TODO ?*)
 
@@ -300,7 +300,7 @@ let binder_of_pattern =
         let pat_list = List.map (pattern info) pat_list in
         let mk_pat p =
           assert (p.pat_exn_name = None);
-          Opt.get p.pat_term
+          Option.get p.pat_term
         in
         let pat_list = List.map mk_pat pat_list in
         let b = binder id ppat_loc ppat_attributes None in
@@ -469,7 +469,7 @@ let rec term info Uast.{ spexp_desc = p_desc; spexp_loc; _ } =
     | Uast.Sexp_field (expr, field) ->
         Tidapp (longident field.txt, [ term info expr ])
     | Uast.Sexp_ifthenelse (e1, e2, e3) ->
-        let term3 = term info (Opt.get e3) in
+        let term3 = term info (Option.get e3) in
         Tif (term info e1, term info e2, term3)
     | Uast.Sexp_assert { spexp_desc; _ } when is_false spexp_desc ->
         assert false (* TODO *)
@@ -630,12 +630,12 @@ let rec expression_desc info expr_loc expr_desc =
   | Uast.Sexp_construct (id, Some e) ->
       mk_eidapp (longident id.txt) [ expression info e ]
   | Uast.Sexp_record (field_list, e) ->
-      let update_expr = Opt.map (expression info) e in
+      let update_expr = Option.map (expression info) e in
       mk_erecord (List.map field_expr field_list) update_expr
   | Uast.Sexp_field (expr, field) ->
       mk_eidapp (longident field.txt) [ expression info expr ]
   | Uast.Sexp_ifthenelse (e1, e2, e3) ->
-      let expr3 = Opt.map (expression info) e3 in
+      let expr3 = Option.map (expression info) e3 in
       mk_eif (expression info e1) (expression info e2) expr3
   | Uast.Sexp_assert { spexp_desc; _ } when is_false spexp_desc -> Eabsurd
   | Sexp_assert e -> Eassert (Expr.Assert, term info e)
@@ -739,7 +739,7 @@ and let_match info expr svb =
       let svb_expr = expression info svb.spvb_expr in
       let pat = pattern info svb.spvb_pat in
       assert (pat.pat_exn_name = None);
-      mk_ematch_no_exn svb_expr [ (Opt.get pat.pat_term, expr) ]
+      mk_ematch_no_exn svb_expr [ (Option.get pat.pat_term, expr) ]
   | _ ->
       let id, svb_expr = s_value_binding info svb in
       mk_elet_none id (is_ghost_svb svb) svb_expr expr
@@ -784,7 +784,7 @@ and case_exn info Uast.{ spc_lhs; spc_guard; spc_rhs } =
 
 and apply_raise info = function
   | Uast.Sexp_construct (id, exn_arg) ->
-      mk_eraise (longident id.txt) (Opt.map (expression info) exn_arg)
+      mk_eraise (longident id.txt) (Option.map (expression info) exn_arg)
   | _ -> assert false
 (* TODO: not supported for now *)
 
