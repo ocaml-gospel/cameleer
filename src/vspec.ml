@@ -47,8 +47,8 @@ let sp_post_no_ret sp_post =
 let sp_xpost (loc, q_pat_t_option_list) =
   let loc = T.location loc in
   let pat_term (q, t) = (T.pattern q, T.term true t) in
-  let qualid_pat_term_opt (q, pt_opt) = 
-    (T.qualid q, Option.map pat_term pt_opt) 
+  let qualid_pat_term_opt (q, pt_opt) =
+    (T.qualid q, Option.map pat_term pt_opt)
   in
   (loc, List.map qualid_pat_term_opt q_pat_t_option_list)
 
