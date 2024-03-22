@@ -122,31 +122,12 @@ let type_decl info Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
                              ~default:(P.Preid.create "" ~loc:Location.none, []) in
        (s.ty_ephemeral, name, invariant , s.ty_field)
   in
-  let invariant = List.map (T.remove_prefix inv_tname) invariant in
-  (* let qualid_of_ldl ldl = Qident {id_str = ldl.pld_name.txt; id_ats = []; id_loc = Loc.dummy_position} in *)
-  (* let id pld = mk_id pld in *)
-  (* let prefix inv = *)
-  (*   (\* This is a hack. *)
-  (*      Turn type invariant fields into applications. x.t -> t x *\) *)
-  (*   match tkind with *)
-  (*   | Ptype_record rl -> *)
-  (*      let binder = [Loc.dummy_position, None, false, Some (PTtuple [])] in *)
-  (*      let self id = mk_term (Tident (qualid_of_ldl id)) in *)
-  (*      let mk_quant id = mk_term (Tquant (D.DTlambda, binder, [], self id)) in *)
-  (*      let mk_let rcrd acc = mk_term (Tlet (id rcrd.pld_name.txt, mk_quant rcrd, acc)) in *)
-  (*      List.fold_right mk_let rl inv *)
-  (*   | Ptype_abstract -> (\* TODO: invariant for non-record type *\) *)
-  (*      Printf.printf "TODO\n"; *)
-  (*      assert false; *)
-  (*   | _ -> assert false in *)
-
   let td_loc = T.location td.tloc in
   let td_params = List.map td_params td.tparams in
   let td_vis = td_private tmanifest td.tprivate tkind in
-  let td_inv = List.map (Uterm.term false) invariant in (* t *)
-  (* let app acc = mk_term (Tlet(id inv_tname.pid_str, mk_term(Ttuple []), acc)) in *)
-  (* let td_inv = List.map app td_inv in    (\* let x = () *\) *)
-  (* let td_inv = List.map prefix td_inv in (\* let a () = a in *\) *)
+  (* remove invariant prefix *)
+  let invariant = List.map (T.remove_prefix inv_tname) invariant in
+  let td_inv = List.map (Uterm.term false) invariant in
   let mk_attr { attr_name; _ } = ATstr (Ident.create_attribute attr_name.txt) in
   let id_ats = List.map mk_attr td.tattributes in
   let rec_decl (td_ident, field_list) =
