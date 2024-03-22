@@ -2,7 +2,7 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 
 (*@ function height (t: 'a tree) : integer = match t with
       | Empty -> 0
-      | Node l _ r -> 1 + max (height l) (height r) *)
+      | Node (l, _, r) -> 1 + max (height l) (height r) *)
 
 let rec height_cps t k =
   match t with

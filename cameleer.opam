@@ -28,12 +28,13 @@ depends: [
   "ppx_deriving"
   "ppx_sexp_conv"
   ("lablgtk3" & "lablgtk3-sourceview3")
+  "pp_loc" {>= "2.1.0"}
 ]
 
 conflicts: [
   "lablgtk" {< "2.14.2"}
 ]
 
-pin-depends: [
-  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#2e928ead075e9b281544adad063c992f97cfaa02"
-]
+# pin-depends: [
+#   "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#2e928ead075e9b281544adad063c992f97cfaa02"
+# ]

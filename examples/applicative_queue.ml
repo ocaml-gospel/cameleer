@@ -1,6 +1,6 @@
 type 'a t = { self : 'a list * 'a list; view : 'a list [@ghost] }
-(*@ invariant let (prefix, xiffus) = self in
-              (prefix=[] -> xiffus=[]) && view = prefix @ List.rev xiffus *)
+(*@ with x invariant let (prefix, xiffus) = x.self in
+              (prefix=[] -> xiffus=[]) && x.view = prefix @ List.rev xiffus *)
 
 let empty = { self = ([], []); view = [] }
 (*@ t = empty

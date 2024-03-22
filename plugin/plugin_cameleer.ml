@@ -12,6 +12,7 @@ open Cameleer
 module Pm = Pmodule
 module E = Cameleer.Expression
 module T = Cameleer.Uterm
+module W = Gospel.Warnings
 
 let print_modules = Debug.lookup_flag "print_modules"
 
@@ -32,8 +33,12 @@ let mk_info () =
 let read_file filename nm c =
   let lb = Lexing.from_channel c in
   Location.init lb filename;
-  let ocaml_structure = parse_ocaml_structure_lb lb in
-  parse_structure_gospel ~filename ocaml_structure nm
+  try
+    let ocaml_structure = parse_ocaml_structure_lb lb in
+    parse_structure_gospel ~filename ocaml_structure nm
+  with W.Error e ->
+    Fmt.epr "%a@." W.pp e;
+    exit 1
 
 (* TODO: type-checking structure items *)
 (* let type_check name nm structs =
@@ -172,16 +177,16 @@ let read_channel env path file c =
     match l with
     | [] -> ()
     | x :: r ->
-        Format.eprintf "%a" pp x;
-        pp_list pp fmt r
+       Format.eprintf "%a" pp x;
+       pp_list pp fmt r
   in
   let rec pp_decl fmt d =
     match d with
     | Odecl.Odecl (_loc, d) ->
-        Format.fprintf fmt "%a@." (Mlw_printer.pp_decl ~attr:false) d
+       Format.fprintf fmt "%a@." (Mlw_printer.pp_decl ~attr:false) d
     | Odecl.Omodule (_loc, id, dl) ->
-        Format.eprintf "@[<hv 2>scope %s@\n%a@]@\nend@." id.id_str
-          (pp_list pp_decl) dl
+       Format.eprintf "@[<hv 2>scope %s@\n%a@]@\nend@." id.id_str
+         (pp_list pp_decl) dl
   in
   if !debug then pp_list pp_decl Format.err_formatter f;
   List.iter add_decl f;
@@ -190,9 +195,9 @@ let read_channel env path file c =
   mk_refine_modules info mod_name;
   let mm = close_file () in
   (if Debug.test_flag print_modules then
-   let print_m _ m = Format.eprintf "%a@\n@." Pm.print_module m in
-   let add_m _ m mm = Mid.add m.Pm.mod_theory.Theory.th_name m mm in
-   Mid.iter print_m (Mstr.fold add_m mm Mid.empty));
+     let print_m _ m = Format.eprintf "%a@\n@." Pm.print_module m in
+     let add_m _ m mm = Mid.add m.Pm.mod_theory.Theory.th_name m mm in
+     Mid.iter print_m (Mstr.fold add_m mm Mid.empty));
   mm
 
 let () =

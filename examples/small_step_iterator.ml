@@ -23,7 +23,7 @@ module type Cursor = sig
         ensures  b <-> not (complete c) *)
 end
 
-module CursorList (* : Cursor *) = struct
+module CursorList : Cursor = struct
   (*@ function seq_of_list (l: 'a list): 'a seq = match l with
       | [] -> empty
       | x :: r -> cons x (seq_of_list r) *)
@@ -33,7 +33,7 @@ module CursorList (* : Cursor *) = struct
     collection : 'a list; [@ghost]
     mutable to_visit : 'a list;
   }
-  (*@ invariant seq_of_list collection = visited ++ seq_of_list to_visit *)
+  (*@ with x invariant seq_of_list x.collection = x.visited ++ seq_of_list x.to_visit *)
 
   (*@ lemma seq_of_list_append: forall l1 l2: 'a list.
         seq_of_list (List.append l1 l2) == seq_of_list l1 ++ seq_of_list l2 *)
@@ -79,15 +79,15 @@ let sum_cursor l =
   let s = ref 0 in
   let c = CursorList.create l in
   while CursorList.has_next c do
-    (*@ variant length (seq_of_list l) - length c.visited
-        invariant permitted c
-        invariant !s = sum (fun i -> c.visited[i]) 0 (length c.visited) *)
+    (*@ variant length (CursorList.seq_of_list l) - length c.CursorList.visited
+        invariant CursorList.permitted c
+        invariant !s = sum (fun i -> c.CursorList.visited[i]) 0 (length c.CursorList.visited) *)
     let x = CursorList.next c in
     s := !s + x
   done;
   !s
 (*@ r = sum_cursor l
-      ensures r = sum (fun i -> (seq_of_list l)[i]) 0 (List.length l) *)
+      ensures r = sum (fun i -> (CursorList.seq_of_list l)[i]) 0 (List.length l) *)
 
 module Mem (Eq : sig
   type elt
@@ -102,9 +102,9 @@ struct
     let exception Found in
     try
       while CursorList.has_next c do
-        (*@ variant length (seq_of_list l) - length c.visited
-            invariant permitted c
-            invariant forall i. 0 <= i < length c.visited -> c.visited[i] <> x *)
+        (*@ variant length (CursorList.seq_of_list l) - length c.CursorList.visited
+            invariant CursorList.permitted c
+            invariant forall i. 0 <= i < length c.CursorList.visited -> c.CursorList.visited[i] <> x *)
         if Eq.eq (CursorList.next c) x then raise Found
       done;
       false

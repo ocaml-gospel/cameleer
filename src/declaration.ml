@@ -9,6 +9,8 @@ module T = Uterm
 module Tt = Tterm
 module E = Expression
 module O = Odecl
+module D = Why3.Dterm
+module P = Gospel.Identifier
 
 let mk_const svb_list expr =
   let p = T.mk_pattern Pwild in
@@ -112,15 +114,39 @@ let td_def info params spec_fields td_manifest td_kind =
 (* TODO *)
 
 let type_decl info Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
-  let td_mut, invariant, spec_fields =
+  let td_mut, inv_tname, invariant, spec_fields =
     match tspec with
-    | None -> (false, [], [])
-    | Some s -> (s.ty_ephemeral, s.ty_invariant, s.ty_field)
+    | None -> (false, P.Preid.create "" ~loc:Location.none, [], [])
+    | Some s ->
+       let name, invariant = Option.value s.ty_invariant
+                             ~default:(P.Preid.create "" ~loc:Location.none, []) in
+       (s.ty_ephemeral, name, invariant , s.ty_field)
   in
+  let invariant = List.map (T.remove_prefix inv_tname) invariant in
+  (* let qualid_of_ldl ldl = Qident {id_str = ldl.pld_name.txt; id_ats = []; id_loc = Loc.dummy_position} in *)
+  (* let id pld = mk_id pld in *)
+  (* let prefix inv = *)
+  (*   (\* This is a hack. *)
+  (*      Turn type invariant fields into applications. x.t -> t x *\) *)
+  (*   match tkind with *)
+  (*   | Ptype_record rl -> *)
+  (*      let binder = [Loc.dummy_position, None, false, Some (PTtuple [])] in *)
+  (*      let self id = mk_term (Tident (qualid_of_ldl id)) in *)
+  (*      let mk_quant id = mk_term (Tquant (D.DTlambda, binder, [], self id)) in *)
+  (*      let mk_let rcrd acc = mk_term (Tlet (id rcrd.pld_name.txt, mk_quant rcrd, acc)) in *)
+  (*      List.fold_right mk_let rl inv *)
+  (*   | Ptype_abstract -> (\* TODO: invariant for non-record type *\) *)
+  (*      Printf.printf "TODO\n"; *)
+  (*      assert false; *)
+  (*   | _ -> assert false in *)
+
   let td_loc = T.location td.tloc in
   let td_params = List.map td_params td.tparams in
   let td_vis = td_private tmanifest td.tprivate tkind in
-  let td_inv = List.map (Uterm.term false) invariant in
+  let td_inv = List.map (Uterm.term false) invariant in (* t *)
+  (* let app acc = mk_term (Tlet(id inv_tname.pid_str, mk_term(Ttuple []), acc)) in *)
+  (* let td_inv = List.map app td_inv in    (\* let x = () *\) *)
+  (* let td_inv = List.map prefix td_inv in (\* let a () = a in *\) *)
   let mk_attr { attr_name; _ } = ATstr (Ident.create_attribute attr_name.txt) in
   let id_ats = List.map mk_attr td.tattributes in
   let rec_decl (td_ident, field_list) =
@@ -331,7 +357,8 @@ let mk_import_name_list popen_lid =
     | _ -> assert false
   in
   let mname = T.mk_id mname_txt ~id_loc in
-  let id_str = String.uncapitalize_ascii mname_txt in
+  (* let id_str = String.uncapitalize_ascii mname_txt in *)
+  let id_str = "ocamlstdlib" in
   let id_fname = T.mk_id id_str ~id_loc in
   let fname = Qident id_fname in
   (fname, mname)
