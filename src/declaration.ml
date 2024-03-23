@@ -341,6 +341,9 @@ let mk_import_name_list popen_lid =
   in
   let mname = T.mk_id mname_txt ~id_loc in
   (* let id_str = String.uncapitalize_ascii mname_txt in *)
+
+  (* TODO: this makes every open resort to the ocamlstdlib file *)
+  (* this is a hack *)
   let id_str = "ocamlstdlib" in
   let id_fname = T.mk_id id_str ~id_loc in
   let fname = Qident id_fname in
