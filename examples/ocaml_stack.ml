@@ -3,7 +3,7 @@ type 'a t = {
   mutable len : int;
   mutable view : 'a list; [@ghost]
 }
-(*@ invariant List.length view = len /\ c = view *)
+(*@ with a invariant List.length a.view = a.len /\ a.c = a.view *)
 
 exception Empty
 

@@ -3,9 +3,12 @@
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
 <prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
-<file format="ocaml" proved="true">
+<prover id="1" name="Z3" version="4.12.4" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Alt-Ergo" version="2.5.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="3" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
 <path name=".."/><path name="ocaml_fold.ml"/>
-<theory name="Ocaml_fold" proved="true">
+<theory name="Ocaml_fold">
  <goal name="seq_of_list_append" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="seq_of_list_append.0" proved="true">
@@ -13,10 +16,14 @@
    <goal name="seq_of_list_append.0.0" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="seq_of_list_append.0.0.0" proved="true">
-    <proof prover="0"><result status="valid" time="0.02" steps="139"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.020000" steps="139"/></proof>
+    <proof prover="3"><result status="valid" time="0.350476" steps="37324"/></proof>
     </goal>
     <goal name="seq_of_list_append.0.0.1" proved="true">
-    <proof prover="0"><result status="valid" time="0.03" steps="327"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.030000" steps="327"/></proof>
+    <proof prover="1"><result status="timeout" time="1.000000" steps="1136141"/></proof>
+    <proof prover="2"><result status="valid" time="0.091161" steps="440"/></proof>
+    <proof prover="3"><result status="timeout" time="1.000000" steps="75994"/></proof>
     </goal>
    </transf>
    </goal>
@@ -24,44 +31,62 @@
   </goal>
  </transf>
  </goal>
- <goal name="fold_left&#39;vc" expl="VC for fold_left" proved="true">
- <transf name="split_vc" proved="true" >
+ <goal name="fold_left&#39;vc" expl="VC for fold_left">
+ <proof prover="2"><result status="timeout" time="5.000000" steps="54082"/></proof>
+ <transf name="split_vc" >
   <goal name="fold_left&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="87"/></proof>
+  <proof prover="0" obsolete="true"><result status="valid" time="0.020000" steps="87"/></proof>
+  <proof prover="3"><result status="valid" time="0.311631" steps="37247"/></proof>
   </goal>
-  <goal name="fold_left&#39;vc.1" expl="precondition" proved="true">
-  <transf name="replace" proved="true" arg1="(seq_of_list (v ++&#39; Cons x1 (Nil: list a)))" arg2="(seq_of_list v ++ (cons x1 empty))">
-   <goal name="fold_left&#39;vc.1.0" expl="precondition" proved="true">
-   <proof prover="0"><result status="valid" time="0.03" steps="289"/></proof>
+  <goal name="fold_left&#39;vc.1" expl="precondition">
+  <proof prover="2"><result status="timeout" time="5.000000" steps="62700"/></proof>
+  <transf name="replace" arg1="(seq_of_list (v ++&#39; Cons x1 (Nil: list a)))" arg2="(seq_of_list v ++ (cons x1 empty))">
+   <goal name="fold_left&#39;vc.1.0" expl="precondition">
+   <proof prover="0"><result status="valid" time="0.030000" steps="289"/></proof>
+   <proof prover="1"><undone/></proof>
+   <proof prover="3"><undone/></proof>
    </goal>
-   <goal name="fold_left&#39;vc.1.1" expl="equality hypothesis" proved="true">
-   <proof prover="0"><result status="valid" time="0.03" steps="293"/></proof>
+   <goal name="fold_left&#39;vc.1.1" expl="equality hypothesis">
+   <proof prover="0"><result status="valid" time="0.030000" steps="293"/></proof>
+   <proof prover="1"><undone/></proof>
+   <proof prover="3"><undone/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="fold_left&#39;vc.2" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.03" steps="205"/></proof>
+  <proof prover="0" obsolete="true"><result status="valid" time="0.030000" steps="205"/></proof>
+  <proof prover="3"><result status="valid" time="0.420076" steps="44386"/></proof>
   </goal>
-  <goal name="fold_left&#39;vc.3" expl="precondition" proved="true">
-  <transf name="instantiate" proved="true" arg1="H3" arg2="(seq_of_list v),acc,x1">
-   <goal name="fold_left&#39;vc.3.0" expl="precondition" proved="true">
-   <transf name="destruct_rec" proved="true" arg1="Hinst">
+  <goal name="fold_left&#39;vc.3" expl="precondition">
+  <transf name="instantiate" arg1="H3" arg2="(seq_of_list v),acc,x1">
+   <goal name="fold_left&#39;vc.3.0" expl="precondition">
+   <transf name="destruct_rec" arg1="Hinst">
     <goal name="fold_left&#39;vc.3.0.0" expl="destruct premise" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.010000" steps="14"/></proof>
+    <proof prover="3"><result status="valid" time="0.168420" steps="33836"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.3.0.1" expl="destruct premise" proved="true">
-    <proof prover="0"><result status="valid" time="0.04" steps="379"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.040000" steps="379"/></proof>
+    <proof prover="3"><result status="valid" time="0.709167" steps="59107"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.3.0.2" expl="destruct premise" proved="true">
-    <proof prover="0"><result status="valid" time="0.02" steps="116"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.020000" steps="116"/></proof>
+    <proof prover="3"><result status="valid" time="0.334875" steps="41899"/></proof>
     </goal>
-    <goal name="fold_left&#39;vc.3.0.3" expl="precondition" proved="true">
-    <transf name="assert" proved="true" arg1="(v ++&#39; Cons x1 (Nil: list a) == snoc (seq_of_list v) x1)">
-     <goal name="fold_left&#39;vc.3.0.3.0" expl="asserted formula" proved="true">
-     <proof prover="0"><result status="valid" time="0.05" steps="528"/></proof>
+    <goal name="fold_left&#39;vc.3.0.3" expl="precondition">
+    <proof prover="1"><result status="timeout" time="1.000000" steps="1420688"/></proof>
+    <proof prover="2"><result status="timeout" time="5.000000" steps="63639"/></proof>
+    <proof prover="3"><result status="timeout" time="1.000000" steps="105432"/></proof>
+    <transf name="assert" arg1="(v ++&#39; Cons x1 (Nil: list a) == snoc (seq_of_list v) x1)">
+     <goal name="fold_left&#39;vc.3.0.3.0" expl="asserted formula">
+     <proof prover="0"><result status="valid" time="0.050000" steps="528"/></proof>
+     <proof prover="1"><undone/></proof>
+     <proof prover="3"><undone/></proof>
      </goal>
-     <goal name="fold_left&#39;vc.3.0.3.1" expl="precondition" proved="true">
-     <proof prover="0"><result status="valid" time="0.01" steps="34"/></proof>
+     <goal name="fold_left&#39;vc.3.0.3.1" expl="precondition">
+     <proof prover="0"><result status="valid" time="0.010000" steps="34"/></proof>
+     <proof prover="1"><undone/></proof>
+     <proof prover="3"><undone/></proof>
      </goal>
     </transf>
     </goal>
@@ -70,37 +95,44 @@
   </transf>
   </goal>
   <goal name="fold_left&#39;vc.4" expl="precondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.02" steps="28"/></proof>
+  <proof prover="0" obsolete="true"><result status="valid" time="0.020000" steps="28"/></proof>
+  <proof prover="3"><result status="valid" time="0.247473" steps="35769"/></proof>
   </goal>
   <goal name="fold_left&#39;vc.5" expl="postcondition" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="fold_left&#39;vc.5.0" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="fold_left&#39;vc.5.0.0" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="14"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.010000" steps="14"/></proof>
+    <proof prover="3"><result status="valid" time="0.220460" steps="34629"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.5.0.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.010000" steps="16"/></proof>
+    <proof prover="3"><result status="valid" time="0.164137" steps="33868"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="fold_left&#39;vc.5.1" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="fold_left&#39;vc.5.1.0" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.02" steps="83"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.020000" steps="83"/></proof>
+    <proof prover="3"><result status="valid" time="0.300507" steps="36949"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.5.1.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.03" steps="214"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.030000" steps="214"/></proof>
+    <proof prover="3"><result status="valid" time="0.415096" steps="44440"/></proof>
     </goal>
    </transf>
    </goal>
    <goal name="fold_left&#39;vc.5.2" expl="postcondition" proved="true">
    <transf name="split_vc" proved="true" >
     <goal name="fold_left&#39;vc.5.2.0" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.01" steps="17"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.010000" steps="17"/></proof>
+    <proof prover="3"><result status="valid" time="0.213442" steps="34667"/></proof>
     </goal>
     <goal name="fold_left&#39;vc.5.2.1" expl="postcondition" proved="true">
-    <proof prover="0"><result status="valid" time="0.00" steps="18"/></proof>
+    <proof prover="0" obsolete="true"><result status="valid" time="0.000000" steps="18"/></proof>
+    <proof prover="3"><result status="valid" time="0.137749" steps="33886"/></proof>
     </goal>
    </transf>
    </goal>

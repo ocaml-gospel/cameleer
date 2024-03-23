@@ -4,8 +4,8 @@ type 'a t = {
   mutable size : int;
   mutable view : 'a list; [@ghost]
 }
-(*@ invariant size = List.length view
-    invariant (front = [] -> rear = []) && view = front @ List.rev rear *)
+(*@ with t invariant t.size = List.length t.view
+    invariant (t.front = [] -> t.rear = []) && t.view = t.front @ List.rev t.rear *)
 
 let create () = { front = []; rear = []; size = 0; view = [] }
 (*@ q = create ()

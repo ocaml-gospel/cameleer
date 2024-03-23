@@ -9,15 +9,15 @@ end
 module Make (Eq : EQUAL) = struct
   type tree = Empty | Node of tree * Eq.elt * tree
 
-  (*@ function elements (t: tree) : elt list = match t with
+  (*@ function elements (t: tree) : Eq.elt list = match t with
         | Empty -> []
-        | Node l x r -> (elements l) @ (x :: elements r) *)
+        | Node (l, x, r) -> (elements l) @ (x :: elements r) *)
 
   type enum = Done | Next of Eq.elt * tree * enum
 
-  (*@ function enum_elements (e : enum) : elt list = match e with
+  (*@ function enum_elements (e : enum) : Eq.elt list = match e with
         | Done -> []
-        | Next x r e -> x :: (elements r @ enum_elements e) *)
+        | Next (x, r, e) -> x :: (elements r @ enum_elements e) *)
 
   let rec enum (t : tree) (e : enum) =
     match t with Empty -> e | Node (l, x, r) -> enum l (Next (x, r, e))

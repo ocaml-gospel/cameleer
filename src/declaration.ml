@@ -9,6 +9,8 @@ module T = Uterm
 module Tt = Tterm
 module E = Expression
 module O = Odecl
+module D = Why3.Dterm
+module P = Gospel.Identifier
 
 let mk_const svb_list expr =
   let p = T.mk_pattern Pwild in
@@ -112,14 +114,21 @@ let td_def info params spec_fields td_manifest td_kind =
 (* TODO *)
 
 let type_decl info Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
-  let td_mut, invariant, spec_fields =
+  let td_mut, inv_tname, invariant, spec_fields =
     match tspec with
-    | None -> (false, [], [])
-    | Some s -> (s.ty_ephemeral, s.ty_invariant, s.ty_field)
+    | None -> (false, P.Preid.create "" ~loc:Location.none, [], [])
+    | Some s ->
+        let name, invariant =
+          Option.value s.ty_invariant
+            ~default:(P.Preid.create "" ~loc:Location.none, [])
+        in
+        (s.ty_ephemeral, name, invariant, s.ty_field)
   in
   let td_loc = T.location td.tloc in
   let td_params = List.map td_params td.tparams in
   let td_vis = td_private tmanifest td.tprivate tkind in
+  (* remove invariant prefix *)
+  let invariant = List.map (T.remove_prefix inv_tname) invariant in
   let td_inv = List.map (Uterm.term false) invariant in
   let mk_attr { attr_name; _ } = ATstr (Ident.create_attribute attr_name.txt) in
   let id_ats = List.map mk_attr td.tattributes in
@@ -331,7 +340,12 @@ let mk_import_name_list popen_lid =
     | _ -> assert false
   in
   let mname = T.mk_id mname_txt ~id_loc in
-  let id_str = String.uncapitalize_ascii mname_txt in
+
+  (* let id_str = String.uncapitalize_ascii mname_txt in *)
+
+  (* TODO: this makes every open resort to the ocamlstdlib file *)
+  (* this is a hack *)
+  let id_str = "ocamlstdlib" in
   let id_fname = T.mk_id id_str ~id_loc in
   let fname = Qident id_fname in
   (fname, mname)

@@ -2,67 +2,88 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
+<prover id="0" name="Z3" version="4.12.4" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="1" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Alt-Ergo" version="2.5.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="3" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="checking_a_large_routine.ml"/>
 <theory name="Checking_a_large_routine" proved="true">
  <goal name="fact&#39;vc" expl="VC for fact" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="fact&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="6"/></proof>
+  <proof prover="3"><result status="valid" time="0.083988" steps="25530"/></proof>
   </goal>
   <goal name="fact&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="6"/></proof>
+  <proof prover="3"><result status="valid" time="0.183144" steps="26621"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="routine&#39;vc" expl="VC for routine" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="routine&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="6"/></proof>
+  <proof prover="3"><result status="valid" time="0.130225" steps="27781"/></proof>
   </goal>
   <goal name="routine&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="14"/></proof>
+  <proof prover="3"><result status="valid" time="0.135862" steps="25716"/></proof>
   </goal>
   <goal name="routine&#39;vc.2" expl="loop variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="33"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="33"/></proof>
+  <proof prover="3"><result status="valid" time="0.104716" steps="25844"/></proof>
   </goal>
   <goal name="routine&#39;vc.3" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="33"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="33"/></proof>
+  <proof prover="3"><result status="valid" time="0.112034" steps="27021"/></proof>
   </goal>
   <goal name="routine&#39;vc.4" expl="loop variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.00" steps="39"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.000000" steps="39"/></proof>
+  <proof prover="3"><result status="valid" time="0.132329" steps="25825"/></proof>
   </goal>
   <goal name="routine&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="108"/></proof>
+  <proof prover="0"><result status="timeout" time="1.000000" steps="1055643"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.020000" steps="108"/></proof>
+  <proof prover="2"><result status="valid" time="0.055432" steps="157"/></proof>
+  <proof prover="3"><result status="timeout" time="1.000000" steps="272962"/></proof>
   </goal>
   <goal name="routine&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="15"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="15"/></proof>
+  <proof prover="3"><result status="valid" time="0.181810" steps="26818"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="routine2&#39;vc" expl="VC for routine2" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="routine2&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="7"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="7"/></proof>
+  <proof prover="3"><result status="valid" time="0.200849" steps="27781"/></proof>
   </goal>
   <goal name="routine2&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="14"/></proof>
+  <proof prover="3"><result status="valid" time="0.129851" steps="25698"/></proof>
   </goal>
   <goal name="routine2&#39;vc.2" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.00" steps="24"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.000000" steps="24"/></proof>
+  <proof prover="3"><result status="valid" time="0.123050" steps="25790"/></proof>
   </goal>
   <goal name="routine2&#39;vc.3" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="75"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.020000" steps="75"/></proof>
+  <proof prover="3"><result status="valid" time="0.139858" steps="28234"/></proof>
   </goal>
   <goal name="routine2&#39;vc.4" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="13"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="13"/></proof>
+  <proof prover="3"><result status="valid" time="0.069706" steps="25701"/></proof>
   </goal>
   <goal name="routine2&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="9"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="9"/></proof>
+  <proof prover="3"><result status="valid" time="0.081438" steps="25658"/></proof>
   </goal>
-  <goal name="routine2&#39;vc.6" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.00" steps="6"/></proof>
+  <goal name="routine2&#39;vc.6" expl="VC for routine2" proved="true">
+  <proof prover="1" obsolete="true"><result status="valid" time="0.000000" steps="6"/></proof>
+  <proof prover="3"><result status="valid" time="0.079841" steps="25644"/></proof>
   </goal>
  </transf>
  </goal>

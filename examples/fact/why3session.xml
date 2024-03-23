@@ -2,6 +2,7 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="1" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="fact.ml"/>
@@ -9,32 +10,40 @@
  <goal name="fact&#39;vc" expl="VC for fact" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="fact&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
+  <proof prover="0"><result status="valid" time="0.079756" steps="25530"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="6"/></proof>
   </goal>
   <goal name="fact&#39;vc.1" expl="precondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
+  <proof prover="0"><result status="valid" time="0.170647" steps="26621"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="6"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="fact_imp&#39;vc" expl="VC for fact_imp" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="fact_imp&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
+  <proof prover="0"><result status="valid" time="0.065785" steps="25625"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="6"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="6"/></proof>
+  <proof prover="0"><result status="valid" time="0.134543" steps="27774"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="6"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.2" expl="loop variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="22"/></proof>
+  <proof prover="0"><result status="valid" time="0.097416" steps="25774"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="22"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.3" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="22"/></proof>
+  <proof prover="0"><result status="valid" time="0.158888" steps="26889"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="22"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.4" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="89"/></proof>
+  <proof prover="0"><result status="valid" time="0.184356" steps="28252"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.020000" steps="89"/></proof>
   </goal>
   <goal name="fact_imp&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="15"/></proof>
+  <proof prover="0"><result status="valid" time="0.112147" steps="26818"/></proof>
+  <proof prover="1" obsolete="true"><result status="valid" time="0.010000" steps="15"/></proof>
   </goal>
  </transf>
  </goal>
