@@ -10,8 +10,6 @@ val mk_id :
   ?id_ats:Ptree.attr list -> ?id_loc:Loc.position -> string -> Ptree.ident
 
 val mk_term : ?term_loc:Loc.position -> Ptree.term_desc -> Ptree.term
-val ident_of_tvsymbol : Ttypes.tvsymbol -> Ptree.ident
-val ident_of_lsymbol : Symbols.lsymbol -> Ptree.ident
 val mk_pattern : ?pat_loc:Loc.position -> Ptree.pat_desc -> Ptree.pattern
 val constant : P.constant -> Constant.constant
 val preid : Identifier.Preid.t -> Ptree.ident
