@@ -341,11 +341,12 @@ module Make (E : EqType) = struct
         star_nil_bool (not (eval_b st b)) st;
         a @ [ ONeg ]
 
-  (* @ r = compile_bool st b
+  (*@ r = compile_bool st b
         variant b
         ensures match star [] r st with
                 | Error -> false
-                | Res (stack, code, store) ->
+                | Res s ->
+                    let (stack, code, st') = s  in
                     stack = (VBool (eval_b st b)) :: [] && code = [] &&
                     st = store *)
   and compile ((st : store) [@ghost]) = function
@@ -379,11 +380,12 @@ module Make (E : EqType) = struct
         star_nil (eval_0 st e1 * eval_0 st e2) st;
         star_mul a2 a1 st (eval_0 st e2) (eval_0 st e1);
         a2 @ a1 @ [ OMul ]
-  (* @ r = compile store e
+  (*@ r = compile store e
         variant e
         ensures match star [] r store with
                 | Error -> false
-                | Res (stack, code, st) ->
+                | Res s ->
+                    let (stack, code, st') = s  in
                     stack = (VInt (eval_0 store e) :: []) /\ code = [] &&
                     st = store *)
 
