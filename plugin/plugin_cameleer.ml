@@ -177,16 +177,16 @@ let read_channel env path file c =
     match l with
     | [] -> ()
     | x :: r ->
-       Format.eprintf "%a" pp x;
-       pp_list pp fmt r
+        Format.eprintf "%a" pp x;
+        pp_list pp fmt r
   in
   let rec pp_decl fmt d =
     match d with
     | Odecl.Odecl (_loc, d) ->
-       Format.fprintf fmt "%a@." (Mlw_printer.pp_decl ~attr:false) d
+        Format.fprintf fmt "%a@." (Mlw_printer.pp_decl ~attr:false) d
     | Odecl.Omodule (_loc, id, dl) ->
-       Format.eprintf "@[<hv 2>scope %s@\n%a@]@\nend@." id.id_str
-         (pp_list pp_decl) dl
+        Format.eprintf "@[<hv 2>scope %s@\n%a@]@\nend@." id.id_str
+          (pp_list pp_decl) dl
   in
   if !debug then pp_list pp_decl Format.err_formatter f;
   List.iter add_decl f;

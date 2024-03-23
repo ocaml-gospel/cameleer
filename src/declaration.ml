@@ -118,9 +118,11 @@ let type_decl info Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
     match tspec with
     | None -> (false, P.Preid.create "" ~loc:Location.none, [], [])
     | Some s ->
-       let name, invariant = Option.value s.ty_invariant
-                             ~default:(P.Preid.create "" ~loc:Location.none, []) in
-       (s.ty_ephemeral, name, invariant , s.ty_field)
+        let name, invariant =
+          Option.value s.ty_invariant
+            ~default:(P.Preid.create "" ~loc:Location.none, [])
+        in
+        (s.ty_ephemeral, name, invariant, s.ty_field)
   in
   let td_loc = T.location td.tloc in
   let td_params = List.map td_params td.tparams in
