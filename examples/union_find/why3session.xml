@@ -2,11 +2,7 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="1" name="CVC4" version="1.8" timelimit="5" steplimit="0" memlimit="1000"/>
-<prover id="2" name="Z3" version="4.8.6" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="3" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="4" name="Z3" version="4.12.4" timelimit="1" steplimit="0" memlimit="1000"/>
 <prover id="5" name="Alt-Ergo" version="2.5.2" timelimit="5" steplimit="0" memlimit="1000"/>
 <prover id="6" name="CVC4" version="1.7" alternative="counterexamples" timelimit="5" steplimit="0" memlimit="1000"/>
 <prover id="7" name="Alt-Ergo" version="2.5.2" alternative="counterexamples" timelimit="5" steplimit="0" memlimit="1000"/>
@@ -51,8 +47,6 @@
  </transf>
  </goal>
  <goal name="find&#39;vc" expl="VC for find" proved="true">
- <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="142690"/></proof>
- <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="992484"/></proof>
  <transf name="split_vc" proved="true" >
   <goal name="find&#39;vc.0" expl="index in array bounds" proved="true">
   <proof prover="3"><result status="valid" time="0.181349" steps="30113"/></proof>
@@ -65,48 +59,36 @@
   <goal name="find&#39;vc.2" expl="postcondition" proved="true">
   <proof prover="3"><result status="valid" time="0.171740" steps="34753"/></proof>
   <proof prover="7"><result status="valid" time="0.010000" steps="26"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.2.0" expl="postcondition">
-   <proof prover="3" timelimit="30" memlimit="4000" obsolete="true"><result status="timeout" time="30.000000" steps="7400389"/></proof>
-   <proof prover="4" timelimit="30" memlimit="4000" obsolete="true"><result status="timeout" time="30.000000" steps="4759748"/></proof>
-   <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="58092"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.2.0" expl="postcondition" proved="true">
+   <proof prover="5"><result status="valid" time="0.059712" steps="64"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.3" expl="postcondition" proved="true">
   <proof prover="3"><result status="valid" time="0.161642" steps="30194"/></proof>
-  <proof prover="5" obsolete="true"><result status="failure" time="0.000000"/></proof>
   <proof prover="7"><result status="valid" time="0.010000" steps="18"/></proof>
   </goal>
   <goal name="find&#39;vc.4" expl="variant decrease" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="135625"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="808562"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="12670"/></proof>
+  <proof prover="3"><result status="valid" time="0.175193" steps="34841"/></proof>
   <proof prover="7"><result status="valid" time="0.020000" steps="30"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.4.0" expl="variant decrease">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="135388"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.4.0" expl="variant decrease" proved="true">
+   <proof prover="3"><result status="valid" time="0.165727" steps="34736"/></proof>
    </goal>
-   <goal name="find&#39;vc.4.1" expl="variant decrease">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="197030"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="find&#39;vc.4.1" expl="variant decrease" proved="true">
+   <proof prover="3"><result status="valid" time="0.173209" steps="34732"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.5" expl="precondition" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="141463"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="808346"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="18017"/></proof>
   <proof prover="7"><result status="valid" time="0.020000" steps="25"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.5.0" expl="precondition">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="214368"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.5.0" expl="precondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.160074" steps="32595"/></proof>
    </goal>
-   <goal name="find&#39;vc.5.1" expl="precondition">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="149870"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="find&#39;vc.5.1" expl="precondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.168568" steps="32600"/></proof>
    </goal>
   </transf>
   </goal>
@@ -123,110 +105,69 @@
   <proof prover="7"><result status="valid" time="0.040000" steps="50"/></proof>
   </goal>
   <goal name="find&#39;vc.9" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="84748"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="772331"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="24314"/></proof>
   <proof prover="7"><result status="valid" time="0.400005" steps="61"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.9.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="136335"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.9.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.909453" steps="114529"/></proof>
    </goal>
-   <goal name="find&#39;vc.9.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="135506"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="find&#39;vc.9.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.936513" steps="121886"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.10" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="82597"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="776839"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="25334"/></proof>
   <proof prover="7"><result status="valid" time="0.165797" steps="59"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.10.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="106298"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   </goal>
-   <goal name="find&#39;vc.13.1" expl="type invariant">
-   <proof prover="3"><result status="timeout" time="1.000000" steps="83792"/></proof>
-   <proof prover="4"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.10.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.242842" steps="44783"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.11" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="82201"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="851058"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="26528"/></proof>
   <proof prover="7"><result status="valid" time="0.227577" steps="59"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.11.0" expl="type invariant">
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.11.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.236805" steps="39653"/></proof>
    </goal>
-   <goal name="find&#39;vc.11.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="130347"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="find&#39;vc.11.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.243913" steps="45198"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.12" expl="type invariant" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="find&#39;vc.12.0" expl="type invariant" proved="true">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="85338"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="18892"/></proof>
    <proof prover="7" timelimit="1"><result status="valid" time="0.740000" steps="67"/></proof>
-   </goal>
-   <goal name="find&#39;vc.13.1" expl="type invariant">
-   <proof prover="0"><result status="valid" time="0.720000" steps="4442"/></proof>
-   <proof prover="3"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4"><result status="failure" time="0.000000"/></proof>
-   <proof prover="5"><result status="failure" time="0.000000"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.13" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="78471"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="848757"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="20449"/></proof>
   <proof prover="7"><result status="valid" time="0.950758" steps="66"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.13.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="79138"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.13.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.257710" steps="44551"/></proof>
    </goal>
-   <goal name="find&#39;vc.13.1" expl="type invariant">
+   <goal name="find&#39;vc.13.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.275742" steps="45861"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.14" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="76630"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="724501"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="20219"/></proof>
   <proof prover="7"><result status="valid" time="0.060000" steps="62"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.14.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="140283"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.14.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.222149" steps="41552"/></proof>
    </goal>
-   <goal name="find&#39;vc.14.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="110135"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="find&#39;vc.14.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.212627" steps="39833"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.15" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="84434"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="787489"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="22384"/></proof>
   <proof prover="7"><result status="valid" time="0.827645" steps="66"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.15.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="85009"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   </goal>
-   <goal name="find&#39;vc.11.0" expl="type invariant">
-   <proof prover="3"><result status="timeout" time="1.000000" steps="122938"/></proof>
-   <proof prover="4"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.15.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.281912" steps="50127"/></proof>
    </goal>
   </transf>
   </goal>
@@ -235,26 +176,19 @@
   <proof prover="7"><result status="valid" time="0.020000" steps="35"/></proof>
   </goal>
   <goal name="find&#39;vc.17" expl="postcondition" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="89929"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="865244"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="23128"/></proof>
+  <proof prover="3"><result status="valid" time="0.219083" steps="39402"/></proof>
   <proof prover="7"><result status="valid" time="0.261255" steps="57"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.17.0" expl="postcondition">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="90015"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.17.0" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.198835" steps="39208"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="find&#39;vc.18" expl="postcondition" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="86783"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="826126"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="26518"/></proof>
   <proof prover="7"><result status="valid" time="0.256712" steps="59"/></proof>
-  <transf name="split_vc" >
-   <goal name="find&#39;vc.18.0" expl="postcondition">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="170094"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="find&#39;vc.18.0" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.198325" steps="39172"/></proof>
    </goal>
   </transf>
   </goal>
@@ -294,22 +228,6 @@
   <proof prover="7"><result status="valid" time="0.040000" steps="121"/></proof>
   </goal>
   <goal name="union&#39;vc.7" expl="type invariant" proved="true">
-  <proof prover="3"><result status="timeout" time="1.000000" steps="99105"/></proof>
-  <proof prover="4"><result status="timeout" time="1.000000" steps="970264"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="20034"/></proof>
-  <proof prover="7"><result status="timeout" time="5.000000" steps="139"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.7.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="137514"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="5"><result status="valid" time="0.221377" steps="744"/></proof>
-   </goal>
-   <goal name="union&#39;vc.7.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="83794"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="5"><result status="valid" time="0.149344" steps="758"/></proof>
-   </goal>
-  </transf>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.7.0" expl="type invariant" proved="true">
    <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="0.964545" steps="113236"/></proof>
@@ -320,42 +238,26 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.8" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="81592"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="738057"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="24844"/></proof>
   <proof prover="7"><result status="valid" time="3.332965" steps="139"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.8.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   </goal>
-   <goal name="union&#39;vc.36.1" expl="type invariant">
-   <proof prover="3"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.8.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.222842" steps="44224"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.9" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="79379"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="861030"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="25817"/></proof>
+  <proof prover="3"><result status="valid" time="0.245563" steps="44599"/></proof>
   <proof prover="7"><result status="valid" time="3.386808" steps="138"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.9.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.9.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.260997" steps="43880"/></proof>
    </goal>
-   <goal name="union&#39;vc.9.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="union&#39;vc.9.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.232177" steps="43762"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.10" expl="type invariant" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="5.000000" steps="1743472"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="2909129"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="307089"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.10.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.311609" steps="51860"/></proof>
@@ -363,10 +265,6 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.11" expl="type invariant" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="5.000000" steps="1356593"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="2857995"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="268370"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.11.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.509299" steps="66439"/></proof>
@@ -377,26 +275,18 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.12" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="80248"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="909273"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="26773"/></proof>
+  <proof prover="3"><result status="valid" time="0.349650" steps="58645"/></proof>
   <proof prover="7"><result status="valid" time="3.425971" steps="139"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.12.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.12.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.452020" steps="57507"/></proof>
    </goal>
-   <goal name="union&#39;vc.12.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="union&#39;vc.12.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.528920" steps="66291"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.13" expl="type invariant" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="5.000000" steps="1733690"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="3487148"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="189262"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.13.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.382425" steps="61588"/></proof>
@@ -404,14 +294,10 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.14" expl="postcondition" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="96916"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="792190"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="29561"/></proof>
   <proof prover="6"><result status="valid" time="0.539914" steps="56147"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.14.0" expl="postcondition">
-   <proof prover="3" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.14.0" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.233069" steps="42422"/></proof>
    </goal>
   </transf>
   </goal>
@@ -444,10 +330,6 @@
   <proof prover="7"><result status="valid" time="0.030000" steps="129"/></proof>
   </goal>
   <goal name="union&#39;vc.22" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="84018"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="689185"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="21146"/></proof>
-  <proof prover="7"><result status="timeout" time="5.000000" steps="147"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.22.0" expl="type invariant" proved="true">
    <proof prover="3" timelimit="5" memlimit="2000"><result status="valid" time="1.120925" steps="129905"/></proof>
@@ -458,60 +340,32 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.23" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="84273"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="764456"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="23260"/></proof>
   <proof prover="7"><result status="valid" time="3.108114" steps="147"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.23.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="88998"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   </goal>
-   <goal name="union&#39;vc.26.1" expl="type invariant">
-   <proof prover="3"><result status="timeout" time="1.000000" steps="151250"/></proof>
-   <proof prover="4"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.23.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.240591" steps="45711"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.24" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="80290"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="748688"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="26007"/></proof>
   <proof prover="7"><result status="valid" time="3.914071" steps="145"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.24.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="128013"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.24.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.252403" steps="45382"/></proof>
    </goal>
-   <goal name="union&#39;vc.24.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="83176"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="union&#39;vc.24.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.275007" steps="45899"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.25" expl="type invariant" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="5.000000" steps="1602725"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="3480296"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="261657"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.25.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.300630" steps="52910"/></proof>
    </goal>
-   <goal name="union&#39;vc.36.1" expl="type invariant">
-   <proof prover="0"><result status="timeout" time="1.000000"/></proof>
-   <proof prover="2"><result status="timeout" time="1.000000" steps="3264037"/></proof>
-   <proof prover="3"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4"><result status="failure" time="0.000000"/></proof>
-   <proof prover="5"><result status="failure" time="0.000000"/></proof>
-   </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.26" expl="type invariant" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="5.000000" steps="1404061"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="3474177"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="248401"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.26.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.433743" steps="61798"/></proof>
@@ -522,26 +376,18 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.27" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="82258"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="777644"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="19448"/></proof>
+  <proof prover="3"><result status="valid" time="0.358289" steps="60404"/></proof>
   <proof prover="7"><result status="valid" time="2.894451" steps="146"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.27.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="84352"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.27.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.394417" steps="58539"/></proof>
    </goal>
-   <goal name="union&#39;vc.27.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="146314"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="union&#39;vc.27.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.474135" steps="67591"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.28" expl="type invariant" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="5.000000" steps="1405377"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="3199818"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="308148"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.28.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.404936" steps="63347"/></proof>
@@ -549,14 +395,11 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.29" expl="postcondition" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="79977"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="796478"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="23075"/></proof>
+  <proof prover="3"><result status="valid" time="0.397843" steps="57627"/></proof>
   <proof prover="6"><result status="valid" time="0.499485" steps="67920"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.29.0" expl="postcondition">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="109428"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.29.0" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.356578" steps="57366"/></proof>
    </goal>
   </transf>
   </goal>
@@ -569,10 +412,6 @@
   <proof prover="7"><result status="valid" time="0.060000" steps="130"/></proof>
   </goal>
   <goal name="union&#39;vc.32" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="79983"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="0.798506" steps="701347"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="20252"/></proof>
-  <proof prover="7"><result status="timeout" time="5.000000" steps="150"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.32.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.890686" steps="119273"/></proof>
@@ -584,42 +423,26 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.33" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="83269"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="720098"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="17732"/></proof>
   <proof prover="7"><result status="valid" time="2.978301" steps="147"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.33.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="127643"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   </goal>
-   <goal name="union&#39;vc.11.1" expl="type invariant">
-   <proof prover="3"><result status="timeout" time="1.000000" steps="88287"/></proof>
-   <proof prover="4"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.33.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.236588" steps="45177"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.34" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="82541"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="713167"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="19081"/></proof>
+  <proof prover="3"><result status="valid" time="0.240618" steps="45747"/></proof>
   <proof prover="7"><result status="valid" time="4.002819" steps="147"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.34.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="141627"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.34.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.245400" steps="44883"/></proof>
    </goal>
-   <goal name="union&#39;vc.34.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="141872"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="union&#39;vc.34.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.236740" steps="45352"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.35" expl="type invariant" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="5.000000" steps="1550917"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="3479461"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="368306"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.35.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.310079" steps="52281"/></proof>
@@ -627,10 +450,6 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.36" expl="type invariant" proved="true">
-  <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-  <proof prover="1" obsolete="true"><result status="timeout" time="5.000000" steps="1497245"/></proof>
-  <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="3477990"/></proof>
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="349105"/></proof>
   <transf name="split_vc" proved="true" >
    <goal name="union&#39;vc.36.0" expl="type invariant" proved="true">
    <proof prover="3"><result status="valid" time="0.497680" steps="60958"/></proof>
@@ -643,42 +462,25 @@
   </transf>
   </goal>
   <goal name="union&#39;vc.37" expl="type invariant" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="80767"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="716885"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="26309"/></proof>
+  <proof prover="3"><result status="valid" time="0.373767" steps="59610"/></proof>
   <proof prover="7"><result status="valid" time="3.840455" steps="148"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.37.0" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="81636"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.37.0" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.360668" steps="57763"/></proof>
    </goal>
-   <goal name="union&#39;vc.37.1" expl="type invariant">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="81428"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+   <goal name="union&#39;vc.37.1" expl="type invariant" proved="true">
+   <proof prover="3"><result status="valid" time="0.445649" steps="66434"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="union&#39;vc.38" expl="type invariant" proved="true">
   <proof prover="3"><result status="valid" time="0.417417" steps="62817"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.38.0" expl="type invariant">
-   <proof prover="0" obsolete="true"><result status="timeout" time="1.000000"/></proof>
-   <proof prover="2" obsolete="true"><result status="timeout" time="1.000000" steps="3492114"/></proof>
-   <proof prover="3"><result status="failure" time="0.000000"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
-   <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="17584"/></proof>
-   </goal>
-  </transf>
   </goal>
   <goal name="union&#39;vc.39" expl="postcondition" proved="true">
-  <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="82047"/></proof>
-  <proof prover="4" obsolete="true"><result status="timeout" time="1.000000" steps="790646"/></proof>
-  <proof prover="5" obsolete="true"><result status="timeout" time="5.000000" steps="30570"/></proof>
   <proof prover="6"><result status="valid" time="0.707095" steps="66439"/></proof>
-  <transf name="split_vc" >
-   <goal name="union&#39;vc.39.0" expl="postcondition">
-   <proof prover="3" obsolete="true"><result status="timeout" time="1.000000" steps="82220"/></proof>
-   <proof prover="4" obsolete="true"><result status="failure" time="0.000000"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="union&#39;vc.39.0" expl="postcondition" proved="true">
+   <proof prover="3"><result status="valid" time="0.371025" steps="56582"/></proof>
    </goal>
   </transf>
   </goal>

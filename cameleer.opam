@@ -3,7 +3,7 @@ name: "cameleer"
 synopsis: "A Deductive Verification Tool for OCaml Programs"
 description: "A Deductive Verification Tool for OCaml Programs"
 version: "0.1"
-maintainer: "mjp.pereira@fct.unl.t"
+maintainer: "mjp.pereira@fct.unl.pt"
 authors: [
 "Mário Pereira"
 ]
@@ -34,7 +34,3 @@ depends: [
 conflicts: [
   "lablgtk" {< "2.14.2"}
 ]
-
-# pin-depends: [
-#   "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#2e928ead075e9b281544adad063c992f97cfaa02"
-# ]
