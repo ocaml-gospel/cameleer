@@ -1,12 +1,11 @@
-(*@ open Array *)
 
 (** The following is used to prove validity of the [uf] type invariant. *)
 let[@ghost] [@logic] init () = Array.init 0 (fun x -> x)
 (*@ a = init ()
-      ensures length a = 0 *)
+      ensures Array.length a = 0 *)
 
 (*@ predicate mem (i: int) (a: int array) =
-      0 <= i < length a *)
+      0 <= i < Array.length a *)
 
 type uf = {
   link : int array;
@@ -16,10 +15,10 @@ type uf = {
   mutable maxd : int; [@ghost]
 }
 (*@ invariant 0 <= maxd
-    invariant length rank = length link
-    invariant forall i. mem i link -> 0 <= link.(i) < length link
+    invariant Array.length rank = Array.length link
+    invariant forall i. mem i link -> 0 <= link.(i) < Array.length link
     invariant forall i. mem i link -> rep (rep i) = rep i
-    invariant forall i. mem i link -> 0 <= rep i < length link
+    invariant forall i. mem i link -> 0 <= rep i < Array.length link
     invariant forall i. mem i link -> link.(i) <> i -> rep i = rep link.(i)
     invariant forall i. mem i link -> (link.(i) = i <-> rep i = i)
     invariant forall i. mem i link -> 0 <= dst i <= maxd
@@ -43,7 +42,7 @@ let rec find i uf =
       mem i uf.link -> mem j uf.link -> uf.rep i = uf.rep j *)
 
 let[@ghost] set (f : 'a -> 'b) (x : 'a) (v : 'b) : 'a -> 'b =
- fun y -> if (y = x) [@pure] then v else f y
+  fun y -> if (y = x) [@pure] then v else f y
 
 let union i j uf =
   let rep_i = find i uf in
