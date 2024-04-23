@@ -22,9 +22,7 @@ module type S = sig
 
   type t
 
-  (*@ predicate leftist (h: t) *)
-
-  val size : t -> int [@@logic]
+  val[@logic] size : t -> int
   (*@ r = size t
         ensures 0 <= r *)
 
@@ -47,12 +45,12 @@ module type S = sig
 
   (*@ predicate leftist_heap (h: t) *)
 
-  val empty : t [@@logic]
+  val[@logic] empty : t
   (*@ r = empty
         ensures size r = 0
         ensures forall x. occ x r = 0 *)
 
-  val is_empty : t -> bool [@@logic]
+  val[@logic] is_empty : t -> bool
   (*@ b = is_empty t
         requires leftist_heap t
         ensures  b <-> size t = 0 *)

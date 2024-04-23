@@ -8,6 +8,20 @@ module D = Why3.Dterm
 module Ty = Ttypes
 module P = Parsetree
 
+let empty_spec =
+  {
+    sp_pre = [];
+    sp_post = [];
+    sp_xpost = [];
+    sp_reads = [];
+    sp_writes = [];
+    sp_alias = [];
+    sp_variant = [];
+    sp_checkrw = false;
+    sp_diverge = false;
+    sp_partial = false;
+  }
+
 let dummy_loc = Loc.dummy_position
 let location Location.{ loc_start = b; loc_end = e; _ } = Loc.extract (b, e)
 
@@ -15,6 +29,7 @@ let mk_id ?(id_ats = []) ?(id_loc = dummy_loc) id_str =
   { id_str; id_ats; id_loc }
 
 let mk_term ?(term_loc = dummy_loc) term_desc = { term_desc; term_loc }
+let mk_expr ?(expr_loc = dummy_loc) expr_desc = { expr_desc; expr_loc }
 let mk_pattern ?(pat_loc = dummy_loc) pat_desc = { pat_desc; pat_loc }
 
 let ident_of_tvsymbol Ty.{ tv_name = name } =
@@ -143,3 +158,70 @@ let rec term in_post Uast.{ term_desc = t_desc; term_loc } =
         Tquant (quant q, List.map binder bl, [], term in_post t)
   in
   mk_term (term_desc t_desc)
+
+let rec expr Uast.{ term_desc = t_desc; term_loc } =
+  let expr_loc = location term_loc in
+  let mk_expr t = mk_expr ~expr_loc t in
+  let binop t1 t2 = function
+    | Uast.Tand -> assert false (* FIXME: add a better error message *)
+    | Uast.Tand_asym -> Eand (expr t1, expr t2)
+    | Uast.Tor -> assert false
+    | Uast.Tor_asym -> Eor (expr t1, expr t2)
+    | Uast.Timplies -> assert false
+    | Uast.Tiff -> assert false
+  in
+  let attr a = ATstr (Why3.Ident.create_attribute a) in
+  let pat_expr (pat, t) = (pattern pat, expr t) in
+  let qualid_expr (q, t) = (qualid q, expr t) in
+  let is_arith = function
+    (* TODO: complete this list *)
+    | "infix +" | "infix -" | "infix *" -> true
+    | "infix <=" -> true
+    | "infix >=" -> true (* assert false (\* TODO *\) *)
+    | _ -> false
+  in
+  let expr_desc = function
+    | Uast.Ttrue -> Etrue
+    | Uast.Tfalse -> Efalse
+    | Uast.Tconst c -> Econst (constant c)
+    | Uast.Tpreid id -> Eident (qualid id)
+    | Uast.Tidapp ((Qpreid q as qq), [ t1; t2 ]) ->
+        if is_arith q.pid_str then
+          let f = mk_expr (Eidpur (qualid qq)) in
+          let f_app = mk_expr (Eapply (f, expr t1)) in
+          Eapply (f_app, expr t2)
+        else Eidapp (qualid qq, [ expr t1; expr t2 ])
+    | Uast.Tidapp (q, tl) -> Eidapp (qualid q, List.map expr tl)
+    | Uast.Tfield (t, q) -> Eidapp (qualid q, [ expr t ])
+    | Uast.Tapply (t1, t2) -> Eapply (expr t1, expr t2)
+    | Uast.Tnot t -> Enot (expr t)
+    | Uast.Tattr (a, t) -> Eattr (attr a, expr t)
+    | Uast.Tcast (t, ty) -> Ecast (expr t, pty ty)
+    | Uast.Ttuple t_list -> Etuple (List.map expr t_list)
+    | Uast.Trecord q_t_list -> Erecord (List.map qualid_expr q_t_list)
+    | Uast.Tscope (q, t) -> Escope (qualid q, expr t)
+    | Uast.Tcase (t, pt_list) -> Ematch (expr t, List.map pat_expr pt_list, [])
+    | Uast.Tlet (id, t1, t2) ->
+        Elet (preid id, false, Expr.RKnone, expr t1, expr t2)
+    | Uast.Tinfix (t1, id, t2) when is_arith id.pid_str ->
+        let f = mk_expr (Eidpur (Qident (preid id))) in
+        let f_app = mk_expr (Eapply (f, expr t1)) in
+        Eapply (f_app, expr t2)
+    | Uast.Tinfix (t1, id, t2) -> Einfix (expr t1, preid id, expr t2)
+    | Uast.Tbinop (t1, op, t2) -> binop t1 t2 op
+    | Uast.Told _ -> assert false (* FIXME: add a better error message *)
+    | Uast.Tif (t1, t2, t3) -> Eif (expr t1, expr t2, expr t3)
+    | Uast.Tupdate (t, q_t_list) ->
+        Eupdate (expr t, List.map qualid_expr q_t_list)
+    | Uast.Tquant (Tlambda, binders, t) ->
+        Efun
+          ( List.map binder binders,
+            None,
+            mk_pattern Pwild,
+            Ity.MaskVisible,
+            empty_spec,
+            expr t )
+    | Uast.Tquant _ -> assert false
+    (* FIXME: add a better error message *)
+  in
+  mk_expr (expr_desc t_desc)

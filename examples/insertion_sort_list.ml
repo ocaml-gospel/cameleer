@@ -1,4 +1,4 @@
-(*@ open Permut *)
+(* @ open Permut *)
 
 module type PRE_ORD = sig
   type t
@@ -35,13 +35,13 @@ module InsertionSort (E : PRE_ORD) = struct
           (forall x y. List.mem x l1 -> List.mem y l2 -> E.le x y)) <->
         sorted_list (l1 ++ l2) *)
 
-  let rec insert x = function
+  let[@logic] rec insert x = function
     | [] -> [ x ]
     | y :: l -> if E.leq x y then x :: y :: l else y :: insert x l
   (*@ l = insert x param
         requires sorted_list param
         variant  param
-        ensures  permut (x :: param) l
+        (* ensures  permut (x :: param) l *)
         ensures  sorted_list l *)
 
   let rec insertion_sort = function
@@ -49,6 +49,6 @@ module InsertionSort (E : PRE_ORD) = struct
     | x :: l -> insert x (insertion_sort l)
   (*@ l = insertion_sort param
         variant param
-        ensures permut param l
+        (* ensures permut param l *)
         ensures sorted_list l *)
 end

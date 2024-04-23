@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
-"http://why3.lri.fr/why3session.dtd">
+"https://www.why3.org/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
-<file format="ocaml" proved="true">
+<prover id="1" name="Alt-Ergo" version="2.5.2" timelimit="5" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
 <path name=".."/><path name="find.ml"/>
-<theory name="Find" proved="true">
+<theory name="Find">
  <goal name="Make.find&#39;vc" expl="VC for find" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="find&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="6"/></proof>
+  <proof prover="1"><result status="valid" time="0.010000" steps="16"/></proof>
   </goal>
   <goal name="find&#39;vc.1" expl="index in array bounds" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="8"/></proof>
+  <proof prover="1"><result status="valid" time="0.010000" steps="18"/></proof>
   </goal>
   <goal name="find&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="10"/></proof>
+  <proof prover="1"><result status="valid" time="0.010000" steps="20"/></proof>
   </goal>
   <goal name="find&#39;vc.3" expl="loop invariant preservation" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="16"/></proof>
+  <proof prover="1"><result status="valid" time="0.010000" steps="33"/></proof>
   </goal>
   <goal name="find&#39;vc.4" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.01" steps="10"/></proof>
+  <proof prover="1"><result status="valid" time="0.000000" steps="20"/></proof>
   </goal>
-  <goal name="find&#39;vc.5" expl="postcondition" proved="true">
-  <proof prover="0"><result status="valid" time="0.00" steps="6"/></proof>
+  <goal name="find&#39;vc.5" expl="VC for find" proved="true">
+  <proof prover="1"><result status="valid" time="0.010000" steps="16"/></proof>
   </goal>
  </transf>
+ </goal>
+ <goal name="MakeList.mem&#39;vc" expl="VC for mem">
  </goal>
 </theory>
 </file>

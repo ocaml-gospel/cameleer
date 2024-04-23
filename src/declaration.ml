@@ -285,14 +285,29 @@ let function_ f =
   let ld_ident = T.preid f.fun_name in
   let ld_params = List.map param f.fun_params in
   let ld_type = Option.map T.pty f.fun_type in
-  let ld_def = Option.map (T.term false) f.fun_def in
+  (* let ld_def = Option.map (T.term false) f.fun_def in *)
   let fun_spec = f.fun_spec in
-  let coercion =
-    match fun_spec with
-    | None -> None
-    | Some f -> if f.fun_coer then Some (Qident ld_ident) else None
-  in
-  ({ ld_loc; ld_ident; ld_params; ld_type; ld_def }, coercion)
+  match fun_spec with
+  | None ->
+      let ld_def = Option.map (T.term false) f.fun_def in
+      (O.RKpure (ld_loc, ld_ident, ld_params, ld_type, ld_def), None)
+  | Some fspec ->
+      let mk_binder (loc, id, g, pty) = (loc, id, g, Some pty) in
+      let binders = List.map mk_binder ld_params in
+      let dlet_spec = Vspec.fun_spec fspec in
+      let dlet_expr = T.expr (Option.get f.fun_def) in
+      let coerc = if fspec.fun_coer then Some (Qident ld_ident) else None in
+      let fun_desc =
+        O.RKfunc
+          (ld_loc, ld_ident, f.fun_rec, binders, ld_type, dlet_spec, dlet_expr)
+      in
+      (fun_desc, coerc)
+  (* let coercion = *)
+  (*   match fun_spec with *)
+  (*   | None -> None *)
+  (*   | Some f -> if f.fun_coer then Some (Qident ld_ident) else None *)
+  (* in *)
+  (* ({ ld_loc; ld_ident; ld_params; ld_type; ld_def }, coercion) *)
 
 let prop p =
   let kind =
@@ -414,7 +429,8 @@ let s_structure, s_signature =
         [ mk_type_decl info loc type_decl_list ]
     | Sig_function f ->
         let f, coerc = function_ f in
-        O.mk_dlogic loc coerc [ f ]
+        ignore coerc;
+        [ O.(mk_function { let_func_loc = loc; let_func_def = f }) ]
     | Sig_axiom p -> [ mk_axiom loc p ]
     | Sig_inductive ind_decl -> [ mk_ind loc ind_decl ]
     | Sig_typext _ -> assert false (* TODO *)
@@ -517,7 +533,8 @@ let s_structure, s_signature =
         [ mk_type_decl info loc type_decl_list ]
     | Uast.Str_function f ->
         let f, coerc = function_ f in
-        O.mk_dlogic loc coerc [ f ]
+        ignore coerc;
+        [ O.(mk_function { let_func_loc = loc; let_func_def = f }) ]
     | Uast.Str_prop p -> [ mk_prop loc p ]
     | Uast.Str_module mod_binding
     (* {spmb_loc; spmb_name = {txt; loc};

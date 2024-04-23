@@ -1,9 +1,28 @@
 open Why3
 open Mod_subst
+module P = Ptree
 
 type odecl = private
   | Odecl of Loc.position * Ptree.decl
   | Omodule of Loc.position * Ptree.ident * odecl list
+
+type let_function = {
+  let_func_loc : Loc.position;
+  let_func_def : let_function_node;
+}
+
+(* FIXME: make this type declaration private, at least *)
+and let_function_node =
+  | RKfunc of
+      Loc.position
+      * P.ident
+      * bool
+      * P.binder list
+      * P.pty option
+      * P.spec
+      * P.expr
+  | RKpure of
+      Loc.position * P.ident * P.param list * P.pty option * P.term option
 
 val mk_odecl : Loc.position -> Ptree.decl -> odecl
 val mk_omodule : Loc.position -> Ptree.ident -> odecl list -> odecl
@@ -31,10 +50,11 @@ type info = private {
 val empty_info : unit -> info
 val add_info : info -> string -> int -> unit
 val add_info_refinement : info -> string -> info_refinement -> unit
+val mk_function : let_function -> odecl
 val mk_dtype : Loc.position -> Ptree.type_decl list -> odecl
 
 val mk_dlogic :
-  Loc.position -> Ptree.qualid option -> Ptree.logic_decl list -> odecl list
+  Loc.position -> Ptree.logic_decl list -> odecl
 
 val mk_dprop :
   Loc.position -> Decl.prop_kind -> Ptree.ident -> Ptree.term -> odecl

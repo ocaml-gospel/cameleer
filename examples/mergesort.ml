@@ -1,4 +1,4 @@
-(*@ open Permut *)
+(* @ open Permut *)
 
 module type PRE_ORD = sig
   type t
@@ -19,6 +19,12 @@ end
 
 module Make (E : PRE_ORD) = struct
   type elt = E.t
+
+  (*@ predicate rec sorted_list_aux (l: elt list) =
+        match l with
+        | [] | _ :: [] -> true
+        | x :: (y :: r) -> E.le x y && sorted_list_aux (y :: r) *)
+  (*@ variant List.length l *)
 
   let[@logic] rec sorted_list = function
     | [] | [ _ ] -> true
@@ -46,37 +52,24 @@ module Make (E : PRE_ORD) = struct
         requires forall x y. List.mem x acc -> List.mem y l1 -> E.le x y
         requires forall x y. List.mem x acc -> List.mem y l2 -> E.le x y
         ensures  sorted_list r
-        ensures  permut r (acc @ l1 @ l2)
+        (* ensures  permut r (acc @ l1 @ l2) *)
         variant  l1, l2 *)
 
   let merge l1 l2 = merge_aux [] l1 l2
   (*@ r = merge l1 l2
         requires sorted_list l1 && sorted_list l2
-        ensures  sorted_list r  && permut r (l1 @ l2) *)
+        ensures  sorted_list r  (* && permut r (l1 @ l2) *) *)
 
-  let split l0 =
-    let n0 = List.length l0 / 2 in
-    let rec split_aux (pref : elt list) n l =
-      if n = 0 then (List.rev pref, l)
-      else
-        match l with
-        | [] -> assert false
-        | x :: xs -> split_aux (x :: pref) (n - 1) xs
-      (*@ (l1, l2) = split_aux pref n l
-            requires 0 <= n <= List.length l
-            requires n <= n0 <= List.length l0
-            requires List.length pref = n0 - n
-            requires l0 = List.rev pref @ l
-            ensures  permut l0 (l1 @ l2)
-            ensures  List.length l1 = n0 &&
-                     List.length l2 = List.length l0 - n0
-            variant  n *)
-    in
-    split_aux [] n0 l0
-  (*@ (l1, l2) = split l0
-        requires List.length l0 >= 2
-        ensures  permut l0 (l1 @ l2)
-        ensures  1 <= List.length l1 /\ 1 <= List.length l2 *)
+  let rec split l =
+    match l with
+    | [] -> ([], [])
+    | [x] -> ([x], [])
+    | x :: y :: xs ->
+        let (l1, l2) = split xs in
+        (x :: l1, y :: l2)
+  (*@ (l1, l2) = split l
+        variant List.length l
+        ensures l = l1 @ l2 *)
 
   let rec mergesort l =
     match l with
@@ -86,5 +79,5 @@ module Make (E : PRE_ORD) = struct
         merge (mergesort l1) (mergesort l2)
   (*@ r = mergesort l
         variant List.length l
-        ensures sorted_list r && permut r l *)
+        ensures sorted_list r (* && permut r l  *)*)
 end

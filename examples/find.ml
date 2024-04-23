@@ -1,4 +1,4 @@
-module type Eq = sig
+module type EQUAL = sig
   type t
 
   val eq : t -> t -> bool
@@ -6,10 +6,10 @@ module type Eq = sig
         ensures b <-> x = y *)
 end
 
-module Make (E : Eq) = struct
+module Make (E : EQUAL) = struct
   type elt = E.t
 
-  let find a x =
+  let find x a =
     let exception E of int in
     try
       for i = 0 to Array.length a - 1 do
@@ -18,8 +18,19 @@ module Make (E : Eq) = struct
       done;
       None
     with E i -> Some i
-  (*@ r = find a x
+  (*@ r = find x a
         ensures match r with
                 | None -> forall i. 0 <= i < Array.length a -> a.(i) <> x
                 | Some i -> a.(i) = x *)
+end
+
+module MakeList (E: EQUAL) = struct
+  type elt = E.t
+
+  let rec mem x l =
+    match l with
+    | [] -> false
+    | y :: r ->
+        E.eq x y || mem x r
+
 end

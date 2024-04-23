@@ -20,3 +20,4 @@ val pty : Uast.pty -> Ptree.pty
 val ty : Ttypes.ty -> Ptree.pty
 val pattern : Uast.pattern -> Ptree.pattern
 val term : bool -> Uast.term -> Ptree.term
+val expr : Uast.term -> Ptree.expr
