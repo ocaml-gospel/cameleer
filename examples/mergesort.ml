@@ -20,17 +20,11 @@ end
 module Make (E : PRE_ORD) = struct
   type elt = E.t
 
-  (*@ predicate rec sorted_list_aux (l: elt list) =
+  (*@ predicate rec sorted_list (l: elt list) =
         match l with
         | [] | _ :: [] -> true
-        | x :: (y :: r) -> E.le x y && sorted_list_aux (y :: r) *)
-  (*@ variant List.length l *)
-
-  let[@logic] rec sorted_list = function
-    | [] | [ _ ] -> true
-    | x :: y :: r -> E.leq x y && sorted_list (y :: r)
-  (*@ sorted_list l
-        variant l *)
+        | x :: (y :: r) -> E.le x y && sorted_list (y :: r) *)
+  (*@ variant l *)
 
   (*@ lemma sorted_mem: forall x l.
         (forall y. List.mem y l -> E.le x y) /\ sorted_list l <->
@@ -68,8 +62,9 @@ module Make (E : PRE_ORD) = struct
         let (l1, l2) = split xs in
         (x :: l1, y :: l2)
   (*@ (l1, l2) = split l
-        variant List.length l
-        ensures l = l1 @ l2 *)
+        variant  List.length l
+        ensures  List.length l1 <= List.length l
+        ensures  List.length l2 <= List.length l *)
 
   let rec mergesort l =
     match l with
