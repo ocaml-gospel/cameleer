@@ -1,0 +1,1184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"https://www.why3.org/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC5" version="1.0.6-dev.66.d284ecaae" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.12.1" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Alt-Ergo" version="2.5.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml">
+<path name=".."/><path name="set.ml"/>
+<theory name="Set">
+ <goal name="BinTree.occ_nonneg&#39;vc" expl="VC for occ_nonneg" proved="true">
+ <proof prover="2"><result status="valid" time="0.042276" steps="85"/></proof>
+ </goal>
+ <goal name="BinTree.height_nonneg" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="height_nonneg.0" proved="true">
+  <proof prover="2"><result status="valid" time="0.043655" steps="89"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.height&#39;vc" expl="VC for height" proved="true">
+ <proof prover="2"><result status="valid" time="0.037288" steps="91"/></proof>
+ </goal>
+ <goal name="BinTree.occ_uniq2&#39;vc" expl="VC for occ_uniq2" proved="true">
+ <proof prover="0"><result status="valid" time="0.261290" steps="48382"/></proof>
+ </goal>
+ <goal name="BinTree.create&#39;vc" expl="VC for create" proved="true">
+ <proof prover="0"><result status="valid" time="0.187339" steps="36974"/></proof>
+ </goal>
+ <goal name="BinTree.bal&#39;vc" expl="VC for bal">
+ <proof prover="0"><result status="timeout" time="1.000000" steps="134678"/></proof>
+ <proof prover="1"><result status="timeout" time="1.000000" steps="1515317"/></proof>
+ <proof prover="2"><result status="timeout" time="1.000000" steps="13744"/></proof>
+ <transf name="split_vc" >
+  <goal name="bal&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="1"><result status="valid" time="0.054691" steps="143977"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.040893" steps="51"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.035750" steps="51"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.041418" steps="53"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.035010" steps="38"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.203126" steps="36092"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.6" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.117203" steps="1337"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036514" steps="58"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.061911" steps="393"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.044327" steps="70"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.034574" steps="44"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.203911" steps="35881"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.12" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.047972" steps="263"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.13" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.338796" steps="5437"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.14" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.129653" steps="1277"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.15" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.035731" steps="49"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.16" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.041081" steps="58"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.17" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.029049" steps="38"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.18" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.214992" steps="36996"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.19" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.372793" steps="5252"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.20" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.025919" steps="65"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.21" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.085330" steps="700"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.22" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036208" steps="75"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.23" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.035909" steps="78"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.24" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.095952" steps="815"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.25" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.047393" steps="292"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.26" expl="precondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.841950" steps="1416331"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.27" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.109162" steps="971"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.28" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.034540" steps="48"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.29" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.028054" steps="48"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.30" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.477261" steps="61794"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.31" expl="precondition">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="120140"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1518331"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="14791"/></proof>
+  <transf name="split_vc" >
+   <goal name="bal&#39;vc.31.0" expl="precondition">
+   <proof prover="0"><result status="timeout" time="1.000000" steps="114238"/></proof>
+   <proof prover="1"><result status="timeout" time="1.000000" steps="1525771"/></proof>
+   <proof prover="2"><result status="timeout" time="1.000000" steps="15661"/></proof>
+   <transf name="split_vc" >
+    <goal name="bal&#39;vc.31.0.0" expl="precondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.033928" steps="39"/></proof>
+    </goal>
+    <goal name="bal&#39;vc.31.0.1" expl="precondition">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="474071"/></proof>
+    <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4806340"/></proof>
+    <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="129851"/></proof>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="bal&#39;vc.31.1" expl="precondition">
+   <proof prover="0"><result status="timeout" time="1.000000" steps="121334"/></proof>
+   <proof prover="1"><result status="timeout" time="1.000000" steps="1558394"/></proof>
+   <proof prover="2"><result status="timeout" time="1.000000" steps="10742"/></proof>
+   <transf name="split_vc" >
+    <goal name="bal&#39;vc.31.1.0" expl="precondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.046786" steps="122"/></proof>
+    </goal>
+    <goal name="bal&#39;vc.31.1.1" expl="precondition">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="599285"/></proof>
+    <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4512406"/></proof>
+    <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="84116"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.32" expl="precondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="bal&#39;vc.32.0" expl="precondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.979919" steps="129782"/></proof>
+   </goal>
+   <goal name="bal&#39;vc.32.1" expl="precondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="bal&#39;vc.32.1.0" expl="precondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.040177" steps="122"/></proof>
+    </goal>
+    <goal name="bal&#39;vc.32.1.1" expl="precondition" proved="true">
+    <proof prover="1" timelimit="10" memlimit="4000"><result status="valid" time="3.084243" steps="2226037"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.33" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.659469" steps="8508"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.34" expl="unreachable point" proved="true">
+  <proof prover="1"><result status="valid" time="0.044712" steps="144118"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.35" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.039549" steps="52"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.36" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.035401" steps="52"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.37" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.029389" steps="38"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.38" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.041644" steps="53"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.39" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.206020" steps="37278"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.40" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.033118" steps="59"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.41" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.113586" steps="1281"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.42" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.069853" steps="442"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.43" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.031938" steps="44"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.44" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036706" steps="70"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.45" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.199044" steps="35818"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.46" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.388228" steps="6584"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.47" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.047188" steps="256"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.48" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.202400" steps="2447"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.49" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.031544" steps="50"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.50" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036266" steps="60"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.51" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.042935" steps="61"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.52" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.052282" steps="397"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.53" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.273157" steps="3331"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.54" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.053037" steps="243"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.55" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.086790" steps="698"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.56" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.029413" steps="44"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.57" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.035812" steps="77"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.58" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.332284" steps="47116"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.59" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.042200" steps="82"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.60" expl="precondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="bal&#39;vc.60.0" expl="precondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.044955" steps="100"/></proof>
+   </goal>
+   <goal name="bal&#39;vc.60.1" expl="precondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="bal&#39;vc.60.1.0" expl="precondition" proved="true">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="valid" time="9.204725" steps="108398"/></proof>
+    </goal>
+    <goal name="bal&#39;vc.60.1.1" expl="precondition" proved="true">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="valid" time="3.967042" steps="186230"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.61" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.182366" steps="2077"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.62" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.031041" steps="50"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.63" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.030272" steps="50"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.64" expl="precondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.311993" steps="48160"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.65" expl="precondition">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="121924"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1611579"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="10907"/></proof>
+  <transf name="split_vc" >
+   <goal name="bal&#39;vc.65.0" expl="precondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.039756" steps="117"/></proof>
+   </goal>
+   <goal name="bal&#39;vc.65.1" expl="precondition">
+   <proof prover="0"><result status="timeout" time="1.000000" steps="124247"/></proof>
+   <proof prover="1"><result status="timeout" time="1.000000" steps="1560237"/></proof>
+   <proof prover="2"><result status="timeout" time="1.000000" steps="9341"/></proof>
+   <transf name="split_vc" >
+    <goal name="bal&#39;vc.65.1.0" expl="precondition">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="204682"/></proof>
+    <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4315719"/></proof>
+    <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="115347"/></proof>
+    </goal>
+    <goal name="bal&#39;vc.65.1.1" expl="precondition" proved="true">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="valid" time="3.722252" steps="202970"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.66" expl="precondition">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="118376"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1501187"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="13149"/></proof>
+  <transf name="split_vc" >
+   <goal name="bal&#39;vc.66.0" expl="precondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.053562" steps="117"/></proof>
+   </goal>
+   <goal name="bal&#39;vc.66.1" expl="precondition">
+   <proof prover="0"><result status="timeout" time="1.000000" steps="117628"/></proof>
+   <proof prover="1"><result status="timeout" time="1.000000" steps="1498644"/></proof>
+   <proof prover="2"><result status="timeout" time="1.000000" steps="11511"/></proof>
+   <transf name="split_vc" >
+    <goal name="bal&#39;vc.66.1.0" expl="precondition">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="471180"/></proof>
+    <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="3850449"/></proof>
+    <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="97612"/></proof>
+    </goal>
+    <goal name="bal&#39;vc.66.1.1" expl="precondition">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="619974"/></proof>
+    <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4575399"/></proof>
+    <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="98142"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.67" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.424448" steps="4751"/></proof>
+  </goal>
+  <goal name="bal&#39;vc.68" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="bal&#39;vc.68.0" expl="postcondition" proved="true">
+   <proof prover="1"><result status="valid" time="0.020198" steps="15997"/></proof>
+   </goal>
+   <goal name="bal&#39;vc.68.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.819023" steps="103182"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.69" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="bal&#39;vc.69.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="bal&#39;vc.69.0.0" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="bal&#39;vc.69.0.0.0" expl="postcondition" proved="true">
+     <proof prover="2"><result status="valid" time="0.113916" steps="706"/></proof>
+     </goal>
+     <goal name="bal&#39;vc.69.0.0.1" expl="postcondition" proved="true">
+     <transf name="split_vc" proved="true" >
+      <goal name="bal&#39;vc.69.0.0.1.0" expl="postcondition" proved="true">
+      <proof prover="2"><result status="valid" time="0.055274" steps="132"/></proof>
+      </goal>
+      <goal name="bal&#39;vc.69.0.0.1.1" expl="postcondition" proved="true">
+      <proof prover="0" timelimit="10" memlimit="4000"><result status="valid" time="1.474472" steps="147561"/></proof>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="bal&#39;vc.69.0.1" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="bal&#39;vc.69.0.1.0" expl="postcondition" proved="true">
+     <proof prover="0"><result status="valid" time="0.771115" steps="79851"/></proof>
+     </goal>
+     <goal name="bal&#39;vc.69.0.1.1" expl="postcondition" proved="true">
+     <transf name="split_vc" proved="true" >
+      <goal name="bal&#39;vc.69.0.1.1.0" expl="postcondition" proved="true">
+      <proof prover="2"><result status="valid" time="0.063583" steps="154"/></proof>
+      </goal>
+      <goal name="bal&#39;vc.69.0.1.1.1" expl="postcondition" proved="true">
+      <proof prover="0" timelimit="10" memlimit="4000"><result status="valid" time="4.995158" steps="359464"/></proof>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="bal&#39;vc.69.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="bal&#39;vc.69.1.0" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="bal&#39;vc.69.1.0.0" expl="postcondition" proved="true">
+     <transf name="split_vc" proved="true" >
+      <goal name="bal&#39;vc.69.1.0.0.0" expl="postcondition" proved="true">
+      <proof prover="2"><result status="valid" time="0.053292" steps="123"/></proof>
+      </goal>
+      <goal name="bal&#39;vc.69.1.0.0.1" expl="postcondition" proved="true">
+      <transf name="split_vc" proved="true" >
+       <goal name="bal&#39;vc.69.1.0.0.1.0" expl="postcondition" proved="true">
+       <proof prover="2"><result status="valid" time="0.130087" steps="978"/></proof>
+       </goal>
+       <goal name="bal&#39;vc.69.1.0.0.1.1" expl="postcondition" proved="true">
+       <proof prover="0" timelimit="10" memlimit="4000"><result status="valid" time="1.689263" steps="154272"/></proof>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+     <goal name="bal&#39;vc.69.1.0.1" expl="postcondition" proved="true">
+     <transf name="split_vc" proved="true" >
+      <goal name="bal&#39;vc.69.1.0.1.0" expl="postcondition" proved="true">
+      <proof prover="2"><result status="valid" time="0.071193" steps="145"/></proof>
+      </goal>
+      <goal name="bal&#39;vc.69.1.0.1.1" expl="postcondition" proved="true">
+      <transf name="split_vc" proved="true" >
+       <goal name="bal&#39;vc.69.1.0.1.1.0" expl="postcondition" proved="true">
+       <proof prover="0"><result status="valid" time="0.570650" steps="67918"/></proof>
+       </goal>
+       <goal name="bal&#39;vc.69.1.0.1.1.1" expl="postcondition" proved="true">
+       <proof prover="0" timelimit="10" memlimit="4000"><result status="valid" time="2.010065" steps="175472"/></proof>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="bal&#39;vc.69.1.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.040140" steps="71"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.70" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="bal&#39;vc.70.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.493291" steps="74215"/></proof>
+   </goal>
+   <goal name="bal&#39;vc.70.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="bal&#39;vc.70.1.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.898993" steps="94676"/></proof>
+    </goal>
+    <goal name="bal&#39;vc.70.1.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.047877" steps="190"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.71" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="bal&#39;vc.71.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.984225" steps="106840"/></proof>
+   </goal>
+   <goal name="bal&#39;vc.71.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="bal&#39;vc.71.1.0" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.467212" steps="54099"/></proof>
+    </goal>
+    <goal name="bal&#39;vc.71.1.1" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="bal&#39;vc.71.1.1.0" expl="postcondition" proved="true">
+     <proof prover="0"><result status="valid" time="0.486433" steps="59809"/></proof>
+     </goal>
+     <goal name="bal&#39;vc.71.1.1.1" expl="postcondition" proved="true">
+     <proof prover="2"><result status="valid" time="0.048396" steps="82"/></proof>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="bal&#39;vc.72" expl="postcondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.600153" steps="7200"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.min_tree&#39;vc" expl="VC for min_tree" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="min_tree&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.026850" steps="28"/></proof>
+  </goal>
+  <goal name="min_tree&#39;vc.1" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.040055" steps="58"/></proof>
+  </goal>
+  <goal name="min_tree&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.037461" steps="49"/></proof>
+  </goal>
+  <goal name="min_tree&#39;vc.3" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="min_tree&#39;vc.3.0" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.656299" steps="11781"/></proof>
+   </goal>
+   <goal name="min_tree&#39;vc.3.1" expl="postcondition" proved="true">
+   <proof prover="2" timelimit="10" memlimit="4000"><result status="valid" time="1.509491" steps="21087"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.is_minimum_min&#39;vc" expl="VC for is_minimum_min" proved="true">
+ <proof prover="2"><result status="valid" time="0.045120" steps="282"/></proof>
+ </goal>
+ <goal name="BinTree.remove_min_elt&#39;vc" expl="VC for remove_min_elt">
+ <proof prover="0"><result status="timeout" time="1.000000" steps="126383"/></proof>
+ <proof prover="1"><result status="timeout" time="1.000000" steps="1491283"/></proof>
+ <proof prover="2"><result status="timeout" time="1.000000" steps="14143"/></proof>
+ <transf name="split_vc" >
+  <goal name="remove_min_elt&#39;vc.0" expl="unreachable point" proved="true">
+  <proof prover="2"><result status="valid" time="0.034631" steps="28"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.1" expl="assertion" proved="true">
+  <proof prover="2"><result status="valid" time="0.043092" steps="110"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.2" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.038217" steps="58"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.030471" steps="41"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036586" steps="57"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.032512" steps="50"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.6" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.056497" steps="388"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.098527" steps="845"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.046709" steps="220"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.083951" steps="574"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.10" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.043438" steps="132221"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.11" expl="postcondition">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="111956"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1484786"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="17405"/></proof>
+  <transf name="split_vc" >
+   <goal name="remove_min_elt&#39;vc.11.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.393983" steps="64499"/></proof>
+   </goal>
+   <goal name="remove_min_elt&#39;vc.11.1" expl="postcondition">
+   <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="415889"/></proof>
+   <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="6794248"/></proof>
+   <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="103036"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.12" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.684442" steps="95394"/></proof>
+  </goal>
+  <goal name="remove_min_elt&#39;vc.13" expl="postcondition">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="109335"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1484856"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="18092"/></proof>
+  <transf name="split_vc" >
+   <goal name="remove_min_elt&#39;vc.13.0" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="1.000000" steps="108137"/></proof>
+   <proof prover="1"><result status="timeout" time="1.000000" steps="1482867"/></proof>
+   <proof prover="2"><result status="timeout" time="1.000000" steps="13284"/></proof>
+   <transf name="split_vc" >
+    <goal name="remove_min_elt&#39;vc.13.0.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.024997" steps="36"/></proof>
+    </goal>
+    <goal name="remove_min_elt&#39;vc.13.0.1" expl="postcondition">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="586963"/></proof>
+    <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="6390629"/></proof>
+    <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="52433"/></proof>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="remove_min_elt&#39;vc.13.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.201708" steps="37876"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.add_min_element&#39;vc" expl="VC for add_min_element" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="add_min_element&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.033226" steps="28"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.038417" steps="28"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036928" steps="34"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036808" steps="85"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.042189" steps="37"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.040036" steps="97"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.6" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.044250" steps="120"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.040614" steps="36"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.092111" steps="716"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.047181" steps="47"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.055897" steps="215"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.539346" steps="6662"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.12" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.054642" steps="171"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.13" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.070130" steps="340"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.14" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.018564" steps="15630"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.15" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.717541" steps="101514"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.16" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.246796" steps="42795"/></proof>
+  </goal>
+  <goal name="add_min_element&#39;vc.17" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="add_min_element&#39;vc.17.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="add_min_element&#39;vc.17.0.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.040634" steps="54"/></proof>
+    </goal>
+    <goal name="add_min_element&#39;vc.17.0.1" expl="postcondition" proved="true">
+    <proof prover="2" timelimit="10" memlimit="4000"><result status="valid" time="3.967706" steps="49226"/></proof>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="add_min_element&#39;vc.17.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.276610" steps="44571"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.merge&#39;vc" expl="VC for merge" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="merge&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.031970" steps="34"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.045440" steps="64"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.045516" steps="76"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.035710" steps="44"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.058133" steps="210"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.066132" steps="275"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.6" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.111980" steps="961"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.091665" steps="661"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.8" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.210067" steps="37415"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.9" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.186893" steps="33530"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.10" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.117310" steps="27804"/></proof>
+  </goal>
+  <goal name="merge&#39;vc.11" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="merge&#39;vc.11.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="merge&#39;vc.11.0.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.036302" steps="63"/></proof>
+    </goal>
+    <goal name="merge&#39;vc.11.0.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.042451" steps="129"/></proof>
+    </goal>
+    <goal name="merge&#39;vc.11.0.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.041456" steps="133"/></proof>
+    </goal>
+    <goal name="merge&#39;vc.11.0.3" expl="postcondition" proved="true">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="valid" time="8.160687" steps="597056"/></proof>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="merge&#39;vc.11.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.191345" steps="34868"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.mem&#39;vc" expl="VC for mem" proved="true">
+ <proof prover="2"><result status="valid" time="0.613075" steps="10248"/></proof>
+ </goal>
+ <goal name="BinTree.add&#39;vc" expl="VC for add">
+ <proof prover="0"><result status="timeout" time="1.000000" steps="132423"/></proof>
+ <proof prover="1"><result status="timeout" time="1.000000" steps="1508594"/></proof>
+ <proof prover="2"><result status="timeout" time="1.000000" steps="12416"/></proof>
+ <transf name="split_vc" >
+  <goal name="add&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.054652" steps="136"/></proof>
+  </goal>
+  <goal name="add&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.032492" steps="40"/></proof>
+  </goal>
+  <goal name="add&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.042796" steps="54"/></proof>
+  </goal>
+  <goal name="add&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.062484" steps="261"/></proof>
+  </goal>
+  <goal name="add&#39;vc.4" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.076622" steps="520"/></proof>
+  </goal>
+  <goal name="add&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.052129" steps="205"/></proof>
+  </goal>
+  <goal name="add&#39;vc.6" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.079032" steps="413"/></proof>
+  </goal>
+  <goal name="add&#39;vc.7" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.051442" steps="136"/></proof>
+  </goal>
+  <goal name="add&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.045808" steps="40"/></proof>
+  </goal>
+  <goal name="add&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.035051" steps="54"/></proof>
+  </goal>
+  <goal name="add&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.056624" steps="263"/></proof>
+  </goal>
+  <goal name="add&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.045137" steps="207"/></proof>
+  </goal>
+  <goal name="add&#39;vc.12" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.081316" steps="531"/></proof>
+  </goal>
+  <goal name="add&#39;vc.13" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.067825" steps="423"/></proof>
+  </goal>
+  <goal name="add&#39;vc.14" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="add&#39;vc.14.0" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.036422" steps="54"/></proof>
+   </goal>
+   <goal name="add&#39;vc.14.1" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.148024" steps="1325"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="add&#39;vc.15" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.470332" steps="71668"/></proof>
+  </goal>
+  <goal name="add&#39;vc.16" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="add&#39;vc.16.0" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.074572" steps="401"/></proof>
+   </goal>
+   <goal name="add&#39;vc.16.1" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.035784" steps="52"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="add&#39;vc.17" expl="postcondition">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="121240"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1496179"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="6425"/></proof>
+  <transf name="split_vc" >
+   <goal name="add&#39;vc.17.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.461950" steps="68088"/></proof>
+   </goal>
+   <goal name="add&#39;vc.17.1" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="1.000000" steps="113158"/></proof>
+   <proof prover="1"><result status="timeout" time="1.000000" steps="1494937"/></proof>
+   <proof prover="2"><result status="timeout" time="1.000000" steps="9672"/></proof>
+   <transf name="split_vc" >
+    <goal name="add&#39;vc.17.1.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.031924" steps="55"/></proof>
+    </goal>
+    <goal name="add&#39;vc.17.1.1" expl="postcondition">
+    <proof prover="0"><result status="timeout" time="1.000000" steps="95929"/></proof>
+    <proof prover="1"><result status="timeout" time="1.000000" steps="1318240"/></proof>
+    <proof prover="2"><result status="timeout" time="1.000000" steps="14555"/></proof>
+    <transf name="split_vc" >
+     <goal name="add&#39;vc.17.1.1.0" expl="postcondition" proved="true">
+     <proof prover="2"><result status="valid" time="0.036680" steps="36"/></proof>
+     </goal>
+     <goal name="add&#39;vc.17.1.1.1" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="1.000000" steps="96368"/></proof>
+     <proof prover="1"><result status="timeout" time="1.000000" steps="1400993"/></proof>
+     <proof prover="2"><result status="timeout" time="1.000000" steps="13126"/></proof>
+     <transf name="split_vc" >
+      <goal name="add&#39;vc.17.1.1.1.0" expl="postcondition">
+      <proof prover="0"><result status="timeout" time="1.000000" steps="107324"/></proof>
+      <proof prover="1"><result status="timeout" time="1.000000" steps="1398679"/></proof>
+      <proof prover="2"><result status="timeout" time="1.000000" steps="12832"/></proof>
+      <transf name="split_vc" >
+       <goal name="add&#39;vc.17.1.1.1.0.0" expl="postcondition" proved="true">
+       <proof prover="2"><result status="valid" time="0.040171" steps="46"/></proof>
+       </goal>
+       <goal name="add&#39;vc.17.1.1.1.0.1" expl="postcondition">
+       <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="534425"/></proof>
+       <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="3770039"/></proof>
+       <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="106877"/></proof>
+       </goal>
+      </transf>
+      </goal>
+      <goal name="add&#39;vc.17.1.1.1.1" expl="postcondition">
+      <proof prover="0"><result status="timeout" time="1.000000" steps="105467"/></proof>
+      <proof prover="1"><result status="timeout" time="1.000000" steps="1397812"/></proof>
+      <proof prover="2"><result status="timeout" time="1.000000" steps="11798"/></proof>
+      <transf name="split_vc" >
+       <goal name="add&#39;vc.17.1.1.1.1.0" expl="postcondition" proved="true">
+       <proof prover="2"><result status="valid" time="0.042852" steps="46"/></proof>
+       </goal>
+       <goal name="add&#39;vc.17.1.1.1.1.1" expl="postcondition">
+       <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="234473"/></proof>
+       <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4023828"/></proof>
+       <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="111940"/></proof>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.remove&#39;vc" expl="VC for remove" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="remove&#39;vc.0" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.031562" steps="39"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036252" steps="42"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.2" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.085841" steps="584"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.079405" steps="519"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.4" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.052594" steps="136"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.041372" steps="40"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.6" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.037345" steps="57"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.059138" steps="264"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.8" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.080680" steps="510"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.051736" steps="206"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.10" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.075720" steps="406"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.11" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.041175" steps="136"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.12" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.033253" steps="40"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.13" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.040952" steps="57"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.14" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.063993" steps="266"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.15" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.052259" steps="206"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.16" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.114765" steps="823"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.17" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.073520" steps="421"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.18" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="remove&#39;vc.18.0" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.038220" steps="32"/></proof>
+   </goal>
+   <goal name="remove&#39;vc.18.1" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.127702" steps="1057"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="remove&#39;vc.19" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="remove&#39;vc.19.0" expl="postcondition" proved="true">
+   <proof prover="2"><result status="valid" time="0.036239" steps="53"/></proof>
+   </goal>
+   <goal name="remove&#39;vc.19.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="remove&#39;vc.19.1.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.056607" steps="290"/></proof>
+    </goal>
+    <goal name="remove&#39;vc.19.1.1" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="remove&#39;vc.19.1.1.0" expl="postcondition" proved="true">
+     <proof prover="2"><result status="valid" time="0.381057" steps="5128"/></proof>
+     </goal>
+     <goal name="remove&#39;vc.19.1.1.1" expl="postcondition" proved="true">
+     <proof prover="2"><result status="valid" time="0.118991" steps="956"/></proof>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="remove&#39;vc.20" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.119090" steps="28919"/></proof>
+  </goal>
+  <goal name="remove&#39;vc.21" expl="postcondition" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="remove&#39;vc.21.0" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="remove&#39;vc.21.0.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.032856" steps="33"/></proof>
+    </goal>
+    <goal name="remove&#39;vc.21.0.1" expl="postcondition" proved="true">
+    <transf name="split_vc" proved="true" >
+     <goal name="remove&#39;vc.21.0.1.0" expl="postcondition" proved="true">
+     <proof prover="2"><result status="valid" time="0.044367" steps="77"/></proof>
+     </goal>
+     <goal name="remove&#39;vc.21.0.1.1" expl="postcondition" proved="true">
+     <transf name="split_vc" proved="true" >
+      <goal name="remove&#39;vc.21.0.1.1.0" expl="postcondition" proved="true">
+      <transf name="split_vc" proved="true" >
+       <goal name="remove&#39;vc.21.0.1.1.0.0" expl="postcondition" proved="true">
+       <proof prover="2"><result status="valid" time="0.044284" steps="49"/></proof>
+       </goal>
+       <goal name="remove&#39;vc.21.0.1.1.0.1" expl="postcondition" proved="true">
+       <proof prover="2" timelimit="10" memlimit="4000"><result status="valid" time="4.292694" steps="35999"/></proof>
+       </goal>
+      </transf>
+      </goal>
+      <goal name="remove&#39;vc.21.0.1.1.1" expl="postcondition" proved="true">
+      <transf name="split_vc" proved="true" >
+       <goal name="remove&#39;vc.21.0.1.1.1.0" expl="postcondition" proved="true">
+       <proof prover="2"><result status="valid" time="0.042204" steps="49"/></proof>
+       </goal>
+       <goal name="remove&#39;vc.21.0.1.1.1.1" expl="postcondition" proved="true">
+       <proof prover="2" timelimit="10" memlimit="4000"><result status="valid" time="4.142381" steps="35194"/></proof>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="remove&#39;vc.21.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.453954" steps="68231"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="BinTree.subset_refl" proved="true">
+ <proof prover="2"><result status="valid" time="0.033154" steps="28"/></proof>
+ </goal>
+ <goal name="BinTree.subset_trans" proved="true">
+ <proof prover="2"><result status="valid" time="0.034007" steps="80"/></proof>
+ </goal>
+ <goal name="BinTree.subset&#39;vc" expl="VC for subset">
+ <proof prover="0"><result status="timeout" time="1.000000" steps="134759"/></proof>
+ <proof prover="1"><result status="timeout" time="1.000000" steps="1500879"/></proof>
+ <proof prover="2"><result status="timeout" time="1.000000" steps="14172"/></proof>
+ <transf name="split_vc" >
+  <goal name="subset&#39;vc.0" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.051145" steps="173"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.1" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036980" steps="45"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.2" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.054611" steps="176"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.3" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.041907" steps="47"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.4" expl="variant decrease">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="149275"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1633355"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="13200"/></proof>
+  <transf name="split_vc" >
+   <goal name="subset&#39;vc.4.0" expl="variant decrease">
+   <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="943220"/></proof>
+   <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4881295"/></proof>
+   <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="135081"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="subset&#39;vc.5" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.672549" steps="5799"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.6" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.051914" steps="202"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.7" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.039797" steps="52"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.8" expl="variant decrease">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="144230"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1551783"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="14929"/></proof>
+  <transf name="split_vc" >
+   <goal name="subset&#39;vc.8.0" expl="variant decrease">
+   <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="805526"/></proof>
+   <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4578690"/></proof>
+   <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="109726"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="subset&#39;vc.9" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.524705" steps="7731"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.10" expl="variant decrease" proved="true">
+  <proof prover="2"><result status="valid" time="0.053976" steps="203"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.11" expl="precondition" proved="true">
+  <proof prover="2"><result status="valid" time="0.036383" steps="52"/></proof>
+  </goal>
+  <goal name="subset&#39;vc.12" expl="postcondition">
+  <proof prover="0"><result status="timeout" time="1.000000" steps="128591"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="1424327"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="16210"/></proof>
+  <transf name="split_vc" >
+   <goal name="subset&#39;vc.12.0" expl="postcondition">
+   <proof prover="0"><result status="timeout" time="1.000000" steps="128868"/></proof>
+   <proof prover="1"><result status="timeout" time="1.000000" steps="1497566"/></proof>
+   <proof prover="2"><result status="timeout" time="1.000000" steps="15616"/></proof>
+   <transf name="split_vc" >
+    <goal name="subset&#39;vc.12.0.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.039738" steps="36"/></proof>
+    </goal>
+    <goal name="subset&#39;vc.12.0.1" expl="postcondition">
+    <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="1080282"/></proof>
+    <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="5601464"/></proof>
+    <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="35618"/></proof>
+    </goal>
+    <goal name="subset&#39;vc.12.0.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.035833" steps="36"/></proof>
+    </goal>
+    <goal name="subset&#39;vc.12.0.3" expl="postcondition">
+    <proof prover="0"><result status="timeout" time="1.000000" steps="105033"/></proof>
+    <proof prover="1"><result status="timeout" time="1.000000" steps="1312839"/></proof>
+    <proof prover="2"><result status="timeout" time="1.000000" steps="7395"/></proof>
+    <transf name="split_vc" >
+     <goal name="subset&#39;vc.12.0.3.0" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="1.000000" steps="131171"/></proof>
+     <proof prover="1"><result status="timeout" time="1.000000" steps="1356626"/></proof>
+     <proof prover="2"><result status="timeout" time="1.000000" steps="13909"/></proof>
+     <transf name="split_vc" >
+      <goal name="subset&#39;vc.12.0.3.0.0" expl="postcondition">
+      <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="643997"/></proof>
+      <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4473032"/></proof>
+      <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="59913"/></proof>
+      </goal>
+      <goal name="subset&#39;vc.12.0.3.0.1" expl="postcondition">
+      <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="828036"/></proof>
+      <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4838212"/></proof>
+      <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="62220"/></proof>
+      </goal>
+     </transf>
+     </goal>
+     <goal name="subset&#39;vc.12.0.3.1" expl="postcondition">
+     <proof prover="0"><result status="timeout" time="1.000000" steps="121990"/></proof>
+     <proof prover="1"><result status="timeout" time="1.000000" steps="1394957"/></proof>
+     <proof prover="2"><result status="timeout" time="1.000000" steps="13422"/></proof>
+     <transf name="split_vc" >
+      <goal name="subset&#39;vc.12.0.3.1.0" expl="postcondition">
+      <proof prover="0"><result status="timeout" time="1.000000" steps="137126"/></proof>
+      <proof prover="1"><result status="timeout" time="1.000000" steps="1399374"/></proof>
+      <proof prover="2"><result status="timeout" time="1.000000" steps="10761"/></proof>
+      <transf name="split_vc" >
+       <goal name="subset&#39;vc.12.0.3.1.0.0" expl="postcondition" proved="true">
+       <proof prover="0"><result status="valid" time="0.408421" steps="59539"/></proof>
+       </goal>
+       <goal name="subset&#39;vc.12.0.3.1.0.1" expl="postcondition">
+       <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="863226"/></proof>
+       <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4481475"/></proof>
+       <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="103265"/></proof>
+       </goal>
+      </transf>
+      </goal>
+      <goal name="subset&#39;vc.12.0.3.1.1" expl="postcondition">
+      <proof prover="0"><result status="timeout" time="1.000000" steps="136390"/></proof>
+      <proof prover="1"><result status="timeout" time="1.000000" steps="1398224"/></proof>
+      <proof prover="2"><result status="timeout" time="1.000000" steps="12606"/></proof>
+      <transf name="split_vc" >
+       <goal name="subset&#39;vc.12.0.3.1.1.0" expl="postcondition" proved="true">
+       <proof prover="0"><result status="valid" time="0.731875" steps="94106"/></proof>
+       </goal>
+       <goal name="subset&#39;vc.12.0.3.1.1.1" expl="postcondition">
+       <proof prover="0" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="873781"/></proof>
+       <proof prover="1" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="4307281"/></proof>
+       <proof prover="2" timelimit="10" memlimit="4000"><result status="timeout" time="10.000000" steps="127300"/></proof>
+       </goal>
+      </transf>
+      </goal>
+     </transf>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+   <goal name="subset&#39;vc.12.1" expl="postcondition" proved="true">
+   <transf name="split_vc" proved="true" >
+    <goal name="subset&#39;vc.12.1.0" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.051869" steps="36"/></proof>
+    </goal>
+    <goal name="subset&#39;vc.12.1.1" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.046835" steps="34"/></proof>
+    </goal>
+    <goal name="subset&#39;vc.12.1.2" expl="postcondition" proved="true">
+    <proof prover="2"><result status="valid" time="0.066008" steps="169"/></proof>
+    </goal>
+    <goal name="subset&#39;vc.12.1.3" expl="postcondition" proved="true">
+    <proof prover="0"><result status="valid" time="0.856253" steps="95637"/></proof>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
