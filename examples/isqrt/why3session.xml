@@ -2,57 +2,57 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="1" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
-<prover id="2" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="0" name="Eprover" version="2.0" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="3" name="Alt-Ergo" version="2.5.3" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="isqrt.ml"/>
 <theory name="Isqrt" proved="true">
  <goal name="sqr_non_neg" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_non_neg.0" proved="true">
-  <proof prover="1"><result status="valid" time="0.00" steps="7"/></proof>
+  <proof prover="3"><result status="valid" time="0.000000" steps="21"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="sqr_increasing" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_increasing.0" proved="true">
-  <proof prover="2"><result status="valid" time="0.09" steps="23105"/></proof>
+  <proof prover="0"><result status="valid" time="0.295701"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="sqr_sum" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="sqr_sum.0" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="56"/></proof>
+  <proof prover="3"><result status="valid" time="0.020000" steps="71"/></proof>
   </goal>
  </transf>
  </goal>
  <goal name="int_sqrt&#39;vc" expl="VC for int_sqrt" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="int_sqrt&#39;vc.0" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="4"/></proof>
+  <proof prover="3"><result status="valid" time="0.010000" steps="14"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.1" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="7"/></proof>
+  <proof prover="3"><result status="valid" time="0.010000" steps="20"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.2" expl="loop invariant init" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="14"/></proof>
+  <proof prover="3"><result status="valid" time="0.010000" steps="27"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.3" expl="loop variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="34"/></proof>
+  <proof prover="3"><result status="valid" time="0.010000" steps="52"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.4" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="16"/></proof>
+  <proof prover="3"><result status="valid" time="0.010000" steps="26"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.5" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="17"/></proof>
+  <proof prover="3"><result status="valid" time="0.010000" steps="27"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.6" expl="loop invariant preservation" proved="true">
-  <proof prover="1"><result status="valid" time="0.02" steps="41"/></proof>
+  <proof prover="3"><result status="valid" time="0.020000" steps="54"/></proof>
   </goal>
   <goal name="int_sqrt&#39;vc.7" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="18"/></proof>
+  <proof prover="3"><result status="valid" time="0.010000" steps="31"/></proof>
   </goal>
  </transf>
  </goal>

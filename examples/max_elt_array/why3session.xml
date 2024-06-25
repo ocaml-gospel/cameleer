@@ -2,12 +2,49 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="0" name="CVC4" version="1.7" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.5.3" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="max_elt_array.ml"/>
 <theory name="Max_elt_array" proved="true">
  <goal name="max&#39;vc" expl="VC for max" proved="true">
- <proof prover="0"><result status="valid" time="0.07" steps="24487"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="max&#39;vc.0" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.021775" steps="14"/></proof>
+  </goal>
+  <goal name="max&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.027364" steps="20"/></proof>
+  </goal>
+  <goal name="max&#39;vc.2" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.022086" steps="24"/></proof>
+  </goal>
+  <goal name="max&#39;vc.3" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.032732" steps="24"/></proof>
+  </goal>
+  <goal name="max&#39;vc.4" expl="loop variant decrease" proved="true">
+  <proof prover="1"><result status="valid" time="0.030914" steps="28"/></proof>
+  </goal>
+  <goal name="max&#39;vc.5" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.025667" steps="28"/></proof>
+  </goal>
+  <goal name="max&#39;vc.6" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.040093" steps="73"/></proof>
+  </goal>
+  <goal name="max&#39;vc.7" expl="loop variant decrease" proved="true">
+  <proof prover="1"><result status="valid" time="0.032064" steps="28"/></proof>
+  </goal>
+  <goal name="max&#39;vc.8" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.040771" steps="28"/></proof>
+  </goal>
+  <goal name="max&#39;vc.9" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.046379" steps="91"/></proof>
+  </goal>
+  <goal name="max&#39;vc.10" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.032010" steps="24"/></proof>
+  </goal>
+  <goal name="max&#39;vc.11" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.035288" steps="48"/></proof>
+  </goal>
+ </transf>
  </goal>
 </theory>
 </file>

@@ -2,27 +2,34 @@
 <!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
 "http://why3.lri.fr/why3session.dtd">
 <why3session shape_version="6">
-<prover id="1" name="Alt-Ergo" version="2.4.0" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="0" name="Alt-Ergo" version="2.5.3" timelimit="5" steplimit="0" memlimit="1000"/>
 <file format="ocaml" proved="true">
 <path name=".."/><path name="tree_height_cps.ml"/>
 <theory name="Tree_height_cps" proved="true">
  <goal name="height_cps&#39;vc" expl="VC for height_cps" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="height_cps&#39;vc.0" expl="variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="43"/></proof>
+  <proof prover="0"><result status="valid" time="0.010000" steps="69"/></proof>
   </goal>
   <goal name="height_cps&#39;vc.1" expl="variant decrease" proved="true">
-  <proof prover="1"><result status="valid" time="0.00" steps="43"/></proof>
+  <proof prover="0"><result status="valid" time="0.000000" steps="69"/></proof>
   </goal>
   <goal name="height_cps&#39;vc.2" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.37" steps="8285"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="height_cps&#39;vc.2.0" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.037393" steps="23"/></proof>
+   </goal>
+   <goal name="height_cps&#39;vc.2.1" expl="postcondition" proved="true">
+   <proof prover="0"><result status="valid" time="0.036369" steps="60"/></proof>
+   </goal>
+  </transf>
   </goal>
  </transf>
  </goal>
  <goal name="height_tree&#39;vc" expl="VC for height_tree" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="height_tree&#39;vc.0" expl="postcondition" proved="true">
-  <proof prover="1"><result status="valid" time="0.01" steps="4"/></proof>
+  <proof prover="0"><result status="valid" time="0.010000" steps="21"/></proof>
   </goal>
  </transf>
  </goal>
