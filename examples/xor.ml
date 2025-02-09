@@ -1,5 +1,5 @@
 (*@ open Seq       *)
-(*@ open SeqOfList *)
+(* @ open SeqOfList *)
 
 (*@ predicate map (f: 'a -> 'a -> 'b) (a1 a2: 'a seq) (r: 'b seq) =
       length a1 = length a2 = length r &&
@@ -33,7 +33,7 @@ module Make (X : XOR) : CIPHER with type elt = X.t = struct
 
   (*@ function xor (x y: elt) : elt = X.xor x y *)
 
-  (*@ function to_seq (t: t) : elt seq = of_list t *)
+  (* @ function to_seq (t: t) : elt seq = of_list t *)
 
   let rec cipher key msg =
     match (key, msg) with
