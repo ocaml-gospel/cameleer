@@ -240,6 +240,8 @@ module Stdlib
 
     function of_list (l: list 'a) : set 'a = elements l
 
+    function cardinal (s: t 'a) : int = FS.cardinal s
+
   end
 
   scope Power
