@@ -186,6 +186,8 @@ module Stdlib
 
   type sequence 'a = seq 'a
 
+  use export seq.OfList
+
   scope Sequence
 
     type t 'a = sequence 'a
