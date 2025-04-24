@@ -1,5 +1,9 @@
 module Stdlib
 
+  (* use export seq.Seq *)
+  (* use export seq.OfList *)
+
+
   use export int.Int
   use export int.ComputerDivision
   use export int.MinMax
@@ -11,6 +15,7 @@ module Stdlib
   use export option.Option
   use export ref.Ref
   use export ref.Refint
+
 
   let invalid_arg (s: string)
     raises  { Invalid_argument }
@@ -176,6 +181,30 @@ module Stdlib
 
     val constant max_array_length : int
     axiom non_neg_max_array_length : 0 < max_array_length
+
+  end
+
+  type sequence 'a = seq 'a
+
+  scope Sequence
+
+    type t 'a = sequence 'a
+
+    function length (s: t 'a) : int
+
+    function empty : t 'a
+
+    function init (n: int) (f: int -> 'a) : t 'a
+
+    function singleton (x: 'a) : t 'a
+
+    function cons (x: 'a) (s: t 'a) : t 'a
+
+    function snoc (s: t 'a) (x: 'a) : t 'a
+
+    function append (s1 s2: t 'a) : t 'a
+
+    function get (s: t 'a) (i: int) : 'a
 
   end
 
