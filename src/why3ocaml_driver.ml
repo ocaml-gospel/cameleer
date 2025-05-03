@@ -41,8 +41,8 @@ let () =
       ("infix ::", "Cons");
       ("::", "Cons");
       (* FIXME: understand why this happens in program symbols *)
-      ("infix @", "infix ++");
-      ("@", "infix ++");
+      ("infix @", "infix +++");
+      ("@", "infix +++");
       ("!", "prefix !");
       (":=", "infix :=");
       ("|>", "infix |>");

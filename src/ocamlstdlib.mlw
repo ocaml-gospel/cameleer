@@ -1,8 +1,48 @@
 module Stdlib
 
-  (* use export seq.Seq *)
-  (* use export seq.OfList *)
+  use import seq.Seq as Seq
 
+  type sequence 'a = seq 'a
+
+  function (++) (s s': sequence 'a) : sequence 'a =
+    Seq.(++) s s'
+
+  use export seq.OfList
+
+  scope Sequence
+
+    type t 'a = Seq.seq 'a
+
+    function length (s: t 'a) : int =
+      Seq.length s
+
+    function empty : t 'a =
+      Seq.empty
+
+    function init (n: int) (f: int -> 'a) : t 'a =
+      Seq.create n f
+
+    function singleton (x: 'a) : t 'a =
+      Seq.singleton x
+
+    function cons (x: 'a) (s: t 'a) : t 'a =
+      Seq.cons x s
+
+    function snoc (s: t 'a) (x: 'a) : t 'a =
+      Seq.snoc s x
+
+    function append (s1 s2: t 'a) : t 'a =
+      Seq.(++) s1 s2
+
+    function get (s: t 'a) (i: int) : 'a =
+      Seq.get s i
+
+   use import seq.Reverse as SR
+
+    function rev (s: t 'a) : t 'a =
+      SR.reverse s
+
+  end
 
   use export int.Int
   use export int.ComputerDivision
@@ -10,12 +50,10 @@ module Stdlib
   use export int.Abs
   use export mach.int.Int
   use export list.List
-  use export list.Append
   use export ocaml.Exceptions
   use export option.Option
   use export ref.Ref
   use export ref.Refint
-
 
   let invalid_arg (s: string)
     raises  { Invalid_argument }
@@ -23,6 +61,11 @@ module Stdlib
   = raise (Invalid_argument s)
 
   val ignore (_: 'a) : unit
+
+  use import list.Append as LA
+
+  let function (+++) (l1 l2: list 'a) : list 'a =
+    LA.(++) l1 l2
 
   let function fst (x: ('a, 'b)) : 'a =
     let r, _ = x in r
@@ -181,32 +224,6 @@ module Stdlib
 
     val constant max_array_length : int
     axiom non_neg_max_array_length : 0 < max_array_length
-
-  end
-
-  type sequence 'a = seq 'a
-
-  use export seq.OfList
-
-  scope Sequence
-
-    type t 'a = sequence 'a
-
-    function length (s: t 'a) : int
-
-    function empty : t 'a
-
-    function init (n: int) (f: int -> 'a) : t 'a
-
-    function singleton (x: 'a) : t 'a
-
-    function cons (x: 'a) (s: t 'a) : t 'a
-
-    function snoc (s: t 'a) (x: 'a) : t 'a
-
-    function append (s1 s2: t 'a) : t 'a
-
-    function get (s: t 'a) (i: int) : 'a
 
   end
 
