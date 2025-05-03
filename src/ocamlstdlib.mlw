@@ -16,6 +16,9 @@ module Stdlib
     function length (s: t 'a) : int =
       Seq.length s
 
+    predicate (==) (s1 s2: sequence 'a) =
+      Seq.(==) s1 s2
+
     function empty : t 'a =
       Seq.empty
 
