@@ -1,11 +1,31 @@
 module Stdlib
 
+  use export int.Int
+  use export int.ComputerDivision
+  use export int.MinMax
+  use export int.Abs
+  use export mach.int.Int
+  use export list.List
+  use export ocaml.Exceptions
+  use export option.Option
+  use export ref.Ref
+  use export ref.Refint
+
   use import seq.Seq as Seq
 
   type sequence 'a = seq 'a
 
   function (++) (s s': sequence 'a) : sequence 'a =
     Seq.(++) s s'
+
+  function ([..]) (s: sequence 'a) (i1 i2: int) : sequence 'a =
+    Seq.([..]) s i1 i2
+
+  function ([_..]) (s: sequence 'a) (i: int) : sequence 'a =
+    Seq.([_..]) s i
+
+  function ([.._]) (s: sequence 'a) (i: int) : sequence 'a =
+    Seq.([.._]) s i
 
   use export seq.OfList
 
@@ -40,23 +60,12 @@ module Stdlib
     function get (s: t 'a) (i: int) : 'a =
       Seq.get s i
 
-   use import seq.Reverse as SR
+    use import seq.Reverse as SR
 
     function rev (s: t 'a) : t 'a =
       SR.reverse s
 
   end
-
-  use export int.Int
-  use export int.ComputerDivision
-  use export int.MinMax
-  use export int.Abs
-  use export mach.int.Int
-  use export list.List
-  use export ocaml.Exceptions
-  use export option.Option
-  use export ref.Ref
-  use export ref.Refint
 
   let invalid_arg (s: string)
     raises  { Invalid_argument }

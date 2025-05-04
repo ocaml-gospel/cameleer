@@ -37,6 +37,9 @@ let () =
       ("mixfix {}", "empty");
       ("mixfix {:_:}", "singleton");
       ("mixfix [_]", "mixfix []");
+      ("mixfix [_.._]", "mixfix [..]");
+      ("mixfix [.._]", "mixfix [.._]");
+      ("mixfix [_..]", "mixfix [_..]");
       ("[]", "Nil");
       ("infix ::", "Cons");
       ("::", "Cons");
