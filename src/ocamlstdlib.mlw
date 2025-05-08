@@ -18,6 +18,9 @@ module Stdlib
   function (++) (s s': sequence 'a) : sequence 'a =
     Seq.(++) s s'
 
+  function ([]) (s: sequence 'a) (i: int) : 'a =
+    Seq.([]) s i
+
   function ([..]) (s: sequence 'a) (i1 i2: int) : sequence 'a =
     Seq.([..]) s i1 i2
 
