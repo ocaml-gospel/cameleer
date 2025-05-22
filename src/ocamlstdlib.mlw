@@ -63,6 +63,11 @@ module Stdlib
     function get (s: t 'a) (i: int) : 'a =
       Seq.get s i
 
+    use import seq.Mem as SM
+
+    predicate mem (x: 'a) (s: t 'a) =
+      SM.mem x s
+
     use import seq.Reverse as SR
 
     function rev (s: t 'a) : t 'a =
