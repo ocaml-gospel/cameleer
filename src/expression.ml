@@ -652,6 +652,9 @@ let rec expression_desc info expr_loc expr_desc =
   | Sexp_while (e_test, e_body, Some loop_annotation) ->
       let mk_variant t = (T.term false t, None) in
       let inv = List.map (T.term false) loop_annotation.loop_invariant in
+      let checks = List.map (T.term false)
+          loop_annotation.loop_checks_invariant in
+      let inv = inv @ checks in
       let var = List.map mk_variant loop_annotation.loop_variant in
       mk_ewhile (expression info e_test) inv var (expression info e_body)
   | Sexp_for (pat, expr_lower, expr_upper, flag, expr_body, None) ->
@@ -668,7 +671,10 @@ let rec expression_desc info expr_loc expr_desc =
       let flag = direction_flag flag in
       let expr_body = expression info expr_body in
       let invariant = List.map (T.term false) loop_spec.loop_invariant in
-      mk_efor id expr_lower flag expr_upper invariant expr_body
+      let checks = List.map (T.term false)
+          loop_spec.loop_checks_invariant in
+      let inv = invariant @ checks in
+      mk_efor id expr_lower flag expr_upper inv expr_body
   | Sexp_letexception (exn_constructor, expr) ->
       let id, pty, mask = exception_constructor exn_constructor in
       mk_eexn id pty mask (expression info expr)
