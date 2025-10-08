@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"https://www.why3.org/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="Alt-Ergo" version="2.6.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Z3" version="4.15.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="ocaml" proved="true">
+<path name=".."/><path name="most_frequent.ml"/>
+<theory name="Most_frequent" proved="true">
+ <goal name="numof&#39;vc" expl="VC for numof" proved="true">
+ <proof prover="1"><result status="valid" time="0.012404" steps="95436"/></proof>
+ </goal>
+ <goal name="numof_bounds" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="numof_bounds.0" proved="true">
+  <transf name="induction" proved="true" arg1="b" arg2="from" arg3="a">
+   <goal name="numof_bounds.0.0" expl="base case" proved="true">
+   <proof prover="1"><result status="valid" time="0.006135" steps="8914"/></proof>
+   </goal>
+   <goal name="numof_bounds.0.1" expl="recursive case" proved="true">
+   <proof prover="0"><result status="valid" time="0.019415" steps="101"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="numof_bounds.1" proved="true">
+  <transf name="induction" proved="true" arg1="b" arg2="from" arg3="a">
+   <goal name="numof_bounds.1.0" expl="base case" proved="true">
+   <proof prover="1"><result status="valid" time="0.003806" steps="8926"/></proof>
+   </goal>
+   <goal name="numof_bounds.1.1" expl="recursive case" proved="true">
+   <proof prover="0"><result status="valid" time="0.018920" steps="100"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="numof_append" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="numof_append.0" proved="true">
+  <transf name="induction" proved="true" arg1="c" arg2="from" arg3="a">
+   <goal name="numof_append.0.0" expl="base case" proved="true">
+   <proof prover="0"><result status="valid" time="0.022246" steps="73"/></proof>
+   </goal>
+   <goal name="numof_append.0.1" expl="recursive case" proved="true">
+   <proof prover="0"><result status="valid" time="0.027930" steps="248"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="numof_left_no_add" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="numof_left_no_add.0" proved="true">
+  <transf name="induction" proved="true" arg1="b" arg2="from" arg3="a">
+   <goal name="numof_left_no_add.0.0" expl="base case" proved="true">
+   <proof prover="1"><result status="valid" time="0.004795" steps="9025"/></proof>
+   </goal>
+   <goal name="numof_left_no_add.0.1" expl="recursive case" proved="true">
+   <proof prover="0"><result status="valid" time="0.023458" steps="221"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="numof_left_add" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="numof_left_add.0" proved="true">
+  <transf name="induction" proved="true" arg1="b" arg2="from" arg3="a">
+   <goal name="numof_left_add.0.0" expl="base case" proved="true">
+   <proof prover="1"><result status="valid" time="0.003979" steps="9078"/></proof>
+   </goal>
+   <goal name="numof_left_add.0.1" expl="recursive case" proved="true">
+   <proof prover="0"><result status="valid" time="0.031298" steps="418"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="empty" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="empty.0" proved="true">
+  <transf name="induction" proved="true" arg1="b" arg2="from" arg3="a">
+   <goal name="empty.0.0" expl="base case" proved="true">
+   <proof prover="1"><result status="valid" time="0.012775" steps="108318"/></proof>
+   </goal>
+   <goal name="empty.0.1" expl="recursive case" proved="true">
+   <proof prover="1"><result status="valid" time="0.015866" steps="124701"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="most_frequent&#39;vc" expl="VC for most_frequent" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="most_frequent&#39;vc.0" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.004051" steps="9067"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.017154" steps="119700"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.2" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.004009" steps="9288"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.3" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.015330" steps="116306"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.4" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.018218" steps="118420"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.5" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.016251" steps="120043"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.6" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.014595" steps="134393"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.7" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.049175" steps="703"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.8" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.005648" steps="36812"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.9" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.318662" steps="3860"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.10" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.051847" steps="683"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.11" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.024007" steps="154879"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.12" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.525355" steps="5041"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.13" expl="loop invariant preservation" proved="true">
+  <proof prover="1" timelimit="10" memlimit="4000"><result status="valid" time="3.329212" steps="3041380"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.14" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.098190" steps="1906"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.15" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.587369" steps="5956"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.16" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.053883" steps="993"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.17" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.012327" steps="120101"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.18" expl="out of loop bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.014894" steps="109183"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="Make.most_frequent&#39;vc" expl="VC for most_frequent" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="most_frequent&#39;vc.0" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.001921" steps="9517"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.1" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.014667" steps="129666"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.2" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.006894" steps="9738"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.3" expl="loop invariant init" proved="true">
+  <proof prover="1"><result status="valid" time="0.014337" steps="123372"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.4" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.016273" steps="124187"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.5" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.013716" steps="126836"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.6" expl="index in array bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.013617" steps="137234"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.7" expl="loop invariant preservation" proved="true">
+  <proof prover="1" timelimit="10" memlimit="4000"><result status="valid" time="5.228502" steps="3222793"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.8" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.007501" steps="38820"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.9" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.433213" steps="4846"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.10" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.024265" steps="193906"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.11" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.157397" steps="915"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.12" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.481309" steps="5913"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.13" expl="loop invariant preservation" proved="true">
+  <proof prover="1" timelimit="5" memlimit="2000"><result status="valid" time="1.635622" steps="2288488"/></proof>
+  <transf name="inline_goal" proved="true" >
+   <goal name="most_frequent&#39;vc.13.0" expl="loop invariant preservation" proved="true">
+   <proof prover="0" timelimit="5"><result status="valid" time="0.368732" steps="4085"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="most_frequent&#39;vc.14" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.089957" steps="1605"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.15" expl="loop invariant preservation" proved="true">
+  <proof prover="0"><result status="valid" time="0.500075" steps="6726"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.16" expl="postcondition" proved="true">
+  <proof prover="0"><result status="valid" time="0.070183" steps="986"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.17" expl="postcondition" proved="true">
+  <proof prover="1"><result status="valid" time="0.022333" steps="126894"/></proof>
+  </goal>
+  <goal name="most_frequent&#39;vc.18" expl="out of loop bounds" proved="true">
+  <proof prover="1"><result status="valid" time="0.018378" steps="114426"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>
