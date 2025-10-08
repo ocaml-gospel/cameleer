@@ -30,7 +30,7 @@
       a < b -> p a -> numof p a b = 1 + numof p (a+1) b *)
 
 (*@ lemma empty :
-      forall p : (int -> bool), a b : integer.
+      forall p : (integer -> bool), a b : integer.
       (forall n : int. a <= n < b -> not p n) -> numof p a b = 0 *)
 
 (*@ function numof_eq (a: 'a array) (v: 'a) (l u: integer) : integer =
