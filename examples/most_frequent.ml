@@ -31,7 +31,7 @@
 
 (*@ lemma empty :
       forall p : (integer -> bool), a b : integer.
-      (forall n : int. a <= n < b -> not p n) -> numof p a b = 0 *)
+      (forall n : integer. a <= n < b -> not p n) -> numof p a b = 0 *)
 
 (*@ function numof_eq (a: 'a array) (v: 'a) (l u: integer) : integer =
       numof (fun i -> a.(i) = v) l u *)
