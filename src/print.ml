@@ -1,5 +1,5 @@
 open Format
-open Ast
+open Ml_lang
 
 (* some useful combinators *)
 let pp_newline fmt () = fprintf fmt "@\n"
