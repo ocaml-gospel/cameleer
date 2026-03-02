@@ -1,0 +1,3 @@
+(executable
+ (libraries gospel why3 cameleer)
+ (name cli))
