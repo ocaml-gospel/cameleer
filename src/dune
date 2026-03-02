@@ -1,9 +1,11 @@
 (library
  (public_name cameleer)
- (libraries ppxlib gospel why3))
+ (libraries ppxlib gospel why3)
+ (modules_without_implementation ml_lang))
 
 (install
  (section share_root)
  (files
   (ocamlstdlib.mlw as why3/stdlib/ocamlstdlib.mlw))
  (package cameleer))
+
