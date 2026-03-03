@@ -1,20 +1,16 @@
 open Ppxlib
 open Gospel
 open Asttypes
-(* open Parsetree *)
-(* open Why3 *)
-(* open Ptree *)
-(* open Vspec *)
 module Tt = Tterm
 module E = Expression_coma
-(* module O = Odecl *)
 
 module ML = Ml_lang
 
+let (^~) a b = fun c -> a c b
+
 let rec_flag b = ML.(if b then Recursive else NonRecursive)
 
-let param (_loc, pre_id, _ty) =
-  E.preid pre_id
+let param (_loc, pre_id, _ty) = E.preid pre_id
 
 let function_ f =
   let _ld_loc = E.location f.Uast.fun_loc in
@@ -25,7 +21,7 @@ let function_ f =
   let _fun_spec = f.fun_spec in
   match f.fun_def with None -> assert false
   | Some fun_def ->
-    ML.DFun (rec_flag, ld_ident, ld_params, E.term fun_def)
+      ML.DFun (rec_flag, ld_ident, ld_params, E.term fun_def)
 
 let s_structure, s_signature =
   let rec s_signature s_sig =
@@ -45,19 +41,15 @@ let s_structure, s_signature =
     s_structure_item_desc (E.location sstr_loc) sstr_desc
   and s_structure_item_desc loc str_item_desc =
     match str_item_desc with
-    | Str_value (Nonrecursive, svb_list)
-    | Str_value (Recursive, svb_list) ->
-        ignore svb_list; []
-        (* let rs_kind, id_fun_expr_list = id_expr_rs_kind_of_svb svb_list in
-        let ghost = is_ghost_let svb_list in
-        [
-          O.mk_drec loc (List.map (E.mk_fun_def ghost rs_kind) id_fun_expr_list);
-        ] *)
+    | Str_value (b, svb_list) ->
+        let b = if b = Recursive then ML.Recursive else ML.NonRecursive in
+        let k = ML.{ id_name = "return"; id_loc = E.dummy_loc } in
+        List.map (E.s_value_binding b ^~ k) svb_list
     | Str_type (rec_flag, type_decl_list) ->
-        ignore (rec_flag, type_decl_list); assert false
+        ignore (rec_flag, type_decl_list); []
     | Str_function f ->
         [ ML.{ decl_loc = loc; decl_desc = function_ f } ]
-    | _ -> assert false
+    | _ -> [] (* TODO *)
 
   and s_structure s_str =
     List.flatten (List.map s_structure_item s_str)

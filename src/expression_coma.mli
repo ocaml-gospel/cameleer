@@ -17,12 +17,11 @@ val atom_num   : int -> atom_desc
 
 val string_of_longident : Longident.t -> string
 
+val term : Uast.term -> expr
+
 val mk_atom : ?loc:location -> atom_desc -> atom
 val mk_expr : ?loc:location -> expr_desc -> expr
 
-val term : Uast.term -> expr
+val mk_decl : rec_flag * id * id list * expr -> declaration
 
-val mk_decl :
-  rec_flag * id * id list * expr -> declaration
-
-val s_value_binding : Uast.s_value_binding -> id * expr
+val s_value_binding : rec_flag -> Uast.s_value_binding -> id -> declaration

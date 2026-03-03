@@ -50,7 +50,7 @@ let rec pp_expr fmt (e: expr) =
       fprintf fmt "@[<hov 2>%a @[%a@]@]" pp_expr f
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true)) al
   | EIf (a, e1, e2) ->
-      fprintf fmt "if @[%a@] then@ @[%a@]@ else@ @[%a@]"
+      fprintf fmt "if @[%a@] then@;<1 2>@[%a@]@ else@;<1 2>@[%a@]"
         (pp_atom ~paren:false) a pp_expr e1 pp_expr e2
   | EMatch (a, pel) ->
       fprintf fmt "@[match @[%a@] with@\n@[%a@]@]"
@@ -62,7 +62,7 @@ and pp_atom ?(paren=false) fmt (a: atom) =
     fprintf fmt (protect_on paren "@[%a %a %a@]") pp_expr e1 pp_op op
       pp_expr e2
   | ACst c -> fprintf fmt "%a" pp_constant c
-  | AFun (x, e) ->
+  | AFun (_, x, e) ->
     fprintf fmt (protect_on paren "@[fun %s -> @[<hov 2>%a@]@]")
       x.id_name pp_expr e
   | AId x -> fprintf fmt "%s" x.id_name
@@ -90,7 +90,7 @@ let pp_id fmt {id_name; _} =
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with
   | DFun (rec_flag, id, args, e) ->
-      fprintf fmt "@[<hov 2>let%a %s %a@ = %a@]"
+      fprintf fmt "@[let%a %s %a@ =@;<1 2>@[%a@]@]"
         pp_rec rec_flag id.id_name
         (pp_print_list ~pp_sep:pp_space pp_id) args
         pp_expr e
