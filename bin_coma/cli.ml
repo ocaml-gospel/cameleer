@@ -40,7 +40,6 @@ let main file c =
     String.capitalize_ascii (Filename.chop_extension f) in
   let f = read_file file mod_name c in
   let f = Declaration_coma.s_structure f in
-  let pp_decl _fmt _d = failwith "printer not implemented yet." in
-  Format.printf "%a" (pp_print_list pp_decl) f
+  printf "%a@." (pp_print_list ~pp_sep:pp_print_newline Print.pp_decl) f
 
-let () = main fname stdin
+let () = main fname (open_in fname)
