@@ -158,6 +158,36 @@ let is_atomic e =
   | Sexp_constant _ | Sexp_ident _ | Sexp_construct _ -> true
   | _ -> false
 
+let construct_to_atom ?(loc=dummy_loc) c = match c with
+  | ({ txt = Lident "true"; _ },  None) -> mk_atom ~loc atom_true
+  | ({ txt = Lident "false"; _ }, None) -> mk_atom ~loc atom_false
+  | ({ txt = Lident "()"; _ }, None) -> assert false
+  | ({ txt; loc }, None) ->
+      let id = {id_name = string_of_longident txt; id_loc = location loc} in
+      mk_atom ~loc:id.id_loc (ACons (id, []))
+  | ({ txt; loc }, Some Uast.{ spexp_desc = Sexp_tuple expr_list; _ }) ->
+      let id = {id_name = string_of_longident txt; id_loc = location loc} in
+      let l = List.map (fun e ->
+        assert (is_atomic e); (* ANF assumption *)
+        match e.spexp_desc with
+        | Sexp_constant c ->
+            mk_atom (constant c)
+        | Sexp_ident {txt; loc} ->
+            let loc = location loc in
+            mk_atom ~loc @@
+            AId { id_name = string_of_longident txt ; id_loc = loc}
+        | Sexp_construct ({ txt; loc }, None) ->
+            let loc = location loc in
+            let id = {id_name = string_of_longident txt; id_loc = loc} in
+            mk_atom ~loc @@
+            ACons (id, [])
+        | _ -> assert false (* TODO other construct cases with recursive call*)
+      ) expr_list in
+      mk_atom ~loc:id.id_loc (ACons (id, l))
+  | (_id, Some _e) ->
+      (* mk_eidapp (longident id.txt) [ expression info e ] *)
+      assert false
+
 (** CPS translation where [k] is a [CFun] callable *)
 let rec expr (e: Uast.s_expression) k : expr_desc =
   let callk a = EApp (k, a, []) in
@@ -195,41 +225,9 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
                 mk_expr @@ EIf (mk_atom (AId z),e2,e3))) in
       expr e1 kk
   | Sexp_ifthenelse (_, _, None) -> assert false
-  | Sexp_construct ({ txt = Lident "true"; _ }, None) ->
-      callk [mk_atom ~loc atom_true]
-  | Sexp_construct ({ txt = Lident "false"; _ }, None) ->
-      callk [mk_atom ~loc atom_false]
-  | Sexp_construct ({ txt = Lident "()"; _ }, None) -> assert false
-  | Sexp_construct ({ txt; loc }, None) ->
-      let id = {id_name = string_of_longident txt; id_loc = location loc} in
-      let a = ACons (id, []) in
-      callk [mk_atom ~loc:id.id_loc a]
-
-  | Sexp_construct ({ txt; loc }, Some { spexp_desc = Sexp_tuple expr_list; _ }) ->
-      let id = {id_name = string_of_longident txt; id_loc = location loc} in
-      let l = List.map (fun e ->
-        assert (is_atomic e); (* ANF assumption *)
-        match e.spexp_desc with
-        | Sexp_constant c ->
-            mk_atom (constant c)
-        | Sexp_ident {txt; loc} ->
-            let loc = location loc in
-            mk_atom ~loc @@
-            AId { id_name = string_of_longident txt ; id_loc = loc}
-        | Sexp_construct ({ txt; loc }, None) ->
-            let loc = location loc in
-            let id = {id_name = string_of_longident txt; id_loc = loc} in
-            mk_atom ~loc @@
-            ACons (id, [])
-        | _ -> assert false
-      ) expr_list in
-      let a = ACons (id, l) in
-      callk [mk_atom ~loc:id.id_loc a]
-
-  | Sexp_construct (_id, Some _e) ->
-      assert false
-      (* mk_eidapp (longident id.txt) [ expression info e ] *)
-
+  | Sexp_construct (l,e) ->
+      let a = construct_to_atom (l,e) in
+      callk [a]
   | Sexp_let (_, _, _)          -> assert false
   | Sexp_function _             -> assert false
   | Sexp_fun (_, _, _, _, _)    -> failwith "unreachable"
@@ -296,37 +294,9 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
                 mk_expr @@ EIf (mk_atom (AId z),e2,e3)) in
       expr e1 kk
   | Sexp_ifthenelse (_, _, None) -> assert false
-  | Sexp_construct ({ txt = Lident "true"; _ }, None) ->
-      callk [mk_atom ~loc atom_true]
-  | Sexp_construct ({ txt = Lident "false"; _ }, None) ->
-      callk [mk_atom ~loc atom_false]
-  | Sexp_construct ({ txt = Lident "()"; _ }, None) -> assert false
-  | Sexp_construct ({ txt; loc }, None) ->
-      let id = {id_name = string_of_longident txt; id_loc = location loc} in
-      let a = ACons (id, []) in
-      callk [mk_atom ~loc:id.id_loc a]
-  | Sexp_construct ({ txt; loc }, Some { spexp_desc = Sexp_tuple expr_list; _ }) ->
-      let id = {id_name = string_of_longident txt; id_loc = location loc} in
-      let l = List.map (fun e ->
-        assert (is_atomic e); (* ANF assumption *)
-        match e.spexp_desc with
-        | Sexp_constant c ->
-            mk_atom (constant c)
-        | Sexp_ident {txt; loc} ->
-            let loc = location loc in
-            mk_atom ~loc @@
-            AId { id_name = string_of_longident txt ; id_loc = loc}
-        | Sexp_construct ({ txt; loc }, None) ->
-            let loc = location loc in
-            let id = {id_name = string_of_longident txt; id_loc = loc} in
-            mk_atom ~loc @@
-            ACons (id, [])
-        | _ -> assert false
-      ) expr_list in
-      let a = ACons (id, l) in
-      callk [mk_atom ~loc:id.id_loc a]
-  | Sexp_construct (_id, Some _e) ->
-      assert false (* mk_eidapp (longident id.txt) [ expression info e ] *)
+  | Sexp_construct (l,e) ->
+      let a = construct_to_atom (l,e) in
+      callk [a]
   | Sexp_let (Nonrecursive, _svb, _e) ->  assert false
   | Sexp_let (Recursive, _svb, _e) ->  assert false
   | Sexp_function _             -> assert false
@@ -350,13 +320,14 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
              AId { id_name = string_of_longident txt ; id_loc = loc})
             :: acc
         | Sexp_tuple _ -> assert false (* TODO *)
-        | Sexp_construct (_, _) -> assert false (* TODO *)
+        | Sexp_construct (l, e) ->
+            let a = construct_to_atom (l,e) in
+            a :: acc
         | _ -> assert false
       ) args [mk_atom (AId k)] in
       EApp  (c, l, [])
 
   | Sexp_apply (e, args) ->
-
       let _loc = location e.spexp_loc in
       let _l = List.map (fun (_,e) ->
         assert (is_atomic e); (* ANF assumption *)
@@ -367,6 +338,9 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
             let loc = location loc in
             mk_atom ~loc @@
             AId { id_name = string_of_longident txt ; id_loc = loc}
+        | Sexp_tuple _ -> assert false (* TODO *)
+        | Sexp_construct (l, e) ->
+            construct_to_atom (l,e)
         | _ -> assert false
       ) args in
       assert false

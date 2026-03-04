@@ -8,13 +8,16 @@ let sum x y =
 type t = A | B | C
 
 let sum_t x y =
-  if x then
+  if sum true y = x then
     if y then A else B
   else C
 
 let match_t x y =
   match x with
-  | A -> sum 1 2
-  | B -> sum 2 1
-  | x -> if y then 100 else 200
-  | _ -> if y then 1 else 2
+  | A -> sum true false
+  | B -> sum false false
+  | x ->
+    (match y with
+     | true -> sum true false
+     | _ -> if y then 100 else 200)
+
