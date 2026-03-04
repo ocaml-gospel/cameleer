@@ -324,7 +324,23 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
   | Sexp_let (Recursive, _svb, _e) ->  assert false
   | Sexp_function _             -> assert false
   | Sexp_apply (_, _)           -> assert false
-  | Sexp_match (e, cases)       ->
+  | Sexp_match (e, cases) when is_atomic e ->
+      let a = match e.spexp_desc with
+        | Sexp_constant c ->
+            constant c
+        | Sexp_ident {txt; _} ->
+             AId { id_name = string_of_longident txt ; id_loc = loc}
+        | _ -> assert false in
+      let a  = mk_atom ~loc:(location e.spexp_loc) a in
+      let cases = List.map
+        (fun Uast.{spc_lhs; spc_rhs; _} ->
+          let loc = location spc_rhs.spexp_loc in
+          let ploc = location spc_lhs.ppat_loc in
+          let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
+          pat, mk_expr ~loc @@ expr2 spc_rhs k)
+        cases in
+      EMatch (a, cases)
+  | Sexp_match (e, cases) ->
       let cases = List.map
         (fun Uast.{spc_lhs; spc_rhs; _} ->
           let loc = location spc_rhs.spexp_loc in
