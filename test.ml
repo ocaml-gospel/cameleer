@@ -8,7 +8,8 @@ let sum x y =
 type t = A | B | C
 
 let sum_t x y =
-  if sum true y = x then
+  (* if sum true y = x then *)
+  if x then
     if y then A else B
   else C
 
@@ -21,3 +22,8 @@ let match_t x y =
      | true -> sum true false
      | _ -> if y then 100 else 200)
 
+let sum_t2 x y =
+  (* if sum true y = x then *)
+  if if y then true else false then
+    if x then A else B
+  else C

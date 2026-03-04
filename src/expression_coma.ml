@@ -297,9 +297,9 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
   | Sexp_construct (l,e) ->
       let a = construct_to_atom (l,e) in
       callk [a]
-  | Sexp_let (Nonrecursive, _svb, _e) ->  assert false
-  | Sexp_let (Recursive, _svb, _e) ->  assert false
-  | Sexp_function _             -> assert false
+  | Sexp_let (Nonrecursive, _svb, _e) ->  assert false (* TODO *)
+  | Sexp_let (Recursive, _svb, _e) ->  assert false (* TODO *)
+  | Sexp_function _             -> assert false (* TODO *)
   | Sexp_apply (e, args) when is_atomic e ->
       let loc = location e.spexp_loc in
       let c = mk_callable ~loc @@ match e.spexp_desc with
