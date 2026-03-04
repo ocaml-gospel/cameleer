@@ -1,6 +1,6 @@
 (* dune exec bin_coma/cli.exe -- ./test.ml *)
 
-let band x y =
+let sum x y =
   if x then
-    if y then 1 else 0
+    if y then 2 else 1
   else 0

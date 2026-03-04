@@ -15,6 +15,9 @@ let atom_true = ACst cst_true
 let atom_false = ACst cst_false
 let atom_num n = ACst (cst_num n)
 
+let gen_id ?(loc=dummy_loc) () =
+  { id_name = gen_symbol (); id_loc = loc}
+
 let mk_atom ?(loc=dummy_loc) atom_desc =
   { atom_loc=loc ; atom_desc }
 
@@ -144,6 +147,7 @@ let is_atomic e =
   | Sexp_constant _ | Sexp_ident _ -> true
   | _ -> false
 
+(** CPS translation where [k] is a context *)
 let rec expr (e: Uast.s_expression) k : expr_desc =
   let callk a = EApp (k, a) in
   let loc = location e.spexp_loc in
@@ -152,16 +156,31 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
   | Sexp_ident {txt; _} ->
       let id = { id_name = string_of_longident txt ; id_loc = loc} in
       callk [mk_atom ~loc (AId id)]
-  | Sexp_ifthenelse (_e1, _e2, Some _e3) ->
-      (* let () = assert false in
-      let loc_e1 = location e1.spexp_loc in
-      let e1 = mk_expr ~loc:loc_e1 (expr e1) in
-      let e2 = mk_expr ~loc:(location e2.spexp_loc) (expr e2) in
-      let e3 = mk_expr ~loc:(location e3.spexp_loc) (expr e3) in
-      let id = { id_name = gen_symbol (); id_loc = loc_e1} in
-      let pid = mk_pattern ~loc:loc_e1 (PVar id) in
-      ELet (pid, e1, test_bool id e2 e3) *)
-      assert false
+  | Sexp_ifthenelse (e1, e2, Some e3) when is_atomic e1 ->
+      let kid = gen_id () in
+      let a = match e1.spexp_desc with
+        | Sexp_constant c ->
+            constant c
+        | Sexp_ident {txt; _} ->
+             AId { id_name = string_of_longident txt ; id_loc = loc}
+        | _ -> assert false in
+      let a  = mk_atom ~loc:(location e1.spexp_loc) a in
+      let e2 = mk_expr ~loc:(location e2.spexp_loc) (expr2 e2 kid) in
+      let e3 = mk_expr ~loc:(location e3.spexp_loc) (expr2 e3 kid) in
+      ELet (mk_pattern ~loc @@ PVar kid, k,
+            mk_expr @@ EIf (a,e2,e3))
+  | Sexp_ifthenelse (e1, e2, Some e3) ->
+      let kid = gen_id () in
+      let e2 = mk_expr ~loc:(location e2.spexp_loc) (expr2 e2 kid) in
+      let e3 = mk_expr ~loc:(location e3.spexp_loc) (expr2 e3 kid) in
+      let z = gen_id ~loc:(location e1.spexp_loc) () in
+      let kk = mk_expr_atom @@
+          AFun (true, z, mk_expr @@
+            ELet (mk_pattern ~loc @@ PVar kid,
+                  k,
+                  mk_expr @@ EIf (mk_atom (AId z),e2,e3)))
+      in
+      expr e1 kk
   | Sexp_ifthenelse (_, _, None) -> assert false
   | Sexp_construct (_, _)       -> assert false
   | Sexp_let (_, _, _)          -> assert false
@@ -199,6 +218,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
   | Sexp_extension _
   | Sexp_letop _ -> assert false
 
+(** CPS translation where [k] is a name *)
 and expr2 (e: Uast.s_expression) k : expr_desc =
   let loc = location e.spexp_loc in
   let callk a =
@@ -224,7 +244,7 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
       let loc_e1 = location e1.spexp_loc in
       let e2 = mk_expr ~loc:(location e2.spexp_loc) (expr2 e2 k) in
       let e3 = mk_expr ~loc:(location e3.spexp_loc) (expr2 e3 k) in
-      let id = { id_name = gen_symbol (); id_loc = loc_e1} in
+      let id = gen_id ~loc:loc_e1 () in
       let a = mk_atom ~loc:loc_e1 (AId id) in
       let kk =
         mk_expr_atom ~loc @@
@@ -244,7 +264,7 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
           pat, mk_expr ~loc @@ expr2 spc_rhs k)
         cases in
-      let id = { id_name = gen_symbol (); id_loc = loc} in
+      let id = gen_id ~loc () in
       let kk =
         mk_expr_atom ~loc @@
         AFun (true, id, mk_expr (EMatch (mk_atom ~loc (AId id), cases)))
