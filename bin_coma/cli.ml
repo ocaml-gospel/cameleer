@@ -40,6 +40,9 @@ let main file c =
     String.capitalize_ascii (Filename.chop_extension f) in
   let f = read_file file mod_name c in
   let f = Declaration_coma.s_structure f in
-  printf "%a@." (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f
+  let fc = List.map Ml2coma.declaration f in
+  printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
+  printf "-------@\n";
+  printf "%a@." Pp_coma.pp_program fc
 
 let () = main fname (open_in fname)
