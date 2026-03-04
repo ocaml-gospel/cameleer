@@ -12,9 +12,9 @@ let sum_t x y =
     if y then A else B
   else C
 
-let match_t x =
+let match_t x y =
   match x with
-  | A -> 1
-  | B -> 2
-  | x -> 3
-  | _ -> 4
+  | A -> sum 1 2
+  | B -> sum 2 1
+  | x -> if y then 100 else 200
+  | _ -> if y then 1 else 2

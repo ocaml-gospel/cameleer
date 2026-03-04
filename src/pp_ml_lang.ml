@@ -25,6 +25,10 @@ let pp_op fmt (op: op) =
   | OPEq -> fprintf fmt "="
   | OPLe -> fprintf fmt "<="
 
+let pp_id fmt id =
+  fprintf fmt "%s" id.id_name
+
+
 let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   match ppat_desc with
   | PWild ->
@@ -51,15 +55,20 @@ let rec pp_expr fmt (e: expr) =
   | ELet (x, e1, e2) ->
       fprintf fmt "let %a =@ @[<hov 2>%a@] in@ @[%a@]"
         (pp_pattern ~paren:false) x pp_expr e1 pp_expr e2
-  | EApp (f, al) ->
-      fprintf fmt "@[<hov 2>%a @[%a@]@]" pp_expr f
+  | EApp (c, al, cl) ->
+      fprintf fmt "@[<hov 2>%a @[%a@] @[%a@]@]" pp_callable c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true)) al
+        (pp_print_list ~pp_sep:pp_space pp_callable) cl
   | EIf (a, e1, e2) ->
       fprintf fmt "if @[%a@] then@;<1 2>@[%a@]@ else@;<1 2>@[%a@]"
         (pp_atom ~paren:false) a pp_expr e1 pp_expr e2
   | EMatch (a, pel) ->
       fprintf fmt "@[match @[%a@] with@\n@[%a@]@]"
         (pp_atom ~paren:false) a (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
+  | ELetK (k, x, e1, e2) ->
+      fprintf fmt "let %s %s =@ @[<hov 2>%a@] in@ @[%a@]"
+        k.id_name x.id_name
+        pp_expr e1 pp_expr e2
 
 and pp_atom ?(paren=false) fmt (a: atom) =
   match a.atom_desc with
@@ -84,6 +93,15 @@ and pp_atom ?(paren=false) fmt (a: atom) =
 and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 4>| %a ->@ @[%a@]@]"
     (pp_pattern ~paren:false) p pp_expr e
+
+and pp_callable fmt c =
+  match c.callable_desc with
+  | CId id -> fprintf fmt "%a" pp_id id
+  | CFun (xs, ks, e) ->
+      fprintf fmt "@[fun %a %a -> @[<hov 2>%a@]@]"
+        (pp_print_list pp_id) xs
+        (pp_print_list pp_id) ks
+        pp_expr e
 
 let pp_rec fmt = function
   | Recursive -> fprintf fmt " rec"

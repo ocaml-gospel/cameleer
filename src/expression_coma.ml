@@ -21,6 +21,9 @@ let gen_id ?(loc=dummy_loc) () =
 let mk_atom ?(loc=dummy_loc) atom_desc =
   { atom_loc=loc ; atom_desc }
 
+let mk_callable ?(loc=dummy_loc) callable_desc =
+  { callable_loc=loc ; callable_desc }
+
 let rec string_of_longident = function
   | Longident.Lident s -> s
   | Ldot (t, s) -> string_of_longident t ^ s
@@ -108,9 +111,6 @@ let rec term (t: Uast.term) =
     | Tscope (_, _)     -> assert false
     | Told _            -> assert false
 
-let test_atom a y n =
-  mk_expr ~loc:a.atom_loc (EIf (a,y,n))
-
 let collect_params expr =
   let rec loop acc expr =
     match expr.Uast.spexp_desc with
@@ -155,12 +155,12 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
 
 let is_atomic e =
   match e.Uast.spexp_desc with
-  | Sexp_constant _ | Sexp_ident _ -> true
+  | Sexp_constant _ | Sexp_ident _ | Sexp_construct _ -> true
   | _ -> false
 
-(** CPS translation where [k] is a context *)
+(** CPS translation where [k] is a [CFun] callable *)
 let rec expr (e: Uast.s_expression) k : expr_desc =
-  let callk a = EApp (k, a) in
+  let callk a = EApp (k, a, []) in
   let loc = location e.spexp_loc in
   match e.spexp_desc with
   | Sexp_constant c -> callk [mk_atom ~loc (constant c)]
@@ -169,28 +169,30 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
       callk [mk_atom ~loc (AId id)]
   | Sexp_ifthenelse (e1, e2, Some e3) when is_atomic e1 ->
       let kid = gen_id () in
+      let aid = gen_id () in
       let a = match e1.spexp_desc with
-        | Sexp_constant c ->
-            constant c
         | Sexp_ident {txt; _} ->
              AId { id_name = string_of_longident txt ; id_loc = loc}
+        | Sexp_constant _
+        | Sexp_construct _ -> assert false (* impossible (type error) *)
         | _ -> assert false in
       let a  = mk_atom ~loc:(location e1.spexp_loc) a in
       let e2 = mk_expr ~loc:(location e2.spexp_loc) (expr2 e2 kid) in
       let e3 = mk_expr ~loc:(location e3.spexp_loc) (expr2 e3 kid) in
-      ELet (mk_pattern ~loc @@ PVar kid, k,
-            mk_expr @@ EIf (a,e2,e3))
+      ELetK (kid, aid,
+             mk_expr @@ EApp (k, [mk_atom @@ AId aid], []),
+             mk_expr @@ EIf (a,e2,e3))
   | Sexp_ifthenelse (e1, e2, Some e3) ->
       let kid = gen_id () in
       let e2 = mk_expr ~loc:(location e2.spexp_loc) (expr2 e2 kid) in
       let e3 = mk_expr ~loc:(location e3.spexp_loc) (expr2 e3 kid) in
       let z = gen_id ~loc:(location e1.spexp_loc) () in
-      let kk = mk_expr_atom @@
-          AFun (true, z, mk_expr @@
-            ELet (mk_pattern ~loc @@ PVar kid,
-                  k,
-                  mk_expr @@ EIf (mk_atom (AId z),e2,e3)))
-      in
+      let z2 = gen_id () in
+      let az2 = mk_atom (AId z2) in
+      let kk = mk_callable @@
+          CFun ([z],[],
+                mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
+                mk_expr @@ EIf (mk_atom (AId z),e2,e3))) in
       expr e1 kk
   | Sexp_ifthenelse (_, _, None) -> assert false
   | Sexp_construct ({ txt = Lident "true"; _ }, None) ->
@@ -214,6 +216,11 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
             let loc = location loc in
             mk_atom ~loc @@
             AId { id_name = string_of_longident txt ; id_loc = loc}
+        | Sexp_construct ({ txt; loc }, None) ->
+            let loc = location loc in
+            let id = {id_name = string_of_longident txt; id_loc = loc} in
+            mk_atom ~loc @@
+            ACons (id, [])
         | _ -> assert false
       ) expr_list in
       let a = ACons (id, l) in
@@ -262,8 +269,8 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
 and expr2 (e: Uast.s_expression) k : expr_desc =
   let loc = location e.spexp_loc in
   let callk a =
-    let k = mk_expr_atom ~loc:k.id_loc (AId k) in
-    EApp (k, a) in
+    let k = mk_callable ~loc:k.id_loc (CId k) in
+    EApp (k, a, []) in
   match e.spexp_desc with
   | Sexp_constant c -> callk [mk_atom ~loc (constant c)]
   | Sexp_ident {txt; _} ->
@@ -271,24 +278,22 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
       callk [mk_atom ~loc a]
   | Sexp_ifthenelse (e1, e2, Some e3) when is_atomic e1 ->
       let a = match e1.spexp_desc with
-        | Sexp_constant c ->
-            constant c
         | Sexp_ident {txt; _} ->
              AId { id_name = string_of_longident txt ; id_loc = loc}
+        | Sexp_constant _
+        | Sexp_construct _ -> assert false (* impossible (type error) *)
         | _ -> assert false in
       let a  = mk_atom ~loc:(location e1.spexp_loc) a in
       let e2 = mk_expr ~loc:(location e2.spexp_loc) (expr2 e2 k) in
       let e3 = mk_expr ~loc:(location e3.spexp_loc) (expr2 e3 k) in
       EIf (a,e2,e3)
   | Sexp_ifthenelse (e1, e2, Some e3) ->
-      let loc_e1 = location e1.spexp_loc in
       let e2 = mk_expr ~loc:(location e2.spexp_loc) (expr2 e2 k) in
       let e3 = mk_expr ~loc:(location e3.spexp_loc) (expr2 e3 k) in
-      let id = gen_id ~loc:loc_e1 () in
-      let a = mk_atom ~loc:loc_e1 (AId id) in
-      let kk =
-        mk_expr_atom ~loc @@
-        AFun (true, id, test_atom a e2 e3) in
+      let z = gen_id ~loc:(location e1.spexp_loc) () in
+      let kk = mk_callable @@
+          CFun ([z],[],
+                mk_expr @@ EIf (mk_atom (AId z),e2,e3)) in
       expr e1 kk
   | Sexp_ifthenelse (_, _, None) -> assert false
   | Sexp_construct ({ txt = Lident "true"; _ }, None) ->
@@ -300,7 +305,6 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
       let id = {id_name = string_of_longident txt; id_loc = location loc} in
       let a = ACons (id, []) in
       callk [mk_atom ~loc:id.id_loc a]
-
   | Sexp_construct ({ txt; loc }, Some { spexp_desc = Sexp_tuple expr_list; _ }) ->
       let id = {id_name = string_of_longident txt; id_loc = location loc} in
       let l = List.map (fun e ->
@@ -312,18 +316,68 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
             let loc = location loc in
             mk_atom ~loc @@
             AId { id_name = string_of_longident txt ; id_loc = loc}
+        | Sexp_construct ({ txt; loc }, None) ->
+            let loc = location loc in
+            let id = {id_name = string_of_longident txt; id_loc = loc} in
+            mk_atom ~loc @@
+            ACons (id, [])
         | _ -> assert false
       ) expr_list in
       let a = ACons (id, l) in
       callk [mk_atom ~loc:id.id_loc a]
-
   | Sexp_construct (_id, Some _e) ->
-      assert false
-      (* mk_eidapp (longident id.txt) [ expression info e ] *)
+      assert false (* mk_eidapp (longident id.txt) [ expression info e ] *)
   | Sexp_let (Nonrecursive, _svb, _e) ->  assert false
   | Sexp_let (Recursive, _svb, _e) ->  assert false
   | Sexp_function _             -> assert false
-  | Sexp_apply (_, _)           -> assert false
+  | Sexp_apply (e, args) when is_atomic e ->
+      let loc = location e.spexp_loc in
+      let c = mk_callable ~loc @@ match e.spexp_desc with
+        | Sexp_ident {txt; _} ->
+             CId { id_name = string_of_longident txt ; id_loc = loc}
+        | Sexp_constant _
+        | Sexp_construct _ -> assert false (* impossible (type error) *)
+        | _ -> assert false in
+      let l = List.fold_right (fun (_,e) acc ->
+        assert (is_atomic e);
+        (* ANF assumption *)
+        match e.Uast.spexp_desc with
+        | Sexp_constant c ->
+            mk_atom (constant c) :: acc
+        | Sexp_ident {txt; loc} ->
+            let loc = location loc in
+            (mk_atom ~loc @@
+             AId { id_name = string_of_longident txt ; id_loc = loc})
+            :: acc
+        | Sexp_tuple _ -> assert false (* TODO *)
+        | Sexp_construct (_, _) -> assert false (* TODO *)
+        | _ -> assert false
+      ) args [mk_atom (AId k)] in
+      EApp  (c, l, [])
+
+  | Sexp_apply (e, args) ->
+
+      let _loc = location e.spexp_loc in
+      let _l = List.map (fun (_,e) ->
+        assert (is_atomic e); (* ANF assumption *)
+        match e.spexp_desc with
+        | Sexp_constant c ->
+            mk_atom (constant c)
+        | Sexp_ident {txt; loc} ->
+            let loc = location loc in
+            mk_atom ~loc @@
+            AId { id_name = string_of_longident txt ; id_loc = loc}
+        | _ -> assert false
+      ) args in
+      assert false
+      (* EApp  (mk_expr ~loc @@ expr2 e k, l) *)
+      (* let id_e = gen_id ~loc () in
+      let kk =
+        mk_expr_atom ~loc @@
+        AFun (true, id_e, EApp (mk_expr_atom ~loc (AId id_e)))
+      in
+      expr e kk *)
+
   | Sexp_match (e, cases) when is_atomic e ->
       let a = match e.spexp_desc with
         | Sexp_constant c ->
@@ -348,11 +402,10 @@ and expr2 (e: Uast.s_expression) k : expr_desc =
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
           pat, mk_expr ~loc @@ expr2 spc_rhs k)
         cases in
-      let id = gen_id ~loc () in
-      let kk =
-        mk_expr_atom ~loc @@
-        AFun (true, id, mk_expr (EMatch (mk_atom ~loc (AId id), cases)))
-      in
+      let z = gen_id ~loc () in
+      let kk = mk_callable @@
+          CFun ([z],[],
+                mk_expr @@ EMatch (mk_atom (AId z),cases)) in
       expr e kk
   | Sexp_unreachable            -> assert false
   | Sexp_assert _               -> assert false

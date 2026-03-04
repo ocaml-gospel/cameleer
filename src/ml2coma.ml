@@ -64,14 +64,17 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
     | EAssert -> CEAssert
     | ELet (x, e1, e2) ->
         CELet (pattern x, expr fn_name e1, expr fn_name e2) (* TODO *)
-    | EApp (f, al) ->
-        CEApp (expr fn_name f, List.map (atom fn_name) al) (* TODO *)
+    | EApp (c, al, _cl) ->
+        CEApp (callable c, List.map (atom fn_name) al) (* TODO *)
     | EIf (a, e1, e2) ->
         CEIf (atom fn_name a, expr fn_name e1, expr fn_name e2) (* TODO *)
     | EMatch (a, pel) ->
         register_handler fn_name a pel;
-        CEDestruct (atom fn_name a, List.map mk_ppat_expr pel) in
+        CEDestruct (atom fn_name a, List.map mk_ppat_expr pel)
+    | _ -> failwith "TODO" in
   mk_cexpr (expr_desc e_desc)
+
+and callable _ = assert false
 
 and pattern p =
   let desc =

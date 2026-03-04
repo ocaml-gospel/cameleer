@@ -7,10 +7,12 @@ module T = Cameleer.Uterm
 
 let fname = ref None
 let debug = ref false
+let coma = ref false
 
 let spec =
   [
     ("--debug", Arg.Unit (fun () -> debug := true), "print debug information");
+    ("--coma", Arg.Unit (fun () -> coma := true), "compile to Coma");
   ]
 
 let usage_msg = sprintf "%s <file>.ml\nCompile <file> to Coma\n" Sys.argv.(0)
@@ -40,9 +42,12 @@ let main file c =
     String.capitalize_ascii (Filename.chop_extension f) in
   let f = read_file file mod_name c in
   let f = Declaration_coma.s_structure f in
-  let fc = List.map Ml2coma.declaration f in
   printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
-  printf "-------@\n";
-  printf "%a@." Pp_coma.pp_program fc
+
+  if !coma then begin
+    let fc = List.map Ml2coma.declaration f in
+    printf "-------@\n";
+    printf "%a@." Pp_coma.pp_program fc
+  end
 
 let () = main fname (open_in fname)

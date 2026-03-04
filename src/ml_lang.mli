@@ -30,8 +30,9 @@ type expr = {
 and expr_desc =
   | EAtom of atom
   | EAssert
-  | ELet of pattern * expr * expr
-  | EApp of expr * atom list   (* function application *)
+  | ELet  of pattern * expr * expr                  (* let p = e in e        *)
+  | ELetK of id * id * expr * expr                  (* let_cont h x = e in e *)
+  | EApp  of callable * atom list * callable list   (* k a…a k…k *)
   | EIf of atom * expr * expr
   | EMatch of atom * (pattern * expr) list
 
@@ -47,6 +48,16 @@ and atom_desc =
   | AFun of bool * id * expr
   | ATuple of atom list
   | ACons of id * atom list
+
+and callable = {
+  callable_loc: location;
+  callable_desc: callable_desc;
+}
+
+and callable_desc =
+  | CId  of id
+  | CFun of id list * id list * expr
+            (* data parameters, kont parameters, body *)
 
 type rec_flag = Recursive | NonRecursive
 
