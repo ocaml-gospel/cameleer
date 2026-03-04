@@ -121,15 +121,26 @@ let collect_params expr =
   in
   loop [] expr
 
-let pattern (p: Parsetree.pattern) = match p.ppat_desc with
-  | Ppat_any -> PWild
-  | Ppat_var _ -> PWild
-  | Ppat_constant _ -> PWild
-
+let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
+  | Ppat_any ->
+      PWild
+  | Ppat_var {txt; loc} ->
+      PVar { id_name = txt; id_loc= location loc}
+  | Ppat_construct ({txt; loc}, args) ->
+      let args = match args with
+        | Some ([], { ppat_desc = Ppat_tuple pl; _} ) ->
+            List.map (fun p -> mk_pattern (pattern p)) pl
+        | Some ([], p) -> [mk_pattern (pattern p)]
+        | None -> []
+        | _ -> assert false in
+      let id = { id_name = string_of_longident txt; id_loc = location loc } in
+      PCons (id, args)
+  | Ppat_tuple pl ->
+      let pl = List.map (fun p -> mk_pattern (pattern p)) pl in
+      PTuple pl
+  | Ppat_constant _
   | Ppat_interval (_, _)
   | Ppat_alias (_, _)
-  | Ppat_tuple _
-  | Ppat_construct (_, _)
   | Ppat_variant (_, _)
   | Ppat_record (_, _)
   | Ppat_array _

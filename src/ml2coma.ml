@@ -5,6 +5,7 @@ let rec pattern_to_args p =
   | PVar id -> [id]
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
   | PWild -> []
+  | PTuple _ -> failwith "to be completed"
 
 (* ! PATTERN MATCHING HANDLERS CONSTRUCTION *)
 
@@ -30,6 +31,7 @@ let case_of_branch p =
   | PVar id         -> (id, [])
   | PCons (cid, ps) -> (cid, List.concat(List.map pattern_to_args ps))
   | PWild           -> ({ id_name = "_"; id_loc = p.ppat_loc }, [])
+  | PTuple _ -> failwith "to be completed"
 
 let register_handler fn_name a cases =
   match a.atom_desc with
@@ -76,7 +78,8 @@ and pattern p =
     match p.ppat_desc with
     | PVar id -> CPVar id
     | PCons (id, args) -> CPCons (id, List.map pattern args)
-    | PWild -> CPWild in
+    | PWild -> CPWild
+    | PTuple _ -> failwith "to be completed" in
   {cppat_loc = p.ppat_loc; cppat_desc = desc;}
 
 let declaration d =

@@ -20,6 +20,7 @@ and pattern_desc =
   | PWild                       (* _ *)
   | PVar of id                  (* x *)
   | PCons of id * pattern list  (* Cons(x, xs) *)
+  | PTuple of pattern list      (* p1, p2, … *)
 
 type expr = {
   expr_loc: location;

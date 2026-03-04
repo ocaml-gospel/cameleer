@@ -27,15 +27,20 @@ let pp_op fmt (op: op) =
 
 let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   match ppat_desc with
-  | PWild -> fprintf fmt "_"
-  | PVar x -> fprintf fmt "%s" x.id_name
+  | PWild ->
+      fprintf fmt "_"
+  | PVar x ->
+      fprintf fmt "%s" x.id_name
   | PCons (id, []) ->
-    fprintf fmt "%s" id.id_name
+      fprintf fmt "%s" id.id_name
   | PCons (id, [a]) ->
-    fprintf fmt "%s %a" id.id_name (pp_pattern ~paren:true) a
+      fprintf fmt "%s %a" id.id_name (pp_pattern ~paren:true) a
   | PCons (id, args) ->
-    fprintf fmt (protect_on paren "%s @[(%a)@]") id.id_name
-      (pp_print_list ~pp_sep:pp_coma pp_pattern) args
+      fprintf fmt (protect_on paren "%s @[(%a)@]") id.id_name
+        (pp_print_list ~pp_sep:pp_coma pp_pattern) args
+  | PTuple (args) ->
+      fprintf fmt (protect_on paren "@[(%a)@]")
+        (pp_print_list ~pp_sep:pp_coma pp_pattern) args
 
 let rec pp_expr fmt (e: expr) =
   match e.expr_desc with
@@ -59,22 +64,22 @@ let rec pp_expr fmt (e: expr) =
 and pp_atom ?(paren=false) fmt (a: atom) =
   match a.atom_desc with
   | ABinop (e1, op, e2) ->
-    fprintf fmt (protect_on paren "@[%a %a %a@]") pp_expr e1 pp_op op
-      pp_expr e2
+      fprintf fmt (protect_on paren "@[%a %a %a@]") pp_expr e1 pp_op op
+        pp_expr e2
   | ACst c -> fprintf fmt "%a" pp_constant c
   | AFun (_, x, e) ->
-    fprintf fmt (protect_on paren "@[fun %s -> @[<hov 2>%a@]@]")
-      x.id_name pp_expr e
+      fprintf fmt (protect_on paren "@[fun %s -> @[<hov 2>%a@]@]")
+        x.id_name pp_expr e
   | AId x -> fprintf fmt "%s" x.id_name
   | ATuple al ->
-    fprintf fmt "@[(%a)@]" (pp_print_list ~pp_sep:pp_coma pp_atom) al
+      fprintf fmt "@[(%a)@]" (pp_print_list ~pp_sep:pp_coma pp_atom) al
   | ACons (c, []) -> fprintf fmt "%s" c.id_name
   | ACons (c, [a]) ->
-    fprintf fmt (protect_on paren "%s %a") c.id_name
-      (pp_atom ~paren) a
+      fprintf fmt (protect_on paren "%s %a") c.id_name
+        (pp_atom ~paren) a
   | ACons (c, al) ->
-    fprintf fmt (protect_on paren "%s @[(%a)@]") c.id_name
-      (pp_print_list ~pp_sep:pp_coma pp_atom) al
+      fprintf fmt (protect_on paren "%s @[(%a)@]") c.id_name
+        (pp_print_list ~pp_sep:pp_coma pp_atom) al
 
 and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 4>| %a ->@ @[%a@]@]"
