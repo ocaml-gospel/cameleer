@@ -45,7 +45,7 @@ let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
       fprintf fmt (protect_on paren "%s @[(%a)@]") id.id_name
         (pp_print_list ~pp_sep:pp_coma pp_pattern) args
   | PTuple (args) ->
-      fprintf fmt (protect_on paren "@[(%a)@]")
+      fprintf fmt (protect_on paren "@[%a@]")
         (pp_print_list ~pp_sep:pp_coma pp_pattern) args
 
 let rec pp_expr fmt (e: expr) =
@@ -64,9 +64,13 @@ let rec pp_expr fmt (e: expr) =
   | EIf (a, e1, e2) ->
       fprintf fmt "if @[%a@] then@;<1 2>@[%a@]@ else@;<1 2>@[%a@]"
         (pp_atom ~paren:false) a pp_expr e1 pp_expr e2
-  | EMatch (a, pel) ->
+  | EMatch (al, pel) ->
+      (* List.iter (fun (p, _) ->
+        Format.eprintf "DEBUG pattern: %a\n%!" (pp_pattern ~paren:false) p
+      ) pel; *)
       fprintf fmt "@[match @[%a@] with@\n@[%a@]@]"
-        (pp_atom ~paren:false) a (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
+        (pp_print_list ~pp_sep:pp_coma (pp_atom ~paren:false)) al 
+        (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
   | ELetK (k, x, e1, e2) ->
       fprintf fmt "let %s %s =@ @[<hov 2>%a@] in@ @[%a@]"
         k.id_name x.id_name

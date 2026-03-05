@@ -47,6 +47,12 @@ let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
       let non_wild_args = List.filter not_wild args in
       fprintf fmt "@[fun %a@]@ "
         (pp_print_list ~pp_sep:pp_space pp_pattern) non_wild_args (* TODO *)
+  | CPTuple args ->
+      let non_wild_args = List.filter (fun p -> match p.cppat_desc with
+        | CPWild -> false
+        | _ -> true) args in
+      fprintf fmt "@[fun %a@]@ "
+        (pp_print_list ~pp_sep:pp_space pp_pattern) non_wild_args (* TODO *)
 
 let pp_id fmt {id_name; _} = fprintf fmt "%s" id_name
 
@@ -65,14 +71,14 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (fun fmt e -> pp_expr fmt e) f
         (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:true)) al
   | CEIf (a, e1, e2) ->
-      fprintf fmt "if @[%a@] @\n (-> %a) @\n @[(%a)@]"
+      fprintf fmt "if @[%a@] @\n (-> %a) @\n @[(-> %a)@]"
         (pp_atom ~paren:false ~curly:true) a
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
   | CEDestruct (a, pel) ->
       fprintf fmt "@[%s @[%a@]@\n@[%a@]@]"
         (Ml2coma.handler_name_of_id (_fn_name))
-        (pp_atom ~paren:false ~curly:true) a
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
 
 and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
@@ -136,9 +142,9 @@ let pp_handler_case fmt (case_id, vars) =
             (pp_print_list ~pp_sep:pp_space pp_id) vars
 
 let pp_handler fmt name (h : Ml2coma.handler) =
-  fprintf fmt "@[<hov 2>let %s (%a)@\n @[%a@]\n= any@]"
+  fprintf fmt "@[<hov 2>let %s %a@\n @[%a@]\n= any@]"
     name
-    pp_id h.arg
+    (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id ~paren:true fmt id)) h.args
     (pp_print_list ~pp_sep:pp_newline pp_handler_case) h.cases
 
 let pp_program fmt =

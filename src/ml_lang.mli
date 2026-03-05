@@ -37,7 +37,7 @@ and expr_desc =
   | ELetK of id * id * expr * expr                  (* let_cont h x = e in e *)
   | EApp  of callable * atom list * callable list   (* k a…a k…k *)
   | EIf of atom * expr * expr
-  | EMatch of atom * (pattern * expr) list
+  | EMatch of atom list * (pattern * expr) list
 
 and atom = {
   atom_loc: location;
@@ -97,6 +97,7 @@ and cpattern_desc =
   | CPWild                       (* _ *)
   | CPVar of id                  (* x *)
   | CPCons of id * cpattern list (* Cons(x, xs) *)
+  | CPTuple of cpattern list      (* p1, p2, … *)
 
 type cexpr = {
   cexpr_loc: location;
@@ -109,7 +110,7 @@ and cexpr_desc =
   | CELet of cpattern * cexpr * cexpr
   | CEApp of cexpr * catom list   (* function application *)
   | CEIf of catom * cexpr * cexpr
-  | CEDestruct of catom * (info_p * cexpr) list
+  | CEDestruct of catom list * (info_p * cexpr) list
 
 and catom = {
   catom_loc: location;

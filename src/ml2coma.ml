@@ -5,15 +5,15 @@ let rec pattern_to_args p =
   | PVar id -> [id]
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
   | PWild -> []
-  | PTuple _ -> failwith "to be completed"
+  | PTuple ps -> List.concat(List.map pattern_to_args ps)
 
 (* ! PATTERN MATCHING HANDLERS CONSTRUCTION *)
 
 (* e.g. for `match t with Empty -> ... | Node(l,_,r) -> ...`
-        arg   = "t"
+        args   = "[t]"
         cases = [("is_empty", []); ("is_node", ["l"; "r"])]        *)
 type handler = {
-  arg:   id;
+  args:   id list;
   cases: (id * id list) list;
 }
 
@@ -31,16 +31,19 @@ let case_of_branch p =
   | PVar id         -> (id, [])
   | PCons (cid, ps) -> (cid, List.concat(List.map pattern_to_args ps))
   | PWild           -> ({ id_name = "_"; id_loc = p.ppat_loc }, [])
-  | PTuple _ -> failwith "to be completed"
+  | PTuple ps       -> ({ id_name = "tuple"; id_loc = p.ppat_loc }, List.concat(List.map pattern_to_args ps))
 
-let register_handler fn_name a cases =
-  match a.atom_desc with
-  | AId id ->
-      let key = handler_name_of_id fn_name in
-      if not (Hashtbl.mem destructs key) then
-        Hashtbl.add destructs key
-          { arg = id; cases = List.map (fun (p,_) -> case_of_branch p) cases }
-  | _ -> failwith "A match expression must match on an identifier"
+let register_handler fn_name (atoms : atom list) cases =
+  let key = handler_name_of_id fn_name in
+  if not (Hashtbl.mem destructs key) then begin
+    let args = List.map (fun a ->
+      match a.atom_desc with
+      | AId id -> id
+      | _ -> failwith "A match expression must match on an identifier"
+    ) atoms in
+    Hashtbl.add destructs key
+      { args; cases = List.map (fun (p, _) -> case_of_branch p) cases }
+  end
 
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
 
@@ -68,9 +71,9 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
         CEApp (callable c, List.map (atom fn_name) al) (* TODO *)
     | EIf (a, e1, e2) ->
         CEIf (atom fn_name a, expr fn_name e1, expr fn_name e2) (* TODO *)
-    | EMatch (a, pel) ->
-        register_handler fn_name a pel;
-        CEDestruct (atom fn_name a, List.map mk_ppat_expr pel)
+    | EMatch (al, pel) ->
+        register_handler fn_name al pel;
+        CEDestruct (List.map (atom fn_name) al, List.map mk_ppat_expr pel) in
     | _ -> failwith "TODO" in
   mk_cexpr (expr_desc e_desc)
 
@@ -82,7 +85,7 @@ and pattern p =
     | PVar id -> CPVar id
     | PCons (id, args) -> CPCons (id, List.map pattern args)
     | PWild -> CPWild
-    | PTuple _ -> failwith "to be completed" in
+    | PTuple ps -> CPTuple (List.map pattern ps) in
   {cppat_loc = p.ppat_loc; cppat_desc = desc;}
 
 let declaration d =
