@@ -1,6 +1,9 @@
 open Format
 open Ml_lang
 
+open Gospel
+module UPrint = Upretty_printer
+
 (* some useful combinators *)
 let pp_newline fmt () = fprintf fmt "@\n"
 let pp_newline_newline fmt () = fprintf fmt "@\n@\n"
@@ -27,7 +30,6 @@ let pp_op fmt (op: op) =
 
 let pp_id fmt id =
   fprintf fmt "%s" id.id_name
-
 
 let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   match ppat_desc with
@@ -104,19 +106,23 @@ and pp_callable fmt c =
         pp_expr e
 
 let pp_rec fmt = function
-  | Recursive -> fprintf fmt " rec"
-  | NonRecursive -> ()
+  | Asttypes.Recursive -> fprintf fmt " rec"
+  | Nonrecursive -> ()
 
 let pp_id fmt {id_name; _} =
   fprintf fmt "%s" id_name
 
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with
-  | DFun (rec_flag, id, args, e) ->
+  | DFun (rec_flag, id, args, e, spec) ->
+      ignore spec; (* TODO *)
       fprintf fmt "@[let%a %s %a@ =@;<1 2>@[%a@]@]"
         pp_rec rec_flag id.id_name
         (pp_print_list ~pp_sep:pp_space pp_id) args
         pp_expr e
+  | DType (rec_flag, td) ->
+      fprintf fmt "@[%a@]"
+        UPrint.s_type_declaration_rec_flag (rec_flag, td)
 
 let pp_program fmt =
   pp_print_list ~pp_sep:pp_newline_newline pp_decl fmt

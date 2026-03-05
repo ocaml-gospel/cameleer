@@ -3,6 +3,9 @@
 open Format
 open Ml_lang
 
+open Gospel
+module UPrint = Upretty_printer
+
 (* some useful combinators *)
 let pp_newline fmt () = fprintf fmt "@\n"
 let pp_newline_newline fmt () = fprintf fmt "@\n@\n"
@@ -34,12 +37,14 @@ let pp_op fmt (op: op) =
   | OPLe -> fprintf fmt "<="
 
 let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
+  let not_wild p = match p.cppat_desc with
+    | CPWild -> false | _ -> true in 
   match cppat_desc with
   | CPWild -> () (* FIXME? *)
   | CPVar x -> fprintf fmt "%s" x.id_name (* FIXME *)
   | CPCons (_, []) -> () (* TODO *)
   | CPCons (_, args) ->
-      let non_wild_args = List.filter (fun p -> match p.cppat_desc with CPWild -> false | _ -> true) args in
+      let non_wild_args = List.filter not_wild args in
       fprintf fmt "@[fun %a@]@ "
         (pp_print_list ~pp_sep:pp_space pp_pattern) non_wild_args (* TODO *)
 
@@ -108,17 +113,20 @@ and pp_ppat_cexpr fmt (p, e) =
     (fun fmt e -> pp_expr fmt e) e (* TODO *)
 
 let pp_rec fmt = function
-  | Recursive -> fprintf fmt " rec"
-  | NonRecursive -> ()
+  | Asttypes.Recursive -> fprintf fmt " rec"
+  | Nonrecursive -> ()
 
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
   | CDFun (rec_flag, id, args, e) ->
-      fprintf fmt "@[<hov 2>let%a %s %a =@\n%a@]"
+      fprintf fmt "@[<hov 2>letttttt%a %s %a =@\n%a@]"
         pp_rec rec_flag
         id.id_name
         (pp_print_list ~pp_sep:pp_space pp_id) args
         (fun fmt e -> pp_expr ~_fn_name:(id.id_name) fmt e) e
+  | CDType (rec_flag, td) ->
+      fprintf fmt "@[%a@]"
+        UPrint.s_type_declaration_rec_flag (rec_flag, td)
 
 let pp_handler_case fmt (case_id, vars) =
   match vars with
