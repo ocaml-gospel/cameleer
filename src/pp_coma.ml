@@ -37,22 +37,21 @@ let pp_op fmt (op: op) =
   | OPLe -> fprintf fmt "<="
 
 let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
-  let not_wild p = match p.cppat_desc with
-    | CPWild -> false | _ -> true in 
+  let non_wild_args args = List.filter (fun p -> match p.cppat_desc with
+    | CPWild -> false
+    | _ -> true) args in
   match cppat_desc with
   | CPWild -> () (* FIXME? *)
   | CPVar x -> fprintf fmt "%s" x.id_name (* FIXME *)
   | CPCons (_, []) -> () (* TODO *)
   | CPCons (_, args) ->
-      let non_wild_args = List.filter not_wild args in
+      let al = non_wild_args args in
       fprintf fmt "@[fun %a@]@ "
-        (pp_print_list ~pp_sep:pp_space pp_pattern) non_wild_args (* TODO *)
+        (pp_print_list ~pp_sep:pp_space pp_pattern) al 
   | CPTuple args ->
-      let non_wild_args = List.filter (fun p -> match p.cppat_desc with
-        | CPWild -> false
-        | _ -> true) args in
+      let al = non_wild_args args in
       fprintf fmt "@[fun %a@]@ "
-        (pp_print_list ~pp_sep:pp_space pp_pattern) non_wild_args (* TODO *)
+        (pp_print_list ~pp_sep:pp_space pp_pattern) al
 
 let pp_id fmt {id_name; _} = fprintf fmt "%s" id_name
 
