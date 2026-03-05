@@ -64,11 +64,12 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
       fprintf fmt "let %a =@ @[<hov 2>%a@] in@ @[%a@]"
         (pp_pattern ~_paren:false) x
         (fun fmt e -> pp_expr fmt e) e1
-        (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
-  | CEApp (f, al) ->
-      fprintf fmt ("@[<hov 2>%a @[%a@]@]")
-        (fun fmt e -> pp_expr fmt e) f
-        (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:true)) al
+        (fun fmt e -> pp_expr fmt e) e2 
+  | CEApp (c, al, cl) ->
+      fprintf fmt ("@[<hov 2>%a @[%a %a@]@]")
+        (pp_callable ~_fn_name) c
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true ~curly:true)) al
+        (pp_print_list ~pp_sep:pp_space (pp_callable ~_fn_name)) cl
   | CEIf (a, e1, e2) ->
       fprintf fmt "if @[%a@] @\n (-> %a) @\n @[(-> %a)@]"
         (pp_atom ~paren:false ~curly:true) a
@@ -79,6 +80,8 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (Ml2coma.handler_name_of_id (_fn_name))
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
+  (* | CELetK(k, x, e1, e2) -> failwith "TODO"  *)
+  | _ -> failwith "TODO" 
 
 and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
   match a.catom_desc with
@@ -104,6 +107,15 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
       fprintf fmt (curly_braces curly "%s @[%a@]")
         c.id_name
         (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:false)) al (* TODO *)
+
+and pp_callable ?(_fn_name="") fmt c =
+  match c.ccallable_desc with
+  | CCId id -> fprintf fmt "%s" id.id_name
+  | CCFun (data, kon, e) ->
+      fprintf fmt (protect_on true "@[fun %a %a -> @[<hov 2>%a@]@]")
+        (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id ~paren:true fmt id)) data
+        (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id ~paren:true fmt id)) kon
+        (fun fmt e -> pp_expr fmt e) e
 
 and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 2>(%a->@ @[%a@])@]"

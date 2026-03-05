@@ -81,17 +81,23 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
     | EAssert -> CEAssert
     | ELet (x, e1, e2) ->
         CELet (pattern x, expr fn_name e1, expr fn_name e2) (* TODO *)
+    | ELetK (k, x, e1, e2) ->
+        CELetK (k, x, expr fn_name e1, expr fn_name e2) (* TODO *)
     | EApp (c, al, _cl) ->
-        CEApp (callable c, List.map (atom fn_name) al) (* TODO *)
+        CEApp (callable fn_name c, List.map (atom fn_name) al, List.map (callable fn_name) _cl) (* TODO *)
     | EIf (a, e1, e2) ->
         CEIf (atom fn_name a, expr fn_name e1, expr fn_name e2) (* TODO *)
     | EMatch (al, pel) ->
         register_handler fn_name al pel;
-        CEDestruct (List.map (atom fn_name) al, List.map mk_ppat_expr pel)
-    | _ -> failwith "TODO" in
+        CEDestruct (List.map (atom fn_name) al, List.map mk_ppat_expr pel) in
   mk_cexpr (expr_desc e_desc)
 
-and callable _ = assert false
+and callable fn_name c = 
+  let desc = 
+    match c.callable_desc with
+    | CId id -> CCId id
+    | CFun (data, kon, e) -> CCFun (data, kon, expr fn_name e) in
+  { ccallable_loc = c.callable_loc; ccallable_desc = desc }
 
 and pattern p =
   let desc =

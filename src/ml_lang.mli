@@ -104,7 +104,8 @@ and cexpr_desc =
   | CEAtom of catom
   | CEAssert
   | CELet of cpattern * cexpr * cexpr
-  | CEApp of cexpr * catom list                   (* function application    *)
+  | CELetK of id * id * cexpr * cexpr                  (* let_cont h x = e in e *)
+  | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr
   | CEDestruct of catom list * (info_p * cexpr) list
 
@@ -120,6 +121,16 @@ and catom_desc =
   | CAFun of id * cexpr
   | CATuple of catom list
   | CACons of id * catom list
+
+
+and ccallable = {
+  ccallable_loc: location;
+  ccallable_desc: ccallable_desc;
+}
+
+and ccallable_desc =
+  | CCId  of id                             (* handler name                   *)
+  | CCFun of id list * id list * cexpr      (* data params, kont params, body *)
 
 type cdeclaration = {
   cdecl_loc: location;
