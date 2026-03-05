@@ -86,6 +86,8 @@ type program = declaration list
 
 type info_p = id list 
 
+type precondition = U.term list
+
 type cpattern = {
   cppat_loc: location;
   cppat_desc: cpattern_desc;
@@ -124,15 +126,14 @@ and catom_desc =
   | CATuple of catom list
   | CACons of id * catom list
 
-
 and ccallable = {
   ccallable_loc: location;
   ccallable_desc: ccallable_desc;
 }
 
 and ccallable_desc =
-  | CCId  of id                             (* handler name                   *)
-  | CCFun of id list * id list * cexpr      (* data params, kont params, body *)
+  | CCId  of id                                       (* handler name                   *)
+  | CCFun of id list * precondition * id list * cexpr (* data params, kont params, body *)
 
 type cdeclaration = {
   cdecl_loc: location;
@@ -143,7 +144,7 @@ type cdeclaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and cdeclaration_desc =
-  | CDFun of rec_flag * id * id list * id list * cexpr
+  | CDFun of rec_flag * id * id list * precondition * id list * cexpr
   | CDType of rec_flag * U.s_type_declaration list
 
 type cprogram = cdeclaration list

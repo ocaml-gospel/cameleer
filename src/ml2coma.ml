@@ -92,12 +92,15 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
         CEDestruct (List.map (atom fn_name) al, List.map mk_ppat_expr pel) in
   mk_cexpr (expr_desc e_desc)
 
-and callable fn_name c = 
+and callable fn_name {callable_loc; callable_desc} =
+  let mk_ccalable ccallable_desc =
+    { ccallable_loc = callable_loc; ccallable_desc } in
   let desc = 
-    match c.callable_desc with
+    match callable_desc with
     | CId id -> CCId id
-    | CFun (data, kon, e) -> CCFun (data, kon, expr fn_name e) in
-  { ccallable_loc = c.callable_loc; ccallable_desc = desc }
+    | CFun (data, kon, e) ->
+        CCFun (data, [], kon, expr fn_name e) in 
+  mk_ccalable desc
 
 and pattern p =
   let desc =
@@ -108,12 +111,15 @@ and pattern p =
     | PTuple ps -> CPTuple (List.map pattern ps) in
   {cppat_loc = p.ppat_loc; cppat_desc = desc;}
 
+
 let declaration d =
   let mk_cdecl cdecl_desc = { cdecl_loc = d.decl_loc; cdecl_desc } in
+  let pre_of_spec spec = match spec with
+      None -> [] | Some U.{sp_pre; _} -> sp_pre in
   let cdecl = match d.decl_desc with
     | DFun (rec_flag, id, xs, ks, e, spec) ->
-        ignore spec; (* TODO *)
-        CDFun (rec_flag, id, xs, ks, (expr id.id_name e))
+        let pre = pre_of_spec spec in
+        CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e)) 
     | DType (rec_flag, td) -> CDType (rec_flag, td) in
   mk_cdecl cdecl
 

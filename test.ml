@@ -6,6 +6,8 @@ let sum x y =
   if x then
     if y then 2 else 1
   else 0
+(*@ requires x > 0
+    requires y >= 0 *)
 
 type t = A | B | C
 

@@ -11,7 +11,7 @@ let pp_newline fmt () = fprintf fmt "@\n"
 let pp_newline_newline fmt () = fprintf fmt "@\n@\n"
 let pp_space fmt () = fprintf fmt " "
 let pp_coma fmt () = fprintf fmt ", "
-
+let pp_and fmt () = fprintf fmt " && "
 let pp_paren fmt () = fprintf fmt ". "
 
 let protect_on b f =
@@ -54,6 +54,12 @@ let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
         (pp_print_list ~pp_sep:pp_space pp_pattern) al
 
 let pp_id ?(paren=false) fmt {id_name; _} = fprintf fmt (protect_on paren "%s") id_name
+ 
+let pp_pre fmt = function
+  | [] -> ()
+  | l ->
+      fprintf fmt "{@[%a@]}"
+        (pp_print_list ~pp_sep:pp_and UPrint.term) l
 
 let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
   match e.cexpr_desc with
@@ -111,9 +117,10 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
 and pp_callable ?(_fn_name="") fmt c =
   match c.ccallable_desc with
   | CCId id -> fprintf fmt "%s" id.id_name
-  | CCFun (data, kon, e) ->
-      fprintf fmt (protect_on true "@[fun %a %a -> @[<hov 2>%a@]@]")
+  | CCFun (data, pre, kon, e) ->
+      fprintf fmt (protect_on true "@[fun %a %a %a -> @[<hov 2>%a@]@]")
         (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) data
+        pp_pre pre
         (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) kon
         (fun fmt e -> pp_expr fmt e) e
 
@@ -135,11 +142,12 @@ let pp_rec fmt = function
 
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
-  | CDFun (rec_flag, id, xs, ks, e) ->
-      fprintf fmt "@[<hov 2>letttttt%a %s %a%s%a =@\n%a@]"
+  | CDFun (rec_flag, id, xs, pre, ks, e) ->
+      fprintf fmt "@[<hov 2>let%a %s %a %a%s%a =@\n%a@]"
         pp_rec rec_flag
         id.id_name
         (pp_print_list ~pp_sep:pp_space pp_id) xs
+        pp_pre pre
         (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list ~pp_sep:pp_space pp_id) ks
         (fun fmt e -> pp_expr ~_fn_name:(id.id_name) fmt e) e
