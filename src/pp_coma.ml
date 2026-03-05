@@ -113,8 +113,8 @@ and pp_callable ?(_fn_name="") fmt c =
   | CCId id -> fprintf fmt "%s" id.id_name
   | CCFun (data, kon, e) ->
       fprintf fmt (protect_on true "@[fun %a %a -> @[<hov 2>%a@]@]")
-        (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id ~paren:true fmt id)) data
-        (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id ~paren:true fmt id)) kon
+        (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) data
+        (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) kon
         (fun fmt e -> pp_expr fmt e) e
 
 and pp_ppat_expr fmt (p, e) =
