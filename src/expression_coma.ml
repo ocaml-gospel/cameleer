@@ -304,7 +304,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
         | Sexp_constant c     -> constant c
         | Sexp_ident {txt; _} ->
             AId { id_name = string_of_longident txt ; id_loc = loc}
-        | _ -> assert false in
+        | _ -> assert false (* TODO tuples *) in
       let a = mk_atom ~loc:(location e.spexp_loc) a in
       let map k = List.map
         (fun Uast.{spc_lhs; spc_rhs; _} ->
@@ -321,7 +321,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
           let cases = map kid in
           ELetK (kid, aid,
                  mk_expr @@ EApp (k, [mk_atom @@ AId aid], []),
-                 mk_expr @@ EMatch (a, cases))
+                 mk_expr @@ EMatch ([a], cases))
       end
 
   | Sexp_match (e, cases) ->

@@ -82,7 +82,7 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
         CEIf (atom fn_name a, expr fn_name e1, expr fn_name e2) (* TODO *)
     | EMatch (al, pel) ->
         register_handler fn_name al pel;
-        CEDestruct (List.map (atom fn_name) al, List.map mk_ppat_expr pel) in
+        CEDestruct (List.map (atom fn_name) al, List.map mk_ppat_expr pel)
     | _ -> failwith "TODO" in
   mk_cexpr (expr_desc e_desc)
 
