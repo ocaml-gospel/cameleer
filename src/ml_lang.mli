@@ -63,6 +63,13 @@ and callable_desc =
 
 type rec_flag = Asttypes.rec_flag
 
+type precondition = U.term list
+
+type kont = {
+  kont_id: id;
+  kont_pre: precondition;
+}
+
 type declaration = {
   decl_loc: location;
   decl_desc: declaration_desc;
@@ -72,7 +79,7 @@ type declaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and declaration_desc =
-  | DFun of rec_flag * id * id list * id list * expr * U.val_spec option
+  | DFun of rec_flag * id * id list * precondition * kont list * expr
   | DType of rec_flag * U.s_type_declaration list
 
 type program = declaration list
@@ -85,8 +92,6 @@ type program = declaration list
     CPS-conversion later. *)
 
 type info_p = id list 
-
-type precondition = U.term list
 
 type cpattern = {
   cppat_loc: location;
@@ -132,8 +137,9 @@ and ccallable = {
 }
 
 and ccallable_desc =
-  | CCId  of id                                       (* handler name                   *)
-  | CCFun of id list * precondition * id list * cexpr (* data params, kont params, body *)
+  | CCId  of id (* handler name *)
+  | CCFun of id list * precondition * id list * cexpr
+  (* data params, precondition, kont params, body *)
 
 type cdeclaration = {
   cdecl_loc: location;
@@ -144,7 +150,7 @@ type cdeclaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and cdeclaration_desc =
-  | CDFun of rec_flag * id * id list * precondition * id list * cexpr
+  | CDFun of rec_flag * id * id list * precondition * kont list * cexpr
   | CDType of rec_flag * U.s_type_declaration list
 
 type cprogram = cdeclaration list

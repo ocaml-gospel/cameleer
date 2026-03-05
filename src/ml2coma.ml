@@ -114,11 +114,8 @@ and pattern p =
 
 let declaration d =
   let mk_cdecl cdecl_desc = { cdecl_loc = d.decl_loc; cdecl_desc } in
-  let pre_of_spec spec = match spec with
-      None -> [] | Some U.{sp_pre; _} -> sp_pre in
   let cdecl = match d.decl_desc with
-    | DFun (rec_flag, id, xs, ks, e, spec) ->
-        let pre = pre_of_spec spec in
+    | DFun (rec_flag, id, xs, pre, ks, e) ->
         CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e)) 
     | DType (rec_flag, td) -> CDType (rec_flag, td) in
   mk_cdecl cdecl

@@ -119,15 +119,18 @@ let pp_rec fmt = function
 let pp_id fmt {id_name; _} =
   fprintf fmt "%s" id_name
 
+let pp_kont fmt {kont_id; _} =
+  fprintf fmt "%a" pp_id kont_id
+
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with
-  | DFun (rec_flag, id, xs, ks, e, spec) ->
-      ignore spec; (* TODO *)
+  | DFun (rec_flag, id, xs, pre, ks, e) ->
+      ignore pre; (* TODO *)
       fprintf fmt "@[let%a %s %a%s%a@ =@;<1 2>@[%a@]@]"
         pp_rec rec_flag id.id_name
         (pp_print_list ~pp_sep:pp_space pp_id) xs
         (if xs <> [] && ks <> [] then " " else "")
-        (pp_print_list ~pp_sep:pp_space pp_id) ks
+        (pp_print_list ~pp_sep:pp_space pp_kont) ks
         pp_expr e
   | DType (rec_flag, td) ->
       fprintf fmt "@[%a@]"

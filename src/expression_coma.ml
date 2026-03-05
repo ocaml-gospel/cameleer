@@ -53,7 +53,6 @@ let get_pattern_id (pat: Parsetree.pattern) =
       { id_name = txt; id_loc = location loc }
   | _ ->  assert false
 
-
 let preid Uast.Preid.{ pid_str; pid_loc; _ } =
   mk_id ~loc:(location pid_loc) pid_str
 
@@ -123,6 +122,17 @@ let collect_params expr =
     | _ -> List.rev acc, expr
   in
   loop [] expr
+
+let mk_kont kont_id spec =
+  let mk_kont kont_pre = { kont_id; kont_pre } in
+  let pre = match spec with
+    | None -> []
+    | Some U.{sp_post; _} -> sp_post in
+  mk_kont pre
+
+let pre_of_spec = function
+  | None -> []
+  | Some U.{sp_pre; _} -> sp_pre
 
 let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
   | Ppat_any ->
@@ -446,4 +456,6 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let body = mk_expr ~loc:expr_loc (expr pexp (KName k)) in
   let spec = svb.spvb_vspec in
-  mk_decl (rec_flag, id, params, [k], body, spec)
+  let kont = mk_kont k spec in
+  let pre = pre_of_spec spec in
+  mk_decl (rec_flag, id, params, pre, [kont], body)

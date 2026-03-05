@@ -140,6 +140,9 @@ let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"
   | Nonrecursive -> ()
 
+let pp_kont fmt {kont_id; _} =
+  fprintf fmt "%a" (pp_id ~paren:true) kont_id
+
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
   | CDFun (rec_flag, id, xs, pre, ks, e) ->
@@ -149,7 +152,7 @@ let pp_decl fmt (d: cdeclaration) =
         (pp_print_list ~pp_sep:pp_space pp_id) xs
         pp_pre pre
         (if xs <> [] && ks <> [] then " " else "")
-        (pp_print_list ~pp_sep:pp_space pp_id) ks
+        (pp_print_list ~pp_sep:pp_space pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
   | CDType (rec_flag, td) ->
       fprintf fmt "@[%a@]"
