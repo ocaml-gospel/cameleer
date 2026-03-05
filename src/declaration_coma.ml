@@ -8,7 +8,7 @@ module ML = Ml_lang
 
 let (^~) a b = fun c -> a c b
 
-let rec_flag b = ML.(if b then Recursive else NonRecursive)
+let rec_flag b = if b then Recursive else Nonrecursive
 
 let param (_loc, pre_id, _ty) = E.preid pre_id
 
@@ -21,7 +21,9 @@ let function_ f =
   let _fun_spec = f.fun_spec in
   match f.fun_def with None -> assert false
   | Some fun_def ->
-      ML.DFun (rec_flag, ld_ident, ld_params, E.term fun_def)
+      let def = E.term fun_def in
+      (* TODO: fun_spec *)
+      ML.DFun (rec_flag, ld_ident, ld_params, def, None)
 
 let s_structure, s_signature =
   let rec s_signature s_sig =

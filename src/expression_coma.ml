@@ -35,9 +35,9 @@ let mk_expr ?(loc=dummy_loc) expr_desc =
 let mk_pattern ?(loc=dummy_loc) ppat_desc =
   { ppat_loc=loc; ppat_desc }
 
-let mk_decl (rec_flag, id, params, e) =
+let mk_decl (rec_flag, id, params, e, spec) =
   { decl_loc  = id.id_loc;
-    decl_desc = DFun (rec_flag, id, params, e); }
+    decl_desc = DFun (rec_flag, id, params, e, spec); }
 
 let mk_id ?(loc=dummy_loc) id_name =
   { id_name; id_loc=loc }
@@ -393,4 +393,5 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let body = mk_expr ~loc:expr_loc (expr2 pexp k) in
   let params = params @ [k] in
-  mk_decl (rec_flag, id, params, body)
+  let spec = svb.spvb_vspec in
+  mk_decl (rec_flag, id, params, body, spec)
