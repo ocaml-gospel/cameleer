@@ -26,14 +26,18 @@ let routine n =
 
 let routine2 n =
   let u = ref 1 in
+  let[@ghost] c1 = ref 0 in
   for r = 0 to n - 1 do
-    (*@ invariant !u = fact r *)
+    (*@ invariant !u = fact r
+        invariant !c1 = r *)
+    incr c1;
     let v = !u in
     for s = 1 to r do
       (*@ invariant !u = s * fact r *)
       u := !u + v
     done
   done;
+  assert (!c1 = n);
   !u
 (*@ r = routine2 n
       requires n >= 0
