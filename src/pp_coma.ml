@@ -47,7 +47,7 @@ let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
   | CPCons (_, args) ->
       let al = non_wild_args args in
       fprintf fmt "@[fun %a@]@ "
-        (pp_print_list ~pp_sep:pp_space pp_pattern) al 
+        (pp_print_list ~pp_sep:pp_space pp_pattern) al
   | CPTuple args ->
       let al = non_wild_args args in
       fprintf fmt "@[fun %a@]@ "
@@ -108,7 +108,7 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
 and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 2>(%a->@ @[%a@])@]"
     (pp_pattern ~_paren:false) p
-    (fun fmt e -> pp_expr fmt e) e 
+    (fun fmt e -> pp_expr fmt e) e
 
 and pp_ppat_cexpr fmt (p, e) =
   match p with

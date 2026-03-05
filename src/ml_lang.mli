@@ -20,10 +20,10 @@ type pattern = {
 }
 
 and pattern_desc =
-  | PWild                       (* _ *)
-  | PVar of id                  (* x *)
-  | PCons of id * pattern list  (* Cons(x, xs) *)
-  | PTuple of pattern list      (* p1, p2, … *)
+  | PWild                                     (* catch all pattern: _        *)
+  | PVar of id                                (* catch all+binder:  x        *)
+  | PCons of id * pattern list                (* constructor:   Cons(x, xs)  *)
+  | PTuple of pattern list                    (* multiple pattern: p1, p2, … *)
 
 type expr = {
   expr_loc: location;
@@ -58,9 +58,8 @@ and callable = {
 }
 
 and callable_desc =
-  | CId  of id
-  | CFun of id list * id list * expr
-            (* data parameters, kont parameters, body *)
+  | CId  of id                             (* handler name                   *)
+  | CFun of id list * id list * expr       (* data params, kont params, body *)
 
 type rec_flag = Asttypes.rec_flag
 
@@ -77,10 +76,7 @@ and declaration_desc =
 type program = declaration list
 
 
-
-
-
-(* --------------------- *)
+(* ------------------------------------------------------------------------- *)
 
 (** An intermediate AST for a ML-like toy language to COMA.
     All the terms are written in A-normal form to ease
@@ -94,10 +90,10 @@ type cpattern = {
 }
 
 and cpattern_desc =
-  | CPWild                       (* _ *)
-  | CPVar of id                  (* x *)
-  | CPCons of id * cpattern list (* Cons(x, xs) *)
-  | CPTuple of cpattern list      (* p1, p2, … *)
+  | CPWild                                (* catch all pattern: _            *)
+  | CPVar of id                           (* catch all+binder:  x            *)
+  | CPCons of id * cpattern list          (* constructor:       Cons(x, xs)  *)
+  | CPTuple of cpattern list              (* multiple pattern:  p1, p2, …    *)
 
 type cexpr = {
   cexpr_loc: location;
@@ -108,7 +104,7 @@ and cexpr_desc =
   | CEAtom of catom
   | CEAssert
   | CELet of cpattern * cexpr * cexpr
-  | CEApp of cexpr * catom list   (* function application *)
+  | CEApp of cexpr * catom list                   (* function application    *)
   | CEIf of catom * cexpr * cexpr
   | CEDestruct of catom list * (info_p * cexpr) list
 
@@ -130,7 +126,7 @@ type cdeclaration = {
   cdecl_desc: cdeclaration_desc;
 }
 
-(* id list are the parameters and expr is the body *)
+(** [id list] are the parameters and [expr] is the body. *)
 and cdeclaration_desc =
   | CDFun of rec_flag * id * id list * cexpr
   | CDType of rec_flag * U.s_type_declaration list
