@@ -139,6 +139,9 @@ module Stdlib
   val int_of_string (s: string) : int
     ensures { result = to_int s }
 
+  val (^) (s1 s2: string) : string
+    ensures  { result = concat s1 s2 }
+
   use import seq.Seq as Seq
 
   scope import Array
@@ -397,6 +400,39 @@ module Stdlib
 
     val function compare (x y: t) : int
     axiom compare_pre_order : is_pre_order compare
+
+  end
+
+  scope Bitv
+    use bv.BV256 as BV
+    type t = BV.t
+
+    val function all_zeros (n : t) : bool
+      ensures { result = (n = BV.zeros) }
+
+    val function bw_and (n1 n2 : t) : t
+        ensures { result = BV.bw_and n1 n2 }
+
+    val function bw_or (n1 n2 : t) : t
+        ensures { result = BV.bw_and n1 n2 }
+
+    val function bw_xor (n1 n2 : t) : t
+        ensures { result = BV.bw_xor n1 n2 }
+
+    val function bw_not (n1 : t) : t
+        ensures { result = BV.bw_not n1 }
+
+    val function to_int_s (n: t) : int
+        ensures { result = BV.to_int n }
+
+    val function of_int_s (n: int) : t
+        ensures { result = BV.of_int n }
+
+    val function shiftr (n: t) (n': int) : t
+        ensures { result = BV.lsr n n' }
+
+    val function shiftl (n: t) (n': int) : t
+        ensures { result = BV.lsl n n' }
 
   end
 

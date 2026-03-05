@@ -49,6 +49,7 @@ let () =
       ("!", "prefix !");
       (":=", "infix :=");
       ("|>", "infix |>");
+      ("^", "infix ^");
       ("<>", "infix ~=");
       ("mixfix ([<-])", "mixfix ([<-])");
       ("~-", "prefix ~-");
