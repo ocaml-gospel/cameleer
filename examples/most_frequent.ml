@@ -81,7 +81,7 @@ module Make (C: COMP) = struct
 
   (*@ predicate is_sorted (a: elt array) = forall i j.
         0 <= i <= j < Array.length a -> C.cmp a.(i) a.(j) <= 0 *)
-
+  
   let most_frequent (a: elt array) : elt =
     let r = ref a.(0) in
     let c = ref 1 in

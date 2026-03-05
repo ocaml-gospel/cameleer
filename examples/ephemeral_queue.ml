@@ -2,7 +2,7 @@ type 'a t = {
   mutable front : 'a list;
   mutable rear : 'a list;
   mutable size : int;
-  mutable view : 'a list; [@ghost]
+  mutable view : 'a list [@ghost]
 }
 (*@ invariant size = List.length view
     invariant (front = [] -> rear = []) && view = front @ List.rev rear *)
