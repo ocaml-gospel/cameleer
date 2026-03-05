@@ -26,8 +26,6 @@ let match_t x y =
      | true -> sum true false
      | _ -> if y then 100 else 200)
 
-(* TODO: do we have to do smth special for `+`, `-`, …
-         in `Sexp_apply` case of the CPS translation ? *)
 let f a b c =
   let x = a in
   let y = b in

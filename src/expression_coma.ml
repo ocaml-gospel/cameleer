@@ -161,6 +161,28 @@ let is_atomic e =
   | Sexp_constant _ | Sexp_ident _ | Sexp_construct _ -> true
   | _ -> false
 
+let is_binop, get_binop =
+  let driver = Hashtbl.create 16 in
+  List.iter
+    (fun (x,y) -> Hashtbl.add driver x y)
+    [ ("+", Some OPAdd);
+      ("*", Some OPMult);
+      ("-", Some OPMinus);
+      ("/", Some OPDiv);
+      ("infix mod", None);
+      ("<=", Some OPLe);
+      (">=", None);
+      ("<", None);
+      (">", None);
+      ("<>", None);
+      ("=", Some OPEq);
+      ("infix ::", None);
+      ("::", None);
+      ("infix @", None);
+      ("@", None) ];
+  (fun s -> Hashtbl.mem driver s),
+  (fun s -> Option.get @@ Hashtbl.find driver s)
+
 let construct_to_atom ?(loc=dummy_loc) c = match c with
   | ({ txt = Lident "true"; _ },  None) -> mk_atom ~loc atom_true
   | ({ txt = Lident "false"; _ }, None) -> mk_atom ~loc atom_false
@@ -190,6 +212,18 @@ let construct_to_atom ?(loc=dummy_loc) c = match c with
   | (_id, Some _e) ->
       (* mk_eidapp (longident id.txt) [ expression info e ] *)
       assert false
+
+let atom_of_sexpr e =
+  assert (is_atomic e); (* ANF assumption *)
+  match e.Uast.spexp_desc with
+  | Sexp_constant  c      -> mk_atom (constant c)
+  | Sexp_construct (l, e) -> construct_to_atom (l,e)
+  | Sexp_ident {txt; loc} ->
+      let loc = location loc in
+      let id = { id_name = string_of_longident txt ; id_loc = loc} in
+      (mk_atom ~loc @@ AId id)
+  | Sexp_tuple _ -> assert false (* TODO *)
+  | _ -> assert false
 
 type kont_type = KName of id | KExpr of callable
 
@@ -282,6 +316,20 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
 
   | Sexp_let (Recursive, _svb, _e) -> assert false (* TODO *)
 
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([_;_] as args))
+    when is_binop (string_of_longident txt) ->
+      let st = string_of_longident txt in
+      let op = get_binop st in
+      let[@warning "-8"] [a1;a2] =
+        List.map (fun (_, e) -> atom_of_sexpr e) args in
+      let a1 = mk_expr ~loc:a1.atom_loc (EAtom a1) in
+      let a2 = mk_expr ~loc:a2.atom_loc (EAtom a2) in
+      let a = [mk_atom ~loc:a1.expr_loc @@ ABinop (a1, op, a2)] in
+      let k = match k with
+        | KName k -> mk_callable @@ CId k
+        | KExpr k -> k in
+      EApp (k, a, [])
+
   | Sexp_apply (e, args) when is_atomic e ->
       let loc = location e.spexp_loc in
       let c = mk_callable ~loc @@ match e.spexp_desc with
@@ -290,16 +338,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
         | Sexp_constant _ | Sexp_construct _ ->
             assert false (* impossible (type error) *)
         | _ -> assert false in
-      let args = List.map (fun (_,e) -> assert (is_atomic e); (* ANF assumption *)
-        match e.Uast.spexp_desc with
-        | Sexp_constant  c      -> mk_atom (constant c)
-        | Sexp_construct (l, e) -> construct_to_atom (l,e)
-        | Sexp_ident {txt; loc} ->
-            let loc = location loc in
-            let id = { id_name = string_of_longident txt ; id_loc = loc} in
-            (mk_atom ~loc @@ AId id)
-        | Sexp_tuple _ -> assert false (* TODO *)
-        | _ -> assert false) args in
+      let args = List.map (fun (_, e) -> atom_of_sexpr e) args in
       let k = match k with
         | KName k -> mk_callable @@ CId k
         | KExpr k -> k in
@@ -307,16 +346,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
   | Sexp_apply (e, args) ->
       let loc = location e.spexp_loc in
       let z = gen_id ~loc () in
-      let args = List.map (fun (_,e) -> assert (is_atomic e); (* ANF assumption *)
-        match e.Uast.spexp_desc with
-        | Sexp_constant  c      -> mk_atom (constant c)
-        | Sexp_construct (l, e) -> construct_to_atom (l,e)
-        | Sexp_ident {txt; loc} ->
-            let loc = location loc in
-            let id = { id_name = string_of_longident txt ; id_loc = loc} in
-            (mk_atom ~loc @@ AId id)
-        | Sexp_tuple _ -> assert false (* TODO *)
-        | _ -> assert false) args in
+      let args = List.map (fun (_, e) -> atom_of_sexpr e) args in
       let k = match k with
         | KName k -> mk_callable ~loc:k.id_loc @@ CId k
         | KExpr k -> k in
