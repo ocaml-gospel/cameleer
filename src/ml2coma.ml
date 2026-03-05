@@ -1,10 +1,19 @@
 open Ml_lang
 
+let wild_counter = ref 0
+
+(* Generate a wildcard identifier for pattern matching 
+  e.g. Node(l, _, r) becomes Node(l, x0, r) *)
+let fresh_wild loc =
+  let n = !wild_counter in
+  incr wild_counter;
+  { id_name = "x" ^ string_of_int n; id_loc = loc }
+
 let rec pattern_to_args p =
   match p.ppat_desc with
   | PVar id -> [id]
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
-  | PWild -> []
+  | PWild -> [fresh_wild p.ppat_loc]
   | PTuple ps -> List.concat(List.map pattern_to_args ps)
 
 (* ! PATTERN MATCHING HANDLERS CONSTRUCTION *)
