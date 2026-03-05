@@ -26,8 +26,11 @@ let match_t x y =
      | true -> sum true false
      | _ -> if y then 100 else 200)
 
-let sum_t2 x y =
-  (* if sum true y = x then *)
-  if if y then true else false then
-    if x then A else B
-  else C
+(* TODO: do we have to do smth special for `+`, `-`, …
+         in `Sexp_apply` case of the CPS translation ? *)
+let f a b c =
+  let x = a in
+  let y = b in
+  let z = c in
+  let q = y + z in
+  x + q

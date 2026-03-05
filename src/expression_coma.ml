@@ -260,13 +260,26 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
   | Sexp_let (Nonrecursive, [svb], e2) ->
       let id = get_pattern_id svb.spvb_pat in
       let e1 = svb.spvb_expr in
-      let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
-      let body = mk_expr ~loc:expr_loc @@ expr e2 k in
+      let loc1 = location e1.spexp_loc in
+      let loc2 = location e2.spexp_loc in
+      let body = mk_expr ~loc:loc2 @@ expr e2 k in
       let kid = gen_kid () in
       ELetK (kid, id, body,
-             mk_expr @@ expr e1 (KName kid))
+             mk_expr ~loc:loc1 @@ expr e1 (KName kid))
 
-  | Sexp_let (Nonrecursive, _svb, _e) -> assert false (* TODO *)
+  | Sexp_let (Nonrecursive, [], _) -> assert false
+  | Sexp_let (Nonrecursive, svb::svbs, e2) ->
+      let id = get_pattern_id svb.spvb_pat in
+      let e1 = svb.spvb_expr in
+      let loc1 = location e1.spexp_loc in
+      let loc2 = location e2.spexp_loc in
+      let e2 =
+        { e with spexp_desc = Sexp_let (Nonrecursive, svbs, e1) } in
+      let body = mk_expr ~loc:loc2 @@ expr e2 k in
+      let kid = gen_kid () in
+      ELetK (kid, id, body,
+             mk_expr ~loc:loc1 @@ expr e1 (KName kid))
+
   | Sexp_let (Recursive, _svb, _e) -> assert false (* TODO *)
 
   | Sexp_apply (e, args) when is_atomic e ->
