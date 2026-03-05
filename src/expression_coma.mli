@@ -23,6 +23,6 @@ val mk_atom : ?loc:location -> atom_desc -> atom
 val mk_expr : ?loc:location -> expr_desc -> expr
 
 val mk_decl :
-  rec_flag * id * id list * expr * Uast.val_spec option -> declaration
+  rec_flag * id * id list * id list * expr * Uast.val_spec option -> declaration
 
 val s_value_binding : rec_flag -> Uast.s_value_binding -> id -> declaration

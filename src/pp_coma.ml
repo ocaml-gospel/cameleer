@@ -126,7 +126,7 @@ and pp_ppat_cexpr fmt (p, e) =
   match p with
   | [] -> fprintf fmt "@[<hov 2>(->@ @[%a@])@]" (fun fmt e -> pp_expr fmt e) e
   | _ -> fprintf fmt "@[<hov 2>(fun %a->@ @[%a@])@] "
-    (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id fmt id)) p
+    (pp_print_list ~pp_sep:pp_space pp_id) p
     (fun fmt e -> pp_expr fmt e) e (* TODO *)
 
 let pp_rec fmt = function
@@ -135,11 +135,13 @@ let pp_rec fmt = function
 
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
-  | CDFun (rec_flag, id, args, e) ->
-      fprintf fmt "@[<hov 2>letttttt%a %s %a =@\n%a@]"
+  | CDFun (rec_flag, id, xs, ks, e) ->
+      fprintf fmt "@[<hov 2>letttttt%a %s %a%s%a =@\n%a@]"
         pp_rec rec_flag
         id.id_name
-        (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id fmt id)) args
+        (pp_print_list ~pp_sep:pp_space pp_id) xs
+        (if xs <> [] && ks <> [] then " " else "")
+        (pp_print_list ~pp_sep:pp_space pp_id) ks
         (fun fmt e -> pp_expr ~_fn_name:(id.id_name) fmt e) e
   | CDType (rec_flag, td) ->
       fprintf fmt "@[%a@]"
@@ -150,12 +152,12 @@ let pp_handler_case fmt (case_id, vars) =
   | [] -> fprintf fmt "(%a)" (fun fmt id -> pp_id fmt id) case_id
   | _  -> fprintf fmt "(%a %a)"
             (fun fmt id -> pp_id fmt id) case_id
-            (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id ~paren:true fmt id)) vars
+            (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) vars
 
 let pp_handler fmt name (h : Ml2coma.handler) =
   fprintf fmt "@[<hov 2>let %s %a@\n @[%a@]\n= any@]"
     name
-    (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id ~paren:true fmt id)) h.args
+    (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) h.args
     (pp_print_list ~pp_sep:pp_newline pp_handler_case) h.cases
 
 let pp_program fmt =

@@ -55,15 +55,17 @@ let rec pp_expr fmt (e: expr) =
   | EAssert ->
       fprintf fmt "absurd"
   | ELet (x, e1, e2) ->
-      fprintf fmt "let %a =@ @[<hov 2>%a@] in@ @[%a@]"
+      fprintf fmt "let %a =@;<1 2>@[%a@]@ in@ @[%a@]"
         (pp_pattern ~paren:false) x pp_expr e1 pp_expr e2
   | EApp (c, al, cl) ->
       fprintf fmt "@[<hov 2>%a @[%a@] @[%a@]@]" pp_callable c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true)) al
         (pp_print_list ~pp_sep:pp_space pp_callable) cl
   | EIf (a, e1, e2) ->
-      fprintf fmt "if @[%a@] then@;<1 2>@[%a@]@ else@;<1 2>@[%a@]"
+      fprintf fmt "if@ %a@ @[then@;<1 2>@[%a@]@\nelse@;<1 2>@[%a@]@]"
+      (* "if @[%a@] then@;<1 2>@[%a@]@ else@;<1 2>@[%a@]" *)
         (pp_atom ~paren:false) a pp_expr e1 pp_expr e2
+
   | EMatch (al, pel) ->
       (* List.iter (fun (p, _) ->
         Format.eprintf "DEBUG pattern: %a\n%!" (pp_pattern ~paren:false) p
@@ -72,7 +74,7 @@ let rec pp_expr fmt (e: expr) =
         (pp_print_list ~pp_sep:pp_coma (pp_atom ~paren:false)) al 
         (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
   | ELetK (k, x, e1, e2) ->
-      fprintf fmt "let %s %s =@ @[<hov 2>%a@] in@ @[%a@]"
+      fprintf fmt "let %s %s =@;<1 2>@[%a@]@ in@ @[%a@]"
         k.id_name x.id_name
         pp_expr e1 pp_expr e2
 
@@ -83,7 +85,7 @@ and pp_atom ?(paren=false) fmt (a: atom) =
         pp_expr e2
   | ACst c -> fprintf fmt "%a" pp_constant c
   | AFun (_, x, e) ->
-      fprintf fmt (protect_on paren "@[fun %s -> @[<hov 2>%a@]@]")
+      fprintf fmt (protect_on paren "fun %s ->@;<1 2>@[%a@]")
         x.id_name pp_expr e
   | AId x -> fprintf fmt "%s" x.id_name
   | ATuple al ->
@@ -104,8 +106,9 @@ and pp_callable fmt c =
   match c.callable_desc with
   | CId id -> fprintf fmt "%a" pp_id id
   | CFun (xs, ks, e) ->
-      fprintf fmt "@[fun %a %a -> @[<hov 2>%a@]@]"
+      fprintf fmt "fun %a%s%a ->@;<1 2>@[%a@]"
         (pp_print_list pp_id) xs
+        (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list pp_id) ks
         pp_expr e
 
@@ -118,11 +121,13 @@ let pp_id fmt {id_name; _} =
 
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with
-  | DFun (rec_flag, id, args, e, spec) ->
+  | DFun (rec_flag, id, xs, ks, e, spec) ->
       ignore spec; (* TODO *)
-      fprintf fmt "@[let%a %s %a@ =@;<1 2>@[%a@]@]"
+      fprintf fmt "@[let%a %s %a%s%a@ =@;<1 2>@[%a@]@]"
         pp_rec rec_flag id.id_name
-        (pp_print_list ~pp_sep:pp_space pp_id) args
+        (pp_print_list ~pp_sep:pp_space pp_id) xs
+        (if xs <> [] && ks <> [] then " " else "")
+        (pp_print_list ~pp_sep:pp_space pp_id) ks
         pp_expr e
   | DType (rec_flag, td) ->
       fprintf fmt "@[%a@]"

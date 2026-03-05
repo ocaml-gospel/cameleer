@@ -23,7 +23,7 @@ let function_ f =
   | Some fun_def ->
       let def = E.term fun_def in
       (* TODO: fun_spec *)
-      ML.DFun (rec_flag, ld_ident, ld_params, def, None)
+      ML.DFun (rec_flag, ld_ident, ld_params, [], def, None)
 
 let s_structure, s_signature =
   let rec s_signature s_sig =

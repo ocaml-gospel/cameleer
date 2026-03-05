@@ -111,9 +111,9 @@ and pattern p =
 let declaration d =
   let mk_cdecl cdecl_desc = { cdecl_loc = d.decl_loc; cdecl_desc } in
   let cdecl = match d.decl_desc with
-    | DFun (rec_flag, id, args, e, spec) ->
+    | DFun (rec_flag, id, xs, ks, e, spec) ->
         ignore spec; (* TODO *)
-        CDFun (rec_flag, id, args, (expr id.id_name e))
+        CDFun (rec_flag, id, xs, ks, (expr id.id_name e))
     | DType (rec_flag, td) -> CDType (rec_flag, td) in
   mk_cdecl cdecl
 
