@@ -77,7 +77,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true ~curly:true)) al
         (pp_print_list ~pp_sep:pp_space (pp_callable ~_fn_name)) cl
   | CEIf (a, e1, e2) ->
-      fprintf fmt "if @[%a@] @\n (-> %a) @\n @[(-> %a)@]"
+      fprintf fmt "@[if @[%a@] @\n (-> %a) @\n @[(-> %a)@]@]"
         (pp_atom ~paren:false ~curly:true) a
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
@@ -150,7 +150,7 @@ let pp_decl fmt (d: cdeclaration) =
         pp_pre pre
         (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list ~pp_sep:pp_space pp_id) ks
-        (fun fmt e -> pp_expr ~_fn_name:(id.id_name) fmt e) e
+        (pp_expr ~_fn_name:id.id_name) e
   | CDType (rec_flag, td) ->
       fprintf fmt "@[%a@]"
         UPrint.s_type_declaration_rec_flag (rec_flag, td)
@@ -158,8 +158,8 @@ let pp_decl fmt (d: cdeclaration) =
 let pp_handler_case fmt (case_id, vars) =
   match vars with
   | [] -> fprintf fmt "(%a)" (fun fmt id -> pp_id fmt id) case_id
-  | _  -> fprintf fmt "(%a %a)"
-            (fun fmt id -> pp_id fmt id) case_id
+  | _  -> fprintf fmt "(%s %a)"
+            case_id.id_name
             (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) vars
 
 let pp_handler fmt name (h : Ml2coma.handler) =
