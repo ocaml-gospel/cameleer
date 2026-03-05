@@ -123,11 +123,13 @@ let pp_rec fmt = function
 
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
-  | CDFun (rec_flag, id, args, e) ->
-      fprintf fmt "@[<hov 2>letttttt%a %s %a =@\n%a@]"
+  | CDFun (rec_flag, id, xs, ks, e) ->
+      fprintf fmt "@[<hov 2>letttttt%a %s %a%s%a =@\n%a@]"
         pp_rec rec_flag
         id.id_name
-        (pp_print_list ~pp_sep:pp_space (fun fmt id -> pp_id fmt id)) args
+        (pp_print_list ~pp_sep:pp_space pp_id) xs
+        (if xs <> [] && ks <> [] then " " else "")
+        (pp_print_list ~pp_sep:pp_space pp_id) ks
         (fun fmt e -> pp_expr ~_fn_name:(id.id_name) fmt e) e
   | CDType (rec_flag, td) ->
       fprintf fmt "@[%a@]"

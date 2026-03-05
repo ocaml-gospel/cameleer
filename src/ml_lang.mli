@@ -68,9 +68,11 @@ type declaration = {
   decl_desc: declaration_desc;
 }
 
-(* id list are the parameters and expr is the body *)
+(** 1st [id list] is for data parameters
+    2nd [id list] is for continuation parameters
+    and [expr] is the body. *)
 and declaration_desc =
-  | DFun of rec_flag * id * id list * expr * U.val_spec option
+  | DFun of rec_flag * id * id list * id list * expr * U.val_spec option
   | DType of rec_flag * U.s_type_declaration list
 
 type program = declaration list
@@ -126,9 +128,11 @@ type cdeclaration = {
   cdecl_desc: cdeclaration_desc;
 }
 
-(** [id list] are the parameters and [expr] is the body. *)
+(** 1st [id list] is for data parameters
+    2nd [id list] is for continuation parameters
+    and [expr] is the body. *)
 and cdeclaration_desc =
-  | CDFun of rec_flag * id * id list * cexpr
+  | CDFun of rec_flag * id * id list * id list * cexpr
   | CDType of rec_flag * U.s_type_declaration list
 
 type cprogram = cdeclaration list

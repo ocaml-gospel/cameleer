@@ -18,6 +18,9 @@ let atom_num n = ACst (cst_num n)
 let gen_id ?(loc=dummy_loc) () =
   { id_name = gen_symbol (); id_loc = loc}
 
+let gen_kid ?(loc=dummy_loc) () =
+  { id_name = gen_symbol ~prefix:"_k" (); id_loc = loc}
+
 let mk_atom ?(loc=dummy_loc) atom_desc =
   { atom_loc=loc ; atom_desc }
 
@@ -35,9 +38,9 @@ let mk_expr ?(loc=dummy_loc) expr_desc =
 let mk_pattern ?(loc=dummy_loc) ppat_desc =
   { ppat_loc=loc; ppat_desc }
 
-let mk_decl (rec_flag, id, params, e, spec) =
+let mk_decl (rec_flag, id, params, konts, e, spec) =
   { decl_loc  = id.id_loc;
-    decl_desc = DFun (rec_flag, id, params, e, spec); }
+    decl_desc = DFun (rec_flag, id, params, konts, e, spec); }
 
 let mk_id ?(loc=dummy_loc) id_name =
   { id_name; id_loc=loc }
@@ -219,7 +222,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
       | KName k -> EIf (a, expr_opt e2 k, expr_opt e3 k)
       | KExpr k ->
           let z   = gen_id () in
-          let kid = gen_id () in
+          let kid = gen_kid () in
           let e2  = expr_opt e2 kid in
           let e3  = expr_opt e3 kid in
           ELetK (kid, z,
@@ -237,7 +240,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
                   mk_expr @@ EIf (mk_atom (AId z),e2,e3)) in
           expr e1 (KExpr kk)
       | KExpr k ->
-          let kid = gen_id () in
+          let kid = gen_kid () in
           let e2  = expr_opt e2 kid in
           let e3  = expr_opt e3 kid in
           let z2  = gen_id () in
@@ -254,8 +257,17 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
       let a = construct_to_atom (l,e) in
       callk [a]
 
-  | Sexp_let (Nonrecursive, _svb, _e) ->  assert false (* TODO *)
-  | Sexp_let (Recursive, _svb, _e) ->  assert false (* TODO *)
+  | Sexp_let (Nonrecursive, [svb], e2) ->
+      let id = get_pattern_id svb.spvb_pat in
+      let e1 = svb.spvb_expr in
+      let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
+      let body = mk_expr ~loc:expr_loc @@ expr e2 k in
+      let kid = gen_kid () in
+      ELetK (kid, id, body,
+             mk_expr @@ expr e1 (KName kid))
+
+  | Sexp_let (Nonrecursive, _svb, _e) -> assert false (* TODO *)
+  | Sexp_let (Recursive, _svb, _e) -> assert false (* TODO *)
 
   | Sexp_apply (e, args) when is_atomic e ->
       let loc = location e.spexp_loc in
@@ -316,8 +328,8 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
       begin match k with
       | KName k -> EMatch ([a], map k)
       | KExpr k ->
-          let aid = gen_id () in
-          let kid = gen_id () in
+          let aid = gen_id  () in
+          let kid = gen_kid () in
           let cases = map kid in
           ELetK (kid, aid,
                  mk_expr @@ EApp (k, [mk_atom @@ AId aid], []),
@@ -341,9 +353,9 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
                     mk_expr @@ EMatch ([mk_atom (AId z)],cases)) in
           expr e (KExpr kk)
       | KExpr k ->
-          let kid = gen_id () in
-          let z   = gen_id () in
-          let z2  = gen_id () in
+          let kid = gen_kid () in
+          let z   = gen_id  () in
+          let z2  = gen_id  () in
           let az2 = mk_atom (AId z2) in
           let cases = map kid in
           let kk = mk_callable @@
@@ -390,6 +402,5 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let params, pexp = collect_params svb.spvb_expr in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let body = mk_expr ~loc:expr_loc (expr pexp (KName k)) in
-  let params = params @ [k] in
   let spec = svb.spvb_vspec in
-  mk_decl (rec_flag, id, params, body, spec)
+  mk_decl (rec_flag, id, params, [k], body, spec)
