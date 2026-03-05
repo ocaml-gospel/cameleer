@@ -35,12 +35,17 @@ let destructs = Hashtbl.create 10
 let handler_name_of_id fn_name = "destruct_" ^ fn_name
 
 (* Branch pattern as (case_name, bound_vars) *)
-let case_of_branch p =
+let rec case_of_branch p =
+  let mk_id name loc = { id_name = name; id_loc = loc } in
   match p.ppat_desc with
-  | PVar id         -> (id, [])
-  | PCons (cid, ps) -> (cid, List.concat(List.map pattern_to_args ps))
-  | PWild           -> ({ id_name = "_"; id_loc = p.ppat_loc }, [])
-  | PTuple ps       -> ({ id_name = "tuple"; id_loc = p.ppat_loc }, List.concat(List.map pattern_to_args ps))
+  | PVar id         -> (mk_id id.id_name id.id_loc, [])
+  | PCons (cid, ps) -> (mk_id cid.id_name cid.id_loc, List.concat_map pattern_to_args ps)
+  | PWild           -> (mk_id "_" p.ppat_loc, [])
+  | PTuple ps       ->
+      let sub_cases = List.map case_of_branch ps in
+      let name = String.concat "_" (List.map (fun (id, _) -> id.id_name) sub_cases) in
+      let vars  = List.concat_map (fun (_, vars) -> vars) sub_cases in
+      (mk_id name p.ppat_loc, vars)
 
 let register_handler fn_name (atoms : atom list) cases =
   let key = handler_name_of_id fn_name in
