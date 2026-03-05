@@ -2,6 +2,9 @@
     All the terms are written in A-normal form to ease
     CPS-conversion later. *)
 
+open Gospel
+module U = Uast
+
 type location = Lexing.position * Lexing.position
 
 (* Each identifier has a name and a location *)
@@ -59,7 +62,7 @@ and callable_desc =
   | CFun of id list * id list * expr
             (* data parameters, kont parameters, body *)
 
-type rec_flag = Recursive | NonRecursive
+type rec_flag = Asttypes.rec_flag
 
 type declaration = {
   decl_loc: location;
@@ -68,7 +71,8 @@ type declaration = {
 
 (* id list are the parameters and expr is the body *)
 and declaration_desc =
-  | DFun of rec_flag * id * id list * expr
+  | DFun of rec_flag * id * id list * expr * U.val_spec option
+  | DType of rec_flag * U.s_type_declaration list
 
 type program = declaration list
 
@@ -128,6 +132,7 @@ type cdeclaration = {
 (* id list are the parameters and expr is the body *)
 and cdeclaration_desc =
   | CDFun of rec_flag * id * id list * cexpr
+  | CDType of rec_flag * U.s_type_declaration list
 
 type cprogram = cdeclaration list
 

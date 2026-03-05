@@ -86,9 +86,12 @@ and pattern p =
   {cppat_loc = p.ppat_loc; cppat_desc = desc;}
 
 let declaration d =
-  match d.decl_desc with
-  | DFun (rec_flag, id, args, e) ->
-      let desc = CDFun (rec_flag, id, args, (expr id.id_name e))
-      in {cdecl_loc = d.decl_loc; cdecl_desc = desc}
+  let mk_cdecl cdecl_desc = { cdecl_loc = d.decl_loc; cdecl_desc } in
+  let cdecl = match d.decl_desc with
+    | DFun (rec_flag, id, args, e, spec) ->
+        ignore spec; (* TODO *)
+        CDFun (rec_flag, id, args, (expr id.id_name e))
+    | DType (rec_flag, td) -> CDType (rec_flag, td) in
+  mk_cdecl cdecl
 
 let program p = List.map declaration p

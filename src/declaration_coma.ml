@@ -42,11 +42,11 @@ let s_structure, s_signature =
   and s_structure_item_desc loc str_item_desc =
     match str_item_desc with
     | Str_value (b, svb_list) ->
-        let b = if b = Recursive then ML.Recursive else ML.NonRecursive in
         let k = ML.{ id_name = "return"; id_loc = E.dummy_loc } in
         List.map (E.s_value_binding b ^~ k) svb_list
     | Str_type (rec_flag, type_decl_list) ->
-        ignore (rec_flag, type_decl_list); []
+        let decl_desc = ML.DType (rec_flag, type_decl_list) in
+        [ ML.{ decl_loc = loc; decl_desc } ]
     | Str_function f ->
         [ ML.{ decl_loc = loc; decl_desc = function_ f } ]
     | _ -> [] (* TODO *)
