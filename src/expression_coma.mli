@@ -2,6 +2,8 @@ open Ppxlib
 open Gospel
 open Ml_lang
 
+type raise_set
+
 val dummy_loc : position * position
 val location : Location.t -> position * position
 
@@ -16,6 +18,8 @@ val atom_false : atom_desc
 val atom_num   : int -> atom_desc
 
 val string_of_longident : Longident.t -> string
+
+val mayraise : Uast.s_expression -> raise_set
 
 val term : Uast.term -> expr
 

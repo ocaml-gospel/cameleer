@@ -2,10 +2,15 @@ open Ppxlib
 open Gospel
 open Ml_lang
 
+let (^~) a b = fun c -> a c b
+
 let dummy_loc = Lexing.dummy_pos, Lexing.dummy_pos
 
 let location {loc_start; loc_end; _} =
   (loc_start, loc_end)
+
+module Mh = Map.Make(struct type t = id let compare = Stdlib.compare end)
+let empty_map = Mh.empty
 
 let cst_true = CBool true
 let cst_false = CBool false
@@ -14,6 +19,22 @@ let cst_num n = CNum n
 let atom_true = ACst cst_true
 let atom_false = ACst cst_false
 let atom_num n = ACst (cst_num n)
+
+let is_false = function
+  | Uast.Sexp_construct ({ txt = Lident "false"; _ }, None) -> true
+  | _ -> false
+
+let is_raise = function
+  | Uast.Sexp_ident { txt = Lident "raise"; _ } -> true
+  | _ -> false
+
+(** The function [get_ident] is valid iff [is_ident] succeded. *)
+let (is_ident, get_ident) =
+  (function
+  | Uast.Sexp_ident { txt = Lident _; _ } -> true
+  | _ -> false),
+  (function[@warning "-8"] Uast.Sexp_ident { txt = Lident f; _ } -> f)
+
 
 let gen_id ?(loc=dummy_loc) () =
   { id_name = gen_symbol (); id_loc = loc}
@@ -274,13 +295,97 @@ and atom_of_sexpr e =
       mk_atom ~loc (ATuple a)
   | _ -> assert false (* unreachable *)
 
+module S = Set.Make(String)
+type raise_set = S.t
+
+let raisable_hmap: (string, S.t) Hashtbl.t = Hashtbl.create 32
+
+(* TODO
+   Use this function to compute the set [mayraise]
+   of each function before its CPS-conversion.
+   Then, recursively add ...
+   *)
+let mayraise e =
+  let rec loop acc e =
+    match e.Uast.spexp_desc with
+    | Sexp_construct (_, Some e) -> loop acc e
+    | Sexp_construct _ | Sexp_ident _ | Sexp_constant _ -> acc
+    | Sexp_let (_, el, e) ->
+        let acc2 = List.fold_left
+          (fun acc Uast.{spvb_expr=e;_} -> loop acc e) acc el in
+        loop acc2 e
+    | Sexp_apply (e, [ (_, arg) ]) when is_raise e.spexp_desc ->
+        let a = atom_of_sexpr arg in
+        let s = match a.atom_desc with
+          | AId _id -> assert false (* how? *)
+          | ACons (id, _) -> "raise_" ^ id.id_name
+          | ATuple _ | ACst _ | AFun _ | ABinop _ -> assert false in
+        loop (S.add s acc) e
+    | Sexp_apply (f, el) when is_ident f.spexp_desc ->
+        let acc2 = List.fold_left
+          (fun acc (_,e) -> loop acc e) acc el in
+        let fname = get_ident f.spexp_desc in
+        let ef = Hashtbl.find raisable_hmap fname in  (* search for the Hashtbl of f *)
+        S.union acc2 ef
+    | Sexp_apply (e, el) ->
+        let acc2 = List.fold_left
+          (fun acc (_,e) -> loop acc e) acc el in
+        loop acc2 e
+    | Sexp_match (e, cases) ->
+        let acc = loop acc e in
+        List.fold_left (fun acc Uast.{spc_rhs=e;_} -> loop acc e) acc cases
+    | Sexp_try (e, cases) ->
+        let acc2 = loop S.empty e in
+        let remove,add = List.fold_left
+          (fun (r,a) Uast.{spc_lhs=x;spc_rhs=e;_} ->
+            let x = match x.ppat_desc with
+              | Ppat_construct ({txt;_},_) -> "raise_" ^ string_of_longident txt
+              | _ -> assert false in
+            S.add x r, loop a e)
+          (S.empty,S.empty) cases in
+        let acc = S.filter (S.mem ^~ remove) acc in
+        S.union (S.union acc acc2) add
+    | Sexp_tuple el ->
+        List.fold_left loop acc el
+    | Sexp_fun _ | Sexp_function _ -> assert false (* TODO *)
+    | Sexp_variant (_, _)
+    | Sexp_record (_, _)
+    | Sexp_field (_, _)
+    | Sexp_setfield (_, _, _)
+    | Sexp_array _
+    | Sexp_ifthenelse (_, _, _)
+    | Sexp_sequence (_, _)
+    | Sexp_while (_, _, _)
+    | Sexp_for (_, _, _, _, _, _)
+    | Sexp_constraint (_, _)
+    | Sexp_coerce (_, _, _)
+    | Sexp_send (_, _)
+    | Sexp_new _
+    | Sexp_setinstvar (_, _)
+    | Sexp_override _
+    | Sexp_letmodule (_, _, _)
+    | Sexp_letexception (_, _)
+    | Sexp_assert _
+    | Sexp_lazy _
+    | Sexp_poly (_, _)
+    | Sexp_object _
+    | Sexp_newtype (_, _)
+    | Sexp_pack _
+    | Sexp_open (_, _)
+    | Sexp_letop _
+    | Sexp_extension _
+    | Sexp_unreachable -> assert false in
+  loop S.empty e
+
+
 type kont_type = KName of id | KExpr of callable
 
-(** CPS translation where [k] is a [CFun] callable *)
-let rec expr (e: Uast.s_expression) k : expr_desc =
-  let expr_opt e kid =
+(** CPS translation of [e] where [k] is its normal continuation
+    and hm is the map of exceptional ones. *)
+let rec expr (e: Uast.s_expression) k hm : expr_desc =
+  let expr_opt e kid hm =
     let loc = location e.Uast.spexp_loc in
-    let e = expr e (KName kid) in
+    let e = expr e (KName kid) hm in
     mk_expr ~loc e in
   let callk a = match k with
     | KName k -> EApp (mk_callable ~loc:k.id_loc (CId k), a, [])
@@ -304,12 +409,12 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
             assert false (* impossible (type error) *)
         | _ -> assert false in
       begin match k with
-      | KName k -> EIf (a, expr_opt e2 k, expr_opt e3 k)
+      | KName k -> EIf (a, expr_opt e2 k hm, expr_opt e3 k hm)
       | KExpr k ->
           let z   = gen_id () in
           let kid = gen_kid () in
-          let e2  = expr_opt e2 kid in
-          let e3  = expr_opt e3 kid in
+          let e2  = expr_opt e2 kid hm in
+          let e3  = expr_opt e3 kid hm in
           ELetK (kid, z,
                  mk_expr @@ EApp (k, [mk_atom @@ AId z], []),
                  mk_expr @@ EIf (a, e2, e3))
@@ -318,23 +423,23 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
       let z = gen_id ~loc:(location e1.spexp_loc) () in
       begin match k with
       | KName k ->
-          let e2 = expr_opt e2 k in
-          let e3 = expr_opt e3 k in
+          let e2 = expr_opt e2 k hm in
+          let e3 = expr_opt e3 k hm in
           let kk = mk_callable @@
             CFun ([z], [],
                   mk_expr @@ EIf (mk_atom (AId z),e2,e3)) in
-          expr e1 (KExpr kk)
+          expr e1 (KExpr kk) hm
       | KExpr k ->
           let kid = gen_kid () in
-          let e2  = expr_opt e2 kid in
-          let e3  = expr_opt e3 kid in
+          let e2  = expr_opt e2 kid hm in
+          let e3  = expr_opt e3 kid hm in
           let z2  = gen_id () in
           let az2 = mk_atom (AId z2) in
           let kk  = mk_callable @@
             CFun ([z], [],
                   mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
                   mk_expr @@ EIf (mk_atom (AId z),e2,e3))) in
-          expr e1 (KExpr kk)
+          expr e1 (KExpr kk) hm
       end
   | Sexp_ifthenelse (_, _, None) -> assert false
 
@@ -347,10 +452,10 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
       let e1 = svb.spvb_expr in
       let loc1 = location e1.spexp_loc in
       let loc2 = location e2.spexp_loc in
-      let body = mk_expr ~loc:loc2 @@ expr e2 k in
+      let body = mk_expr ~loc:loc2 @@ expr e2 k hm in
       let kid = gen_kid () in
       ELetK (kid, id, body,
-             mk_expr ~loc:loc1 @@ expr e1 (KName kid))
+             mk_expr ~loc:loc1 @@ expr e1 (KName kid) hm)
 
   | Sexp_let (Nonrecursive, [], _) -> assert false
   | Sexp_let (Nonrecursive, svb::svbs, e2) ->
@@ -360,12 +465,28 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
       let loc2 = location e2.spexp_loc in
       let e2 =
         { e with spexp_desc = Sexp_let (Nonrecursive, svbs, e1) } in
-      let body = mk_expr ~loc:loc2 @@ expr e2 k in
+      let body = mk_expr ~loc:loc2 @@ expr e2 k hm in
       let kid = gen_kid () in
       ELetK (kid, id, body,
-             mk_expr ~loc:loc1 @@ expr e1 (KName kid))
+             mk_expr ~loc:loc1 @@ expr e1 (KName kid) hm)
 
   | Sexp_let (Recursive, _svb, _e) -> assert false (* TODO *)
+
+  | Sexp_try (e, cases) ->
+      begin match k with
+      | KName _ ->
+          let f = (fun Uast.{spc_lhs; spc_rhs; _} ->
+            let loc = location spc_rhs.spexp_loc in
+            let ploc = location spc_lhs.ppat_loc in
+            let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
+            pat, mk_expr ~loc @@ expr spc_rhs k hm) in
+          let _cases = List.map f cases in
+          let _e = mk_expr @@ expr e k hm in
+          (* let _letks = List.fold_left (fun acc (h,x,d) ->
+            mk_expr ~loc:h.id_loc @@ ELetK (h, x, d, acc)) e cases in *)
+          assert false
+      | KExpr _ -> assert false
+      end
 
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([_;_] as args))
     when is_binop (string_of_longident txt) ->
@@ -380,6 +501,15 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
         | KName k -> mk_callable @@ CId k
         | KExpr k -> k in
       EApp (k, a, [])
+
+  | Sexp_apply (s, [ (_, arg) ]) when is_raise s.spexp_desc ->
+      let a = atom_of_sexpr arg in
+      let s,l = match a.atom_desc with
+        | AId id -> { id with id_name=("raise_" ^ id.id_name)}, []
+        | ACons (id, al) ->
+            { id with id_name=("raise_" ^ id.id_name)}, al
+        | ATuple _ | ACst _ | AFun _ | ABinop _ -> assert false in
+      EApp (mk_callable (CId s), l, [])
 
   | Sexp_apply (e, args) when is_atomic e ->
       let loc = location e.spexp_loc in
@@ -403,7 +533,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
         | KExpr k -> k in
       let k = mk_callable ~loc @@
         CFun ([z],[], mk_expr @@ EApp (mk_callable @@ CId z, args, [k])) in
-      expr e (KExpr k)
+      expr e (KExpr k) hm
 
   | Sexp_match (e, cases) when is_atomic e ->
       let a = match e.spexp_desc with
@@ -417,7 +547,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          pat, mk_expr ~loc @@ expr spc_rhs (KName k))
+          pat, mk_expr ~loc @@ expr spc_rhs (KName k) hm)
         cases in
       begin match k with
       | KName k -> EMatch ([a], map k)
@@ -436,7 +566,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          pat, mk_expr ~loc @@ expr spc_rhs (KName k))
+          pat, mk_expr ~loc @@ expr spc_rhs (KName k) hm)
         cases in
       begin match k with
       | KName k ->
@@ -445,7 +575,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
           let kk = mk_callable @@
               CFun ([z],[],
                     mk_expr @@ EMatch ([mk_atom (AId z)],cases)) in
-          expr e (KExpr kk)
+          expr e (KExpr kk) hm
       | KExpr k ->
           let kid = gen_kid () in
           let z   = gen_id  () in
@@ -456,16 +586,17 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
             CFun ([z], [],
                   mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
                   mk_expr @@ EMatch ([mk_atom (AId z)], cases))) in
-          expr e (KExpr kk)
+          expr e (KExpr kk) hm
       end
 
-  | Sexp_sequence (_, _)        -> assert false
-  | Sexp_unreachable            -> assert false
-  | Sexp_assert _               -> assert false
+  | Sexp_assert e when is_false e.spexp_desc -> EAssert
+
   | Sexp_function _             -> assert false (* TODO *)
-  | Sexp_fun (_, _, _, _, _)    -> failwith "unreachable" (* its not true *)
+  | Sexp_fun (_, _, _, _, _)    -> failwith "unreachable" (* it is not true *)
   (* TBC *)
-  | Sexp_try (_, _)
+  | Sexp_sequence (_, _)
+  | Sexp_assert _
+  | Sexp_unreachable
   | Sexp_tuple _
   | Sexp_variant (_, _)
   | Sexp_record (_, _)
@@ -495,7 +626,7 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let id = get_pattern_id svb.spvb_pat in
   let params, pexp = collect_params svb.spvb_expr in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
-  let body = mk_expr ~loc:expr_loc (expr pexp (KName k)) in
+  let body = mk_expr ~loc:expr_loc (expr pexp (KName k) empty_map) in
   let spec = svb.spvb_vspec in
   let kont = mk_kont k spec in
   let pre = pre_of_spec spec in
