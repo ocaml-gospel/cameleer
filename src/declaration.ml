@@ -184,8 +184,8 @@ let val_decl loc vd ghost =
     let id = Vspec.ident_of_lb_arg lb_arg in
     let id_loc = id.id_loc in
     let pty = E.core_type ct in
-    (* since why3 1.5.0, I no longer have access to extraction attrubutes, as
-     * the [ocaml] module is now oppaque *)
+    (* since why3 1.5.0, I no longer have access to extraction
+       attributes, as the [OCaml] module is now oppaque *)
     let named_arg = Ident.create_attribute "ocaml:named" in
     let optional_arg = Ident.create_attribute "ocaml:optional" in
     let id, ghost, pty =
