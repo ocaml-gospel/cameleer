@@ -99,6 +99,7 @@ and callable fn_name {callable_loc; callable_desc} =
     match callable_desc with
     | CId id -> CCId id
     | CFun (data, kon, e) ->
+        (* TODO: specification for the generated fun *)
         CCFun (data, [], kon, expr fn_name e) in 
   mk_ccalable desc
 
@@ -111,11 +112,15 @@ and pattern p =
     | PTuple ps -> CPTuple (List.map pattern ps) in
   {cppat_loc = p.ppat_loc; cppat_desc = desc;}
 
-
 let declaration d =
   let mk_cdecl cdecl_desc = { cdecl_loc = d.decl_loc; cdecl_desc } in
+  let mk_ckont {kont_id; kont_pre} =
+    {ckont_id = kont_id;
+     ckont_pre = List.map (Uterm.term false) kont_pre} in
   let cdecl = match d.decl_desc with
     | DFun (rec_flag, id, xs, pre, ks, e) ->
+        let pre = List.map (Uterm.term false) pre in
+        let ks = List.map mk_ckont ks in
         CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e)) 
     | DType (rec_flag, td) -> CDType (rec_flag, td) in
   mk_cdecl cdecl
