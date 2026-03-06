@@ -166,9 +166,12 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
   | Ppat_extension _
   | Ppat_open (_, _) -> assert false
 
-let is_atomic e =
+  (** Returns [true] iff [e] is a constant/ident/construct/atomic-tuple. *)
+let rec is_atomic e =
   match e.Uast.spexp_desc with
-  | Sexp_constant _ | Sexp_ident _ | Sexp_construct _ -> true
+  | Sexp_constant _ | Sexp_ident _ | Sexp_construct (_, None) -> true
+  | Sexp_construct (_, Some e) -> is_atomic e
+  | Sexp_tuple el -> List.for_all is_atomic el
   | _ -> false
 
 let is_binop, get_binop =
@@ -216,6 +219,7 @@ let construct_to_atom ?(loc=dummy_loc) c = match c with
             let id = {id_name = string_of_longident txt; id_loc = loc} in
             mk_atom ~loc @@
             ACons (id, [])
+        | Sexp_tuple _ -> assert false (* TODO *)
         | _ -> assert false (* TODO other construct cases with recursive call*)
       ) expr_list in
       mk_atom ~loc:id.id_loc (ACons (id, l))
@@ -223,7 +227,7 @@ let construct_to_atom ?(loc=dummy_loc) c = match c with
       (* mk_eidapp (longident id.txt) [ expression info e ] *)
       assert false
 
-let atom_of_sexpr e =
+let rec atom_of_sexpr e =
   assert (is_atomic e); (* ANF assumption *)
   match e.Uast.spexp_desc with
   | Sexp_constant  c      -> mk_atom (constant c)
@@ -232,8 +236,11 @@ let atom_of_sexpr e =
       let loc = location loc in
       let id = { id_name = string_of_longident txt ; id_loc = loc} in
       (mk_atom ~loc @@ AId id)
-  | Sexp_tuple _ -> assert false (* TODO *)
-  | _ -> assert false
+  | Sexp_tuple el ->
+      let loc = location e.spexp_loc in
+      let a = List.map atom_of_sexpr el in
+      mk_atom ~loc (ATuple a)
+  | _ -> assert false (* unreachable *)
 
 type kont_type = KName of id | KExpr of callable
 
@@ -259,7 +266,9 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
         match e1.spexp_desc with
         | Sexp_ident {txt; _} ->
              AId { id_name = string_of_longident txt ; id_loc = loc}
-        | Sexp_constant _ | Sexp_construct _ ->
+        | Sexp_constant _
+        | Sexp_construct _
+        | Sexp_tuple _ ->
             assert false (* impossible (type error) *)
         | _ -> assert false in
       begin match k with
