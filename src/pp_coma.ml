@@ -6,6 +6,9 @@ open Ml_lang
 open Gospel
 module UPrint = Upretty_printer
 
+open Why3
+module WPrint = Mlw_printer
+
 (* some useful combinators *)
 let pp_newline fmt () = fprintf fmt "@\n"
 let pp_newline_newline fmt () = fprintf fmt "@\n@\n"
@@ -53,7 +56,8 @@ let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
       fprintf fmt "@[fun %a@]@ "
         (pp_print_list ~pp_sep:pp_space pp_pattern) al
 
-let pp_id ?(paren=false) fmt {id_name; _} = fprintf fmt (protect_on paren "%s") id_name
+let pp_id ?(paren=false) fmt {id_name; _} =
+  fprintf fmt (protect_on paren "%s") id_name
  
 let pp_pre fmt = function
   | [] -> ()
@@ -87,7 +91,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   (* | CELetK(k, x, e1, e2) -> failwith "TODO"  *)
-  | _ -> failwith "TODO" 
+  | _ -> failwith "TODO"
 
 and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
   match a.catom_desc with
@@ -140,17 +144,21 @@ let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"
   | Nonrecursive -> ()
 
-let pp_kont fmt {kont_id; _} =
-  fprintf fmt "%a" (pp_id ~paren:true) kont_id
+let pp_cpre = (WPrint.pp_term ~attr:false).closed
+
+let pp_kont fmt {ckont_id; ckont_pre} =
+  fprintf fmt (protect_on true "%a {@[%a@]}")
+    (pp_id ~paren:false) ckont_id
+    (pp_print_list ~pp_sep:pp_and pp_cpre) ckont_pre
 
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
   | CDFun (rec_flag, id, xs, pre, ks, e) ->
-      fprintf fmt "@[<hov 2>let%a %s %a %a%s%a =@\n%a@]"
+      fprintf fmt "@[<hov 2>let%a %s %a {@[%a@]}%s%a =@\n%a@]"
         pp_rec rec_flag
         id.id_name
         (pp_print_list ~pp_sep:pp_space pp_id) xs
-        pp_pre pre
+        (pp_print_list ~pp_sep:pp_and pp_cpre) pre
         (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
