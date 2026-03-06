@@ -31,6 +31,13 @@ let pp_op fmt (op: op) =
 let pp_id fmt id =
   fprintf fmt "%s" id.id_name
 
+let pp_binder fmt (id, pty) =
+  match pty with
+  | None -> fprintf fmt "%a" pp_id id
+  | Some pty ->
+      ignore pty; (* TODO: print type *)
+      fprintf fmt "%a: ..." pp_id id
+  
 let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   match ppat_desc with
   | PWild ->
@@ -47,6 +54,9 @@ let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   | PTuple (args) ->
       fprintf fmt (protect_on paren "@[%a@]")
         (pp_print_list ~pp_sep:pp_coma pp_pattern) args
+  | PCast (p, _) ->
+      fprintf fmt (protect_on paren "@[%a: ...@]")
+        (pp_pattern ~paren:true) p
 
 let rec pp_expr fmt (e: expr) =
   match e.expr_desc with
@@ -84,7 +94,8 @@ and pp_atom ?(paren=false) fmt (a: atom) =
       fprintf fmt (protect_on paren "@[%a %a %a@]") pp_expr e1 pp_op op
         pp_expr e2
   | ACst c -> fprintf fmt "%a" pp_constant c
-  | AFun (_, x, e) ->
+  | AFun (_, binder, e) ->
+      let (x, _) = binder in
       fprintf fmt (protect_on paren "fun %s ->@;<1 2>@[%a@]")
         x.id_name pp_expr e
   | AId x -> fprintf fmt "%s" x.id_name
@@ -107,7 +118,7 @@ and pp_callable fmt c =
   | CId id -> fprintf fmt "%a" pp_id id
   | CFun (xs, ks, e) ->
       fprintf fmt "fun %a%s%a ->@;<1 2>@[%a@]"
-        (pp_print_list pp_id) xs
+        (pp_print_list pp_binder) xs
         (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list pp_id) ks
         pp_expr e
@@ -120,7 +131,7 @@ let pp_id fmt {id_name; _} =
   fprintf fmt "%s" id_name
 
 let pp_kont fmt {kont_id; _} =
-  fprintf fmt "%a" pp_id kont_id
+  fprintf fmt "%a" pp_binder kont_id
 
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with
@@ -128,7 +139,7 @@ let pp_decl fmt (d: declaration) =
       ignore pre; (* TODO *)
       fprintf fmt "@[let%a %s %a%s%a@ =@;<1 2>@[%a@]@]"
         pp_rec rec_flag id.id_name
-        (pp_print_list ~pp_sep:pp_space pp_id) xs
+        (pp_print_list ~pp_sep:pp_space pp_binder) xs
         (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
         pp_expr e

@@ -10,6 +10,12 @@ type t = A of t | B | C | D of t
 
 (* ------------------------------------------------------------------------- *)
 (* Simple functions (+optional toplevel specification) *)
+let is_empty (t: 'a t) =
+  match t with
+  | Empty -> true
+  | Node ((l: 'a t), (x: 'a), (r: 'a t)) -> false
+(*@ r = is_empty t
+      ensures r <-> t = Emtpy *)
 
 let sum x y =
   if x then
