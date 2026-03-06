@@ -146,19 +146,25 @@ let pp_rec fmt = function
 
 let pp_cpre = (WPrint.pp_term ~attr:false).closed
 
+let pp_cpre fmt = function
+  | [] -> ()
+  | pre ->
+      fprintf fmt "{@[%a@]}"
+        (pp_print_list ~pp_sep:pp_and pp_cpre) pre
+
 let pp_kont fmt {ckont_id; ckont_pre} =
-  fprintf fmt (protect_on true "%a {@[%a@]}")
-    (pp_id ~paren:false) ckont_id
-    (pp_print_list ~pp_sep:pp_and pp_cpre) ckont_pre
+  fprintf fmt (protect_on true "%a %a")
+    (pp_binder ~paren:false) ckont_id
+    pp_cpre ckont_pre
 
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
   | CDFun (rec_flag, id, xs, pre, ks, e) ->
-      fprintf fmt "@[<hov 2>let%a %s %a {@[%a@]}%s%a =@\n%a@]"
+      fprintf fmt "@[<hov 2>let%a %s %a %a%s%a =@\n%a@]"
         pp_rec rec_flag
         id.id_name
-        (pp_print_list ~pp_sep:pp_space pp_id) xs
-        (pp_print_list ~pp_sep:pp_and pp_cpre) pre
+        (pp_print_list ~pp_sep:pp_space pp_binder) xs
+        pp_cpre pre
         (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
