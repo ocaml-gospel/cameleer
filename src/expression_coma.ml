@@ -113,6 +113,53 @@ let rec term (t: Uast.term) =
     | Tscope (_, _)     -> assert false
     | Told _            -> assert false
 
+(* TO BE REMOVED, debugging only *)
+let rec identify e =
+  let open Format in
+  let pploc fmt l =
+    let ({pos_lnum;pos_cnum;_},_) = location l in
+    fprintf fmt "l%d, c%d" pos_lnum pos_cnum in
+  match e.Uast.spexp_desc with
+  | Sexp_ident {txt;_} -> eprintf "ident %s@." (string_of_longident txt)
+  | Sexp_constant _ -> eprintf "constant@."
+  | Sexp_let (_, _, _) -> eprintf "let@."
+  | Sexp_function _ -> eprintf "function@."
+  | Sexp_fun (_, _, _, _, _) -> eprintf "fun@."
+  | Sexp_apply (e, _) -> eprintf "apply+(%a)..@." pploc e.spexp_loc; identify e
+  | Sexp_match (_, _) -> eprintf "match@."
+  | Sexp_try (_, _) -> eprintf "try@."
+  | Sexp_tuple _ -> eprintf "tuple@."
+  | Sexp_construct (_, _) -> eprintf "construct@."
+  | Sexp_variant (_, _) -> eprintf "variant@."
+  | Sexp_record (_, _) -> eprintf "record@."
+  | Sexp_field (_, _) -> eprintf "field@."
+  | Sexp_setfield (_, _, _) -> eprintf "setfield@."
+  | Sexp_array _ -> eprintf "array@."
+  | Sexp_ifthenelse (_, _, _) -> eprintf "ifthenelse@."
+  | Sexp_sequence (_, _) -> eprintf "sequence@."
+  | Sexp_while (_, _, _) -> eprintf "while@."
+  | Sexp_for (_, _, _, _, _, _) -> eprintf "for@."
+  | Sexp_constraint (_, _) -> eprintf "constraint@."
+  | Sexp_coerce (_, _, _) -> eprintf "coerce@."
+  | Sexp_send (_, _) -> eprintf "send@."
+  | Sexp_new _ -> eprintf "new@."
+  | Sexp_setinstvar (_, _) -> eprintf "setinstvar@."
+  | Sexp_override _ -> eprintf "override@."
+  | Sexp_letmodule (_, _, _) -> eprintf "letmodule@."
+  | Sexp_letexception (_, _) -> eprintf "letexception@."
+  | Sexp_assert _ -> eprintf "assert@."
+  | Sexp_lazy _ -> eprintf "lazy@."
+  | Sexp_poly (_, _) -> eprintf "poly@."
+  | Sexp_object _ -> eprintf "object@."
+  | Sexp_newtype (_, _) -> eprintf "newtype@."
+  | Sexp_pack _ -> eprintf "pack@."
+  | Sexp_open (_, _) -> eprintf "open@."
+  | Sexp_letop _ -> eprintf "letop@."
+  | Sexp_extension _ -> eprintf "extension@."
+  | Sexp_unreachable -> eprintf "unreachable@."
+
+let identify_fail e = identify e; assert false
+
 let collect_params expr =
   let rec loop acc expr =
     match expr.Uast.spexp_desc with
@@ -196,7 +243,7 @@ let is_binop, get_binop =
   (fun s -> Hashtbl.mem driver s),
   (fun s -> Option.get @@ Hashtbl.find driver s)
 
-let construct_to_atom ?(loc=dummy_loc) c = match c with
+let rec atom_of_construct ?(loc=dummy_loc) c = match c with
   | ({ txt = Lident "true"; _ },  None) -> mk_atom ~loc atom_true
   | ({ txt = Lident "false"; _ }, None) -> mk_atom ~loc atom_false
   | ({ txt = Lident "()"; _ }, None) -> assert false
@@ -205,33 +252,18 @@ let construct_to_atom ?(loc=dummy_loc) c = match c with
       mk_atom ~loc:id.id_loc (ACons (id, []))
   | ({ txt; loc }, Some Uast.{ spexp_desc = Sexp_tuple expr_list; _ }) ->
       let id = {id_name = string_of_longident txt; id_loc = location loc} in
-      let l = List.map (fun e ->
-        assert (is_atomic e); (* ANF assumption *)
-        match e.spexp_desc with
-        | Sexp_constant c ->
-            mk_atom (constant c)
-        | Sexp_ident {txt; loc} ->
-            let loc = location loc in
-            mk_atom ~loc @@
-            AId { id_name = string_of_longident txt ; id_loc = loc}
-        | Sexp_construct ({ txt; loc }, None) ->
-            let loc = location loc in
-            let id = {id_name = string_of_longident txt; id_loc = loc} in
-            mk_atom ~loc @@
-            ACons (id, [])
-        | Sexp_tuple _ -> assert false (* TODO *)
-        | _ -> assert false (* TODO other construct cases with recursive call*)
-      ) expr_list in
+      let l = List.map atom_of_sexpr expr_list in
       mk_atom ~loc:id.id_loc (ACons (id, l))
-  | (_id, Some _e) ->
-      (* mk_eidapp (longident id.txt) [ expression info e ] *)
-      assert false
+  | ({ txt; loc }, Some e) ->
+      let id = {id_name = string_of_longident txt; id_loc = location loc} in
+      mk_atom ~loc:id.id_loc (ACons (id, [atom_of_sexpr e]))
 
-let rec atom_of_sexpr e =
-  assert (is_atomic e); (* ANF assumption *)
+and atom_of_sexpr e =
+  if not (is_atomic e) then
+    (Format.printf "ANF assumption broken@."; identify_fail e) else
   match e.Uast.spexp_desc with
   | Sexp_constant  c      -> mk_atom (constant c)
-  | Sexp_construct (l, e) -> construct_to_atom (l,e)
+  | Sexp_construct (l, e) -> atom_of_construct (l,e)
   | Sexp_ident {txt; loc} ->
       let loc = location loc in
       let id = { id_name = string_of_longident txt ; id_loc = loc} in
@@ -307,7 +339,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
   | Sexp_ifthenelse (_, _, None) -> assert false
 
   | Sexp_construct (l,e) ->
-      let a = construct_to_atom (l,e) in
+      let a = atom_of_construct (l,e) in
       callk [a]
 
   | Sexp_let (Nonrecursive, [svb], e2) ->
@@ -340,7 +372,7 @@ let rec expr (e: Uast.s_expression) k : expr_desc =
       let st = string_of_longident txt in
       let op = get_binop st in
       let[@warning "-8"] [a1;a2] =
-        List.map (fun (_, e) -> atom_of_sexpr e) args in
+        List.map (fun (_, e) -> identify e; atom_of_sexpr e) args in
       let a1 = mk_expr ~loc:a1.atom_loc (EAtom a1) in
       let a2 = mk_expr ~loc:a2.atom_loc (EAtom a2) in
       let a = [mk_atom ~loc:a1.expr_loc @@ ABinop (a1, op, a2)] in
