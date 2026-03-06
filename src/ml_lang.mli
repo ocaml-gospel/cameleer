@@ -5,10 +5,15 @@
 open Gospel
 module U = Uast
 
+open Ppxlib
+module P = Parsetree
+
 type location = Lexing.position * Lexing.position
 
 (* Each identifier has a name and a location *)
 type id = { id_name: string; id_loc: location }
+
+type binder = id * P.core_type option
 
 type constant = CNum of int | CBool of bool
 
@@ -24,6 +29,7 @@ and pattern_desc =
   | PVar of id                                (* catch all+binder:  x        *)
   | PCons of id * pattern list                (* constructor:   Cons(x, xs)  *)
   | PTuple of pattern list                    (* multiple pattern: p1, p2, … *)
+  | PCast of pattern * P.core_type            (* [P: T] *)
 
 type expr = {
   expr_loc: location;
@@ -48,7 +54,7 @@ and atom_desc =
   | AId of id
   | ABinop of expr * op * expr
   | ACst of constant
-  | AFun of bool * id * expr
+  | AFun of bool * binder * expr
   | ATuple of atom list
   | ACons of id * atom list
 
@@ -58,15 +64,15 @@ and callable = {
 }
 
 and callable_desc =
-  | CId  of id                             (* handler name                   *)
-  | CFun of id list * id list * expr       (* data params, kont params, body *)
+  | CId  of id                           (* handler name                   *)
+  | CFun of binder list * id list * expr (* data params, kont params, body *)
 
 type rec_flag = Asttypes.rec_flag
 
 type precondition = U.term list
 
 type kont = {
-  kont_id: id;
+  kont_id: binder;
   kont_pre: precondition;
 }
 
@@ -79,7 +85,7 @@ type declaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and declaration_desc =
-  | DFun of rec_flag * id * id list * precondition * kont list * expr
+  | DFun of rec_flag * id * binder list * precondition * kont list * expr
   | DType of rec_flag * U.s_type_declaration list
 
 type program = declaration list
@@ -98,7 +104,7 @@ type cprecondition = Ptree.term list
 (* a WhyML precondition *)
 
 type ckont = {
-  ckont_id: id;
+  ckont_id: binder;
   ckont_pre: cprecondition;
 }
 
@@ -112,6 +118,7 @@ and cpattern_desc =
   | CPVar of id                           (* catch all+binder:  x            *)
   | CPCons of id * cpattern list          (* constructor:       Cons(x, xs)  *)
   | CPTuple of cpattern list              (* multiple pattern:  p1, p2, …    *)
+  | CPCast of cpattern * P.core_type      (* [P: T] *)
 
 type cexpr = {
   cexpr_loc: location;
@@ -136,7 +143,7 @@ and catom_desc =
   | CAId of id
   | CABinop of cexpr * op * cexpr
   | CACst of constant
-  | CAFun of id * cexpr
+  | CAFun of binder * cexpr
   | CATuple of catom list
   | CACons of id * catom list
 
@@ -147,7 +154,7 @@ and ccallable = {
 
 and ccallable_desc =
   | CCId  of id (* handler name *)
-  | CCFun of id list * cprecondition * id list * cexpr
+  | CCFun of binder list * cprecondition * id list * cexpr
   (* data params, precondition, kont params, body *)
 
 type cdeclaration = {
@@ -159,8 +166,7 @@ type cdeclaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and cdeclaration_desc =
-  | CDFun of rec_flag * id * id list * cprecondition * ckont list * cexpr
+  | CDFun of rec_flag * id * binder list * cprecondition * ckont list * cexpr
   | CDType of rec_flag * U.s_type_declaration list
 
 type cprogram = cdeclaration list
-

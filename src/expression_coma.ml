@@ -68,10 +68,12 @@ let mk_id ?(loc=dummy_loc) id_name =
 
 let eatom ?(loc=dummy_loc) a = EAtom (mk_atom ~loc a)
 
-let get_pattern_id (pat: Parsetree.pattern) =
+let rec get_pattern_id (pat: Parsetree.pattern) =
   match pat.ppat_desc with
   | Ppat_var {txt; loc} ->
       { id_name = txt; id_loc = location loc }
+  | Ppat_constraint (p, _) ->
+      get_pattern_id p
   | _ ->  assert false
 
 let preid Uast.Preid.{ pid_str; pid_loc; _ } =
@@ -186,7 +188,8 @@ let collect_params expr =
     match expr.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
         let arg = get_pattern_id pat in
-        loop (arg :: acc) e
+        let binder = arg, None in (* FIXME: type *)
+        loop (binder :: acc) e
     | _ -> List.rev acc, expr
   in
   loop [] expr
@@ -219,6 +222,8 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
   | Ppat_tuple pl ->
       let pl = List.map (fun p -> mk_pattern (pattern p)) pl in
       PTuple pl
+  | Ppat_constraint (p, c) ->
+      PCast (mk_pattern (pattern p), c)
   | Ppat_constant _
   | Ppat_interval (_, _)
   | Ppat_alias (_, _)
@@ -226,7 +231,6 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
   | Ppat_record (_, _)
   | Ppat_array _
   | Ppat_or (_, _)
-  | Ppat_constraint (_, _)
   | Ppat_type _
   | Ppat_lazy _
   | Ppat_unpack _
@@ -426,7 +430,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let e2 = expr_opt e2 k hm in
           let e3 = expr_opt e3 k hm in
           let kk = mk_callable @@
-            CFun ([z], [],
+            CFun ([z, None], [], (* FIXME? Type of the argument *)
                   mk_expr @@ EIf (mk_atom (AId z),e2,e3)) in
           expr e1 (KExpr kk) hm
       | KExpr k ->
@@ -436,7 +440,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let z2  = gen_id () in
           let az2 = mk_atom (AId z2) in
           let kk  = mk_callable @@
-            CFun ([z], [],
+            CFun ([z, None], [],
                   mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
                   mk_expr @@ EIf (mk_atom (AId z),e2,e3))) in
           expr e1 (KExpr kk) hm
@@ -532,8 +536,9 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
         | KName k -> mk_callable ~loc:k.id_loc @@ CId k
         | KExpr k -> k in
       let k = mk_callable ~loc @@
-        CFun ([z],[], mk_expr @@ EApp (mk_callable @@ CId z, args, [k])) in
-      expr e (KExpr k) hm
+        CFun ([z, None],[], mk_expr @@
+              EApp (mk_callable @@ CId z, args, [k])) in
+      expr e (KExpr k)
 
   | Sexp_match (e, cases) when is_atomic e ->
       let a = match e.spexp_desc with
@@ -573,7 +578,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let z = gen_id ~loc () in
           let cases = map k in
           let kk = mk_callable @@
-              CFun ([z],[],
+              CFun ([z, None],[],
                     mk_expr @@ EMatch ([mk_atom (AId z)],cases)) in
           expr e (KExpr kk) hm
       | KExpr k ->
@@ -583,14 +588,17 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let az2 = mk_atom (AId z2) in
           let cases = map kid in
           let kk = mk_callable @@
-            CFun ([z], [],
+            CFun ([z, None], [],
                   mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
                   mk_expr @@ EMatch ([mk_atom (AId z)], cases))) in
           expr e (KExpr kk) hm
       end
 
   | Sexp_assert e when is_false e.spexp_desc -> EAssert
-
+  | Sexp_constraint (_, _) ->
+      assert false (* TODO *)
+  | Sexp_sequence (_, _)        -> assert false
+  | Sexp_unreachable            -> assert false
   | Sexp_function _             -> assert false (* TODO *)
   | Sexp_fun (_, _, _, _, _)    -> failwith "unreachable" (* it is not true *)
   (* TBC *)
@@ -605,7 +613,6 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
   | Sexp_array _
   | Sexp_while (_, _, _)
   | Sexp_for (_, _, _, _, _, _)
-  | Sexp_constraint (_, _)
   | Sexp_coerce (_, _, _)
   | Sexp_send (_, _)
   | Sexp_new _
@@ -628,6 +635,6 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let body = mk_expr ~loc:expr_loc (expr pexp (KName k) empty_map) in
   let spec = svb.spvb_vspec in
-  let kont = mk_kont k spec in
+  let kont = mk_kont (k, None) spec in (* FIXME: type of [k] *)
   let pre = pre_of_spec spec in
   mk_decl (rec_flag, id, params, pre, [kont], body)

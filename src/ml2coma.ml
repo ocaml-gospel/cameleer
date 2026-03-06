@@ -15,6 +15,7 @@ let rec pattern_to_args p =
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
   | PWild -> [fresh_wild p.ppat_loc]
   | PTuple ps -> List.concat(List.map pattern_to_args ps)
+  | PCast (p, _) -> pattern_to_args p
 
 (* ! PATTERN MATCHING HANDLERS CONSTRUCTION *)
 
@@ -46,6 +47,10 @@ let rec case_of_branch p =
       let name = String.concat "_" (List.map (fun (id, _) -> id.id_name) sub_cases) in
       let vars  = List.concat_map (fun (_, vars) -> vars) sub_cases in
       (mk_id name p.ppat_loc, vars)
+  | PCast (p, _) ->
+      (* FIXME: this is actually where we want to
+         collect type information *)
+      case_of_branch p
 
 let register_handler fn_name (atoms : atom list) cases =
   let key = handler_name_of_id fn_name in
@@ -109,7 +114,8 @@ and pattern p =
     | PVar id -> CPVar id
     | PCons (id, args) -> CPCons (id, List.map pattern args)
     | PWild -> CPWild
-    | PTuple ps -> CPTuple (List.map pattern ps) in
+    | PTuple ps -> CPTuple (List.map pattern ps)
+    | PCast (p, pty) -> CPCast (pattern p, pty) in
   {cppat_loc = p.ppat_loc; cppat_desc = desc;}
 
 let declaration d =

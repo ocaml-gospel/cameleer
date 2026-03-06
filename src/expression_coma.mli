@@ -27,6 +27,6 @@ val mk_atom : ?loc:location -> atom_desc -> atom
 val mk_expr : ?loc:location -> expr_desc -> expr
 
 val mk_decl :
-  rec_flag * id * id list * Uast.term list * kont list * expr -> declaration
+  rec_flag * id * binder list * Uast.term list * kont list * expr -> declaration
 
 val s_value_binding : rec_flag -> Uast.s_value_binding -> id -> declaration
