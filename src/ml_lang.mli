@@ -90,8 +90,17 @@ type program = declaration list
 (** An intermediate AST for a ML-like toy language to COMA.
     All the terms are written in A-normal form to ease
     CPS-conversion later. *)
+open Why3
 
 type info_p = id list 
+
+type cprecondition = Ptree.term list
+(* a WhyML precondition *)
+
+type ckont = {
+  ckont_id: id;
+  ckont_pre: cprecondition;
+}
 
 type cpattern = {
   cppat_loc: location;
@@ -138,7 +147,7 @@ and ccallable = {
 
 and ccallable_desc =
   | CCId  of id (* handler name *)
-  | CCFun of id list * precondition * id list * cexpr
+  | CCFun of id list * cprecondition * id list * cexpr
   (* data params, precondition, kont params, body *)
 
 type cdeclaration = {
@@ -150,7 +159,7 @@ type cdeclaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and cdeclaration_desc =
-  | CDFun of rec_flag * id * id list * precondition * kont list * cexpr
+  | CDFun of rec_flag * id * id list * cprecondition * ckont list * cexpr
   | CDType of rec_flag * U.s_type_declaration list
 
 type cprogram = cdeclaration list
