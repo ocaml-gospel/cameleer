@@ -44,8 +44,7 @@ let s_structure, s_signature =
   and s_structure_item_desc loc str_item_desc =
     match str_item_desc with
     | Str_value (b, svb_list) ->
-        let k = ML.{ id_name = "return"; id_loc = E.dummy_loc } in
-        (* TODO: fill in the table «mayraise» before the following call. *)
+        let k = ML.{ id_name = gen_symbol ~prefix:"return" (); id_loc = E.dummy_loc } in
         List.map (E.s_value_binding b ^~ k) svb_list
     | Str_type (rec_flag, type_decl_list) ->
         let decl_desc = ML.DType (rec_flag, type_decl_list) in

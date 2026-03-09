@@ -299,16 +299,17 @@ and atom_of_sexpr e =
       mk_atom ~loc (ATuple a)
   | _ -> assert false (* unreachable *)
 
-module S = Set.Make(String)
-type raise_set = S.t
 
+module S = struct
+  module Sstr = Set.Make(String)
+  include Sstr
+  let not_mem l s = not (Sstr.mem l s)
+end
+
+type raise_set = S.t
 let raisable_hmap: (string, S.t) Hashtbl.t = Hashtbl.create 32
 
-(* TODO
-   Use this function to compute the set [mayraise]
-   of each function before its CPS-conversion.
-   Then, recursively add ...
-   *)
+(** Computes the set of exceptions that can escape expression [e]. *)
 let mayraise e =
   let rec loop acc e =
     match e.Uast.spexp_desc with
@@ -329,7 +330,9 @@ let mayraise e =
         let acc2 = List.fold_left
           (fun acc (_,e) -> loop acc e) acc el in
         let fname = get_ident f.spexp_desc in
-        let ef = Hashtbl.find raisable_hmap fname in  (* search for the Hashtbl of f *)
+        let ef =
+          try Hashtbl.find raisable_hmap fname
+          with Not_found -> S.empty in
         S.union acc2 ef
     | Sexp_apply (e, el) ->
         let acc2 = List.fold_left
@@ -339,25 +342,31 @@ let mayraise e =
         let acc = loop acc e in
         List.fold_left (fun acc Uast.{spc_rhs=e;_} -> loop acc e) acc cases
     | Sexp_try (e, cases) ->
-        let acc2 = loop S.empty e in
-        let remove,add = List.fold_left
+        let se = loop S.empty e in
+        let rem, add = List.fold_left
           (fun (r,a) Uast.{spc_lhs=x;spc_rhs=e;_} ->
             let x = match x.ppat_desc with
               | Ppat_construct ({txt;_},_) -> "raise_" ^ string_of_longident txt
               | _ -> assert false in
             S.add x r, loop a e)
           (S.empty,S.empty) cases in
-        let acc = S.filter (S.mem ^~ remove) acc in
-        S.union (S.union acc acc2) add
+        let se = S.filter (S.not_mem ^~ rem) se in
+        S.union (S.union acc se) add
     | Sexp_tuple el ->
         List.fold_left loop acc el
+    | Sexp_ifthenelse (e1, e2, Some e3) ->
+        let acc = loop acc e1 in
+        let acc = loop acc e2 in
+        loop acc e3
+    | Sexp_ifthenelse (e1, e2, None) ->
+        let acc = loop acc e1 in
+        loop acc e2
     | Sexp_fun _ | Sexp_function _ -> assert false (* TODO *)
     | Sexp_variant (_, _)
     | Sexp_record (_, _)
     | Sexp_field (_, _)
     | Sexp_setfield (_, _, _)
     | Sexp_array _
-    | Sexp_ifthenelse (_, _, _)
     | Sexp_sequence (_, _)
     | Sexp_while (_, _, _)
     | Sexp_for (_, _, _, _, _, _)
@@ -378,7 +387,9 @@ let mayraise e =
     | Sexp_open (_, _)
     | Sexp_letop _
     | Sexp_extension _
-    | Sexp_unreachable -> assert false in
+    | Sexp_unreachable ->
+        identify_fail e in
+        (* assert false in *)
   loop S.empty e
 
 
@@ -488,8 +499,8 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let _e = mk_expr @@ expr e k hm in
           (* let _letks = List.fold_left (fun acc (h,x,d) ->
             mk_expr ~loc:h.id_loc @@ ELetK (h, x, d, acc)) e cases in *)
-          assert false
-      | KExpr _ -> assert false
+          assert false (* TODO *)
+      | KExpr _ -> assert false (* TODO *)
       end
 
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([_;_] as args))
@@ -630,6 +641,10 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
 and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let id = get_pattern_id svb.spvb_pat in
   let params, pexp = collect_params svb.spvb_expr in
+  Format.printf "--------- %s@\n" id.id_name;
+  let s = mayraise pexp in
+  let () = Hashtbl.add raisable_hmap id.id_name s in
+  S.iter (Format.printf "->\t\t%s@\n") s;
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let body = mk_expr ~loc:expr_loc (expr pexp (KName k) empty_map) in
   let spec = svb.spvb_vspec in
