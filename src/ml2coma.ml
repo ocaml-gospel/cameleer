@@ -1,19 +1,16 @@
 open Ml_lang
+open Ppxlib
 
-let wild_counter = ref 0
+let dummy_loc = Lexing.dummy_pos, Lexing.dummy_pos
 
-(* Generate a wildcard identifier for pattern matching 
-  e.g. Node(l, _, r) becomes Node(l, x0, r) *)
-let fresh_wild loc =
-  let n = !wild_counter in
-  incr wild_counter;
-  { id_name = "x" ^ string_of_int n; id_loc = loc }
+let gen_id ?(loc=dummy_loc) () =
+  { id_name = gen_symbol (); id_loc = loc}
 
-let rec pattern_to_args p =
+let rec pattern_to_args (p: Ml_lang.pattern) =
   match p.ppat_desc with
   | PVar id -> [id]
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
-  | PWild -> [fresh_wild p.ppat_loc]
+  | PWild -> [gen_id ~loc:p.ppat_loc ()]
   | PTuple ps -> List.concat(List.map pattern_to_args ps)
   | PCast (p, _) -> pattern_to_args p
 
@@ -21,10 +18,10 @@ let rec pattern_to_args p =
 
 (* e.g. for `match t with Empty -> ... | Node(l,_,r) -> ...`
         args   = "[t]"
-        cases = [("is_empty", []); ("is_node", ["l"; "r"])]        *)
+        cases = [("Empty", []); ("Node", ["l"; "_x__001_"; "r"])]   *)
 type handler = {
   args:   id list;
-  cases: (id * id list) list;
+  cases: (id * id list ) list;
 }
 
 (* Hashtable that stores handlers
@@ -36,7 +33,7 @@ let destructs = Hashtbl.create 10
 let handler_name_of_id fn_name = "destruct_" ^ fn_name
 
 (* Branch pattern as (case_name, bound_vars) *)
-let rec case_of_branch p =
+let rec case_of_branch (p: Ml_lang.pattern) =
   let mk_id name loc = { id_name = name; id_loc = loc } in
   match p.ppat_desc with
   | PVar id         -> (mk_id id.id_name id.id_loc, [])
