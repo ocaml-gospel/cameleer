@@ -538,7 +538,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       let k = mk_callable ~loc @@
         CFun ([z, None],[], mk_expr @@
               EApp (mk_callable @@ CId z, args, [k])) in
-      expr e (KExpr k)
+      expr e (KExpr k) hm
 
   | Sexp_match (e, cases) when is_atomic e ->
       let a = match e.spexp_desc with
@@ -602,9 +602,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
   | Sexp_function _             -> assert false (* TODO *)
   | Sexp_fun (_, _, _, _, _)    -> failwith "unreachable" (* it is not true *)
   (* TBC *)
-  | Sexp_sequence (_, _)
   | Sexp_assert _
-  | Sexp_unreachable
   | Sexp_tuple _
   | Sexp_variant (_, _)
   | Sexp_record (_, _)
