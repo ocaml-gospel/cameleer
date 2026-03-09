@@ -10,14 +10,16 @@
       raise r
  *)
 
+exception H of int
 exception E of int
+exception G of int
 
 (* Some questions *)
 
 (* Here CPS[g1] must take additional continuation to handle the [raise]. *)
-let g1 a = raise (E 42)
+let g1 a = if a then raise (E 42) else raise (G 34)
 
-(* Here not. *)
+(* Here only one for [G]. *)
 let g2 a =
   try raise (E 42)
   with E x -> x
@@ -27,16 +29,30 @@ let g2 a =
 let f1 a =
   g1 a
 
-(* no additional continuation *)
-let f1 a =
+(* one additional continuation *)
+let f2 a =
   try
     g1 a
   with E x -> x
 
 (* no additional continuation *)
+let f2 a =
+  try
+    g1 a
+  with E x -> x
+     | G y -> y
 
-let g1 a return raise_E = raise_E 42
+(* catches exceptions from [g] but may raise [H] *)
+let f3 a b =
+  try
+    if b then g1 a else raise (H 13)
+  with E x -> x
+     | G y -> y
 
-let f1cps a return =
-  let onE x = x in
-  g1 a return (onE)
+(* catches exceptions from [g]+[H] but may raise [G] *)
+let f3 a b =
+  try
+    if b then g1 a else raise (H 13)
+  with E x -> x
+     | G y -> y
+     | H z -> raise (G z)
