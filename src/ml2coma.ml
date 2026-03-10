@@ -11,7 +11,7 @@ let dummy_loc =
     pos_lnum = 1 } in
   (pos, pos)
 
-let gen_id ?(loc=dummy_loc) () = { id_name = gen_symbol (); id_loc = loc} 
+let gen_id ?(loc=dummy_loc) () = { id_name = gen_symbol (); id_loc = loc}
 
 let rec pattern_to_args (p: Ml_lang.pattern) =
   match p.ppat_desc with
@@ -39,11 +39,11 @@ let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
   let preid = Identifier.Preid.create id.id_name ~loc:(location id.id_loc) in
   Uast.Qpreid preid
 
-let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id list) = 
+let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id list) =
   let mk_uast_term desc loc = { Uast.term_desc = desc; Uast.term_loc = location loc} in
   let arg_term = mk_uast_term (Uast.Tpreid (ml_id_to_qualid arg)) arg.id_loc in
-  let pp_term = 
-    match vars with 
+  let pp_term =
+    match vars with
     | [] -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid case_id)) case_id.id_loc
     | _ -> let vars_terms = List.map (fun v -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid v)) v.id_loc) vars in
            mk_uast_term (Uast.Tidapp (ml_id_to_qualid case_id, vars_terms)) case_id.id_loc in
@@ -130,12 +130,12 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
 and callable fn_name {callable_loc; callable_desc} =
   let mk_ccalable ccallable_desc =
     { ccallable_loc = callable_loc; ccallable_desc } in
-  let desc = 
+  let desc =
     match callable_desc with
     | CId id -> CCId id
     | CFun (data, kon, e) ->
         (* TODO: specification for the generated fun *)
-        CCFun (data, [], kon, expr fn_name e) in 
+        CCFun (data, [], kon, expr fn_name e) in
   mk_ccalable desc
 
 and pattern p =
@@ -157,7 +157,7 @@ let declaration d =
     | DFun (rec_flag, id, xs, pre, ks, e) ->
         let pre = List.map (Uterm.term false) pre in
         let ks = List.map mk_ckont ks in
-        CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e)) 
+        CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e))
     | DType (rec_flag, td) -> CDType (rec_flag, td) in
   mk_cdecl cdecl
 
