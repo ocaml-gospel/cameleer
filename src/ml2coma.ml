@@ -1,16 +1,23 @@
 open Ml_lang
 open Ppxlib
+open Why3
+open Ptree
+open Gospel
 
-let dummy_loc = Lexing.dummy_pos, Lexing.dummy_pos
+let dummy_loc =
+  let pos = { Lexing.dummy_pos with
+    Lexing.pos_cnum = 0;
+    pos_bol  = 0;
+    pos_lnum = 1 } in
+  (pos, pos)
 
-let gen_id ?(loc=dummy_loc) () =
-  { id_name = gen_symbol (); id_loc = loc}
+let gen_id ?(loc=dummy_loc) () = { id_name = gen_symbol (); id_loc = loc} 
 
 let rec pattern_to_args (p: Ml_lang.pattern) =
   match p.ppat_desc with
   | PVar id -> [id]
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
-  | PWild -> [gen_id ~loc:p.ppat_loc ()]
+  | PWild -> [gen_id ()]
   | PTuple ps -> List.concat(List.map pattern_to_args ps)
   | PCast (p, _) -> pattern_to_args p
 
@@ -20,34 +27,60 @@ let rec pattern_to_args (p: Ml_lang.pattern) =
         args   = "[t]"
         cases = [("Empty", []); ("Node", ["l"; "_x__001_"; "r"])]   *)
 type handler = {
-  args:   id list;
-  cases: (id * id list ) list;
+  args:   Ml_lang.id list;
+  cases: (Ml_lang.id * Ml_lang.id list * Ml_lang.cprecondition) list;
 }
 
+let location loc = Location.{ loc_start = fst loc ; loc_end = snd loc; loc_ghost = false }
+
+let mk_dummy_pre =[{ term_desc = Ttrue; term_loc = Loc.dummy_position }]
+
+let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
+  let preid = Identifier.Preid.create id.id_name ~loc:(location id.id_loc) in
+  Uast.Qpreid preid
+
+let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id list) = 
+  let mk_uast_term desc loc = { Uast.term_desc = desc; Uast.term_loc = location loc} in
+  let arg_term = mk_uast_term (Uast.Tpreid (ml_id_to_qualid arg)) arg.id_loc in
+  let pp_term = 
+    match vars with 
+    | [] -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid case_id)) case_id.id_loc
+    | _ -> let vars_terms = List.map (fun v -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid v)) v.id_loc) vars in
+           mk_uast_term (Uast.Tidapp (ml_id_to_qualid case_id, vars_terms)) case_id.id_loc in
+  let eq_term = Identifier.Preid.create "infix =" ~loc:(location arg.id_loc) in
+  let pre = mk_uast_term (Uast.Tinfix (arg_term, eq_term, pp_term)) arg.id_loc in
+  [Uterm.term false pre]
+
+
 (* Hashtable that stores handlers
-    key: handler name (e.g. "destruct_height")
-    value: handler record *)
+   key: handler name (e.g. "destruct_height")
+   value: handler record *)
 let destructs = Hashtbl.create 10
 
 (* "t" -> "destruct_t" *)
 let handler_name_of_id fn_name = "destruct_" ^ fn_name
 
-(* Branch pattern as (case_name, bound_vars) *)
-let rec case_of_branch (p: Ml_lang.pattern) =
+(* Branch pattern as (case_name, bound_vars, preconditions) *)
+let rec case_of_branch args (p : Ml_lang.pattern) =
   let mk_id name loc = { id_name = name; id_loc = loc } in
   match p.ppat_desc with
-  | PVar id         -> (mk_id id.id_name id.id_loc, [])
-  | PCons (cid, ps) -> (mk_id cid.id_name cid.id_loc, List.concat_map pattern_to_args ps)
-  | PWild           -> (mk_id "_" p.ppat_loc, [])
-  | PTuple ps       ->
-      let sub_cases = List.map case_of_branch ps in
-      let name = String.concat "_" (List.map (fun (id, _) -> id.id_name) sub_cases) in
-      let vars  = List.concat_map (fun (_, vars) -> vars) sub_cases in
-      (mk_id name p.ppat_loc, vars)
-  | PCast (p, _) ->
-      (* FIXME: this is actually where we want to
-         collect type information *)
-      case_of_branch p
+  | PVar id ->
+      let vars = [] in
+      let pre = mk_precondition (List.hd args) id vars in
+      (mk_id id.id_name id.id_loc, vars, pre)
+  | PCons (cid, ps) ->
+      let vars = List.concat_map pattern_to_args ps in
+      let pre = mk_precondition (List.hd args) cid vars in
+      (mk_id cid.id_name cid.id_loc, vars, pre)
+  | PWild ->
+      (mk_id "_" p.ppat_loc, [], [])
+  | PTuple ps ->
+      let sub_cases = List.map (case_of_branch args) ps in
+      let name = String.concat "_" (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
+      let vars  = List.concat_map (fun (_,vars,_) -> vars) sub_cases in
+      let pres = List.concat_map(fun (_,_,pre) -> pre) sub_cases in
+      (mk_id name p.ppat_loc, vars, pres)
+  | PCast (p, _) -> case_of_branch args p
 
 let register_handler fn_name (atoms : atom list) cases =
   let key = handler_name_of_id fn_name in
@@ -58,7 +91,7 @@ let register_handler fn_name (atoms : atom list) cases =
       | _ -> failwith "A match expression must match on an identifier"
     ) atoms in
     Hashtbl.add destructs key
-      { args; cases = List.map (fun (p, _) -> case_of_branch p) cases }
+      { args; cases = List.map (fun (p, _) -> case_of_branch args p) cases }
   end
 
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)

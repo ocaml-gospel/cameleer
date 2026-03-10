@@ -185,12 +185,13 @@ let pp_decl fmt (d: cdeclaration) =
       fprintf fmt "@[%a@]"
         UPrint.s_type_declaration_rec_flag (rec_flag, td)
 
-let pp_handler_case fmt (case_id, vars) =
+let pp_handler_case fmt (case_id, vars, pre) =
   match vars with
-  | [] -> fprintf fmt "(%a)" (fun fmt id -> pp_id fmt id) case_id
-  | _  -> fprintf fmt "(%s %a)"
+  | [] -> fprintf fmt "(%a %a)" (fun fmt id -> pp_id fmt id) case_id pp_cpre pre
+  | _  -> fprintf fmt "(%s %a %a)"
             case_id.id_name
             (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) vars
+            pp_cpre pre
 
 let pp_handler fmt name (h : Ml2coma.handler) =
   fprintf fmt "@[<hov 2>let %s %a@\n @[%a@]\n= any@]"
