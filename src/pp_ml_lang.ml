@@ -27,6 +27,13 @@ let pp_op fmt (op: op) =
   | OPDiv -> fprintf fmt "/"
   | OPEq -> fprintf fmt "="
   | OPLe -> fprintf fmt "<="
+  | OPMod -> fprintf fmt "%%"
+  | OPLt -> fprintf fmt "<"
+  | OPGe -> fprintf fmt ">="
+  | OPGt -> fprintf fmt ">"
+  | OPAnd -> fprintf fmt "&&"
+  | OPOr -> fprintf fmt "||"
+  | OPNot -> fprintf fmt "not"
 
 let pp_id fmt id =
   fprintf fmt "%s" id.id_name
@@ -93,6 +100,8 @@ and pp_atom ?(paren=false) fmt (a: atom) =
   | ABinop (e1, op, e2) ->
       fprintf fmt (protect_on paren "@[%a %a %a@]") pp_expr e1 pp_op op
         pp_expr e2
+  | AUnop (op, e1) ->
+      fprintf fmt (protect_on paren "@[%a %a@]") pp_op op pp_expr e1
   | ACst c -> fprintf fmt "%a" pp_constant c
   | AFun (_, binder, e) ->
       let (x, _) = binder in

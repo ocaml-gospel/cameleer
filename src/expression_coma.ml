@@ -241,6 +241,15 @@ let rec is_atomic e =
   | Sexp_tuple el -> List.for_all is_atomic el
   | _ -> false
 
+let is_unop = function
+  | "not" | "-" -> true
+  | _ -> false
+
+let get_unop = function
+  | "not" -> OPNot
+  | "-" -> OPMinus
+  | _ -> assert false
+
 let is_binop, get_binop =
   let driver = Hashtbl.create 16 in
   List.iter
@@ -249,11 +258,11 @@ let is_binop, get_binop =
       ("*", Some OPMult);
       ("-", Some OPMinus);
       ("/", Some OPDiv);
-      ("infix mod", None);
+      ("infix mod", Some OPMod);
       ("<=", Some OPLe);
-      (">=", None);
-      ("<", None);
-      (">", None);
+      (">=", Some OPGe);
+      ("<", Some OPLt);
+      (">", Some OPGt);
       ("<>", None);
       ("=", Some OPEq);
       ("infix ::", None);
@@ -309,8 +318,41 @@ let raisable_hmap: (string, S.t) Hashtbl.t = Hashtbl.create 32
 let mayraise e =
   let rec loop acc e =
     match e.Uast.spexp_desc with
+    (* 1 *)
+    | Sexp_field (e, _)
+    | Sexp_constraint (e, _)
+    | Sexp_variant (_, Some e)
+    | Sexp_send (e, _)
+    | Sexp_setinstvar (_, e)
+    | Sexp_assert e
+    | Sexp_lazy e
+    | Sexp_poly (e, _)
+    | Sexp_newtype (_, e)
+    | Sexp_coerce (e, _, _)
     | Sexp_construct (_, Some e) -> loop acc e
-    | Sexp_construct _ | Sexp_ident _ | Sexp_constant _ -> acc
+    (* 2 *)
+    | Sexp_sequence (e1,e2)
+    | Sexp_while (e1, e2, _)
+    | Sexp_setfield (e1, _, e2)
+    | Sexp_ifthenelse (e1, e2, None) ->
+        let acc = loop acc e1 in
+        loop acc e2
+    (* 3 *)
+    | Sexp_for (_, e1, e2, _, e3, _)
+    | Sexp_ifthenelse (e1, e2, Some e3) ->
+        let acc = loop acc e1 in
+        let acc = loop acc e2 in
+        loop acc e3
+    (* list *)
+    | Sexp_tuple el
+    | Sexp_array el ->
+        List.fold_left loop acc el
+    (* 0 *)
+    | Sexp_variant (_, None) | Sexp_construct (_, None)
+    | Sexp_new _
+    | Sexp_unreachable
+    | Sexp_ident _ | Sexp_constant _ -> acc
+    (* special cases *)
     | Sexp_let (_, el, e) ->
         let acc2 = List.fold_left
           (fun acc Uast.{spvb_expr=e;_} -> loop acc e) acc el in
@@ -320,7 +362,7 @@ let mayraise e =
         let s = match a.atom_desc with
           | AId _id -> assert false (* how? *)
           | ACons (id, _) -> mk_raise_name id.id_name
-          | ATuple _ | ACst _ | AFun _ | ABinop _ -> assert false in
+          | ATuple _ | ACst _ | AFun _ | AUnop _ | ABinop _ -> assert false in
         loop (S.add s acc) e
     | Sexp_apply (f, el) when is_ident f.spexp_desc ->
         let acc2 = List.fold_left
@@ -349,43 +391,17 @@ let mayraise e =
           (S.empty,S.empty) cases in
         let se = S.filter (S.not_mem ^~ rmv) se in
         S.union (S.union acc se) add
-    | Sexp_tuple el ->
-        List.fold_left loop acc el
-    | Sexp_ifthenelse (e1, e2, Some e3) ->
-        let acc = loop acc e1 in
-        let acc = loop acc e2 in
-        loop acc e3
-    | Sexp_ifthenelse (e1, e2, None) ->
-        let acc = loop acc e1 in
-        loop acc e2
+    (* TODO *)
     | Sexp_fun _ | Sexp_function _ -> assert false (* TODO *)
-    | Sexp_variant (_, _)
     | Sexp_record (_, _)
-    | Sexp_field (_, _)
-    | Sexp_setfield (_, _, _)
-    | Sexp_array _
-    | Sexp_sequence (_, _)
-    | Sexp_while (_, _, _)
-    | Sexp_for (_, _, _, _, _, _)
-    | Sexp_constraint (_, _)
-    | Sexp_coerce (_, _, _)
-    | Sexp_send (_, _)
-    | Sexp_new _
-    | Sexp_setinstvar (_, _)
+    | Sexp_object _
     | Sexp_override _
     | Sexp_letmodule (_, _, _)
     | Sexp_letexception (_, _)
-    | Sexp_assert _
-    | Sexp_lazy _
-    | Sexp_poly (_, _)
-    | Sexp_object _
-    | Sexp_newtype (_, _)
     | Sexp_pack _
     | Sexp_open (_, _)
     | Sexp_letop _
-    | Sexp_extension _
-    | Sexp_unreachable ->
-        identify_fail e in
+    | Sexp_extension _ -> identify_fail e in
   loop S.empty e
 
 
@@ -445,7 +461,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       let a = atom_of_construct (l,e) in
       callk [a]
 
-  | Sexp_let (Nonrecursive, [svb], e2) ->
+  | Sexp_let ((Nonrecursive | Recursive), [svb], e2) ->
       let id = get_pattern_id svb.spvb_pat in
       let e1 = svb.spvb_expr in
       let loc1 = location e1.spexp_loc in
@@ -466,12 +482,13 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       let kid = gen_kid () in
       ELetK (kid, id, body,
              mk_expr ~loc:loc1 @@ expr e1 (KName kid) hm)
-  | Sexp_let (Nonrecursive, [], _) -> assert false (* unreachable *)
 
-  | Sexp_let (Recursive, _svb, _e) -> assert false (* TODO *)
+  | Sexp_let (Recursive, _svb::_svbs, _e) -> assert false (* TODO *)
+
+  | Sexp_let ((Nonrecursive|Recursive), [], _) -> assert false (* unreachable *)
 
   | Sexp_try (e, cases) ->
-      (* Remark:
+      (* TODO Remark:
          for now we only consider `try-catch` of the form
          `try e with E x -> e` *)
       let rec get_mlpattern_id pat =
@@ -515,11 +532,22 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
         List.map (fun (_, e) -> identify e; atom_of_sexpr e) args in
       let a1 = mk_expr ~loc:a1.atom_loc (EAtom a1) in
       let a2 = mk_expr ~loc:a2.atom_loc (EAtom a2) in
-      let a = [mk_atom ~loc:a1.expr_loc @@ ABinop (a1, op, a2)] in
+      let a  = mk_atom ~loc:a1.expr_loc @@ ABinop (a1, op, a2) in
       let k = match k with
         | KName k -> mk_callable @@ CId k
         | KExpr k -> k in
-      EApp (k, a, [])
+      EApp (k, [a], [])
+
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, [(_, arg)])
+    when is_unop (string_of_longident txt) ->
+      let op = get_unop (string_of_longident txt) in
+      let a = atom_of_sexpr arg in
+      let a = mk_expr ~loc:a.atom_loc (EAtom a) in
+      let a = mk_atom ~loc:a.expr_loc @@ AUnop (op, a) in
+      let k = match k with
+        | KName k -> mk_callable @@ CId k
+        | KExpr k -> k in
+      EApp (k, [a], [])
 
   | Sexp_apply (s, [ (_, arg) ]) when is_raise s.spexp_desc ->
       let a = atom_of_sexpr arg in
@@ -656,6 +684,8 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let body = mk_expr ~loc:expr_loc (expr pexp (KName k) empty_map) in
   let spec = svb.spvb_vspec in
-  let kont = mk_kont (k, None) spec in (* FIXME: type of [k] *)
+  let kont = mk_kont (k, None) spec in (* FIXME: type of [k],
+                                          Where is the type annotation
+                                          of functions (svb)? *)
   let pre = pre_of_spec spec in
   mk_decl (rec_flag, id, params, pre, kont :: sl, body)

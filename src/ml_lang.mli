@@ -17,7 +17,9 @@ type binder = id * P.core_type option
 
 type constant = CNum of int | CBool of bool
 
-type op = OPAdd | OPMinus | OPMult | OPDiv | OPEq | OPLe
+type op = OPAdd | OPMinus | OPMult | OPDiv | OPMod
+        | OPEq | OPLe | OPLt | OPGe | OPGt
+        | OPAnd | OPOr | OPNot
 
 type pattern = {
   ppat_loc: location;
@@ -53,6 +55,7 @@ and atom = {
 and atom_desc =
   | AId of id
   | ABinop of expr * op * expr
+  | AUnop of op * expr
   | ACst of constant
   | AFun of bool * binder * expr
   | ATuple of atom list
@@ -142,6 +145,7 @@ and catom = {
 and catom_desc =
   | CAId of id
   | CABinop of cexpr * op * cexpr
+  | CAUnop of op * cexpr
   | CACst of constant
   | CAFun of binder * cexpr
   | CATuple of catom list

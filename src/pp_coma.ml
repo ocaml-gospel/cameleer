@@ -30,14 +30,7 @@ let pp_constant fmt (c: constant) =
   | CNum n -> fprintf fmt "%d" n
   | CBool b -> fprintf fmt "%b" b
 
-let pp_op fmt (op: op) =
-  match op with
-  | OPAdd -> fprintf fmt "+"
-  | OPMinus -> fprintf fmt "-"
-  | OPMult -> fprintf fmt "*"
-  | OPDiv -> fprintf fmt "/"
-  | OPEq -> fprintf fmt "="
-  | OPLe -> fprintf fmt "<="
+let pp_op = Pp_ml_lang.pp_op
 
 let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
   let non_wild_args args = List.filter (fun p -> match p.cppat_desc with
@@ -111,6 +104,10 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
         (protect_on paren (curly_braces curly "@[%a %a %a@]"))
         (fun fmt e -> pp_expr fmt e) e1 pp_op op
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
+  | CAUnop (op, e1) ->
+      fprintf fmt
+        (protect_on paren (curly_braces curly "@[%a %a@]"))
+        pp_op op (fun fmt e -> pp_expr fmt e) e1
   | CACst c -> fprintf fmt (curly_braces curly "%a") pp_constant c
   | CAFun (binder, e) ->
       let (x, _) = binder in

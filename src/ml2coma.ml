@@ -102,6 +102,7 @@ let rec atom fn_name { atom_loc; atom_desc = a_desc } =
     | AId id -> CAId id
     | ACst c -> CACst c
     | ABinop (e1, op, e2) -> CABinop (expr fn_name e1, op, expr fn_name e2)
+    | AUnop (op, e1) -> CAUnop (op, expr fn_name e1)
     | ATuple al -> CATuple (List.map (atom fn_name) al)
     | ACons (id, c) -> CACons (id, List.map (atom fn_name) c)
     | AFun (_, id, e) ->
