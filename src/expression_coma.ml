@@ -279,10 +279,11 @@ let rec atom_of_construct ?(loc=dummy_loc) c = match c with
       mk_atom ~loc:id.id_loc (ACons (id, [atom_of_sexpr e]))
 
 and atom_of_sexpr e =
+  let loc = location e.spexp_loc in
   if not (is_atomic e) then
     (Format.printf "ANF assumption broken@."; identify_fail e) else
   match e.Uast.spexp_desc with
-  | Sexp_constant  c      -> mk_atom (constant c)
+  | Sexp_constant  c      -> mk_atom ~loc (constant c)
   | Sexp_construct (l, e) -> atom_of_construct (l,e)
   | Sexp_ident {txt; loc} ->
       let loc = location loc in
@@ -346,11 +347,7 @@ let mayraise e =
               | _ -> assert false in
             S.add x r, loop a e)
           (S.empty,S.empty) cases in
-        (* S.iter (Format.printf "-\t\t%s@\n") rmv;
-        S.iter (Format.printf "+\t\t%s@\n") add;
-        S.iter (Format.printf "%%\t\t%s@\n") se; *)
         let se = S.filter (S.not_mem ^~ rmv) se in
-        (* S.iter (Format.printf "~\t\t%s@\n") se; *)
         S.union (S.union acc se) add
     | Sexp_tuple el ->
         List.fold_left loop acc el
@@ -413,13 +410,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       callk [mk_atom ~loc (AId id)]
 
   | Sexp_ifthenelse (e1, e2, Some e3) when is_atomic e1 ->
-      let a = mk_atom ~loc:(location e1.spexp_loc) @@
-        match e1.spexp_desc with
-        | Sexp_ident {txt; _} ->
-             AId { id_name = string_of_longident txt ; id_loc = loc}
-        | Sexp_constant _ | Sexp_construct _ | Sexp_tuple _ ->
-            assert false (* impossible (type error) *)
-        | _ -> assert false in
+      let a = atom_of_sexpr e1 in
       begin match k with
       | KName k -> EIf (a, expr_opt e2 k hm, expr_opt e3 k hm)
       | KExpr k ->
@@ -464,7 +455,6 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       ELetK (kid, id, body,
              mk_expr ~loc:loc1 @@ expr e1 (KName kid) hm)
 
-  | Sexp_let (Nonrecursive, [], _) -> assert false
   | Sexp_let (Nonrecursive, svb::svbs, e2) ->
       let id = get_pattern_id svb.spvb_pat in
       let e1 = svb.spvb_expr in
@@ -476,11 +466,15 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       let kid = gen_kid () in
       ELetK (kid, id, body,
              mk_expr ~loc:loc1 @@ expr e1 (KName kid) hm)
+  | Sexp_let (Nonrecursive, [], _) -> assert false (* unreachable *)
 
   | Sexp_let (Recursive, _svb, _e) -> assert false (* TODO *)
 
   | Sexp_try (e, cases) ->
-      let rec get_mlpattern_id pat = (* TODO *)
+      (* Remark:
+         for now we only consider `try-catch` of the form
+         `try e with E x -> e` *)
+      let rec get_mlpattern_id pat =
         match pat.ppat_desc with
         | PVar id -> id
         | PCast  (p,_) -> get_mlpattern_id p
@@ -529,12 +523,12 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
 
   | Sexp_apply (s, [ (_, arg) ]) when is_raise s.spexp_desc ->
       let a = atom_of_sexpr arg in
-      let s,l = match a.atom_desc with
+      let (id, args) = match a.atom_desc with
         | AId id -> { id with id_name=("raise_" ^ id.id_name)}, []
         | ACons (id, al) ->
             { id with id_name=("raise_" ^ id.id_name)}, al
-        | ATuple _ | ACst _ | AFun _ | ABinop _ -> assert false in
-      EApp (mk_callable (CId s), l, [])
+        | _ -> assert false (* unreachable *) in
+      EApp (mk_callable (CId id), args, [])
 
   | Sexp_apply (e, args) when is_atomic e ->
       let loc = location e.spexp_loc in
@@ -542,9 +536,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
         | Sexp_ident {txt; _} ->
             let id = { id_name = string_of_longident txt ; id_loc = loc} in
             CId id, id
-        | Sexp_constant _ | Sexp_construct _ ->
-            assert false (* impossible (type error) *)
-        | _ -> assert false in
+        | _ -> assert false (* impossible (type error) *) in
       let args = List.map (fun (_, e) -> atom_of_sexpr e) args in
       let k = match k with
         | KName k -> mk_callable @@ CId k
@@ -570,12 +562,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       expr e (KExpr k) hm
 
   | Sexp_match (e, cases) when is_atomic e ->
-      let a = match e.spexp_desc with
-        | Sexp_constant c     -> constant c
-        | Sexp_ident {txt; _} ->
-            AId { id_name = string_of_longident txt ; id_loc = loc}
-        | _ -> assert false (* TODO tuples *) in
-      let a = mk_atom ~loc:(location e.spexp_loc) a in
+      let a = atom_of_sexpr e in
       let map k = List.map
         (fun Uast.{spc_lhs; spc_rhs; _} ->
           let loc = location spc_rhs.spexp_loc in
