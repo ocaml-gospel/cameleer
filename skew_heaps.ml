@@ -2,14 +2,14 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 
 let empty = Empty
 
-let le a b = true (* todo *)
+let le a b = true (* TODO *)
 
 let is_empty (t: 'a tree) =
   match t with
   | Empty -> true
   | Node ((l: 'a tree), (x: 'a), (r: 'a tree)) -> false
 (*@ r = is_empty t
-      ensures r <-> t = Emtpy *)
+      ensures r <-> t = Empty *)
 
 let rec merge (t1: 'a tree) (t2: 'a tree) : 'a tree =
     match t1, t2 with

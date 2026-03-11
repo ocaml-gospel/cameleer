@@ -31,6 +31,14 @@ let (b: t) = B
 
 let void (x: bool) = if x then ()
 
+let void2 (x: bool) = if x then (void x; void x)
+
+let void3 (x: bool) (y: bool) =
+  let x = sum x y in
+  while x = 1 do
+    void2 y
+  done
+
 let sum_t (x: bool) (y: bool) =
   let (a: int) = sum true y in      (* ANF requirement *)
   if a = 34 then
