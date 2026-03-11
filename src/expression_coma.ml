@@ -41,8 +41,8 @@ let (is_ident, get_ident) =
 
 let mk_raise_name eid = "raise_" ^ eid
 
-let gen_id ?(loc=dummy_loc) () =
-  { id_name = gen_symbol (); id_loc = loc}
+let gen_id ?(prefix = "_x") ?(loc=dummy_loc) () =
+  { id_name = gen_symbol ~prefix (); id_loc = loc}
 
 let gen_kid ?(loc=dummy_loc) () =
   { id_name = gen_symbol ~prefix:"_k" (); id_loc = loc}
@@ -396,9 +396,11 @@ let mayraise e =
 type kont_type = KName of id | KExpr of callable
 
 (** CPS translation of [e] where [k] is its normal continuation
-    and hm is the map of exceptional ones (TODO: unused yet, do we need this?).
+    and [hm] is the map of exceptional ones (TODO: unused yet, do we need this?).
+
     The translation is freely inspired by
-    “Compiling with continuation, continued” - A. Kennedy. *)
+    “Compiling with continuation, continued” by Andrew Kennedy.
+ *)
 let rec expr (e: Uast.s_expression) k hm : expr_desc =
   let expr_opt e kid hm =
     let loc = location e.Uast.spexp_loc in
@@ -481,24 +483,25 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
   | Sexp_let ((Nonrecursive|Recursive), [], _) -> assert false (* unreachable *)
 
   | Sexp_try (e, cases) ->
-      (* TODO Remark:
-         for now we only consider `try-catch` of the form
-         `try e with E x -> e` *)
+      (* remark:
+           for now we only consider `try-catch` of the form
+           `try e with E x -> e` and
+           `try e with E _ -> e`
+       *)
       let rec get_mlpattern_id pat =
         match pat.ppat_desc with
         | PVar id -> id
         | PCast  (p,_) -> get_mlpattern_id p
-        | PWild -> assert false
+        | PWild -> gen_id ~prefix:"_unused" ()
         | PCons (_,[p]) -> get_mlpattern_id p
         | PCons (_,_) -> assert false
         | PTuple _ -> assert false in
       let ctx, kid = match k with
         | KName k -> Fun.id, k
-        | KExpr _ ->
+        | KExpr c ->
             let kid = gen_kid () in
             let x = gen_id () in
             let a = mk_atom ~loc (AId x) in
-            let c = mk_callable ~loc (CId kid) in
             let f e = ELetK (kid, x, mk_expr @@ EApp (c, [a], []),
                                      mk_expr ~loc e) in
             f, gen_kid () in
@@ -513,7 +516,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
         eid, pat, mk_expr ~loc @@ expr spc_rhs (KName kid) hm) in
       let cases = List.map f cases in
       let e = mk_expr @@ expr e k hm in
-      let letks = List.fold_left (fun acc (eid, pid,d) ->
+      let letks = List.fold_left (fun acc (eid, pid, d) ->
         mk_expr ~loc:eid.id_loc @@ ELetK (eid, pid, d, acc)) e cases in
       ctx letks.expr_desc
 

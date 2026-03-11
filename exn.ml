@@ -54,5 +54,5 @@ let f3 a b =
   try
     if b then g1 a else raise (H 13)
   with E x -> x
-     | G y -> y
+     | G _ -> 55
      | H z -> raise (G z)
