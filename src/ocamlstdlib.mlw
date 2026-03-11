@@ -392,6 +392,9 @@ module Stdlib
     val function compare (x y: t) : int
     axiom compare_pre_order : is_pre_order compare
 
+    val equal (s1 s2: t) : bool
+      ensures { result <-> s1 = s2 }
+
   end
 
   scope Int
