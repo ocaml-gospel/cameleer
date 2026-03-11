@@ -71,7 +71,7 @@ let rec pp_expr fmt (e: expr) =
   | EAtom a ->
       fprintf fmt "%a" (pp_atom ~paren:true) a
   | EAssert ->
-      fprintf fmt "absurd"
+      fprintf fmt "fail"
   | ELet (x, e1, e2) ->
       fprintf fmt "let %a =@;<1 2>@[%a@]@ in@ @[%a@]"
         (pp_pattern ~paren:false) x pp_expr e1 pp_expr e2

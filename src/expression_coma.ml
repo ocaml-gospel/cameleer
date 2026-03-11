@@ -44,8 +44,8 @@ let mk_raise_name eid = "raise_" ^ eid
 let gen_id ?(prefix = "_x") ?(loc=dummy_loc) () =
   { id_name = gen_symbol ~prefix (); id_loc = loc}
 
-let gen_kid ?(loc=dummy_loc) () =
-  { id_name = gen_symbol ~prefix:"_k" (); id_loc = loc}
+let gen_kid ?(prefix = "_k") ?(loc=dummy_loc) () =
+  { id_name = gen_symbol ~prefix (); id_loc = loc}
 
 let mk_callable ?(loc=dummy_loc) callable_desc =
   { callable_loc=loc ; callable_desc }
@@ -417,6 +417,9 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       let id = { id_name = string_of_longident txt ; id_loc = loc} in
       callk [mk_atom ~loc (AId id)]
 
+  | Sexp_tuple el ->
+      callk @@ List.map atom_of_sexpr el
+
   | Sexp_ifthenelse (e1, e2, e3) when is_atomic e1 ->
       let a = atom_of_sexpr e1 in
       let e3 kid = match e3 with
@@ -635,21 +638,52 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       end
 
   | Sexp_assert e when is_false e.spexp_desc -> EAssert
+
   | Sexp_constraint (e, _t) ->
-      expr e k hm
-  | Sexp_sequence (_, _)        -> assert false
-  | Sexp_unreachable            -> assert false
+      expr e k hm (* TODO propag(a: int)te types everywhere ? *)
+
+  | Sexp_sequence (e1, e2)        ->
+      let k = mk_expr ~loc:(location e2.spexp_loc) @@ expr e2 k hm in
+                           (* TODO: replace [None] by [unit] somehow *)
+      let u = (gen_id ~prefix:"_unused" ()), None in
+      let k = KExpr (mk_callable (CFun ([u],[], k))) in
+      expr e1 k hm
+
+  | Sexp_while (e1, e2, _spec) ->
+      let loc1 = location e1.spexp_loc in
+      let id_loop = gen_kid ~prefix:"_loop" () in
+      (* TODO factorize [cloop] with
+         a local handler definition mutually recursive with [id_loop].
+         ```coma
+         let id_cloop = [[e1]] loop
+         and loop x = if x then [[e2]] id_cloop else k () in
+         id_cloop
+         ```
+         instead of (where [[[e1]] loop] is duplicated)
+         ```coma
+         let loop x = if x then [[e2]] ([[e1]] loop) else k () in
+         [[e1]] loop
+         ```
+        *)
+      let cloop = mk_expr ~loc:loc1 (expr e1 (KName id_loop) hm) in
+      let u = (gen_id ~prefix:"_unused" ()), None in
+      let kcloop = KExpr (mk_callable (CFun ([u],[], cloop))) in
+      let z = gen_id () in
+      ELetK (id_loop, z, mk_expr @@ EIf (mk_atom @@ AId z,
+                                         mk_expr (expr e2 kcloop hm),
+                                         mk_expr (callk [atom_unit])),
+                         cloop)
+
+  | Sexp_unreachable            -> EAssert
   | Sexp_function _             -> assert false (* TODO *)
   | Sexp_fun (_, _, _, _, _)    -> failwith "unreachable" (* it is not true *)
   (* TBC *)
   | Sexp_assert _
-  | Sexp_tuple _
   | Sexp_variant (_, _)
   | Sexp_record (_, _)
   | Sexp_field (_, _)
   | Sexp_setfield (_, _, _)
   | Sexp_array _
-  | Sexp_while (_, _, _)
   | Sexp_for (_, _, _, _, _, _)
   | Sexp_coerce (_, _, _)
   | Sexp_send (_, _)

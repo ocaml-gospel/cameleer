@@ -2,14 +2,14 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 
 let empty = Empty
 
-let le a b = true (* todo *)
+let le a b = true (* TODO *)
 
 let is_empty (t: 'a tree) =
   match t with
   | Empty -> true
   | Node ((l: 'a tree), (x: 'a), (r: 'a tree)) -> false
 (*@ r = is_empty t
-      ensures r <-> t = Emtpy *)
+      ensures r <-> t = Empty *)
 
 let rec merge (t1: 'a tree) (t2: 'a tree) : 'a tree =
     match t1, t2 with
@@ -22,4 +22,17 @@ let rec merge (t1: 'a tree) (t2: 'a tree) : 'a tree =
        else
          let l = merge r2 t1 in
          Node (l, x2, l2)
+
+let add (x: 'a) (t: 'a tree) : 'a tree =
+  merge (Node (Empty, x, Empty)) t
+
+let remove_min (t: 'a tree) : 'a tree =
+  match t with
+  | Empty      -> assert false
+  | Node (l, _, r) -> merge l r
+
+let get_min (t: 'a tree) : 'a =
+  match t with
+  | Empty      -> assert false
+  | Node (_, x, _) -> x
 
