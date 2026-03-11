@@ -23,3 +23,16 @@ let rec merge (t1: 'a tree) (t2: 'a tree) : 'a tree =
          let l = merge r2 t1 in
          Node (l, x2, l2)
 
+let add (x: 'a) (t: 'a tree) : 'a tree =
+  merge (Node (Empty, x, Empty)) t
+
+let remove_min (t: 'a tree) : 'a tree =
+  match t with
+  | Empty      -> assert false
+  | Node (l, _, r) -> merge l r
+
+let get_min (t: 'a tree) : 'a =
+  match t with
+  | Empty      -> assert false
+  | Node (_, x, _) -> x
+
