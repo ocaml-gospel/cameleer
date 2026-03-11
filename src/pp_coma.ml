@@ -84,9 +84,9 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_atom ~paren:false ~curly:true) a
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
-  | CEDestruct (a, pel) ->
+  | CEDestruct (id, a, pel) ->
       fprintf fmt "@[%s @[%a@]@\n@[%a@]@]"
-        (Ml2coma.handler_name_of_id (_fn_name))
+        (id.id_name)
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   (* | CELetK(k, x, e1, e2) -> failwith "TODO"  *)
@@ -141,7 +141,7 @@ and pp_ppat_expr fmt (p, e) =
 and pp_ppat_cexpr fmt (p, e) =
   match p with
   | [] -> fprintf fmt "@[<hov 2>(->@ @[%a@])@]" (fun fmt e -> pp_expr fmt e) e
-  | _ -> fprintf fmt "@[<hov 2>(fun %a->@ @[%a@])@] "
+  | _ -> fprintf fmt "@[<hov 2>(fun %a ->@ @[%a@])@] "
     (pp_print_list ~pp_sep:pp_space pp_id) p
     (fun fmt e -> pp_expr fmt e) e (* TODO *)
 

@@ -135,7 +135,7 @@ and cexpr_desc =
   | CELetK of id * id * cexpr * cexpr                  (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr
-  | CEDestruct of catom list * (info_p * cexpr) list
+  | CEDestruct of id * catom list * (info_p * cexpr) list
 
 and catom = {
   catom_loc: location;

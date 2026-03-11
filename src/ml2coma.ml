@@ -57,6 +57,8 @@ let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id li
    value: handler record *)
 let destructs = Hashtbl.create 10
 
+let destructs_counter = Hashtbl.create 10
+
 (* "t" -> "destruct_t" *)
 let handler_name_of_id fn_name = "destruct_" ^ fn_name
 
@@ -82,17 +84,27 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       (mk_id name p.ppat_loc, vars, pres)
   | PCast (p, _) -> case_of_branch args p
 
+
+let fresh_handler_name fn_name =
+  let n = match Hashtbl.find_opt destructs_counter fn_name with
+    | None   -> 1
+    | Some n -> n + 1
+  in
+  Hashtbl.replace destructs_counter fn_name n;
+  let name = handler_name_of_id fn_name ^ string_of_int n in
+  name
+
+
 let register_handler fn_name (atoms : atom list) cases =
-  let key = handler_name_of_id fn_name in
-  if not (Hashtbl.mem destructs key) then begin
-    let args = List.map (fun a ->
-      match a.atom_desc with
-      | AId id -> id
-      | _ -> failwith "A match expression must match on an identifier"
-    ) atoms in
-    Hashtbl.add destructs key
-      { args; cases = List.map (fun (p, _) -> case_of_branch args p) cases }
-  end
+  let key = fresh_handler_name fn_name in
+  let args = List.map (fun a ->
+    match a.atom_desc with
+    | AId id -> id
+    | _ -> failwith "A match expression must match on an identifier"
+  ) atoms in
+  Hashtbl.add destructs key
+    { args; cases = List.map (fun (p, _) -> case_of_branch args p) cases };
+  key
 
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
 
@@ -112,6 +124,7 @@ let rec atom fn_name { atom_loc; atom_desc = a_desc } =
 and expr fn_name { expr_loc; expr_desc = e_desc } =
   let mk_cexpr cexpr_desc = { cexpr_loc = expr_loc; cexpr_desc } in
   let mk_ppat_expr (p, e) = (pattern_to_args p, expr fn_name e) in
+  let mk_id name loc = { id_name = name; id_loc = loc } in
   let expr_desc = function
     | EAtom a -> CEAtom (atom fn_name a)
     | EAssert -> CEAssert
@@ -124,8 +137,8 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
     | EIf (a, e1, e2) ->
         CEIf (atom fn_name a, expr fn_name e1, expr fn_name e2) (* TODO *)
     | EMatch (al, pel) ->
-        register_handler fn_name al pel;
-        CEDestruct (List.map (atom fn_name) al, List.map mk_ppat_expr pel) in
+        let name = register_handler fn_name al pel in
+        CEDestruct (mk_id name expr_loc, List.map (atom fn_name) al, List.map mk_ppat_expr pel) in
   mk_cexpr (expr_desc e_desc)
 
 and callable fn_name {callable_loc; callable_desc} =
