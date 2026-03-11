@@ -40,6 +40,10 @@ let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
   Uast.Qpreid preid
 
 let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id list) =
+  Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
+  arg.id_name
+  case_id.id_name
+  (String.concat ", " (List.map (fun v -> v.id_name) vars));
   let mk_uast_term desc loc = { Uast.term_desc = desc; Uast.term_loc = location loc} in
   let arg_term = mk_uast_term (Uast.Tpreid (ml_id_to_qualid arg)) arg.id_loc in
   let pp_term =
@@ -67,15 +71,19 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
   let mk_id name loc = { id_name = name; id_loc = loc } in
   match p.ppat_desc with
   | PVar id ->
-      let vars = [] in
-      let pre = mk_precondition (List.hd args) id vars in
-      (mk_id id.id_name id.id_loc, vars, pre)
+      let kont_id = mk_id "default_case" id.id_loc in
+      let var = gen_id ~loc:id.id_loc () in
+      let pre = mk_precondition (List.hd args) var [] in
+      (kont_id, [var], pre)
   | PCons (cid, ps) ->
       let vars = List.concat_map pattern_to_args ps in
       let pre = mk_precondition (List.hd args) cid vars in
       (mk_id cid.id_name cid.id_loc, vars, pre)
   | PWild ->
-      (mk_id "_" p.ppat_loc, [], [])
+      let kont_id = mk_id "default_case" dummy_loc in
+      let var = gen_id () in
+      let pre = mk_precondition (List.hd args) var [] in
+      (kont_id, [var], pre)
   | PTuple ps ->
       let sub_cases = List.map (case_of_branch args) ps in
       let name = String.concat "_" (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
