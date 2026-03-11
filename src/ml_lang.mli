@@ -45,7 +45,7 @@ and expr_desc =
   | ELetK of id * id * expr * expr                  (* let_cont h x = e in e *)
   | EApp  of callable * atom list * callable list   (* k a…a k…k *)
   | EIf of atom * expr * expr
-  | EMatch of atom list * (pattern * expr) list
+  | EMatch of atom * (pattern * expr) list
 
 and atom = {
   atom_loc: location;
@@ -135,7 +135,7 @@ and cexpr_desc =
   | CELetK of id * id * cexpr * cexpr                  (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr
-  | CEDestruct of id * catom list * (info_p * cexpr) list
+  | CEDestruct of id * catom * (info_p * cexpr) list
 
 and catom = {
   catom_loc: location;

@@ -87,7 +87,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
   | CEDestruct (id, a, pel) ->
       fprintf fmt "@[%s @[%a@]@\n@[%a@]@]"
         (id.id_name)
-        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) a
+        (pp_atom ~paren:false ~curly:true) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   (* | CELetK(k, x, e1, e2) -> failwith "TODO"  *)
   | _ -> failwith "TODO"

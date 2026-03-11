@@ -84,12 +84,12 @@ let rec pp_expr fmt (e: expr) =
       (* "if @[%a@] then@;<1 2>@[%a@]@ else@;<1 2>@[%a@]" *)
         (pp_atom ~paren:false) a pp_expr e1 pp_expr e2
 
-  | EMatch (al, pel) ->
+  | EMatch (a, pel) ->
       (* List.iter (fun (p, _) ->
         Format.eprintf "DEBUG pattern: %a\n%!" (pp_pattern ~paren:false) p
       ) pel; *)
       fprintf fmt "@[match @[%a@] with@\n@[%a@]@]"
-        (pp_print_list ~pp_sep:pp_coma (pp_atom ~paren:false)) al 
+        (pp_atom ~paren:false) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
   | ELetK (k, x, e1, e2) ->
       fprintf fmt "let %s %s =@;<1 2>@[%a@]@ in@ @[%a@]"

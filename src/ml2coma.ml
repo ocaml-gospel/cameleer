@@ -85,7 +85,10 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [var], pre)
   | PTuple ps ->
-      let sub_cases = List.map (case_of_branch args) ps in
+      let sub_cases = List.mapi (fun i p ->
+        let arg_i = [List.nth args i] in
+        case_of_branch arg_i p
+      ) ps in
       let name = String.concat "_" (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
       let vars  = List.concat_map (fun (_,vars,_) -> vars) sub_cases in
       let pres = List.concat_map(fun (_,_,pre) -> pre) sub_cases in
@@ -103,13 +106,15 @@ let fresh_handler_name fn_name =
   name
 
 
-let register_handler fn_name (atoms : atom list) cases =
+let register_handler fn_name (a : atom) cases =
   let key = fresh_handler_name fn_name in
-  let args = List.map (fun a ->
+  let args =
     match a.atom_desc with
-    | AId id -> id
-    | _ -> failwith "A match expression must match on an identifier"
-  ) atoms in
+    |AId id -> [id]
+    |ATuple al -> List.concat_map (fun a -> match a.atom_desc with
+        | AId id -> [id]
+        | _ -> failwith "A match expression must match on an identifier") al
+    | _ -> failwith "A match expression must match on an identifier" in
   Hashtbl.add destructs key
     { args; cases = List.map (fun (p, _) -> case_of_branch args p) cases };
   key
@@ -144,9 +149,9 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
         CEApp (callable fn_name c, List.map (atom fn_name) al, List.map (callable fn_name) _cl) (* TODO *)
     | EIf (a, e1, e2) ->
         CEIf (atom fn_name a, expr fn_name e1, expr fn_name e2) (* TODO *)
-    | EMatch (al, pel) ->
-        let name = register_handler fn_name al pel in
-        CEDestruct (mk_id name expr_loc, List.map (atom fn_name) al, List.map mk_ppat_expr pel) in
+    | EMatch (a, pel) ->
+        let name = register_handler fn_name a pel in
+        CEDestruct (mk_id name expr_loc, atom fn_name a, List.map mk_ppat_expr pel) in
   mk_cexpr (expr_desc e_desc)
 
 and callable fn_name {callable_loc; callable_desc} =
