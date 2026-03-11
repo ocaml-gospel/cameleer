@@ -598,14 +598,14 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           pat, mk_expr ~loc @@ expr spc_rhs (KName k) hm)
         cases in
       begin match k with
-      | KName k -> EMatch ([a], map k)
+      | KName k -> EMatch (a, map k)
       | KExpr k ->
           let aid = gen_id  () in
           let kid = gen_kid () in
           let cases = map kid in
           ELetK (kid, aid,
                  mk_expr @@ EApp (k, [mk_atom @@ AId aid], []),
-                 mk_expr @@ EMatch ([a], cases))
+                 mk_expr @@ EMatch (a, cases))
       end
 
   | Sexp_match (e, cases) ->
@@ -622,7 +622,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let cases = map k in
           let kk = mk_callable @@
               CFun ([z, None],[],
-                    mk_expr @@ EMatch ([mk_atom (AId z)],cases)) in
+                    mk_expr @@ EMatch (mk_atom (AId z),cases)) in
           expr e (KExpr kk) hm
       | KExpr k ->
           let kid = gen_kid () in
@@ -633,7 +633,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let kk = mk_callable @@
             CFun ([z, None], [],
                   mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
-                  mk_expr @@ EMatch ([mk_atom (AId z)], cases))) in
+                  mk_expr @@ EMatch (mk_atom (AId z), cases))) in
           expr e (KExpr kk) hm
       end
 
