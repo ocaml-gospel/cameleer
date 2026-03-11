@@ -16,9 +16,13 @@ let cst_true = CBool true
 let cst_false = CBool false
 let cst_num n = CNum n
 
+let mk_atom ?(loc=dummy_loc) atom_desc =
+  { atom_loc=loc ; atom_desc }
+
 let atom_true = ACst cst_true
 let atom_false = ACst cst_false
 let atom_num n = ACst (cst_num n)
+let atom_unit = mk_atom (ACst CUnit)
 
 let is_false = function
   | Uast.Sexp_construct ({ txt = Lident "false"; _ }, None) -> true
@@ -42,9 +46,6 @@ let gen_id ?(loc=dummy_loc) () =
 
 let gen_kid ?(loc=dummy_loc) () =
   { id_name = gen_symbol ~prefix:"_k" (); id_loc = loc}
-
-let mk_atom ?(loc=dummy_loc) atom_desc =
-  { atom_loc=loc ; atom_desc }
 
 let mk_callable ?(loc=dummy_loc) callable_desc =
   { callable_loc=loc ; callable_desc }
@@ -131,7 +132,7 @@ let rec term (t: Uast.term) =
     | Tscope (_, _)     -> assert false
     | Told _            -> assert false
 
-(* TO BE REMOVED, debugging only *)
+(* TO BE REMOVED? debugging only *)
 let rec identify e =
   let open Format in
   let pploc fmt l =
@@ -220,12 +221,12 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
   | Ppat_constraint (p, c) ->
       PCast (mk_pattern (pattern p), c)
   | Ppat_constant _
+  | Ppat_or (_, _)
   | Ppat_interval (_, _)
   | Ppat_alias (_, _)
   | Ppat_variant (_, _)
   | Ppat_record (_, _)
   | Ppat_array _
-  | Ppat_or (_, _)
   | Ppat_type _
   | Ppat_lazy _
   | Ppat_unpack _
@@ -275,7 +276,7 @@ let is_binop, get_binop =
 let rec atom_of_construct ?(loc=dummy_loc) c = match c with
   | ({ txt = Lident "true"; _ },  None) -> mk_atom ~loc atom_true
   | ({ txt = Lident "false"; _ }, None) -> mk_atom ~loc atom_false
-  | ({ txt = Lident "()"; _ }, None) -> assert false
+  | ({ txt = Lident "()"; _ }, None)    -> atom_unit
   | ({ txt; loc }, None) ->
       let id = {id_name = string_of_longident txt; id_loc = location loc} in
       mk_atom ~loc:id.id_loc (ACons (id, []))
@@ -404,7 +405,6 @@ let mayraise e =
     | Sexp_extension _ -> identify_fail e in
   loop S.empty e
 
-
 type kont_type = KName of id | KExpr of callable
 
 (** CPS translation of [e] where [k] is its normal continuation
@@ -425,19 +425,21 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       let id = { id_name = string_of_longident txt ; id_loc = loc} in
       callk [mk_atom ~loc (AId id)]
 
-  | Sexp_ifthenelse (e1, e2, Some e3) when is_atomic e1 ->
+  | Sexp_ifthenelse (e1, e2, e3) when is_atomic e1 ->
       let a = atom_of_sexpr e1 in
+      let e3 kid = match e3 with
+        | Some e3 -> expr_opt e3 kid hm
+        | None -> mk_expr @@ EApp (mk_callable (CId kid), [atom_unit], []) in
       begin match k with
-      | KName k -> EIf (a, expr_opt e2 k hm, expr_opt e3 k hm)
+      | KName k -> EIf (a, expr_opt e2 k hm, e3 k)
       | KExpr k ->
           let z   = gen_id () in
           let kid = gen_kid () in
           let e2  = expr_opt e2 kid hm in
-          let e3  = expr_opt e3 kid hm in
           ELetK (kid, z, mk_expr @@ EApp (k, [mk_atom @@ AId z], []),
-                         mk_expr @@ EIf (a, e2, e3))
+                         mk_expr @@ EIf (a, e2, e3 kid))
       end
-  | Sexp_ifthenelse (e1, e2, Some e3) ->
+  | Sexp_ifthenelse (e1, e2, e3) ->
       let z = gen_id ~loc:(location e1.spexp_loc) () in
       let f, kid = match k with
       | KName k ->
@@ -450,12 +452,13 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let az2 = mk_atom (AId z2) in
           let f e2 e3 = mk_callable @@ CFun ([z, None], [],
             mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
-            mk_expr @@ EIf (mk_atom (AId z),e2,e3))) in
+            mk_expr @@ EIf (mk_atom (AId z), e2, e3))) in
           f, kid in
       let e2 = expr_opt e2 kid hm in
-      let e3 = expr_opt e3 kid hm in
+      let e3 = match e3 with
+       | Some e3 -> expr_opt e3 kid hm
+       | None -> mk_expr @@ EApp (mk_callable (CId kid), [atom_unit], []) in
       expr e1 (KExpr (f e2 e3)) hm
-  | Sexp_ifthenelse (_, _, None) -> assert false
 
   | Sexp_construct (l,e) ->
       let a = atom_of_construct (l,e) in

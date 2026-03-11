@@ -18,6 +18,7 @@ let pp_constant fmt (c: constant) =
   match c with
   | CNum n -> fprintf fmt "%d" n
   | CBool b -> fprintf fmt "%b" b
+  | CUnit -> fprintf fmt "()"
 
 let pp_op fmt (op: op) =
   match op with

@@ -25,12 +25,7 @@ let curly_braces b f =
   if b then "{" ^^ f ^^ "}"
   else f
 
-let pp_constant fmt (c: constant) =
-  match c with
-  | CNum n -> fprintf fmt "%d" n
-  | CBool b -> fprintf fmt "%b" b
-
-let pp_op = Pp_ml_lang.pp_op
+let pp_op, pp_constant = Pp_ml_lang.(pp_op, pp_constant)
 
 let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
   let non_wild_args args = List.filter (fun p -> match p.cppat_desc with

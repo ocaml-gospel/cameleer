@@ -29,6 +29,8 @@ let sum x y =
 let c = C
 let b = B
 
+let void x = if x then ()
+
 let sum_t x y =
   let a = sum true y in      (* ANF requirement *)
   if a = 34 then

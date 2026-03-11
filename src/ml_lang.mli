@@ -15,7 +15,7 @@ type id = { id_name: string; id_loc: location }
 
 type binder = id * P.core_type option
 
-type constant = CNum of int | CBool of bool
+type constant = CNum of int | CBool of bool | CUnit
 
 type op = OPAdd | OPMinus | OPMult | OPDiv | OPMod
         | OPEq | OPLe | OPLt | OPGe | OPGt
