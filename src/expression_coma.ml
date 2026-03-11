@@ -319,41 +319,29 @@ let raisable_hmap: (string, S.t) Hashtbl.t = Hashtbl.create 32
 let mayraise e =
   let rec loop acc e =
     match e.Uast.spexp_desc with
-    (* 1 *)
-    | Sexp_field (e, _)
-    | Sexp_constraint (e, _)
-    | Sexp_variant (_, Some e)
-    | Sexp_send (e, _)
-    | Sexp_setinstvar (_, e)
-    | Sexp_assert e
-    | Sexp_lazy e
-    | Sexp_poly (e, _)
-    | Sexp_newtype (_, e)
-    | Sexp_coerce (e, _, _)
-    | Sexp_construct (_, Some e) -> loop acc e
-    (* 2 *)
-    | Sexp_sequence (e1,e2)
-    | Sexp_while (e1, e2, _)
-    | Sexp_setfield (e1, _, e2)
-    | Sexp_ifthenelse (e1, e2, None) ->
+    (* {1 expr} *)
+    | Sexp_field (e, _) | Sexp_constraint (e, _) | Sexp_variant (_, Some e)
+    | Sexp_send (e, _) | Sexp_setinstvar (_, e) | Sexp_assert e
+    | Sexp_lazy e | Sexp_poly (e, _) | Sexp_newtype (_, e)
+    | Sexp_coerce (e, _, _) | Sexp_construct (_, Some e) -> loop acc e
+    (* {2 expr} *)
+    | Sexp_sequence (e1,e2) | Sexp_while (e1, e2, _)
+    | Sexp_setfield (e1, _, e2) | Sexp_ifthenelse (e1, e2, None) ->
         let acc = loop acc e1 in
         loop acc e2
-    (* 3 *)
-    | Sexp_for (_, e1, e2, _, e3, _)
-    | Sexp_ifthenelse (e1, e2, Some e3) ->
+    (* {3 expr} *)
+    | Sexp_for (_, e1, e2, _, e3, _) | Sexp_ifthenelse (e1, e2, Some e3) ->
         let acc = loop acc e1 in
         let acc = loop acc e2 in
         loop acc e3
-    (* list *)
-    | Sexp_tuple el
-    | Sexp_array el ->
+    (* {expr list} *)
+    | Sexp_tuple el | Sexp_array el ->
         List.fold_left loop acc el
-    (* 0 *)
-    | Sexp_variant (_, None) | Sexp_construct (_, None)
-    | Sexp_new _
-    | Sexp_unreachable
-    | Sexp_ident _ | Sexp_constant _ -> acc
-    (* special cases *)
+    (* {0 expr} *)
+    | Sexp_variant (_, None) | Sexp_construct (_, None) | Sexp_new _
+    | Sexp_unreachable | Sexp_ident _ | Sexp_constant _ ->
+        acc
+    (* {special cases} *)
     | Sexp_let (_, el, e) ->
         let acc2 = List.fold_left
           (fun acc Uast.{spvb_expr=e;_} -> loop acc e) acc el in
@@ -408,7 +396,9 @@ let mayraise e =
 type kont_type = KName of id | KExpr of callable
 
 (** CPS translation of [e] where [k] is its normal continuation
-    and hm is the map of exceptional ones. *)
+    and hm is the map of exceptional ones (TODO: unused yet, do we need this?).
+    The translation is freely inspired by
+    “Compiling with continuation, continued” - A. Kennedy. *)
 let rec expr (e: Uast.s_expression) k hm : expr_desc =
   let expr_opt e kid hm =
     let loc = location e.Uast.spexp_loc in
