@@ -635,8 +635,8 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       end
 
   | Sexp_assert e when is_false e.spexp_desc -> EAssert
-  | Sexp_constraint (_, _) ->
-      assert false (* TODO *)
+  | Sexp_constraint (e, _t) ->
+      expr e k hm
   | Sexp_sequence (_, _)        -> assert false
   | Sexp_unreachable            -> assert false
   | Sexp_function _             -> assert false (* TODO *)
