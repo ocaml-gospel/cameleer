@@ -28,7 +28,7 @@ let curly_braces b f =
 let pp_op, pp_constant = Pp_ml_lang.(pp_op, pp_constant)
 
 let pp_cpre = (WPrint.pp_term ~attr:false).closed
-let pp_cbinder = (WPrint.pp_pty ~attr:false).closed
+let pp_pty = (WPrint.pp_pty ~attr:false).closed
 
 let pp_cpre fmt = function
   | [] -> ()
@@ -53,9 +53,7 @@ let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
       fprintf fmt (protect_on paren "@[fun %a@]@ ")
         (pp_print_list ~pp_sep:pp_space pp_pattern) al
   | CPCast (p, pty) ->
-      (* TODO: print the type *)
-      ignore pty;
-      fprintf fmt (protect_on paren "@[%a: ...@]") (pp_pattern ~paren) p
+      fprintf fmt "@[(%a: %a)@]" (pp_pattern ~paren) p pp_pty pty
 
 let pp_id ?(paren=false) fmt {id_name; _} =
   fprintf fmt (protect_on paren "%s") id_name
@@ -65,7 +63,7 @@ let pp_cbinder ?(paren=false) fmt (id, pty) =
   | None -> fprintf fmt "%a" (pp_id ~paren) id
   | Some pty ->
       fprintf fmt "(%a: %a)" (pp_id ~paren) id
-        pp_cbinder pty
+        pp_pty pty
 
 let pp_pre fmt = function
   | [] -> ()

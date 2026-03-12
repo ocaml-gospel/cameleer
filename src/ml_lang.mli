@@ -123,7 +123,7 @@ and cpattern_desc =
   | CPVar of id                           (* catch all+binder:  x            *)
   | CPCons of id * cpattern list          (* constructor:       Cons(x, xs)  *)
   | CPTuple of cpattern list              (* multiple pattern:  p1, p2, …    *)
-  | CPCast of cpattern * P.core_type      (* [P: T] *)
+  | CPCast of cpattern * Ptree.pty        (* [P: T] *)
 
 type cexpr = {
   cexpr_loc: location;

@@ -201,7 +201,7 @@ and pattern p =
     | PCons (id, args) -> CPCons (id, List.map pattern args)
     | PWild -> CPWild
     | PTuple ps -> CPTuple (List.map pattern ps)
-    | PCast (p, pty) -> CPCast (pattern p, pty) in
+    | PCast (p, pty) -> CPCast (pattern p, E.core_type pty) in
   { cppat_desc; cppat_loc=p.ppat_loc }
 
 let declaration { decl_desc; decl_loc } =
