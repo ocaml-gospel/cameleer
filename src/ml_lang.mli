@@ -101,7 +101,7 @@ type program = declaration list
     CPS-conversion later. *)
 open Why3
 
-type info_p = id list 
+type info_p = binder list
 
 type cprecondition = Ptree.term list
 (* a WhyML precondition *)

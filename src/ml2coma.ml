@@ -12,15 +12,27 @@ let dummy_loc =
   (pos, pos)
 
 let mk_id ?(loc=dummy_loc) id_name  = { id_name; id_loc = loc }
-let gen_id ?(loc=dummy_loc) () = mk_id ~loc (gen_symbol ())
+
+let gen_id ?(loc=dummy_loc) ?(prefix = "_x") () =
+  mk_id ~loc (gen_symbol ~prefix ())
 
 let rec pattern_to_args (p: Ml_lang.pattern) =
   match p.ppat_desc with
   | PVar id -> [id]
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
-  | PWild -> [gen_id ()]
+  | PWild -> [gen_id ~prefix:"_unused" ()]
   | PTuple ps -> List.concat(List.map pattern_to_args ps)
   | PCast (p, _) -> pattern_to_args p
+
+let rec tpattern_to_args (p: Ml_lang.pattern) =
+  let rec loop (acc: core_type option) (p: Ml_lang.pattern) =
+    match p.ppat_desc with
+    | PVar id -> [id, acc]
+    | PCons (_, args) -> List.concat(List.map tpattern_to_args args)
+    | PWild -> [gen_id ~prefix:"_unused" (), acc]
+    | PTuple ps -> List.concat (List.map tpattern_to_args ps)
+    | PCast (p, t) -> loop (Some t) p in
+  loop None p
 
 (* ! PATTERN MATCHING HANDLERS CONSTRUCTION *)
 
@@ -90,7 +102,7 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       (id, vars, pre)
   | PWild ->
       let kont_id = mk_id "default_case" in
-      let var = gen_id () in
+      let var = gen_id ~prefix:"_unused" () in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [var], pre)
   | PTuple ps ->
@@ -143,7 +155,7 @@ let rec atom fn_name { atom_loc; atom_desc } =
 
 and expr fn_name { expr_loc; expr_desc = e_desc } =
   let mk_cexpr cexpr_desc = { cexpr_loc = expr_loc; cexpr_desc } in
-  let mk_ppat_expr (p, e) = (pattern_to_args p, expr fn_name e) in
+  let mk_ppat_expr (p, e) = (tpattern_to_args p, expr fn_name e) in
   let mk_id name loc = { id_name = name; id_loc = loc } in
   let expr_desc = function
     | EAtom a -> CEAtom (atom fn_name a)

@@ -27,7 +27,7 @@ let curly_braces b f =
 
 let pp_op, pp_constant = Pp_ml_lang.(pp_op, pp_constant)
 
-let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
+let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
   let non_wild_args args = List.filter (fun p -> match p.cppat_desc with
     | CPWild -> false
     | _ -> true) args in
@@ -46,7 +46,7 @@ let rec pp_pattern ?(_paren=false) fmt {cppat_desc; _} =
   | CPCast (p, pty) ->
       (* TODO: print the type *)
       ignore pty;
-      fprintf fmt "@[%a: ...@]" (pp_pattern ~_paren) p
+      fprintf fmt "@[%a: ...@]" (pp_pattern ~paren) p
 
 let pp_id ?(paren=false) fmt {id_name; _} =
   fprintf fmt (protect_on paren "%s") id_name
@@ -70,17 +70,17 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
       fprintf fmt "%a" (pp_atom ~paren:true ~curly:false) a
   | CEAssert -> fprintf fmt "fail"
   | CELet (x, e1, e2) ->
-      fprintf fmt "let %a =@ @[<hov 2>%a@] in@ @[%a@]"
-        (pp_pattern ~_paren:false) x
+      fprintf fmt "@[%a@]@\n[%a : _todo_type_ =@ @[<hov 2>%a@]]"
+        (pp_pattern ~paren:false) x
         (fun fmt e -> pp_expr fmt e) e1
-        (fun fmt e -> pp_expr fmt e) e2 
+        (fun fmt e -> pp_expr fmt e) e2
   | CEApp (c, al, cl) ->
       fprintf fmt ("@[<hov 2>%a @[%a %a@]@]")
         (pp_callable ~_fn_name) c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true ~curly:true)) al
         (pp_print_list ~pp_sep:pp_space (pp_callable ~_fn_name)) cl
   | CEIf (a, e1, e2) ->
-      fprintf fmt "@[if @[%a@] @\n (-> %a) @\n @[(-> %a)@]@]"
+      fprintf fmt "@[if @[%a@]@;<1 3>@[(-> @[%a@])@\n(-> @[%a@])@]@]"
         (pp_atom ~paren:false ~curly:true) a
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
@@ -89,8 +89,12 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (id.id_name)
         (pp_atom ~paren:false ~curly:true) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
-  (* | CELetK(k, x, e1, e2) -> failwith "TODO"  *)
-  | _ -> failwith "not implemented yet (pp_expr)"
+  | CELetK(k, x, e1, e2) ->
+      fprintf fmt "@[%a@]@ @[[ %s (%s: _todo_type_)@;<1 2>@[<hov 2>=@ %a@]@]"
+        (fun fmt e -> pp_expr fmt e) e2
+        k.id_name
+        x.id_name
+        (fun fmt e -> pp_expr fmt e) e1
 
 and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
   match a.catom_desc with
@@ -105,19 +109,18 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
         pp_op op (fun fmt e -> pp_expr fmt e) e1
   | CACst c -> fprintf fmt (curly_braces curly "%a") pp_constant c
   | CAFun (binder, e) ->
-      let (x, _) = binder in
-      (* TODO: print type *)
-      fprintf fmt (protect_on true "@[fun %s -> @[<hov 2>%a@]@]")
-        x.id_name
+      fprintf fmt (protect_on true "@[fun %a -> @[<hov 2>%a@]@]")
+        (pp_binder ~paren:true) binder
         (fun fmt e -> pp_expr fmt e) e
   | CAId x -> fprintf fmt (curly_braces curly "%s") x.id_name
   | CATuple al -> (* i think this should be curly braces *)
-      fprintf fmt "@[(%a)@]" (pp_print_list ~pp_sep:pp_coma pp_atom) al (* TODO *)
-  | CACons (c, []) -> fprintf fmt "%s" c.id_name (* TODO *)
+      fprintf fmt (curly_braces curly "@[(%a)@]")
+        (pp_print_list ~pp_sep:pp_coma pp_atom) al (* TODO *)
+  | CACons (c, []) -> fprintf fmt (curly_braces curly "%s") c.id_name (* TODO *)
   | CACons (c, [a]) ->
       fprintf fmt (curly_braces curly "%s %a")
         c.id_name
-        (pp_atom ~paren:false ~curly:true) a (* TODO *)
+        (pp_atom ~paren:false ~curly:false) a (* TODO *)
   | CACons (c, al) ->
       fprintf fmt (curly_braces curly "%s @[%a@]")
         c.id_name
@@ -127,22 +130,25 @@ and pp_callable ?(_fn_name="") fmt c =
   match c.ccallable_desc with
   | CCId id -> fprintf fmt "%s" id.id_name
   | CCFun (data, pre, kon, e) ->
-      fprintf fmt (protect_on true "@[fun %a %a %a -> @[<hov 2>%a@]@]")
+      fprintf fmt (protect_on true "@[fun %a%s%a%s%a%s-> @[<hov 2>%a@]@]")
         (pp_print_list ~pp_sep:pp_space pp_binder) data
+        (if data = [] && pre = [] then "" else " ")
         pp_pre pre
+        (if kon = [] && pre = [] then "" else " ")
         (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) kon
+        (if kon = [] then "" else " ")
         (fun fmt e -> pp_expr fmt e) e
 
 and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 2>(%a->@ @[%a@])@]"
-    (pp_pattern ~_paren:false) p
+    (pp_pattern ~paren:false) p
     (fun fmt e -> pp_expr fmt e) e
 
 and pp_ppat_cexpr fmt (p, e) =
-  match p with
-  | [] -> fprintf fmt "@[<hov 2>(->@ @[%a@])@]" (fun fmt e -> pp_expr fmt e) e
-  | _ -> fprintf fmt "@[<hov 2>(fun %a ->@ @[%a@])@] "
-    (pp_print_list ~pp_sep:pp_space pp_id) p
+  fprintf fmt "@[<hov 2>(%s%a%s->@ @[%a@])@] "
+    (if p = [] then "" else "fun ")
+    (pp_print_list ~pp_sep:pp_space pp_binder) p
+    (if p = [] then "" else " ")
     (fun fmt e -> pp_expr fmt e) e (* TODO *)
 
 let pp_rec fmt = function
@@ -180,7 +186,7 @@ let pp_decl fmt (d: cdeclaration) =
 let pp_handler_case fmt (case_id, vars, pre) =
   match vars with
   | [] -> fprintf fmt "(%a %a)" (fun fmt id -> pp_id fmt id) case_id pp_cpre pre
-  | _  -> fprintf fmt "(%s %a %a)"
+  | _  -> fprintf fmt "(%s @[%a@ %a@])"
             case_id.id_name
             (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) vars
             pp_cpre pre
