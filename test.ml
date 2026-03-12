@@ -1,5 +1,5 @@
 (* How to run this file:
-   `dune exec bin_coma/cli.exe -- --coma ./test.ml` *)
+   `dune exec bin/cli_coma.exe -- --coma ./test.ml` *)
 
 (* ------------------------------------------------------------------------- *)
 (*- Types -*)
