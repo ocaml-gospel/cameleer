@@ -73,10 +73,11 @@ let eatom ?(loc=dummy_loc) a = EAtom (mk_atom ~loc a)
 let rec get_pattern_id (pat: Parsetree.pattern) =
   match pat.ppat_desc with
   | Ppat_var {txt; loc} ->
-      { id_name = txt; id_loc = location loc }
-  | Ppat_constraint (p, _) ->
-      get_pattern_id p
-  | _ ->  assert false
+      { id_name = txt; id_loc = location loc }, None
+  | Ppat_constraint (p, pty) ->
+      let id, _ = get_pattern_id p in
+      id, Some pty
+  | _ -> assert false
 
 let preid Uast.Preid.{ pid_str; pid_loc; _ } =
   mk_id ~loc:(location pid_loc) pid_str
@@ -183,8 +184,8 @@ let collect_params e =
   let rec loop acc e =
     match e.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
-        let arg = get_pattern_id pat in
-        let binder = arg, None in (* FIXME: type *)
+        let arg, pty = get_pattern_id pat in
+        let binder = arg, pty in (* FIXME: type *)
         loop (binder :: acc) e
     | _ -> List.rev acc, e
   in
@@ -464,7 +465,9 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       callk [a]
 
   | Sexp_let ((Nonrecursive | Recursive), [svb], e2) ->
-      let id = get_pattern_id svb.spvb_pat in
+      let id, pty = get_pattern_id svb.spvb_pat in
+      ignore pty; (* FIXME: what should we do about this pty? *)
+      (* for now, we do not support [let x: ty = ...] *)
       let e1 = svb.spvb_expr in
       let ty1 = None in (* TODO type of e1 *)
       let loc1 = location e1.spexp_loc in
@@ -475,7 +478,9 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
              mk_expr ~loc:loc1 @@ expr ~etype:ty1 e1 (KName kid) hm)
 
   | Sexp_let (Nonrecursive, svb::svbs, e2) ->
-      let id = get_pattern_id svb.spvb_pat in
+      let id, pty = get_pattern_id svb.spvb_pat in
+      assert (pty = None);
+      (* for now, we do not support [let x: ty = ...] *)
       let e1 = svb.spvb_expr in
       let loc1 = location e1.spexp_loc in
       let loc2 = location e2.spexp_loc in
@@ -709,7 +714,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
   | Sexp_letop _ -> assert false
 
 and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
-  let id = get_pattern_id svb.spvb_pat in
+  let id, pty = get_pattern_id svb.spvb_pat in
+  ignore pty; (* FIXME? What is this pty? *)
   let params, pexp = collect_params svb.spvb_expr in
   let s = mayraise pexp in
   let sl = S.fold

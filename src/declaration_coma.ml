@@ -10,7 +10,7 @@ let (^~) a b = fun c -> a c b
 
 let rec_flag b = if b then Recursive else Nonrecursive
 
-let param (_loc, pre_id, _ty) = E.preid pre_id, None
+let param (_loc, pre_id, _pty) = E.preid pre_id, None
 
 let function_ f =
   let _ld_loc = E.location f.Uast.fun_loc in

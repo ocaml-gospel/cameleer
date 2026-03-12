@@ -121,7 +121,6 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       (mk_id ~loc:p.ppat_loc name, vars, pres)
   | PCast (p, _) -> case_of_branch args p
 
-
 let fresh_handler_name fn_name =
   let n = match Hashtbl.find_opt destructs_counter fn_name with
     | None   -> 1
