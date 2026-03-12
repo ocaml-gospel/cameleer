@@ -41,11 +41,13 @@ let rec tpattern_to_args (p: Ml_lang.pattern) =
 
 (* ! PATTERN MATCHING HANDLERS CONSTRUCTION *)
 
+(* FIXME: we should accept [t] together with a type *)
+
 (* e.g. for `match t with Empty -> ... | Node(l,_,r) -> ...`
         args   = "[t]"
         cases = [("Empty", []); ("Node", ["l"; "_x__001_"; "r"])]   *)
 type handler = {
-  args:   Ml_lang.id list;
+  args:   Ml_lang.id list; (* FIXME: this should be [cbinder list] *)
   cases: (Ml_lang.id * Ml_lang.id list * Ml_lang.cprecondition) list;
 }
 
@@ -206,8 +208,9 @@ and pattern p =
 
 let declaration { decl_desc; decl_loc } =
   let mk_cdecl cdecl_desc = { cdecl_loc = decl_loc; cdecl_desc } in
-  let mk_ckont { kont_id; kont_pre } =
-    { ckont_id  = binder kont_id;
+  let mk_ckont { kont_id; kont_arg = (arg, pty); kont_pre } =
+    { ckont_id  = kont_id;
+      ckont_arg = arg, Option.map E.core_type pty;
       ckont_pre = List.map (Uterm.term false) kont_pre } in
   let cdecl = match decl_desc with
     | DFun (rec_flag, id, xs, pre, ks, e) ->

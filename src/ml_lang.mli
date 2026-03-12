@@ -75,7 +75,8 @@ type rec_flag = Asttypes.rec_flag
 type precondition = U.term list
 
 type kont = {
-  kont_id: binder;
+  kont_id: id;
+  kont_arg: binder;
   kont_pre: precondition;
 }
 
@@ -109,7 +110,8 @@ type cbinder = id * Ptree.pty option
 type info_p = cbinder list
 
 type ckont = {
-  ckont_id: cbinder;
+  ckont_id: id;
+  ckont_arg: cbinder;
   ckont_pre: cprecondition;
 }
 

@@ -141,7 +141,7 @@ let pp_id fmt {id_name; _} =
   fprintf fmt "%s" id_name
 
 let pp_kont fmt {kont_id; _} =
-  fprintf fmt "%a" pp_binder kont_id
+  fprintf fmt "%a" pp_id kont_id
 
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with

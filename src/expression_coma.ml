@@ -82,6 +82,13 @@ let rec get_pattern_id (pat: Parsetree.pattern) =
 let preid Uast.Preid.{ pid_str; pid_loc; _ } =
   mk_id ~loc:(location pid_loc) pid_str
 
+let labelled_arg = function
+  | Uast.Lunit -> mk_id "()"
+  | Lnone p
+  | Loptional p
+  | Lnamed p
+  | Lghost (p, _) -> preid p
+
 let qualid = function
   | Uast.Qpreid id -> preid id
   | Uast.Qdot _ -> assert false
@@ -185,14 +192,14 @@ let collect_params e =
     match e.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
         let arg, pty = get_pattern_id pat in
-        let binder = arg, pty in (* FIXME: type *)
+        let binder = arg, pty in
         loop (binder :: acc) e
     | _ -> List.rev acc, e
   in
   loop [] e
 
-let mk_kont kont_id spec =
-  let mk_kont kont_pre = { kont_id; kont_pre } in
+let mk_kont kont_id kont_arg spec =
+  let mk_kont kont_pre = { kont_id; kont_arg; kont_pre } in
   let pre = match spec with
     | None -> []
     | Some U.{sp_post; _} -> sp_post in
@@ -714,22 +721,46 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
   | Sexp_letop _ -> assert false
 
 and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
+  let get_type_expr U.{spexp_desc; _} = match spexp_desc with
+    | U.Sexp_constraint (_, pty) -> Some pty
+    | _ -> None in
+  let ret = function
+    | [r] -> labelled_arg r
+    | _ -> assert false in 
+  let return_id_of_spec = function
+    | None | Some U.{sp_header = None; _} -> mk_id "result"
+    | Some U.{sp_header = Some header; _} -> ret header.sp_hd_ret in
   let id, pty = get_pattern_id svb.spvb_pat in
-  ignore pty; (* FIXME? What is this pty? *)
+  (* FIXME? Honestly, I do not know what this pty is. *)
+  (* Mário [12-03-2026, 15h35]: OK, I figured it out. This is the
+     type of a function if, for instance, we write something like:
+     ```
+       let is_empty: 'a tree -> bool = fun t -> ...
+     ```
+     . Which means the type of the function return value is coupled with
+     the body expression, when the function header is written in a
+     more natural style.
+
+     Let us ignore it, for now. *)
+  ignore pty; (* TODO *)
   let params, pexp = collect_params svb.spvb_expr in
   let s = mayraise pexp in
+  let spec = svb.spvb_vspec in
+  let arg_id = return_id_of_spec spec in
+  let return_pty = get_type_expr pexp in
   let sl = S.fold
     (fun s acc ->
       let s = { id_name = s; id_loc = dummy_loc } in
-      mk_kont (s, None) None :: acc)
+      mk_kont s (arg_id, None) None :: acc)
     s [] in
   let () = Hashtbl.add raisable_hmap id.id_name s in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
-  let etype = None in (* return type of the function *)
+  let etype = return_pty in (* return type of the function *)
   let body = mk_expr ~loc:expr_loc (expr ~etype pexp (KName k) empty_map) in
-  let spec = svb.spvb_vspec in
-  let kont = mk_kont (k, None) spec in (* FIXME: type of [k],
-                                          Where is the type annotation
-                                          of functions (svb)? *)
+  let kont = mk_kont k (arg_id, return_pty) spec in
+  (* FIXME: type of [k],
+
+     Where is the type annotation of functions (svb)? *)
+  (* Mário: it is the type of the body expression. *)
   let pre = pre_of_spec spec in
   mk_decl (rec_flag, id, params, pre, kont :: sl, body)

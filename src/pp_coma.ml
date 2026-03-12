@@ -162,9 +162,10 @@ let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"
   | Nonrecursive -> ()
 
-let pp_kont fmt {ckont_id; ckont_pre} =
-  fprintf fmt (protect_on true "%a %a")
-    (pp_cbinder ~paren:false) ckont_id
+let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
+  fprintf fmt (protect_on true "%a %a %a")
+    (pp_id ~paren:false) ckont_id
+    (pp_cbinder ~paren:false) ckont_arg
     pp_cpre ckont_pre
 
 let pp_decl fmt (d: cdeclaration) =
@@ -184,11 +185,13 @@ let pp_decl fmt (d: cdeclaration) =
 
 let pp_handler_case fmt (case_id, vars, pre) =
   match vars with
-  | [] -> fprintf fmt "(%a %a)" (fun fmt id -> pp_id fmt id) case_id pp_cpre pre
-  | _  -> fprintf fmt "(%s @[%a@ %a@])"
-            case_id.id_name
-            (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) vars
-            pp_cpre pre
+  | [] ->
+      fprintf fmt "(%a %a)" (pp_id ~paren:false) case_id pp_cpre pre
+  | _ ->
+      fprintf fmt "(%s @[%a@ %a@])"
+        case_id.id_name
+        (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) vars
+        pp_cpre pre
 
 let pp_handler fmt name (h : Ml2coma.handler) =
   fprintf fmt "@[<hov 2>let %s %a@\n @[%a@]\n= any@]"
