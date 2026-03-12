@@ -11,7 +11,8 @@ let dummy_loc =
     pos_lnum = 1 } in
   (pos, pos)
 
-let gen_id ?(loc=dummy_loc) () = { id_name = gen_symbol (); id_loc = loc}
+let mk_id ?(loc=dummy_loc) id_name  = { id_name; id_loc = loc }
+let gen_id ?(loc=dummy_loc) () = mk_id ~loc (gen_symbol ())
 
 let rec pattern_to_args (p: Ml_lang.pattern) =
   match p.ppat_desc with
@@ -31,9 +32,10 @@ type handler = {
   cases: (Ml_lang.id * Ml_lang.id list * Ml_lang.cprecondition) list;
 }
 
-let location loc = Location.{ loc_start = fst loc ; loc_end = snd loc; loc_ghost = false }
+let location loc =
+  Location.{ loc_start = fst loc ; loc_end = snd loc; loc_ghost = false }
 
-let mk_dummy_pre =[{ term_desc = Ttrue; term_loc = Loc.dummy_position }]
+let mk_dummy_pre = [{ term_desc = Ttrue; term_loc = Loc.dummy_position }]
 
 let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
   let preid = Identifier.Preid.create id.id_name ~loc:(location id.id_loc) in
@@ -41,19 +43,25 @@ let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
 
 let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id list) =
   Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
-  arg.id_name
-  case_id.id_name
-  (String.concat ", " (List.map (fun v -> v.id_name) vars));
-  let mk_uast_term desc loc = { Uast.term_desc = desc; Uast.term_loc = location loc} in
-  let arg_term = mk_uast_term (Uast.Tpreid (ml_id_to_qualid arg)) arg.id_loc in
-  let pp_term =
-    match vars with
+    arg.id_name
+    case_id.id_name
+    (String.concat ", " (List.map (fun v -> v.id_name) vars));
+  let mk_uast_term term_desc loc =
+    let term_loc = location loc in
+    Uast.{ term_desc; term_loc } in
+  let arg_loc = arg.id_loc in
+  let arg_term = mk_uast_term (Uast.Tpreid (ml_id_to_qualid arg)) arg_loc in
+  let pp_term = match vars with
     | [] -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid case_id)) case_id.id_loc
-    | _ -> let vars_terms = List.map (fun v -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid v)) v.id_loc) vars in
-           mk_uast_term (Uast.Tidapp (ml_id_to_qualid case_id, vars_terms)) case_id.id_loc in
-  let eq_term = Identifier.Preid.create "infix =" ~loc:(location arg.id_loc) in
-  let pre = mk_uast_term (Uast.Tinfix (arg_term, eq_term, pp_term)) arg.id_loc in
-  [Uterm.term false pre]
+    | _ ->
+        let vars_terms = List.map
+          (fun v -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid v)) v.id_loc)
+          vars in
+        let t = Uast.Tidapp (ml_id_to_qualid case_id, vars_terms) in
+        mk_uast_term t case_id.id_loc in
+  let eq_term = Identifier.Preid.create "infix =" ~loc:(location arg_loc) in
+  let pre = mk_uast_term (Uast.Tinfix (arg_term, eq_term, pp_term)) arg_loc in
+  [ Uterm.term false pre ]
 
 
 (* Hashtable that stores handlers
@@ -68,19 +76,20 @@ let handler_name_of_id fn_name = "destruct_" ^ fn_name
 
 (* Branch pattern as (case_name, bound_vars, preconditions) *)
 let rec case_of_branch args (p : Ml_lang.pattern) =
-  let mk_id name loc = { id_name = name; id_loc = loc } in
   match p.ppat_desc with
   | PVar id ->
-      let kont_id = mk_id "default_case" id.id_loc in
+      let kont_id = mk_id ~loc:id.id_loc "default_case" in
       let var = gen_id ~loc:id.id_loc () in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [var], pre)
   | PCons (cid, ps) ->
       let vars = List.concat_map pattern_to_args ps in
       let pre = mk_precondition (List.hd args) cid vars in
-      (mk_id cid.id_name cid.id_loc, vars, pre)
+      let id_name = String.uncapitalize_ascii cid.id_name in
+      let id = mk_id ~loc:cid.id_loc id_name in
+      (id, vars, pre)
   | PWild ->
-      let kont_id = mk_id "default_case" dummy_loc in
+      let kont_id = mk_id "default_case" in
       let var = gen_id () in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [var], pre)
@@ -92,38 +101,36 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let name = String.concat "_" (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
       let vars  = List.concat_map (fun (_,vars,_) -> vars) sub_cases in
       let pres = List.concat_map(fun (_,_,pre) -> pre) sub_cases in
-      (mk_id name p.ppat_loc, vars, pres)
+      (mk_id ~loc:p.ppat_loc name, vars, pres)
   | PCast (p, _) -> case_of_branch args p
 
 
 let fresh_handler_name fn_name =
   let n = match Hashtbl.find_opt destructs_counter fn_name with
     | None   -> 1
-    | Some n -> n + 1
-  in
+    | Some n -> n + 1 in
   Hashtbl.replace destructs_counter fn_name n;
-  let name = handler_name_of_id fn_name ^ string_of_int n in
-  name
+  handler_name_of_id fn_name ^ string_of_int n
 
-
-let register_handler fn_name (a : atom) cases =
+let register_handler fn_name a cases =
   let key = fresh_handler_name fn_name in
-  let args =
-    match a.atom_desc with
-    |AId id -> [id]
-    |ATuple al -> List.concat_map (fun a -> match a.atom_desc with
-        | AId id -> [id]
-        | _ -> failwith "A match expression must match on an identifier") al
+  let args = match a.atom_desc with
+    | AId id -> [id]
+    | ATuple al ->
+        List.concat_map (fun a -> match a.atom_desc with
+          | AId id -> [id]
+          | _ -> failwith "A match expression must match on an identifier")
+        al
     | _ -> failwith "A match expression must match on an identifier" in
-  Hashtbl.add destructs key
-    { args; cases = List.map (fun (p, _) -> case_of_branch args p) cases };
+  let cases = List.map (fun (p, _) -> case_of_branch args p) cases in
+  Hashtbl.add destructs key { args; cases };
   key
 
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
 
-let rec atom fn_name { atom_loc; atom_desc = a_desc } =
+let rec atom fn_name { atom_loc; atom_desc } =
   let mk_catom catom_desc = { catom_loc = atom_loc; catom_desc } in
-  let atom_desc = function
+  let catom_desc = match atom_desc with
     | AId id -> CAId id
     | ACst c -> CACst c
     | ABinop (e1, op, e2) -> CABinop (expr fn_name e1, op, expr fn_name e2)
@@ -132,7 +139,7 @@ let rec atom fn_name { atom_loc; atom_desc = a_desc } =
     | ACons (id, c) -> CACons (id, List.map (atom fn_name) c)
     | AFun (_, id, e) ->
         CAFun (id, expr fn_name e) in
-        mk_catom (atom_desc a_desc)
+  mk_catom catom_desc
 
 and expr fn_name { expr_loc; expr_desc = e_desc } =
   let mk_cexpr cexpr_desc = { cexpr_loc = expr_loc; cexpr_desc } in
@@ -145,45 +152,49 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
         CELet (pattern x, expr fn_name e1, expr fn_name e2) (* TODO *)
     | ELetK (k, x, e1, e2) ->
         CELetK (k, x, expr fn_name e1, expr fn_name e2) (* TODO *)
-    | EApp (c, al, _cl) ->
-        CEApp (callable fn_name c, List.map (atom fn_name) al, List.map (callable fn_name) _cl) (* TODO *)
+    | EApp (c, al, _cl) -> (* TODO *)
+        let c = callable fn_name c in
+        let cal = List.map (atom fn_name) al in
+        let ccl = List.map (callable fn_name) _cl in
+        CEApp (c, cal, ccl)
     | EIf (a, e1, e2) ->
         CEIf (atom fn_name a, expr fn_name e1, expr fn_name e2) (* TODO *)
     | EMatch (a, pel) ->
-        let name = register_handler fn_name a pel in
-        CEDestruct (mk_id name expr_loc, atom fn_name a, List.map mk_ppat_expr pel) in
+        let name  = register_handler fn_name a pel in
+        let id    = mk_id name expr_loc in
+        let catom = atom fn_name a in
+        let cases = List.map mk_ppat_expr pel in
+        CEDestruct (id, catom, cases) in
   mk_cexpr (expr_desc e_desc)
 
-and callable fn_name {callable_loc; callable_desc} =
+and callable fn_name { callable_loc; callable_desc } =
   let mk_ccalable ccallable_desc =
     { ccallable_loc = callable_loc; ccallable_desc } in
-  let desc =
-    match callable_desc with
+  let desc = match callable_desc with
     | CId id -> CCId id
-    | CFun (data, kon, e) ->
-        (* TODO: specification for the generated fun *)
+    | CFun (data, kon, e) -> (* TODO: specification for the generated fun *)
         CCFun (data, [], kon, expr fn_name e) in
   mk_ccalable desc
 
 and pattern p =
-  let desc =
+  let cppat_desc =
     match p.ppat_desc with
     | PVar id -> CPVar id
     | PCons (id, args) -> CPCons (id, List.map pattern args)
     | PWild -> CPWild
     | PTuple ps -> CPTuple (List.map pattern ps)
     | PCast (p, pty) -> CPCast (pattern p, pty) in
-  {cppat_loc = p.ppat_loc; cppat_desc = desc;}
+  { cppat_desc; cppat_loc=p.ppat_loc }
 
-let declaration d =
-  let mk_cdecl cdecl_desc = { cdecl_loc = d.decl_loc; cdecl_desc } in
-  let mk_ckont {kont_id; kont_pre} =
-    {ckont_id = kont_id;
-     ckont_pre = List.map (Uterm.term false) kont_pre} in
-  let cdecl = match d.decl_desc with
+let declaration { decl_desc; decl_loc } =
+  let mk_cdecl cdecl_desc = { cdecl_loc = decl_loc; cdecl_desc } in
+  let mk_ckont { kont_id; kont_pre } =
+    { ckont_id  = kont_id;
+      ckont_pre = List.map (Uterm.term false) kont_pre } in
+  let cdecl = match decl_desc with
     | DFun (rec_flag, id, xs, pre, ks, e) ->
         let pre = List.map (Uterm.term false) pre in
-        let ks = List.map mk_ckont ks in
+        let ks  = List.map mk_ckont ks in
         CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e))
     | DType (rec_flag, td) -> CDType (rec_flag, td) in
   mk_cdecl cdecl

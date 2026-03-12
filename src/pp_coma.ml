@@ -90,7 +90,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_atom ~paren:false ~curly:true) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   (* | CELetK(k, x, e1, e2) -> failwith "TODO"  *)
-  | _ -> failwith "TODO"
+  | _ -> failwith "not implemented yet (pp_expr)"
 
 and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
   match a.catom_desc with
@@ -111,7 +111,7 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
         x.id_name
         (fun fmt e -> pp_expr fmt e) e
   | CAId x -> fprintf fmt (curly_braces curly "%s") x.id_name
-  | CATuple al ->
+  | CATuple al -> (* i think this should be curly braces *)
       fprintf fmt "@[(%a)@]" (pp_print_list ~pp_sep:pp_coma pp_atom) al (* TODO *)
   | CACons (c, []) -> fprintf fmt "%s" c.id_name (* TODO *)
   | CACons (c, [a]) ->
