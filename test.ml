@@ -10,14 +10,14 @@ type t = A of t | B | C | D of t
 
 (* ------------------------------------------------------------------------- *)
 (* Simple functions (+optional toplevel specification) *)
-let is_empty (t: 'a tree) =
+let is_empty (t: 'a tree) : bool =
   match t with
   | Empty -> true
   | Node ((l: 'a tree), (x: 'a), (r: 'a tree)) -> false
 (*@ r = is_empty t
       ensures r <-> t = Emtpy *)
 
-let sum (x: bool) (y: bool) =
+let sum (x: bool) (y: bool) : int =
   if x then
     if y then 21 else 13
   else 8
