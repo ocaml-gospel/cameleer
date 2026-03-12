@@ -13,8 +13,8 @@ let is_empty (t: 'a tree) =
 
 let rec merge (t1: 'a tree) (t2: 'a tree) : 'a tree =
     match t1, t2 with
-    | (Empty: 'a tree), (_: 'a tree) -> t2
-    | (_: 'a tree), (Empty: 'a tree) -> t1
+    | Empty, (_: 'a tree) -> t2
+    | (_: 'a tree), Empty -> t1
     | Node ((l1: 'a tree), (x1: 'a), (r1: 'a tree)),
       Node ((l2: 'a tree), (x2: 'a), (r2: 'a tree)) ->
        if (le x1 x2 : bool) then
@@ -30,10 +30,10 @@ let add (x: 'a) (t: 'a tree) : 'a tree =
 let remove_min (t: 'a tree) : 'a tree =
   match t with
   | Empty      -> assert false
-  | Node (l, _, r) -> merge l r
+  | Node ((l: 'a tree), (_: 'a), (r: 'a tree)) -> merge l r
 
 let get_min (t: 'a tree) : 'a =
   match t with
   | Empty      -> assert false
-  | Node (_, x, _) -> x
+  | Node ((_: 'a tree), (x: 'a), (_: 'a tree)) -> x
 

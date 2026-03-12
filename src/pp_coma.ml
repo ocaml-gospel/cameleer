@@ -46,11 +46,11 @@ let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
   | CPCons (_, []) -> () (* TODO *)
   | CPCons (_, args) ->
       let al = non_wild_args args in
-      fprintf fmt (protect_on paren "@[fun %a@]@ ")
+      fprintf fmt (protect_on paren "@[fun @[%a@]@]@ ")
         (pp_print_list ~pp_sep:pp_space pp_pattern) al
   | CPTuple args ->
       let al = non_wild_args args in
-      fprintf fmt (protect_on paren "@[fun %a@]@ ")
+      fprintf fmt (protect_on paren "@[fun @[%a@]@]@ ")
         (pp_print_list ~pp_sep:pp_space pp_pattern) al
   | CPCast (p, pty) ->
       fprintf fmt "@[(%a: %a)@]" (pp_pattern ~paren) p pp_pty pty
@@ -62,7 +62,7 @@ let pp_cbinder ?(paren=false) fmt (id, pty) =
   match pty with
   | None -> fprintf fmt "%a" (pp_id ~paren) id
   | Some pty ->
-      fprintf fmt "(%a: %a)" (pp_id ~paren) id
+      fprintf fmt "@[(%a: %a)@]" (pp_id ~paren) id
         pp_pty pty
 
 let pp_pre fmt = function
@@ -116,7 +116,7 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
         pp_op op (fun fmt e -> pp_expr fmt e) e1
   | CACst c -> fprintf fmt (curly_braces curly "%a") pp_constant c
   | CAFun (binder, e) ->
-      fprintf fmt (protect_on true "@[fun %a -> @[<hov 2>%a@]@]")
+      fprintf fmt (protect_on true "@[fun @[%a@] -> @[<hov 2>%a@]@]")
         (pp_cbinder ~paren:true) binder
         (fun fmt e -> pp_expr fmt e) e
   | CAId x -> fprintf fmt (curly_braces curly "%s") x.id_name
@@ -137,7 +137,7 @@ and pp_callable ?(_fn_name="") fmt c =
   match c.ccallable_desc with
   | CCId id -> fprintf fmt "%s" id.id_name
   | CCFun (data, pre, kon, e) ->
-      fprintf fmt (protect_on true "@[fun %a%s%a%s%a%s-> @[<hov 2>%a@]@]")
+      fprintf fmt (protect_on true "@[fun @[%a@]%s@[%a@]%s@[%a@]%s-> @[<hov 2>%a@]@]")
         (pp_print_list ~pp_sep:pp_space pp_cbinder) data
         (if data = [] && pre = [] then "" else " ")
         pp_pre pre
@@ -152,7 +152,7 @@ and pp_ppat_expr fmt (p, e) =
     (fun fmt e -> pp_expr fmt e) e
 
 and pp_ppat_cexpr fmt (p, e) =
-  fprintf fmt "@[<hov 2>(%s%a%s->@ @[%a@])@] "
+  fprintf fmt "@[<hov 2>(%s@[%a@]%s->@ @[%a@])@] "
     (if p = [] then "" else "fun ")
     (pp_print_list ~pp_sep:pp_space pp_cbinder) p
     (if p = [] then "" else " ")
@@ -163,7 +163,7 @@ let pp_rec fmt = function
   | Nonrecursive -> ()
 
 let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
-  fprintf fmt (protect_on true "%a %a %a")
+  fprintf fmt (protect_on true "@[%a @[%a@] @[%a@]@]")
     (pp_id ~paren:false) ckont_id
     (pp_cbinder ~paren:false) ckont_arg
     pp_cpre ckont_pre
@@ -171,12 +171,11 @@ let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
   | CDFun (rec_flag, id, xs, pre, ks, e) ->
-      fprintf fmt "@[<hov 2>let%a %s %a %a%s%a =@\n%a@]"
+      fprintf fmt "let%a %s @[%a@]@;<1 4>@[%a@]@;<1 4>@[%a@]@\n= @[%a@]"
         pp_rec rec_flag
         id.id_name
         (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
         pp_cpre pre
-        (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
   | CDType (rec_flag, td) ->
