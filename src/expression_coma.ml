@@ -179,16 +179,16 @@ let rec identify e =
 
 let identify_fail e = identify e; assert false
 
-let collect_params expr =
-  let rec loop acc expr =
-    match expr.Uast.spexp_desc with
+let collect_params e =
+  let rec loop acc e =
+    match e.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
         let arg = get_pattern_id pat in
         let binder = arg, None in (* FIXME: type *)
         loop (binder :: acc) e
-    | _ -> List.rev acc, expr
+    | _ -> List.rev acc, e
   in
-  loop [] expr
+  loop [] e
 
 let mk_kont kont_id spec =
   let mk_kont kont_pre = { kont_id; kont_pre } in
@@ -395,16 +395,20 @@ let mayraise e =
 
 type kont_type = KName of id | KExpr of callable
 
+
+let tybool = None (* TODO *)
+let tyunit = None (* TODO *)
+
 (** CPS translation of [e] where [k] is its normal continuation
     and [hm] is the map of exceptional ones (TODO: unused yet, do we need this?).
 
     The translation is freely inspired by
     “Compiling with continuation, continued” by Andrew Kennedy.
  *)
-let rec expr (e: Uast.s_expression) k hm : expr_desc =
-  let expr_opt e kid hm =
+let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_desc =
+  let expr_opt ?(etype=etype) e kid hm =
     let loc = location e.Uast.spexp_loc in
-    let e = expr e (KName kid) hm in
+    let e = expr ~etype e (KName kid) hm in
     mk_expr ~loc e in
   let callk a = match k with
     | KName k -> EApp (mk_callable ~loc:k.id_loc (CId k), a, [])
@@ -453,7 +457,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
       let e3 = match e3 with
        | Some e3 -> expr_opt e3 kid hm
        | None -> mk_expr @@ EApp (mk_callable (CId kid), [atom_unit], []) in
-      expr e1 (KExpr (f e2 e3)) hm
+      expr ~etype:tybool e1 (KExpr (f e2 e3)) hm
 
   | Sexp_construct (l,e) ->
       let a = atom_of_construct (l,e) in
@@ -462,24 +466,26 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
   | Sexp_let ((Nonrecursive | Recursive), [svb], e2) ->
       let id = get_pattern_id svb.spvb_pat in
       let e1 = svb.spvb_expr in
+      let ty1 = None in (* TODO type of e1 *)
       let loc1 = location e1.spexp_loc in
       let loc2 = location e2.spexp_loc in
-      let body = mk_expr ~loc:loc2 @@ expr e2 k hm in
+      let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
       let kid = gen_kid () in
       ELetK (kid, id, body,
-             mk_expr ~loc:loc1 @@ expr e1 (KName kid) hm)
+             mk_expr ~loc:loc1 @@ expr ~etype:ty1 e1 (KName kid) hm)
 
   | Sexp_let (Nonrecursive, svb::svbs, e2) ->
       let id = get_pattern_id svb.spvb_pat in
       let e1 = svb.spvb_expr in
       let loc1 = location e1.spexp_loc in
       let loc2 = location e2.spexp_loc in
+      let ty1 = None in (* TODO type of e1 *)
       let e2 =
         { e with spexp_desc = Sexp_let (Nonrecursive, svbs, e1) } in
-      let body = mk_expr ~loc:loc2 @@ expr e2 k hm in
+      let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
       let kid = gen_kid () in
       ELetK (kid, id, body,
-             mk_expr ~loc:loc1 @@ expr e1 (KName kid) hm)
+             mk_expr ~loc:loc1 @@ expr ~etype:ty1 e1 (KName kid) hm)
 
   | Sexp_let (Recursive, _svb::_svbs, _e) -> assert false (* TODO *)
 
@@ -516,9 +522,9 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           match p with PCons (eid,_) ->
             { eid with id_name = mk_raise_name eid.id_name } in
         let pat = get_mlpattern_id (mk_pattern ~loc:ploc p) in
-        eid, pat, mk_expr ~loc @@ expr spc_rhs (KName kid) hm) in
+        eid, pat, mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm) in
       let cases = List.map f cases in
-      let e = mk_expr @@ expr e k hm in
+      let e = mk_expr @@ expr ~etype e k hm in
       let letks = List.fold_left (fun acc (eid, pid, d) ->
         mk_expr ~loc:eid.id_loc @@ ELetK (eid, pid, d, acc)) e cases in
       ctx letks.expr_desc
@@ -595,7 +601,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          pat, mk_expr ~loc @@ expr spc_rhs (KName k) hm)
+          pat, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
         cases in
       begin match k with
       | KName k -> EMatch (a, map k)
@@ -614,7 +620,7 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          pat, mk_expr ~loc @@ expr spc_rhs (KName k) hm)
+          pat, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
         cases in
       begin match k with
       | KName k ->
@@ -639,15 +645,15 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
 
   | Sexp_assert e when is_false e.spexp_desc -> EAssert
 
-  | Sexp_constraint (e, _t) ->
-      expr e k hm (* TODO propag(a: int)te types everywhere ? *)
+  | Sexp_constraint (e, ty) ->
+      expr ~etype:(Some ty) e k hm
 
-  | Sexp_sequence (e1, e2)        ->
-      let k = mk_expr ~loc:(location e2.spexp_loc) @@ expr e2 k hm in
+  | Sexp_sequence (e1, e2) ->
+      let k = mk_expr ~loc:(location e2.spexp_loc) @@ expr ~etype e2 k hm in
                            (* TODO: replace [None] by [unit] somehow *)
       let u = (gen_id ~prefix:"_unused" ()), None in
       let k = KExpr (mk_callable (CFun ([u],[], k))) in
-      expr e1 k hm
+      expr ~etype:tyunit e1 k hm
 
   | Sexp_while (e1, e2, _spec) ->
       let loc1 = location e1.spexp_loc in
@@ -665,14 +671,15 @@ let rec expr (e: Uast.s_expression) k hm : expr_desc =
          [[e1]] loop
          ```
         *)
-      let cloop = mk_expr ~loc:loc1 (expr e1 (KName id_loop) hm) in
+      let cloop = mk_expr ~loc:loc1 (expr ~etype:tybool e1 (KName id_loop) hm) in
       let u = (gen_id ~prefix:"_unused" ()), None in
       let kcloop = KExpr (mk_callable (CFun ([u],[], cloop))) in
       let z = gen_id () in
-      ELetK (id_loop, z, mk_expr @@ EIf (mk_atom @@ AId z,
-                                         mk_expr (expr e2 kcloop hm),
-                                         mk_expr (callk [atom_unit])),
-                         cloop)
+      ELetK (id_loop, z, mk_expr @@
+             EIf (mk_atom @@ AId z,
+                  mk_expr (expr ~etype:tyunit e2 kcloop hm),
+                  mk_expr (callk [atom_unit])),
+             cloop)
 
   | Sexp_unreachable            -> EAssert
   | Sexp_function _             -> assert false (* TODO *)
@@ -712,7 +719,8 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
     s [] in
   let () = Hashtbl.add raisable_hmap id.id_name s in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
-  let body = mk_expr ~loc:expr_loc (expr pexp (KName k) empty_map) in
+  let etype = None in (* return type of the function *)
+  let body = mk_expr ~loc:expr_loc (expr ~etype pexp (KName k) empty_map) in
   let spec = svb.spvb_vspec in
   let kont = mk_kont (k, None) spec in (* FIXME: type of [k],
                                           Where is the type annotation

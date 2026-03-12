@@ -25,6 +25,7 @@ let rec pattern_to_args (p: Ml_lang.pattern) =
   | PCast (p, _) -> pattern_to_args p
 
 let rec tpattern_to_args (p: Ml_lang.pattern) =
+  (* problem here: we need the types! *)
   let rec loop (acc: core_type option) (p: Ml_lang.pattern) =
     match p.ppat_desc with
     | PVar id -> [id, acc]

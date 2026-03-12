@@ -37,16 +37,16 @@ let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
   | CPCons (_, []) -> () (* TODO *)
   | CPCons (_, args) ->
       let al = non_wild_args args in
-      fprintf fmt "@[fun %a@]@ "
+      fprintf fmt (protect_on paren "@[fun %a@]@ ")
         (pp_print_list ~pp_sep:pp_space pp_pattern) al
   | CPTuple args ->
       let al = non_wild_args args in
-      fprintf fmt "@[fun %a@]@ "
+      fprintf fmt (protect_on paren "@[fun %a@]@ ")
         (pp_print_list ~pp_sep:pp_space pp_pattern) al
   | CPCast (p, pty) ->
       (* TODO: print the type *)
       ignore pty;
-      fprintf fmt "@[%a: ...@]" (pp_pattern ~paren) p
+      fprintf fmt (protect_on paren "@[%a: ...@]") (pp_pattern ~paren) p
 
 let pp_id ?(paren=false) fmt {id_name; _} =
   fprintf fmt (protect_on paren "%s") id_name
@@ -56,7 +56,7 @@ let pp_binder ?(paren=false) fmt (id, pty) =
   | None -> fprintf fmt "%a" (pp_id ~paren) id
   | Some pty ->
       ignore pty; (* TODO: print type *)
-      fprintf fmt "%a: ..." (pp_id ~paren) id
+      fprintf fmt (protect_on paren "%a: ...") (pp_id ~paren:false) id
 
 let pp_pre fmt = function
   | [] -> ()
@@ -131,7 +131,7 @@ and pp_callable ?(_fn_name="") fmt c =
   | CCId id -> fprintf fmt "%s" id.id_name
   | CCFun (data, pre, kon, e) ->
       fprintf fmt (protect_on true "@[fun %a%s%a%s%a%s-> @[<hov 2>%a@]@]")
-        (pp_print_list ~pp_sep:pp_space pp_binder) data
+        (pp_print_list ~pp_sep:pp_space (pp_binder ~paren:true)) data
         (if data = [] && pre = [] then "" else " ")
         pp_pre pre
         (if kon = [] && pre = [] then "" else " ")
@@ -147,7 +147,7 @@ and pp_ppat_expr fmt (p, e) =
 and pp_ppat_cexpr fmt (p, e) =
   fprintf fmt "@[<hov 2>(%s%a%s->@ @[%a@])@] "
     (if p = [] then "" else "fun ")
-    (pp_print_list ~pp_sep:pp_space pp_binder) p
+    (pp_print_list ~pp_sep:pp_space (pp_binder ~paren:true)) p
     (if p = [] then "" else " ")
     (fun fmt e -> pp_expr fmt e) e (* TODO *)
 
