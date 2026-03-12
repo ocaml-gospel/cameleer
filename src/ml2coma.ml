@@ -3,6 +3,7 @@ open Ppxlib
 open Why3
 open Ptree
 open Gospel
+module E = Expression
 
 let dummy_loc =
   let pos = { Lexing.dummy_pos with
@@ -15,6 +16,9 @@ let mk_id ?(loc=dummy_loc) id_name  = { id_name; id_loc = loc }
 
 let gen_id ?(loc=dummy_loc) ?(prefix = "_x") () =
   mk_id ~loc (gen_symbol ~prefix ())
+
+let binder (id, pty) =
+  (id, Option.map E.core_type pty)
 
 let rec pattern_to_args (p: Ml_lang.pattern) =
   match p.ppat_desc with
@@ -151,13 +155,14 @@ let rec atom fn_name { atom_loc; atom_desc } =
     | ATuple al -> CATuple (List.map (atom fn_name) al)
     | ACons (id, c) -> CACons (id, List.map (atom fn_name) c)
     | AFun (_, id, e) ->
-        CAFun (id, expr fn_name e) in
+        CAFun (binder id, expr fn_name e) in
   mk_catom catom_desc
 
 and expr fn_name { expr_loc; expr_desc = e_desc } =
   let mk_cexpr cexpr_desc = { cexpr_loc = expr_loc; cexpr_desc } in
   let mk_ppat_expr (p, e) = (tpattern_to_args p, expr fn_name e) in
   let mk_id name loc = { id_name = name; id_loc = loc } in
+  let mk_binder_cexpr (b, e) = (List.map binder b, e) in
   let expr_desc = function
     | EAtom a -> CEAtom (atom fn_name a)
     | EAssert -> CEAssert
@@ -177,6 +182,7 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
         let id    = mk_id name expr_loc in
         let catom = atom fn_name a in
         let cases = List.map mk_ppat_expr pel in
+        let cases = List.map mk_binder_cexpr cases in
         CEDestruct (id, catom, cases) in
   mk_cexpr (expr_desc e_desc)
 
@@ -186,7 +192,7 @@ and callable fn_name { callable_loc; callable_desc } =
   let desc = match callable_desc with
     | CId id -> CCId id
     | CFun (data, kon, e) -> (* TODO: specification for the generated fun *)
-        CCFun (data, [], kon, expr fn_name e) in
+        CCFun (List.map binder data, [], kon, expr fn_name e) in
   mk_ccalable desc
 
 and pattern p =
@@ -202,10 +208,11 @@ and pattern p =
 let declaration { decl_desc; decl_loc } =
   let mk_cdecl cdecl_desc = { cdecl_loc = decl_loc; cdecl_desc } in
   let mk_ckont { kont_id; kont_pre } =
-    { ckont_id  = kont_id;
+    { ckont_id  = binder kont_id;
       ckont_pre = List.map (Uterm.term false) kont_pre } in
   let cdecl = match decl_desc with
     | DFun (rec_flag, id, xs, pre, ks, e) ->
+        let xs = List.map binder xs in
         let pre = List.map (Uterm.term false) pre in
         let ks  = List.map mk_ckont ks in
         CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e))

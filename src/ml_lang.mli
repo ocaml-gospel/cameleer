@@ -101,13 +101,15 @@ type program = declaration list
     CPS-conversion later. *)
 open Why3
 
-type info_p = binder list
-
 type cprecondition = Ptree.term list
 (* a WhyML precondition *)
 
+type cbinder = id * Ptree.pty option
+
+type info_p = cbinder list
+
 type ckont = {
-  ckont_id: binder;
+  ckont_id: cbinder;
   ckont_pre: cprecondition;
 }
 
@@ -147,7 +149,7 @@ and catom_desc =
   | CABinop of cexpr * op * cexpr
   | CAUnop of op * cexpr
   | CACst of constant
-  | CAFun of binder * cexpr
+  | CAFun of cbinder * cexpr
   | CATuple of catom list
   | CACons of id * catom list
 
@@ -158,7 +160,7 @@ and ccallable = {
 
 and ccallable_desc =
   | CCId  of id (* handler name *)
-  | CCFun of binder list * cprecondition * id list * cexpr
+  | CCFun of cbinder list * cprecondition * id list * cexpr
   (* data params, precondition, kont params, body *)
 
 type cdeclaration = {
@@ -170,7 +172,7 @@ type cdeclaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and cdeclaration_desc =
-  | CDFun of rec_flag * id * binder list * cprecondition * ckont list * cexpr
+  | CDFun of rec_flag * id * cbinder list * cprecondition * ckont list * cexpr
   | CDType of rec_flag * U.s_type_declaration list
 
 type cprogram = cdeclaration list

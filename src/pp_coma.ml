@@ -27,6 +27,15 @@ let curly_braces b f =
 
 let pp_op, pp_constant = Pp_ml_lang.(pp_op, pp_constant)
 
+let pp_cpre = (WPrint.pp_term ~attr:false).closed
+let pp_cbinder = (WPrint.pp_pty ~attr:false).closed
+
+let pp_cpre fmt = function
+  | [] -> ()
+  | pre ->
+      fprintf fmt "{@[%a@]}"
+        (pp_print_list ~pp_sep:pp_and pp_cpre) pre
+
 let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
   let non_wild_args args = List.filter (fun p -> match p.cppat_desc with
     | CPWild -> false
@@ -51,12 +60,12 @@ let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
 let pp_id ?(paren=false) fmt {id_name; _} =
   fprintf fmt (protect_on paren "%s") id_name
 
-let pp_binder ?(paren=false) fmt (id, pty) =
+let pp_cbinder ?(paren=false) fmt (id, pty) =
   match pty with
   | None -> fprintf fmt "%a" (pp_id ~paren) id
   | Some pty ->
-      ignore pty; (* TODO: print type *)
-      fprintf fmt (protect_on paren "%a: ...") (pp_id ~paren:false) id
+      fprintf fmt "(%a: %a)" (pp_id ~paren) id
+        pp_cbinder pty
 
 let pp_pre fmt = function
   | [] -> ()
@@ -110,7 +119,7 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
   | CACst c -> fprintf fmt (curly_braces curly "%a") pp_constant c
   | CAFun (binder, e) ->
       fprintf fmt (protect_on true "@[fun %a -> @[<hov 2>%a@]@]")
-        (pp_binder ~paren:true) binder
+        (pp_cbinder ~paren:true) binder
         (fun fmt e -> pp_expr fmt e) e
   | CAId x -> fprintf fmt (curly_braces curly "%s") x.id_name
   | CATuple al -> (* i think this should be curly braces *)
@@ -131,7 +140,7 @@ and pp_callable ?(_fn_name="") fmt c =
   | CCId id -> fprintf fmt "%s" id.id_name
   | CCFun (data, pre, kon, e) ->
       fprintf fmt (protect_on true "@[fun %a%s%a%s%a%s-> @[<hov 2>%a@]@]")
-        (pp_print_list ~pp_sep:pp_space (pp_binder ~paren:true)) data
+        (pp_print_list ~pp_sep:pp_space pp_cbinder) data
         (if data = [] && pre = [] then "" else " ")
         pp_pre pre
         (if kon = [] && pre = [] then "" else " ")
@@ -147,7 +156,7 @@ and pp_ppat_expr fmt (p, e) =
 and pp_ppat_cexpr fmt (p, e) =
   fprintf fmt "@[<hov 2>(%s%a%s->@ @[%a@])@] "
     (if p = [] then "" else "fun ")
-    (pp_print_list ~pp_sep:pp_space (pp_binder ~paren:true)) p
+    (pp_print_list ~pp_sep:pp_space pp_cbinder) p
     (if p = [] then "" else " ")
     (fun fmt e -> pp_expr fmt e) e (* TODO *)
 
@@ -155,17 +164,9 @@ let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"
   | Nonrecursive -> ()
 
-let pp_cpre = (WPrint.pp_term ~attr:false).closed
-
-let pp_cpre fmt = function
-  | [] -> ()
-  | pre ->
-      fprintf fmt "{@[%a@]}"
-        (pp_print_list ~pp_sep:pp_and pp_cpre) pre
-
 let pp_kont fmt {ckont_id; ckont_pre} =
   fprintf fmt (protect_on true "%a %a")
-    (pp_binder ~paren:false) ckont_id
+    (pp_cbinder ~paren:false) ckont_id
     pp_cpre ckont_pre
 
 let pp_decl fmt (d: cdeclaration) =
@@ -174,7 +175,7 @@ let pp_decl fmt (d: cdeclaration) =
       fprintf fmt "@[<hov 2>let%a %s %a %a%s%a =@\n%a@]"
         pp_rec rec_flag
         id.id_name
-        (pp_print_list ~pp_sep:pp_space pp_binder) xs
+        (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
         pp_cpre pre
         (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
