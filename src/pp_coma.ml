@@ -217,6 +217,14 @@ let pp_decl fmt (d: cdeclaration) =
       fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
 
 
+let preamble = "
+use int.Int
+let halt = any
+let fail { false } = any
+let if (b: bool) (then {b}) (else {not b}) = any
+"
+
 let pp_program fmt =
+  fprintf fmt "%s" preamble;
   pp_print_list ~pp_sep:pp_newline_newline pp_decl fmt
 
