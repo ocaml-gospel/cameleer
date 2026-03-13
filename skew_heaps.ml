@@ -1,6 +1,6 @@
 type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 
-let empty : 'a tree = Empty
+let empty: 'a tree = Empty
 
 let le a b = true (* TODO *)
 
@@ -36,4 +36,3 @@ let get_min (t: 'a tree) : 'a =
   match t with
   | Empty      -> assert false
   | Node ((_: 'a tree), (x: 'a), (_: 'a tree)) -> x
-

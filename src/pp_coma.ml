@@ -62,7 +62,7 @@ let pp_cbinder ?(paren=false) fmt (id, pty) =
   match pty with
   | None -> fprintf fmt "%a" (pp_id ~paren) id
   | Some pty ->
-      fprintf fmt "@[(%a: %a)@]" (pp_id ~paren) id
+      fprintf fmt (protect_on paren "@[%a: %a@]") (pp_id ~paren:false) id
         pp_pty pty
 
 let pp_pre fmt = function
@@ -189,7 +189,7 @@ let pp_handler_case fmt (case_id, vars, pre) =
   | _ ->
       fprintf fmt "(%s @[%a@ %a@])"
         case_id.id_name
-        (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) vars
+        (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) vars
         pp_cpre pre
 
 let pp_handler fmt name (h : Ml2coma.handler) =

@@ -28,16 +28,16 @@ let rec pattern_to_args (p: Ml_lang.pattern) =
   | PTuple ps -> List.concat(List.map pattern_to_args ps)
   | PCast (p, _) -> pattern_to_args p
 
-let rec tpattern_to_args (p: Ml_lang.pattern) =
+let rec tpattern_to_args ?(t=None) (p: Ml_lang.pattern) =
   (* problem here: we need the types! *)
   let rec loop (acc: core_type option) (p: Ml_lang.pattern) =
     match p.ppat_desc with
     | PVar id -> [id, acc]
-    | PCons (_, args) -> List.concat(List.map tpattern_to_args args)
+    | PCons (_, args) -> List.concat(List.map (tpattern_to_args ~t:acc) args) (* FIXME not sure about this «acc» *)
     | PWild -> [gen_id ~prefix:"_unused" (), acc]
-    | PTuple ps -> List.concat (List.map tpattern_to_args ps)
+    | PTuple ps -> List.concat (List.map (tpattern_to_args ~t:acc) ps) (* FIXME not sure about this «acc» *)
     | PCast (p, t) -> loop (Some t) p in
-  loop None p
+  loop t p
 
 (* ! PATTERN MATCHING HANDLERS CONSTRUCTION *)
 
@@ -48,7 +48,7 @@ let rec tpattern_to_args (p: Ml_lang.pattern) =
         cases = [("Empty", []); ("Node", ["l"; "_x__001_"; "r"])]   *)
 type handler = {
   args:   Ml_lang.id list; (* FIXME: this should be [cbinder list] *)
-  cases: (Ml_lang.id * Ml_lang.id list * Ml_lang.cprecondition) list;
+  cases: (Ml_lang.id * (Ml_lang.id * pty option) list * Ml_lang.cprecondition) list;
 }
 
 let location loc =
@@ -57,10 +57,13 @@ let location loc =
 let mk_dummy_pre = [{ term_desc = Ttrue; term_loc = Loc.dummy_position }]
 
 let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
-  let preid = Identifier.Preid.create id.id_name ~loc:(location id.id_loc) in
+  let loc = location id.id_loc in
+  let preid = Identifier.Preid.create id.id_name ~loc in
   Uast.Qpreid preid
 
-let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id list) =
+let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id)
+  (vars: Ml_lang.binder list)
+=
   (* Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
     arg.id_name
     case_id.id_name
@@ -74,7 +77,8 @@ let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id li
     | [] -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid case_id)) case_id.id_loc
     | _ ->
         let vars_terms = List.map
-          (fun v -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid v)) v.id_loc)
+          (fun (v,_ty) ->
+            mk_uast_term (Uast.Tpreid (ml_id_to_qualid v)) v.id_loc)
           vars in
         let t = Uast.Tidapp (ml_id_to_qualid case_id, vars_terms) in
         mk_uast_term t case_id.id_loc in
@@ -94,30 +98,58 @@ let handler_name_of_id fn_name = "destruct_" ^ fn_name
 (* Branch pattern as (case_name, bound_vars, preconditions) *)
 let rec case_of_branch args (p : Ml_lang.pattern) =
   match p.ppat_desc with
+  | PCast ({ppat_desc=PVar id; _}, t) ->
+      let kont_id = mk_id ~loc:id.id_loc "default_case" in
+      let var = gen_id ~loc:id.id_loc () in
+      let b = binder (var, Some t) in
+      let pre = mk_precondition (List.hd args) var [] in
+      (kont_id, [b], pre)
   | PVar id ->
+      (* FIXME:
+         this case should be an error
+         since we can reconstruct the type of the variable,
+         which is required for Coma. *)
+      let () = assert false in
       let kont_id = mk_id ~loc:id.id_loc "default_case" in
       let var = gen_id ~loc:id.id_loc () in
       let pre = mk_precondition (List.hd args) var [] in
-      (kont_id, [var], pre)
-  | PCons (cid, ps) ->
-      let vars = List.concat_map pattern_to_args ps in
+      (kont_id, [var, None], pre)
+  | PCast ({ppat_desc=PCons (cid, ps); _}, t) ->
+      let vars = List.concat_map (tpattern_to_args ~t:(Some t) ) ps in
+      let binders = List.map binder vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
       let id = mk_id ~loc:cid.id_loc id_name in
-      (id, vars, pre)
+      (id, binders, pre)
+  | PCons (cid, ps) ->
+      (* FIXME: same remark as in case [PVar id]? *)
+      let vars = List.concat_map tpattern_to_args ps in
+      let binders = List.map binder vars in
+      let pre = mk_precondition (List.hd args) cid vars in
+      let id_name = String.uncapitalize_ascii cid.id_name in
+      let id = mk_id ~loc:cid.id_loc id_name in
+      (id, binders, pre)
+  | PCast ({ppat_desc=PWild; _}, t) ->
+      let kont_id = mk_id "default_case" in
+      let var = gen_id ~prefix:"_unused" () in
+      let b = binder (var, Some t) in
+      let pre = mk_precondition (List.hd args) var [] in
+      (kont_id, [b], pre)
   | PWild ->
+      (* FIXME: same remark as in case [PVar id]? *)
       let kont_id = mk_id "default_case" in
       let var = gen_id ~prefix:"_unused" () in
       let pre = mk_precondition (List.hd args) var [] in
-      (kont_id, [var], pre)
+      (kont_id, [var, None], pre)
   | PTuple ps ->
       let sub_cases = List.mapi (fun i p ->
         let arg_i = [List.nth args i] in
         case_of_branch arg_i p
       ) ps in
-      let name = String.concat "_" (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
-      let vars  = List.concat_map (fun (_,vars,_) -> vars) sub_cases in
-      let pres = List.concat_map(fun (_,_,pre) -> pre) sub_cases in
+      let name = String.concat "_"
+        (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
+      let vars = List.concat_map (fun (_,vars,_) -> vars) sub_cases in
+      let pres = List.concat_map (fun (_,_,pre)  -> pre)  sub_cases in
       (mk_id ~loc:p.ppat_loc name, vars, pres)
   | PCast (p, _) -> case_of_branch args p
 
