@@ -173,18 +173,6 @@ let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
     (pp_cbinder ~paren:false) ckont_arg
     pp_cpre ckont_pre
 
-let pp_decl fmt (d: cdeclaration) =
-  match d.cdecl_desc with
-  | CDFun (rec_flag, id, xs, pre, ks, e) ->
-      fprintf fmt "let%a %s @[%a@]@;<1 4>@[%a@]@;<1 4>@[%a@]@\n= @[%a@]"
-        pp_rec rec_flag
-        id.id_name
-        (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
-        pp_cpre pre
-        (pp_print_list ~pp_sep:pp_space pp_kont) ks
-        (pp_expr ~_fn_name:id.id_name) e
-  | CDType decl ->
-      fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
 
 let pp_handler_case fmt (case_id, vars, pre) =
   match vars with
@@ -202,13 +190,33 @@ let pp_handler fmt name (h : Ml2coma.handler) =
     (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) h.args
     (pp_print_list ~pp_sep:pp_newline pp_handler_case) h.cases
 
+let print_destructs fn_name fmt =
+    let key = Ml2coma.handler_name_of_id fn_name in
+    let value = Hashtbl.find_opt Ml2coma.destructs key in
+    match value with
+    | None -> ()
+    | Some (_, handlers) -> 
+      List.iteri (fun idx handler ->
+        let handler_name = Printf.sprintf "%s%d" key (idx + 1) in
+        pp_handler fmt handler_name handler;
+        pp_newline_newline fmt ()
+      ) handlers
+
+let pp_decl fmt (d: cdeclaration) =
+  match d.cdecl_desc with
+  | CDFun (rec_flag, id, xs, pre, ks, e) ->
+      print_destructs id.id_name fmt;
+      fprintf fmt "let%a %s @[%a@]@;<1 4>@[%a@]@;<1 4>@[%a@]@\n= @[%a@]"
+        pp_rec rec_flag
+        id.id_name
+        (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
+        pp_cpre pre
+        (pp_print_list ~pp_sep:pp_space pp_kont) ks
+        (pp_expr ~_fn_name:id.id_name) e
+  | CDType decl ->
+      fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
+
+
 let pp_program fmt =
-  Hashtbl.iter (fun key (len, entries) ->
-    List.iteri (fun idx entry ->
-      let handler_name = sprintf "%s%d" key (len - idx) in
-      pp_handler fmt handler_name entry;
-      pp_newline_newline fmt ()
-    ) entries
-  ) Ml2coma.destructs;
   pp_print_list ~pp_sep:pp_newline_newline pp_decl fmt
 
