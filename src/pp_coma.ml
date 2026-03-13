@@ -63,7 +63,7 @@ let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
 let pp_id ?(paren=false) fmt {id_name; _} =
   fprintf fmt (protect_on paren "%s") id_name
 
-let pp_cbinder ?(paren=false) fmt (id, pty) =
+let pp_cbinder ?(paren=true) fmt (id, pty) =
   match pty with
   | None -> fprintf fmt "%a" (pp_id ~paren) id
   | Some pty ->
@@ -102,7 +102,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_atom ~paren:false ~curly:true) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   | CELetK(k, x, e1, e2) ->
-      fprintf fmt "@[%a@]@ @[[ %s (%s: _todo_type_)@;<1 2>@[<hov 2>=@ %a@]@]"
+      fprintf fmt "@[%a@]@ @[[ %s (%s: _todo_type_)@;<1 2>@[<hov 2>=@ %a]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
         x.id_name
@@ -170,7 +170,7 @@ let pp_rec fmt = function
 let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
   fprintf fmt (protect_on true "@[%a @[%a@] @[%a@]@]")
     (pp_id ~paren:false) ckont_id
-    (pp_cbinder ~paren:false) ckont_arg
+    (pp_cbinder ~paren:true) ckont_arg
     pp_cpre ckont_pre
 
 
