@@ -143,7 +143,7 @@ let register_handler fn_name a cases =
   let full_name = Printf.sprintf "%s%d" key idx in
   Hashtbl.replace destructs key (current @ [new_handler]);
   full_name
-  
+
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
 
 let rec atom fn_name { atom_loc; atom_desc } =
