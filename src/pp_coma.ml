@@ -199,9 +199,9 @@ let pp_handler fmt name (h : Ml2coma.handler) =
     (pp_print_list ~pp_sep:pp_newline pp_handler_case) h.cases
 
 let pp_program fmt =
-  Hashtbl.iter (fun key entries ->
+  Hashtbl.iter (fun key (len, entries) ->
     List.iteri (fun idx entry ->
-      let handler_name = Printf.sprintf "%s%d" key (idx + 1) in
+      let handler_name = sprintf "%s%d" key (len - idx) in
       pp_handler fmt handler_name entry;
       pp_newline_newline fmt ()
     ) entries

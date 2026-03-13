@@ -86,7 +86,7 @@ let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id li
 (* Hashtable that stores handlers
    key: handler name (e.g. "destruct_height")
    value: list of handler records *)
-let destructs = Hashtbl.create 10
+let destructs = Hashtbl.create 16
 
 (* "t" -> "destruct_t" *)
 let handler_name_of_id fn_name = "destruct_" ^ fn_name
@@ -135,13 +135,12 @@ let register_handler fn_name a cases =
     args;
     cases = List.map (fun (p, _) -> case_of_branch args p) cases
   } in
-  let current = match Hashtbl.find_opt destructs key with
-    | None   -> []
-    | Some l -> l
-  in
-  let idx = List.length current + 1 in
-  let full_name = Printf.sprintf "%s%d" key idx in
-  Hashtbl.replace destructs key (current @ [new_handler]);
+  let (len, current) = match Hashtbl.find_opt destructs key with
+    | None   -> 0, []
+    | Some l -> l in
+  let len = len + 1 in
+  let full_name = Printf.sprintf "%s%d" key len in
+  Hashtbl.replace destructs key (len, new_handler :: current);
   full_name
 
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
