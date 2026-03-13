@@ -61,10 +61,10 @@ let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
   Uast.Qpreid preid
 
 let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id list) =
-  Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
+  (* Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
     arg.id_name
     case_id.id_name
-    (String.concat ", " (List.map (fun v -> v.id_name) vars));
+    (String.concat ", " (List.map (fun v -> v.id_name) vars)); *)
   let mk_uast_term term_desc loc =
     let term_loc = location loc in
     Uast.{ term_desc; term_loc } in
@@ -85,10 +85,8 @@ let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id) (vars: Ml_lang.id li
 
 (* Hashtable that stores handlers
    key: handler name (e.g. "destruct_height")
-   value: handler record *)
+   value: list of handler records *)
 let destructs = Hashtbl.create 10
-
-let destructs_counter = Hashtbl.create 10
 
 (* "t" -> "destruct_t" *)
 let handler_name_of_id fn_name = "destruct_" ^ fn_name
@@ -123,15 +121,8 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       (mk_id ~loc:p.ppat_loc name, vars, pres)
   | PCast (p, _) -> case_of_branch args p
 
-let fresh_handler_name fn_name =
-  let n = match Hashtbl.find_opt destructs_counter fn_name with
-    | None   -> 1
-    | Some n -> n + 1 in
-  Hashtbl.replace destructs_counter fn_name n;
-  handler_name_of_id fn_name ^ string_of_int n
-
 let register_handler fn_name a cases =
-  let key = fresh_handler_name fn_name in
+  let key = handler_name_of_id fn_name in
   let args = match a.atom_desc with
     | AId id -> [id]
     | ATuple al ->
@@ -140,10 +131,19 @@ let register_handler fn_name a cases =
           | _ -> failwith "A match expression must match on an identifier")
         al
     | _ -> failwith "A match expression must match on an identifier" in
-  let cases = List.map (fun (p, _) -> case_of_branch args p) cases in
-  Hashtbl.add destructs key { args; cases };
-  key
-
+  let new_handler = {
+    args;
+    cases = List.map (fun (p, _) -> case_of_branch args p) cases
+  } in
+  let current = match Hashtbl.find_opt destructs key with
+    | None   -> []
+    | Some l -> l
+  in
+  let idx = List.length current + 1 in
+  let full_name = Printf.sprintf "%s%d" key idx in
+  Hashtbl.replace destructs key (current @ [new_handler]);
+  full_name
+  
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
 
 let rec atom fn_name { atom_loc; atom_desc } =
