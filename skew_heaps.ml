@@ -1,10 +1,10 @@
 type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 
-let empty = Empty
+let empty : 'a tree = Empty
 
 let le a b = true (* TODO *)
 
-let is_empty (t: 'a tree) =
+let is_empty (t: 'a tree) : bool =
   match t with
   | Empty -> true
   | Node ((l: 'a tree), (x: 'a), (r: 'a tree)) -> false
