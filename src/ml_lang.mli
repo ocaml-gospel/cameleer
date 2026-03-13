@@ -175,6 +175,6 @@ type cdeclaration = {
     and [expr] is the body. *)
 and cdeclaration_desc =
   | CDFun of rec_flag * id * cbinder list * cprecondition * ckont list * cexpr
-  | CDType of rec_flag * U.s_type_declaration list
+  | CDType of Ptree.decl (* it should always be a [Dtype] *)
 
 type cprogram = cdeclaration list

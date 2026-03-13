@@ -17,6 +17,9 @@ let pp_coma fmt () = fprintf fmt ", "
 let pp_and fmt () = fprintf fmt " && "
 let pp_paren fmt () = fprintf fmt ". "
 
+let pp_sep f fmt () =
+  fprintf fmt f
+
 let protect_on b f =
   if b then "(" ^^ f ^^ ")"
   else f
@@ -29,6 +32,8 @@ let pp_op, pp_constant = Pp_ml_lang.(pp_op, pp_constant)
 
 let pp_cpre = (WPrint.pp_term ~attr:false).closed
 let pp_pty = (WPrint.pp_pty ~attr:false).closed
+let pp_type_decl = WPrint.pp_decl
+(* FIXME? Why marked? *)
 
 let pp_cpre fmt = function
   | [] -> ()
@@ -178,9 +183,8 @@ let pp_decl fmt (d: cdeclaration) =
         pp_cpre pre
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
-  | CDType (rec_flag, td) ->
-      fprintf fmt "@[%a@]"
-        UPrint.s_type_declaration_rec_flag (rec_flag, td)
+  | CDType decl ->
+      fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
 
 let pp_handler_case fmt (case_id, vars, pre) =
   match vars with

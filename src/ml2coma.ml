@@ -3,6 +3,7 @@ open Ppxlib
 open Why3
 open Ptree
 open Gospel
+module Ut = Uterm
 module E = Expression
 
 let dummy_loc =
@@ -237,6 +238,134 @@ and pattern p =
     | PCast (p, pty) -> CPCast (pattern p, E.core_type pty) in
   { cppat_desc; cppat_loc=p.ppat_loc }
 
+let td_params (cty, _) =
+  match cty.ptyp_desc with
+  | Ptyp_var s -> Ut.(mk_id ~id_loc:(location cty.ptyp_loc)) s
+  | _ -> assert false
+
+let mk_field ~mut:f_mutable ~ghost:f_ghost f_loc f_ident f_pty =
+  { f_loc; f_ident; f_pty; f_mutable; f_ghost }
+
+(** Visibility of type declarations. An alias type cannot be private, so we
+    check whether or not the GOSPEL type manifest is [None]. *)
+let td_private manifest private_ tkind =
+  match (manifest, private_, tkind) with
+  | Some _, _, _ -> Ptree.Public
+  | _, _, Ptype_abstract -> Ptree.Abstract (* ???? Ptree.Private *)
+  | _, Asttypes.Private, _ -> Ptree.Private
+  | _, Asttypes.Public, _ -> Ptree.Public
+
+let param_of_cty cty =
+  let loc = Ut.location cty.ptyp_loc in
+  (loc, None, false, E.core_type cty)
+
+let field_of_label_decl lbl_decl =
+  let is_ghost attributes =
+    List.exists (fun { attr_name; _ } -> attr_name.txt = "ghost")
+      attributes
+  in
+  let pld_mutable = lbl_decl.pld_mutable in
+  let pld_id = lbl_decl.pld_name in
+  let f_loc = Ut.location lbl_decl.pld_loc in
+  let f_id = Ut.(mk_id ~id_loc:(location pld_id.loc) pld_id.txt) in
+  let f_pty = E.core_type lbl_decl.pld_type in
+  let mut = match pld_mutable with Mutable -> true | _ -> false in
+  let ghost = is_ghost lbl_decl.pld_attributes in
+  mk_field f_loc f_id f_pty ~mut ~ghost
+
+(** Translate a list of OCaml constructors declaration into the corresponding
+    Why3's Ptree algebraic constructors list. *)
+let constructor_declaration params er { pcd_loc; pcd_name; pcd_args; _ } =
+  let add_field acc lbl = field_of_label_decl lbl :: acc in
+  let id_loc = Ut.location pcd_name.loc in
+  let id = Ut.mk_id ~id_loc pcd_name.txt in
+  let loc = Ut.location pcd_loc in
+  match pcd_args with
+  | Pcstr_tuple cty_list ->
+      (* let construct_arith = List.length cty_list in *)
+      (* Hashtbl.add info.O.info_arith_construct pcd_name.txt construct_arith; *)
+      (loc, id, List.map param_of_cty cty_list)
+  | Pcstr_record lbl_list ->
+      let id_pty = String.uncapitalize_ascii pcd_name.txt ^ "_rec" in
+      let id_pty = Ut.mk_id ~id_loc id_pty in
+      let fields = List.fold_left add_field [] lbl_list in
+      let fields = List.rev fields in
+      Hashtbl.add er id_pty fields;
+      let td_params = List.map (fun p -> PTtyvar p) params in
+      let pty = PTtyapp (Qident id_pty, td_params) in
+      let param = (loc, None, false, pty) in
+      (loc, id, [ param ])
+
+type embedded_record = { er_typ : type_def; er_rec : (ident * field list) list }
+
+let mk_embedded_record ?(er_rec = []) er_typ = { er_typ; er_rec }
+
+(** Convert a [Uast] type definition into a Why3's Ptree [type_def]. We follow
+    the manifest-kind logic defined in the OCaml [Parsetree]. *)
+let td_def params spec_fields td_manifest td_kind =
+  let field Uast.{ f_preid; f_pty; f_mutable; _ } =
+    let id_loc = Ut.location f_preid.pid_loc in
+    let id = Ut.(mk_id ~id_loc f_preid.pid_str) in
+    let pty = Ut.pty f_pty in
+    mk_field id.id_loc id pty ~mut:f_mutable ~ghost:true
+  in
+  let add_reg_field lbl acc = field_of_label_decl lbl :: acc in
+  match (td_manifest, td_kind) with
+  | None, Ptype_abstract ->
+      mk_embedded_record (TDrecord (List.map field spec_fields))
+  | Some cty, Ptype_abstract -> mk_embedded_record (TDalias (E.core_type cty))
+  | None, Ptype_variant cstr_list ->
+      let er = Hashtbl.create 16 in
+      let alg = List.map (constructor_declaration params er) cstr_list in
+      let er_rec = Hashtbl.fold (fun id lbl acc -> (id, lbl) :: acc) er [] in
+      mk_embedded_record (TDalgebraic alg) ~er_rec
+  | None, Ptype_record lbl_list ->
+      let model_fields = List.map field spec_fields in
+      let all_fields = List.fold_right add_reg_field lbl_list model_fields in
+      mk_embedded_record (TDrecord all_fields)
+  | _ -> assert false
+(* TODO *)
+
+let type_decl Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
+  let td_mut, invariant, spec_fields =
+    match tspec with
+    | None -> (false, [], [])
+    | Some s -> (s.ty_ephemeral, s.ty_invariant, s.ty_field)
+  in
+  let td_loc = Ut.location td.tloc in
+  let td_params = List.map td_params td.tparams in
+  let td_vis = td_private tmanifest td.tprivate tkind in
+  let td_inv = List.map (Uterm.term false) invariant in
+  let mk_attr { attr_name; _ } = ATstr (Ident.create_attribute attr_name.txt) in
+  let id_ats = List.map mk_attr td.tattributes in
+  let rec_decl (td_ident, field_list) =
+    {
+      td_loc;
+      td_ident;
+      td_params;
+      td_vis;
+      td_mut;
+      td_inv;
+      td_wit = None;
+      td_def = TDrecord field_list;
+    }
+  in
+  let { er_typ; er_rec } = td_def td_params spec_fields tmanifest tkind in
+  let main_def =
+    {
+      td_loc;
+      td_params;
+      td_vis;
+      td_mut;
+      td_inv;
+      td_wit = None;
+      td_def = er_typ;
+      td_ident = Ut.(mk_id tname.txt ~id_ats ~id_loc:(location tname.loc));
+    }
+  in
+  let rec_def = List.fold_left (fun acc fl -> rec_decl fl :: acc) [] er_rec in
+  main_def :: rec_def
+
 let declaration { decl_desc; decl_loc } =
   let mk_cdecl cdecl_desc = { cdecl_loc = decl_loc; cdecl_desc } in
   let mk_ckont { kont_id; kont_arg = (arg, pty); kont_pre } =
@@ -249,7 +378,10 @@ let declaration { decl_desc; decl_loc } =
         let pre = List.map (Uterm.term false) pre in
         let ks  = List.map mk_ckont ks in
         CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e))
-    | DType (rec_flag, td) -> CDType (rec_flag, td) in
+    | DType (_, td) ->
+        let type_decls = List.map type_decl td in
+        let decl = Dtype (List.flatten type_decls) in
+        CDType decl in
   mk_cdecl cdecl
 
 let program p = List.map declaration p
