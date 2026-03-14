@@ -168,11 +168,10 @@ let pp_rec fmt = function
   | Nonrecursive -> ()
 
 let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
-  fprintf fmt (protect_on true "@[%a @[%a@] @[%a@]@]")
+  fprintf fmt (protect_on true "@[%a @[%a@]@ @[%a@]@]")
     (pp_id ~paren:false) ckont_id
     (pp_cbinder ~paren:true) ckont_arg
     pp_cpre ckont_pre
-
 
 let pp_handler_case fmt (case_id, vars, pre) =
   match vars with
