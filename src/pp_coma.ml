@@ -126,8 +126,8 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
         (fun fmt e -> pp_expr fmt e) e
   | CAId x -> fprintf fmt (curly_braces curly "%s") x.id_name
   | CATuple al -> (* i think this should be curly braces *)
-      fprintf fmt (curly_braces curly "@[(%a)@]")
-        (pp_print_list ~pp_sep:pp_coma pp_atom) al (* TODO *)
+      fprintf fmt "@[%a@]"
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:true)) al (* TODO *)
   | CACons (c, []) -> fprintf fmt (curly_braces curly "%s") c.id_name (* TODO *)
   | CACons (c, [a]) ->
       fprintf fmt (curly_braces curly "%s %a")
