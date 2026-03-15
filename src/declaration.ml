@@ -309,6 +309,11 @@ let function_ f =
   (* in *)
   (* ({ ld_loc; ld_ident; ld_params; ld_type; ld_def }, coercion) *)
 
+let gospel_function f =
+  let let_func_loc = T.location f.Uast.fun_loc in
+  let f, _ = function_ f in
+  O.(mk_function { let_func_loc; let_func_def = f })
+
 let prop p =
   let kind =
     match p.Uast.prop_kind with Uast.Plemma -> Decl.Plemma | _ -> Decl.Paxiom
