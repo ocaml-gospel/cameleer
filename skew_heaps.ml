@@ -1,15 +1,74 @@
+(** Binary trees specification *)
+
 type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 
-let empty: int tree = Empty
+(*@ function size (t: 'a tree) : integer = match t with
+      | Empty -> 0
+      | Node l _ r -> 1 + size l + size r *)
+                                 
+(*@ lemma size_nonneg: forall t: 'a tree. size t >= 0 *)
 
-(* let le a b = true (* TODO *) *)
+(*@ lemma size_empty: forall t: 'a tree. 0 = size t <-> t = Empty *)
 
-let is_empty (t: int tree) : bool =
+(*@ function occ (v: 'a) (t: 'a tree) : integer = match t with
+      | Empty -> 0
+      | Node l x r -> occ v l + occ v r + (if x = v then 1 else 0) *)
+
+(*@ lemma occ_nonneg: forall x: 'a, t: 'a tree. occ x t >= 0 *)
+
+(*@ predicate mem (v: 'a) (t: 'a tree) =
+      0 < occ v t *)
+
+let[@logic] is_empty (t: int tree) : bool =
   match t with
   | Empty -> true
-  | Node ((l: int tree), (x: int), (r: int tree)) -> false
+  | Node ((_l: int tree), (_x: int), (_r: int tree)) -> false
 (*@ r = is_empty t
       ensures r <-> t = Empty *)
+
+(** Skew Heaps specification *)
+
+type elt = int
+
+(*@ predicate le (x y: int) = x <= y *)
+
+(* [e] is no greater than the root of [t], if any *)  
+(*@ predicate le_root (e: elt) (t: elt tree) = match t with
+      | Empty      -> true
+      | Node _ x _ -> le e x *)
+
+(* [t] is a heap *)
+(*@ predicate heap (t: elt tree) = match t with
+      | Empty      -> true
+      | Node l x r -> le_root x l && heap l && le_root x r && heap r *)
+
+(*@ function minimum (t: elt tree) : elt *)
+(*@ axiom minimum_def: forall l x r. minimum (Node l x r) = x *)
+
+(*@ predicate is_minimum (x: elt) (t: elt tree) =
+      mem x t && forall e. mem e t -> le x e *)
+
+(* the root is the smallest element *)
+let[@lemma] rec is_min (t: elt tree) =
+  match t with
+  | Empty -> assert false
+  | Node (l, _, r) ->
+      if not (is_empty l) then is_min l;
+      if not (is_empty r) then is_min r
+(*@ root_is_min t
+      variant  t
+      requires heap t && size t > 0
+      ensures  is_minimum (minimum t) t *)
+
+(** Skew Heaps operations *)
+
+let empty: int tree = Empty
+(*@ r = empty
+      ensures heap r
+      ensures size r = 0
+      ensures forall e. not (mem e r) *)
+
+(* let le a b = true (* TODO *) *)
 
 let rec merge (t1: int tree) (t2: int tree) : int tree =
     match t1, t2 with
@@ -24,6 +83,7 @@ let rec merge (t1: int tree) (t2: int tree) : int tree =
          let l = merge r2 t1 in
          Node (l, x2, l2)
 (*@ r = merge t1 t2
+      variant  size t1 + size t2
       requires heap t1
       requires heap t2
       ensures  heap r
@@ -47,7 +107,7 @@ let remove_min (t: int tree) : int tree =
       requires heap t
       requires size t > 0
       ensures  heap r
-      ensures  occ (minimum t) r = occ (minimum t) r - 1
+      ensures  occ (minimum t) r = occ (minimum t) t - 1
       ensures  forall e. e <> minimum t -> occ e r = occ e t
       ensures  size r = size t - 1 *)
 
