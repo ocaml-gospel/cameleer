@@ -5,7 +5,7 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 (*@ function size (t: 'a tree) : integer = match t with
       | Empty -> 0
       | Node l _ r -> 1 + size l + size r *)
-                                 
+
 (*@ lemma size_nonneg: forall t: 'a tree. size t >= 0 *)
 
 (*@ lemma size_empty: forall t: 'a tree. 0 = size t <-> t = Empty *)
