@@ -22,7 +22,7 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 let[@logic] is_empty (t: int tree) : bool =
   match t with
   | Empty -> true
-  | Node ((_l: int tree), (_x: int), (_r: int tree)) -> false
+  | Node ((l: int tree), (x: int), (r: int tree)) -> false
 (*@ r = is_empty t
       ensures r <-> t = Empty *)
 
@@ -49,6 +49,12 @@ type elt = int
       mem x t && forall e. mem e t -> le x e *)
 
 (* the root is the smallest element *)
+(* this should be a let-lemma *)
+(*@ lemma is_min: forall t: elt tree.
+      heap t -> size t > 0 ->
+      is_minimum (minimum t) t *)
+
+(*
 let[@lemma] rec is_min (t: elt tree) =
   match t with
   | Empty -> assert false
@@ -59,6 +65,7 @@ let[@lemma] rec is_min (t: elt tree) =
       variant  t
       requires heap t && size t > 0
       ensures  is_minimum (minimum t) t *)
+*)
 
 (** Skew Heaps operations *)
 
