@@ -12,7 +12,10 @@ let rec_flag b = if b then Recursive else Nonrecursive
 
 let param (_loc, pre_id, _pty) = E.preid pre_id, None
 
-let function_ f =
+(* FIXME [Mário]: I am not sure this is what we want.
+   From what I understand, this is turning a Gospel function into an
+   ML program function *)
+let _function_ f =
   let _ld_loc = E.location f.Uast.fun_loc in
   let _ld_type = Option.map Uterm.pty f.fun_type in
   let ld_ident = E.preid f.fun_name in
@@ -24,6 +27,9 @@ let function_ f =
       let def = E.term fun_def in
       (* TODO: fun_spec *)
       ML.DFun (rec_flag, ld_ident, ld_params, [], [], def)
+
+let function_ f =
+  ML.DFunction f
 
 let s_structure, s_signature =
   let rec s_signature s_sig =
