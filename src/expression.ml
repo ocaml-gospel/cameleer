@@ -235,8 +235,11 @@ and inner_pattern info P.{ ppat_desc; ppat_loc; _ } =
     | Ppat_record (id_pat_list, _) ->
         let qualid_pat_list = List.map longident_pattern id_pat_list in
         Prec qualid_pat_list
+    | Ppat_constraint (p, cty) ->
+        let ppat = inner_pattern info p in
+        let pty = core_type cty in
+        Pcast (ppat, pty)
     | Ppat_array _ -> assert false (* TODO *)
-    | Ppat_constraint _ -> assert false (* TODO *)
     | Ppat_type _ -> assert false (* TODO *)
     | Ppat_lazy _ -> assert false (* TODO *)
     | Ppat_unpack _ -> assert false (* TODO *)
