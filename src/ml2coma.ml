@@ -6,6 +6,8 @@ open Gospel
 module Ut = Uterm
 module E = Expression
 
+open Location
+
 let dummy_loc =
   let pos = { Lexing.dummy_pos with
     Lexing.pos_cnum = 0;
@@ -381,7 +383,14 @@ let declaration { decl_desc; decl_loc } =
     | DType (_, td) ->
         let type_decls = List.map type_decl td in
         let decl = Dtype (List.flatten type_decls) in
-        CDType decl in
+        CDType decl
+    | DFunction fd ->
+        begin match Declaration.gospel_function fd with
+          | Odecl.Odecl (_, (Ptree.Dlogic _ as fd)) ->
+              CDFunction fd
+          | Odecl.Odecl (_, _) -> assert false 
+          | Odecl.Omodule (_, _, _) -> assert false end
+  in
   mk_cdecl cdecl
 
 let program p = List.map declaration p
