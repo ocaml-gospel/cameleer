@@ -384,12 +384,16 @@ let declaration { decl_desc; decl_loc } =
         let type_decls = List.map type_decl td in
         let decl = Dtype (List.flatten type_decls) in
         CDType decl
-    | DFunction fd ->
-        begin match Declaration.gospel_function fd with
-          | Odecl.Odecl (_, (Ptree.Dlogic _ as fd)) ->
-              CDFunction fd
-          | Odecl.Odecl (_, _) -> assert false 
-          | Odecl.Omodule (_, _, _) -> assert false end
+    | DFunction fd -> begin match Declaration.gospel_function fd with
+        | Odecl.Odecl (_, (Ptree.Dlogic _ as fd)) ->
+            CDFunction fd
+        | Odecl.Odecl (_, _) -> assert false
+        | Odecl.Omodule (_, _, _) -> assert false end
+    | DProp pd -> begin match Declaration.gospel_prop pd with
+        | Odecl.Odecl (_, (Ptree.Dprop _ as pd)) ->
+            CDProp pd
+        | Odecl.Odecl (_, _) -> assert false
+        | Odecl.Omodule (_, _, _) -> assert false end
   in
   mk_cdecl cdecl
 

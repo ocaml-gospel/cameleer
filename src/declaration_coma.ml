@@ -31,6 +31,9 @@ let _function_ f =
 let function_ f =
   ML.DFunction f
 
+let prop p =
+  ML.DProp p
+
 let s_structure, s_signature =
   let rec s_signature s_sig =
     List.flatten (List.map s_signature_item s_sig)
@@ -57,6 +60,8 @@ let s_structure, s_signature =
         [ ML.{ decl_loc = loc; decl_desc } ]
     | Str_function f ->
         [ ML.{ decl_loc = loc; decl_desc = function_ f } ]
+    | Str_prop p ->
+        [ ML.{ decl_loc = loc; decl_desc = prop p } ]
     | _ -> [] (* TODO *)
 
   and s_structure s_str =

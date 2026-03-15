@@ -158,6 +158,9 @@ let pp_decl fmt (d: declaration) =
         UPrint.s_type_declaration_rec_flag (rec_flag, td)
   | DFunction fd ->
       fprintf fmt "@[%a@]" UPrint.function_ fd
+  | DProp _ ->
+      fprintf fmt "@[lemma ...@]"
+(* FIXME: no suitable printer for axiom/lemma in [UPrint] *)
 
 let pp_program fmt =
   pp_print_list ~pp_sep:pp_newline_newline pp_decl fmt

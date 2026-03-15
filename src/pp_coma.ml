@@ -213,7 +213,8 @@ let pp_decl fmt (d: cdeclaration) =
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
   | CDType decl
-  | CDFunction decl ->
+  | CDFunction decl
+  | CDProp decl ->
       fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
 
 

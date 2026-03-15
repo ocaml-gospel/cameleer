@@ -338,6 +338,10 @@ let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
   O.mk_dprop loc prop_kind prop_name prop_term
 
+let gospel_prop p =
+  let loc = p.Uast.prop_loc in
+  mk_prop (T.location loc) p
+
 let mk_exn loc ptyexn_constructor =
   let id, pty, mask = E.exception_constructor ptyexn_constructor in
   O.mk_dexn loc id pty mask
