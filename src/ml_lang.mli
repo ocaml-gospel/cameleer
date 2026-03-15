@@ -91,6 +91,7 @@ type declaration = {
 and declaration_desc =
   | DFun of rec_flag * id * binder list * precondition * kont list * expr
   | DType of rec_flag * U.s_type_declaration list
+  | DFunction of U.function_
 
 type program = declaration list
 
@@ -175,6 +176,7 @@ type cdeclaration = {
     and [expr] is the body. *)
 and cdeclaration_desc =
   | CDFun of rec_flag * id * cbinder list * cprecondition * ckont list * cexpr
-  | CDType of Ptree.decl (* it should always be a [Dtype] *)
+  | CDType of Ptree.decl (* it is always a [Dtype] *)
+  | CDFunction of Ptree.decl (* it is always a [Dlogic] *)
 
 type cprogram = cdeclaration list
