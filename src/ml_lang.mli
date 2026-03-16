@@ -177,8 +177,6 @@ type cdeclaration = {
     and [expr] is the body. *)
 and cdeclaration_desc =
   | CDFun of rec_flag * id * cbinder list * cprecondition * ckont list * cexpr
-  | CDType of Ptree.decl (* it is always a [Dtype] *)
-  | CDFunction of Ptree.decl (* it is always a [Dlogic] *)
-  | CDProp of Ptree.decl (* it is always a [Dprop] *)
+  | CDLogic of Ptree.decl (* Purely logical WhyML declarations *)
 
 type cprogram = cdeclaration list
