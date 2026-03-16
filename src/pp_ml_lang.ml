@@ -74,7 +74,7 @@ let rec pp_expr fmt (e: expr) =
       fprintf fmt "fail"
   | ELet (x, e1, e2) ->
       fprintf fmt "let %a =@;<1 2>@[%a@]@ in@ @[%a@]"
-        (pp_pattern ~paren:false) x pp_expr e1 pp_expr e2
+        pp_binder x pp_expr e1 pp_expr e2
   | EApp (c, al, cl) ->
       fprintf fmt "@[<hov 2>%a @[%a@] @[%a@]@]" pp_callable c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true)) al
@@ -92,8 +92,8 @@ let rec pp_expr fmt (e: expr) =
         (pp_atom ~paren:false) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
   | ELetK (k, x, e1, e2) ->
-      fprintf fmt "let %s %s =@;<1 2>@[%a@]@ in@ @[%a@]"
-        k.id_name x.id_name
+      fprintf fmt "let %s %a =@;<1 2>@[%a@]@ in@ @[%a@]"
+        k.id_name pp_binder x
         pp_expr e1 pp_expr e2
 
 and pp_atom ?(paren=false) fmt (a: atom) =

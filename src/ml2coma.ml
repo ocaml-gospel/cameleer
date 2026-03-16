@@ -202,9 +202,9 @@ and expr fn_name { expr_loc; expr_desc = e_desc } =
     | EAtom a -> CEAtom (atom fn_name a)
     | EAssert -> CEAssert
     | ELet (x, e1, e2) ->
-        CELet (pattern x, expr fn_name e1, expr fn_name e2) (* TODO *)
+        CELet (binder x, expr fn_name e1, expr fn_name e2) (* TODO *)
     | ELetK (k, x, e1, e2) ->
-        CELetK (k, x, expr fn_name e1, expr fn_name e2) (* TODO *)
+        CELetK (k, binder x, expr fn_name e1, expr fn_name e2) (* TODO *)
     | EApp (c, al, _cl) -> (* TODO *)
         let c = callable fn_name c in
         let cal = List.map (atom fn_name) al in
@@ -230,7 +230,7 @@ and callable fn_name { callable_loc; callable_desc } =
         CCFun (List.map binder data, [], kon, expr fn_name e) in
   mk_ccalable desc
 
-and pattern p =
+(* and pattern p =
   let cppat_desc =
     match p.ppat_desc with
     | PVar id -> CPVar id
@@ -238,7 +238,7 @@ and pattern p =
     | PWild -> CPWild
     | PTuple ps -> CPTuple (List.map pattern ps)
     | PCast (p, pty) -> CPCast (pattern p, E.core_type pty) in
-  { cppat_desc; cppat_loc=p.ppat_loc }
+  { cppat_desc; cppat_loc=p.ppat_loc } *)
 
 let td_params (cty, _) =
   match cty.ptyp_desc with

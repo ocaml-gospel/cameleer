@@ -89,7 +89,8 @@ let labelled_arg = function
   | Lnamed p
   | Lghost (p, _) -> preid p
 
-let qualid = function
+(* TODO: to be removed? *)
+let _qualid = function
   | Uast.Qpreid id -> preid id
   | Uast.Qdot _ -> assert false
 
@@ -109,36 +110,6 @@ let constant = function
         let n = Why3.Number.to_small_integer n in
         atom_num n
   | _ -> assert false
-
-let rec term (t: Uast.term) =
-  let loc = location t.term_loc in
-  match t.term_desc with
-    | Ttrue             -> mk_expr_atom ~loc atom_true
-    | Tfalse            -> mk_expr_atom ~loc atom_false
-    | Tconst c          -> mk_expr_atom ~loc (constant c)
-    | Tpreid id         -> mk_expr_atom ~loc (AId (qualid id))
-    | Tidapp (_, _)     -> assert false
-    | Tfield (_, _)     -> assert false
-    | Tapply (_, _)     -> assert false
-    | Tinfix (_, _, _)  -> assert false
-    | Tbinop (_, _, _)  -> assert false
-    | Tnot _            -> assert false
-    | Tif (_c, _t1, _t2)   -> assert false
-    | Tquant (_, _, _)  -> assert false
-    | Tattr (_, _)      -> assert false
-    | Tlet (id, t1, t2) ->
-        let id_loc = location id.pid_loc in
-        let id = mk_pattern ~loc:id_loc (PVar (preid id)) in
-        let t1 = term t1 in
-        let t2 = term t2 in
-        mk_expr ~loc (ELet (id, t1, t2))
-    | Tcase (_, _)      -> assert false
-    | Tcast (_, _)      -> assert false
-    | Ttuple _          -> assert false
-    | Trecord _         -> assert false
-    | Tupdate (_, _)    -> assert false
-    | Tscope (_, _)     -> assert false
-    | Told _            -> assert false
 
 (* TO BE REMOVED? debugging only *)
 let rec identify e =
@@ -193,6 +164,7 @@ let collect_params e =
     | Sexp_fun (_, None, pat, e, _) ->
         let arg, pty = get_pattern_id pat in
         let binder = arg, pty in
+        (* Format.printf "---> %s@." (Marshal.to_string pty []); *)
         loop (binder :: acc) e
     | _ -> List.rev acc, e
   in
@@ -462,7 +434,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let z   = gen_id () in
           let kid = gen_kid () in
           let e2  = expr_opt e2 kid hm in
-          ELetK (kid, z, mk_expr @@ EApp (k, [mk_atom @@ AId z], []),
+          ELetK (kid, (z,tybool), mk_expr @@ EApp (k, [mk_atom @@ AId z], []),
                          mk_expr @@ EIf (a, e2, e3 kid))
       end
   | Sexp_ifthenelse (e1, e2, e3) ->
@@ -470,14 +442,14 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let f, kid = match k with
       | KName k ->
           let f e2 e3 = mk_callable @@
-            CFun ([z, None], [], mk_expr @@ EIf (mk_atom (AId z),e2,e3)) in
+            CFun ([z, tybool], [], mk_expr @@ EIf (mk_atom (AId z),e2,e3)) in
           f, k
       | KExpr k ->
           let kid = gen_kid () in
           let z2  = gen_id () in
           let az2 = mk_atom (AId z2) in
-          let f e2 e3 = mk_callable @@ CFun ([z, None], [],
-            mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
+          let f e2 e3 = mk_callable @@ CFun ([z, tybool], [],
+            mk_expr @@ ELetK (kid, (z2, etype), mk_expr @@ EApp (k, [az2], []),
             mk_expr @@ EIf (mk_atom (AId z), e2, e3))) in
           f, kid in
       let e2 = expr_opt e2 kid hm in
@@ -492,31 +464,25 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
 
   | Sexp_let ((Nonrecursive | Recursive), [svb], e2) ->
       let id, pty = get_pattern_id svb.spvb_pat in
-      ignore pty; (* FIXME: what should we do about this pty? *)
-      (* for now, we do not support [let x: ty = ...] *)
       let e1 = svb.spvb_expr in
-      let ty1 = None in (* TODO type of e1 *)
       let loc1 = location e1.spexp_loc in
       let loc2 = location e2.spexp_loc in
       let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
       let kid = gen_kid () in
-      ELetK (kid, id, body,
-             mk_expr ~loc:loc1 @@ expr ~etype:ty1 e1 (KName kid) hm)
+      ELetK (kid, (id, pty), body,
+             mk_expr ~loc:loc1 @@ expr ~etype:pty e1 (KName kid) hm)
 
   | Sexp_let (Nonrecursive, svb::svbs, e2) ->
       let id, pty = get_pattern_id svb.spvb_pat in
-      assert (pty = None);
-      (* for now, we do not support [let x: ty = ...] *)
       let e1 = svb.spvb_expr in
       let loc1 = location e1.spexp_loc in
       let loc2 = location e2.spexp_loc in
-      let ty1 = None in (* TODO type of e1 *)
       let e2 =
         { e with spexp_desc = Sexp_let (Nonrecursive, svbs, e1) } in
       let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
       let kid = gen_kid () in
-      ELetK (kid, id, body,
-             mk_expr ~loc:loc1 @@ expr ~etype:ty1 e1 (KName kid) hm)
+      ELetK (kid, (id,pty), body,
+             mk_expr ~loc:loc1 @@ expr ~etype:pty e1 (KName kid) hm)
 
   | Sexp_let (Recursive, _svb::_svbs, _e) -> assert false (* TODO *)
 
@@ -542,7 +508,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
             let kid = gen_kid () in
             let x = gen_id () in
             let a = mk_atom ~loc (AId x) in
-            let f e = ELetK (kid, x, mk_expr @@ EApp (c, [a], []),
+            let f e = ELetK (kid, (x,etype), mk_expr @@ EApp (c, [a], []),
                                      mk_expr ~loc e) in
             f, gen_kid () in
       let f = (fun Uast.{spc_lhs; spc_rhs; _} ->
@@ -557,7 +523,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let cases = List.map f cases in
       let e = mk_expr @@ expr ~etype e k hm in
       let letks = List.fold_left (fun acc (eid, pid, d) ->
-        mk_expr ~loc:eid.id_loc @@ ELetK (eid, pid, d, acc)) e cases in
+        (* TODO howto reconstruct the type here? howto remove None *)
+        mk_expr ~loc:eid.id_loc @@ ELetK (eid, (pid, None), d, acc)) e cases in
       ctx letks.expr_desc
 
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([_;_] as args))
@@ -621,7 +588,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
         | KName k -> mk_callable ~loc:k.id_loc @@ CId k
         | KExpr k -> k in
       let k = mk_callable ~loc @@
-        CFun ([z, None],[], mk_expr @@
+        CFun ([z, etype],[], mk_expr @@
               EApp (mk_callable @@ CId z, args, [k])) in
       expr e (KExpr k) hm
 
@@ -640,7 +607,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let aid = gen_id  () in
           let kid = gen_kid () in
           let cases = map kid in
-          ELetK (kid, aid,
+          ELetK (kid, (aid, etype),
                  mk_expr @@ EApp (k, [mk_atom @@ AId aid], []),
                  mk_expr @@ EMatch (a, cases))
       end
@@ -658,7 +625,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let z = gen_id ~loc () in
           let cases = map k in
           let kk = mk_callable @@
-              CFun ([z, None],[],
+              CFun ([z, etype],[],
                     mk_expr @@ EMatch (mk_atom (AId z),cases)) in
           expr e (KExpr kk) hm
       | KExpr k ->
@@ -668,8 +635,9 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let az2 = mk_atom (AId z2) in
           let cases = map kid in
           let kk = mk_callable @@
+            (* TODO what is the type of [z]? -> the type of [e], what is the type of [e]? *)
             CFun ([z, None], [],
-                  mk_expr @@ ELetK (kid, z2, mk_expr @@ EApp (k, [az2], []),
+                  mk_expr @@ ELetK (kid, (z2,etype), mk_expr @@ EApp (k, [az2], []),
                   mk_expr @@ EMatch (mk_atom (AId z), cases))) in
           expr e (KExpr kk) hm
       end
@@ -706,7 +674,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let u = (gen_id ~prefix:"_unused" ()), None in
       let kcloop = KExpr (mk_callable (CFun ([u],[], cloop))) in
       let z = gen_id () in
-      ELetK (id_loop, z, mk_expr @@
+      ELetK (id_loop, (z,None), mk_expr @@
              EIf (mk_atom @@ AId z,
                   mk_expr (expr ~etype:tyunit e2 kcloop hm),
                   mk_expr (callk [atom_unit])),

@@ -41,7 +41,7 @@ let pp_cpre fmt = function
       fprintf fmt "{@[%a@]}"
         (pp_print_list ~pp_sep:pp_and pp_cpre) pre
 
-let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
+(* let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
   let non_wild_args args = List.filter (fun p -> match p.cppat_desc with
     | CPWild -> false
     | _ -> true) args in
@@ -58,7 +58,7 @@ let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
       fprintf fmt (protect_on paren "@[fun @[%a@]@]@ ")
         (pp_print_list ~pp_sep:pp_space pp_pattern) al
   | CPCast (p, pty) ->
-      fprintf fmt "@[(%a: %a)@]" (pp_pattern ~paren) p pp_pty pty
+      fprintf fmt "@[(%a: %a)@]" (pp_pattern ~paren) p pp_pty pty *)
 
 let pp_id ?(paren=false) fmt {id_name; _} =
   fprintf fmt (protect_on paren "%s") id_name
@@ -82,8 +82,8 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
       fprintf fmt "%a" (pp_atom ~paren:true ~curly:false) a
   | CEAssert -> fprintf fmt "fail"
   | CELet (x, e1, e2) ->
-      fprintf fmt "@[%a@]@\n[%a : _todo_type_ =@ @[<hov 2>%a@]]"
-        (pp_pattern ~paren:false) x
+      fprintf fmt "@[%a@]@\n[%a =@ @[<hov 2>%a@]]"
+        (pp_cbinder ~paren:false) x
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2
   | CEApp (c, al, cl) ->
@@ -102,10 +102,10 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_atom ~paren:false ~curly:true) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   | CELetK(k, x, e1, e2) ->
-      fprintf fmt "@[%a@]@ @[[ %s (%s: _todo_type_)@;<1 2>@[<hov 2>=@ %a]@]"
+      fprintf fmt "@[%a@]@ @[[ %s %a@;<1 2>@[<hov 2>=@ %a]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
-        x.id_name
+        (pp_cbinder ~paren:true) x
         (fun fmt e -> pp_expr fmt e) e1
 
 and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
@@ -151,10 +151,10 @@ and pp_callable ?(_fn_name="") fmt c =
         (if kon = [] then "" else " ")
         (fun fmt e -> pp_expr fmt e) e
 
-and pp_ppat_expr fmt (p, e) =
+(* and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 2>(%a->@ @[%a@])@]"
     (pp_pattern ~paren:false) p
-    (fun fmt e -> pp_expr fmt e) e
+    (fun fmt e -> pp_expr fmt e) e *)
 
 and pp_ppat_cexpr fmt (p, e) =
   fprintf fmt "@[<hov 2>(%s@[%a@]%s->@ @[%a@])@] "

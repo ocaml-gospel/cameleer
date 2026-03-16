@@ -32,7 +32,7 @@ type elt = int
 
 (*@ predicate le (x y: int) = x <= y *)
 
-(* [e] is no greater than the root of [t], if any *)  
+(* [e] is no greater than the root of [t], if any *)
 (*@ predicate le_root (e: elt) (t: elt tree) = match t with
       | Empty      -> true
       | Node _ x _ -> le e x *)
@@ -69,7 +69,7 @@ let[@lemma] rec is_min (t: elt tree) =
 
 (** Skew Heaps operations *)
 
-let empty: int tree = Empty
+let empty: int tree = (Empty: int tree)
 (*@ r = empty
       ensures heap r
       ensures size r = 0
@@ -84,10 +84,10 @@ let rec merge (t1: int tree) (t2: int tree) : int tree =
     | Node ((l1: int tree), (x1: int), (r1: int tree)),
       Node ((l2: int tree), (x2: int), (r2: int tree)) ->
        if x1 < x2 then
-         let l = merge r1 t2 in
+         let (l: int tree) = merge r1 t2 in
          Node (l, x1, l1)
        else
-         let l = merge r2 t1 in
+         let (l: int tree) = merge r2 t1 in
          Node (l, x2, l2)
 (*@ r = merge t1 t2
       variant  size t1 + size t2

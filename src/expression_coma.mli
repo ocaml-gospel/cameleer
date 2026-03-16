@@ -21,8 +21,6 @@ val string_of_longident : Longident.t -> string
 
 val mayraise : Uast.s_expression -> raise_set
 
-val term : Uast.term -> expr
-
 val mk_atom : ?loc:location -> atom_desc -> atom
 val mk_expr : ?loc:location -> expr_desc -> expr
 

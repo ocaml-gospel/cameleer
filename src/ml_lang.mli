@@ -41,8 +41,8 @@ type expr = {
 and expr_desc =
   | EAtom of atom
   | EAssert
-  | ELet  of pattern * expr * expr                  (* let p = e in e        *)
-  | ELetK of id * id * expr * expr                  (* let_cont h x = e in e *)
+  | ELet  of binder * expr * expr                  (* let p = e in e        *)
+  | ELetK of id * binder * expr * expr                  (* let_cont h x = e in e *)
   | EApp  of callable * atom list * callable list   (* k a…a k…k *)
   | EIf of atom * expr * expr
   | EMatch of atom * (pattern * expr) list
@@ -117,7 +117,7 @@ type ckont = {
   ckont_pre: cprecondition;
 }
 
-type cpattern = {
+(* type cpattern = {
   cppat_loc: location;
   cppat_desc: cpattern_desc;
 }
@@ -127,7 +127,7 @@ and cpattern_desc =
   | CPVar of id                           (* catch all+binder:  x            *)
   | CPCons of id * cpattern list          (* constructor:       Cons(x, xs)  *)
   | CPTuple of cpattern list              (* multiple pattern:  p1, p2, …    *)
-  | CPCast of cpattern * Ptree.pty        (* [P: T] *)
+  | CPCast of cpattern * Ptree.pty        (* [P: T] *) *)
 
 type cexpr = {
   cexpr_loc: location;
@@ -137,8 +137,8 @@ type cexpr = {
 and cexpr_desc =
   | CEAtom of catom
   | CEAssert
-  | CELet of cpattern * cexpr * cexpr
-  | CELetK of id * id * cexpr * cexpr                  (* let_cont h x = e in e *)
+  | CELet of cbinder * cexpr * cexpr
+  | CELetK of id * cbinder * cexpr * cexpr                  (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr
   | CEDestruct of id * catom * (info_p * cexpr) list
