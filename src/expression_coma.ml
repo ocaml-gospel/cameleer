@@ -242,14 +242,6 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
   | Ppat_extension _
   | Ppat_open (_, _) -> assert false
 
-  (** Returns [true] iff [e] is a constant/ident/construct/atomic-tuple. *)
-let rec is_atomic e =
-  match e.Uast.spexp_desc with
-  | Sexp_constant _ | Sexp_ident _ | Sexp_construct (_, None) -> true
-  | Sexp_construct (_, Some e) -> is_atomic e
-  | Sexp_tuple el -> List.for_all is_atomic el
-  | _ -> false
-
 let is_unop = function
   | "not" | "-" -> true
   | _ -> false
@@ -281,6 +273,20 @@ let is_binop, get_binop =
   (fun s -> Hashtbl.mem driver s),
   (fun s -> Option.get @@ Hashtbl.find driver s)
 
+  (** Returns [true] iff [e] is a constant/ident/construct/atomic-tuple. *)
+let rec is_atomic e =
+  match e.Uast.spexp_desc with
+  | Sexp_constant _ | Sexp_ident _ | Sexp_construct (_, None) -> true
+  | Sexp_construct (_, Some e) -> is_atomic e
+  | Sexp_tuple el -> List.for_all is_atomic el
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([(_, e1);(_, e2)]))
+    when is_binop (string_of_longident txt) ->
+      is_atomic e1 && is_atomic e2
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, [(_, e1)])
+    when is_unop (string_of_longident txt) ->
+      is_atomic e1
+  | _ -> false
+
 let rec atom_of_construct ?(loc=dummy_loc) c = match c with
   | ({ txt = Lident "true"; _ },  None) -> mk_atom ~loc atom_true
   | ({ txt = Lident "false"; _ }, None) -> mk_atom ~loc atom_false
@@ -311,6 +317,19 @@ and atom_of_sexpr e =
       let loc = location e.spexp_loc in
       let a = List.map atom_of_sexpr el in
       mk_atom ~loc (ATuple a)
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([(_, e1);(_, e2)]))
+    when is_binop (string_of_longident txt) ->
+      let loc = location e1.spexp_loc in
+      let op = get_binop (string_of_longident txt) in
+      let e1 = mk_expr_atom ~loc @@ (atom_of_sexpr e1).atom_desc in
+      let e2 = mk_expr_atom ~loc @@ (atom_of_sexpr e2).atom_desc in
+      mk_atom ~loc (ABinop (e1, op, e2))
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, [(_, e1)])
+    when is_unop (string_of_longident txt) ->
+      let loc = location e1.spexp_loc in
+      let op = get_binop (string_of_longident txt) in
+      let e1 = mk_expr_atom ~loc @@ (atom_of_sexpr e1).atom_desc in
+      mk_atom ~loc (AUnop (op, e1))
   | _ -> assert false (* unreachable *)
 
 
@@ -726,7 +745,7 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
     | _ -> None in
   let ret = function
     | [r] -> labelled_arg r
-    | _ -> assert false in 
+    | _ -> assert false in
   let return_id_of_spec = function
     | None | Some U.{sp_header = None; _} -> mk_id "result"
     | Some U.{sp_header = Some header; _} -> ret header.sp_hd_ret in
