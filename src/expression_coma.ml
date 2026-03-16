@@ -350,7 +350,8 @@ let mayraise e =
         let s = match a.atom_desc with
           | AId _id -> assert false (* how? *)
           | ACons (id, _) -> mk_raise_name id.id_name
-          | ATuple _ | ACst _ | AFun _ | AUnop _ | ABinop _ -> assert false in
+          | ATuple _ | ACst _ | AFun _ | AUnop _ | ABinop _
+          | ACast _ -> assert false in
         loop (S.add s acc) e
     | Sexp_apply (f, el) when is_ident f.spexp_desc ->
         let acc2 = List.fold_left
@@ -398,6 +399,11 @@ type kont_type = KName of id | KExpr of callable
 let tybool = None (* TODO *)
 let tyunit = None (* TODO *)
 
+let bind_cast ty a =
+  match ty with
+  | None -> a
+  | Some ty -> mk_atom ~loc:a.atom_loc @@ ACast (a, ty)
+
 (** CPS translation of [e] where [k] is its normal continuation
     and [hm] is the map of exceptional ones (TODO: unused yet, do we need this?).
 
@@ -414,7 +420,9 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
     | KExpr k -> EApp (k, a, []) in
   let loc = location e.spexp_loc in
   match e.spexp_desc with
-  | Sexp_constant c -> callk [mk_atom ~loc (constant c)]
+  | Sexp_constant c ->
+      let a = mk_atom ~loc (constant c) in
+      callk [bind_cast etype a]
 
   | Sexp_ident {txt; _} ->
       let id = { id_name = string_of_longident txt ; id_loc = loc} in
@@ -460,7 +468,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
 
   | Sexp_construct (l,e) ->
       let a = atom_of_construct (l,e) in
-      callk [a]
+      callk [bind_cast etype a]
 
   | Sexp_let ((Nonrecursive | Recursive), [svb], e2) ->
       let id, pty = get_pattern_id svb.spvb_pat in

@@ -137,6 +137,10 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
       fprintf fmt (curly_braces curly "%s @[%a@]")
         c.id_name
         (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:false)) al (* TODO *)
+  | CACast (a, t) ->
+      fprintf fmt (curly_braces curly "@[%a: %a@]")
+        (pp_atom ~paren ~curly:false) a
+        pp_pty t
 
 and pp_callable ?(_fn_name="") fmt c =
   match c.ccallable_desc with

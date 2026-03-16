@@ -118,6 +118,10 @@ and pp_atom ?(paren=false) fmt (a: atom) =
   | ACons (c, al) ->
       fprintf fmt (protect_on paren "%s @[(%a)@]") c.id_name
         (pp_print_list ~pp_sep:pp_coma pp_atom) al
+  | ACast (a, _t) ->
+      (* TODO *)
+      fprintf fmt (protect_on paren "%a : ...")
+        (pp_atom ~paren) a
 
 and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 4>| %a ->@ @[%a@]@]"

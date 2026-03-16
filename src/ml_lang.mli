@@ -41,9 +41,9 @@ type expr = {
 and expr_desc =
   | EAtom of atom
   | EAssert
-  | ELet  of binder * expr * expr                  (* let p = e in e        *)
-  | ELetK of id * binder * expr * expr                  (* let_cont h x = e in e *)
-  | EApp  of callable * atom list * callable list   (* k a…a k…k *)
+  | ELet  of binder * expr * expr                   (* let p = e in e        *)
+  | ELetK of id * binder * expr * expr              (* let_cont h x = e in e *)
+  | EApp  of callable * atom list * callable list   (* k a…a k…k             *)
   | EIf of atom * expr * expr
   | EMatch of atom * (pattern * expr) list
 
@@ -60,6 +60,7 @@ and atom_desc =
   | AFun of bool * binder * expr
   | ATuple of atom list
   | ACons of id * atom list
+  | ACast of atom * P.core_type
 
 and callable = {
   callable_loc: location;
@@ -156,6 +157,7 @@ and catom_desc =
   | CAFun of cbinder * cexpr
   | CATuple of catom list
   | CACons of id * catom list
+  | CACast of catom * Ptree.pty
 
 and ccallable = {
   ccallable_loc: location;

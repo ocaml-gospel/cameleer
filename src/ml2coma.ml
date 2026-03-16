@@ -22,8 +22,9 @@ let mk_id ?(loc=dummy_loc) id_name  = { id_name; id_loc = loc }
 let gen_id ?(loc=dummy_loc) ?(prefix = "_x") () =
   mk_id ~loc (gen_symbol ~prefix ())
 
-let binder (id, pty) =
-  (id, Option.map E.core_type pty)
+let map_pty pty = Option.map E.core_type pty
+
+let binder (id, pty) = (id, map_pty pty)
 
 let rec pattern_to_args (p: Ml_lang.pattern) =
   match p.ppat_desc with
@@ -187,12 +188,18 @@ let rec atom fn_name { atom_loc; atom_desc } types =
   let catom_desc = match atom_desc with
     | AId id -> CAId id
     | ACst c -> CACst c
-    | ABinop (e1, op, e2) -> CABinop (expr fn_name e1 types, op, expr fn_name e2 types)
-    | AUnop (op, e1) -> CAUnop (op, expr fn_name e1 types)
-    | ATuple al -> CATuple (List.map (fun a -> atom fn_name a types) al)
-    | ACons (id, c) -> CACons (id, List.map (fun a -> atom fn_name a types) c)
+    | ABinop (e1, op, e2) ->
+        CABinop (expr fn_name e1 types, op, expr fn_name e2 types)
+    | AUnop (op, e1) ->
+        CAUnop (op, expr fn_name e1 types)
+    | ATuple al ->
+        CATuple (List.map (fun a -> atom fn_name a types) al)
+    | ACons (id, c) ->
+        CACons (id, List.map (fun a -> atom fn_name a types) c)
     | AFun (_, id, e) ->
-        CAFun (binder id, expr fn_name e types) in
+        CAFun (binder id, expr fn_name e types)
+    | ACast (a, t) ->
+        CACast (atom fn_name a types, E.core_type t) in
   mk_catom catom_desc
 
 and expr fn_name { expr_loc; expr_desc = e_desc } types =
