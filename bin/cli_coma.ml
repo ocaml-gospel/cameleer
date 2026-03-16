@@ -45,9 +45,13 @@ let main file c =
   (* printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f; *)
 
   if !coma then begin
+    let file = Filename.basename file in
+    let f_coma = (Filename.chop_extension file) ^ ".coma" in
+    let fout = let cout = open_out f_coma in
+      formatter_of_out_channel cout in
     let fc = List.map Ml2coma.declaration f in
-    printf "-------@\n";
-    printf "%a@." Pp_coma.pp_program fc
+    (* fprintf fout "-------@\n"; *)
+    fprintf fout "%a@." Pp_coma.pp_program fc
   end
 
 let () = main fname (open_in fname)
