@@ -186,7 +186,7 @@ let pp_handler_case fmt (case_id, vars, pre) =
 let pp_handler fmt name (h : Ml2coma.handler) =
   fprintf fmt "@[<hov 2>let %s %a@\n @[%a@]\n= any@]"
     name
-    (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) h.args
+    (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) h.args
     (pp_print_list ~pp_sep:pp_newline pp_handler_case) h.cases
 
 let print_destructs fn_name fmt =

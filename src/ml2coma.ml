@@ -8,6 +8,8 @@ module E = Expression
 
 open Location
 
+module Ms = Map.Make(String)
+
 let dummy_loc =
   let pos = { Lexing.dummy_pos with
     Lexing.pos_cnum = 0;
@@ -50,7 +52,7 @@ let rec tpattern_to_args ?(t=None) (p: Ml_lang.pattern) =
         args   = "[t]"
         cases = [("Empty", []); ("Node", ["l"; "_x__001_"; "r"])]   *)
 type handler = {
-  args:   Ml_lang.id list; (* FIXME: this should be [cbinder list] *)
+  args:   Ml_lang.cbinder list; (* FIXME: this should be [cbinder list] *)
   cases: (Ml_lang.id * (Ml_lang.id * pty option) list * Ml_lang.cprecondition) list;
 }
 
@@ -112,7 +114,7 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
          this case should be an error
          since we can reconstruct the type of the variable,
          which is required for Coma. *)
-      let () = assert false in
+      (* let () = assert false in *)
       let kont_id = mk_id ~loc:id.id_loc "default_case" in
       let var = gen_id ~loc:id.id_loc () in
       let pre = mk_precondition (List.hd args) var [] in
@@ -156,19 +158,19 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       (mk_id ~loc:p.ppat_loc name, vars, pres)
   | PCast (p, _) -> case_of_branch args p
 
-let register_handler fn_name a cases =
+let register_handler fn_name a cases m =
   let key = handler_name_of_id fn_name in
   let args = match a.atom_desc with
-    | AId id -> [id]
+    | AId id -> [(id, Ms.find id.id_name m)]
     | ATuple al ->
         List.concat_map (fun a -> match a.atom_desc with
-          | AId id -> [id]
+          | AId id -> [(id, Ms.find id.id_name m)]
           | _ -> failwith "A match expression must match on an identifier")
         al
     | _ -> failwith "A match expression must match on an identifier" in
   let new_handler = {
     args;
-    cases = List.map (fun (p, _) -> case_of_branch args p) cases
+    cases = List.map (fun (p, _) -> case_of_branch (List.map fst args) p) cases
   } in
   let (len, current) = match Hashtbl.find_opt destructs key with
     | None   -> 0, []
@@ -180,54 +182,56 @@ let register_handler fn_name a cases =
 
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
 
-let rec atom fn_name { atom_loc; atom_desc } =
+let rec atom fn_name { atom_loc; atom_desc } types =
   let mk_catom catom_desc = { catom_loc = atom_loc; catom_desc } in
   let catom_desc = match atom_desc with
     | AId id -> CAId id
     | ACst c -> CACst c
-    | ABinop (e1, op, e2) -> CABinop (expr fn_name e1, op, expr fn_name e2)
-    | AUnop (op, e1) -> CAUnop (op, expr fn_name e1)
-    | ATuple al -> CATuple (List.map (atom fn_name) al)
-    | ACons (id, c) -> CACons (id, List.map (atom fn_name) c)
+    | ABinop (e1, op, e2) -> CABinop (expr fn_name e1 types, op, expr fn_name e2 types)
+    | AUnop (op, e1) -> CAUnop (op, expr fn_name e1 types)
+    | ATuple al -> CATuple (List.map (fun a -> atom fn_name a types) al)
+    | ACons (id, c) -> CACons (id, List.map (fun a -> atom fn_name a types) c)
     | AFun (_, id, e) ->
-        CAFun (binder id, expr fn_name e) in
+        CAFun (binder id, expr fn_name e types) in
   mk_catom catom_desc
 
-and expr fn_name { expr_loc; expr_desc = e_desc } =
+and expr fn_name { expr_loc; expr_desc = e_desc } types =
   let mk_cexpr cexpr_desc = { cexpr_loc = expr_loc; cexpr_desc } in
-  let mk_ppat_expr (p, e) = (tpattern_to_args p, expr fn_name e) in
+  let mk_ppat_expr (p, e) = (tpattern_to_args p, expr fn_name e types) in
   let mk_id name loc = { id_name = name; id_loc = loc } in
   let mk_binder_cexpr (b, e) = (List.map binder b, e) in
   let expr_desc = function
-    | EAtom a -> CEAtom (atom fn_name a)
+    | EAtom a -> CEAtom (atom fn_name a types)
     | EAssert -> CEAssert
     | ELet (x, e1, e2) ->
-        CELet (binder x, expr fn_name e1, expr fn_name e2) (* TODO *)
+        let (x, t) = binder x in
+        let table = Ms.add x.id_name t types in
+        CELet ((x, t), expr fn_name e1 types, expr fn_name e2 table) (* TODO *)
     | ELetK (k, x, e1, e2) ->
-        CELetK (k, binder x, expr fn_name e1, expr fn_name e2) (* TODO *)
+        CELetK (k, binder x, expr fn_name e1 types, expr fn_name e2 types) (* TODO *)
     | EApp (c, al, _cl) -> (* TODO *)
-        let c = callable fn_name c in
-        let cal = List.map (atom fn_name) al in
-        let ccl = List.map (callable fn_name) _cl in
+        let c = callable fn_name c types in
+        let cal = List.map (fun a -> atom fn_name a types) al in
+        let ccl = List.map (fun cl -> callable fn_name cl types) _cl in
         CEApp (c, cal, ccl)
     | EIf (a, e1, e2) ->
-        CEIf (atom fn_name a, expr fn_name e1, expr fn_name e2) (* TODO *)
+        CEIf (atom fn_name a types, expr fn_name e1 types, expr fn_name e2 types) (* TODO *)
     | EMatch (a, pel) ->
-        let name  = register_handler fn_name a pel in
+        let name  = register_handler fn_name a pel types in
         let id    = mk_id name expr_loc in
-        let catom = atom fn_name a in
+        let catom = atom fn_name a types in
         let cases = List.map mk_ppat_expr pel in
         let cases = List.map mk_binder_cexpr cases in
         CEDestruct (id, catom, cases) in
   mk_cexpr (expr_desc e_desc)
 
-and callable fn_name { callable_loc; callable_desc } =
+and callable fn_name { callable_loc; callable_desc } types =
   let mk_ccalable ccallable_desc =
     { ccallable_loc = callable_loc; ccallable_desc } in
   let desc = match callable_desc with
     | CId id -> CCId id
     | CFun (data, kon, e) -> (* TODO: specification for the generated fun *)
-        CCFun (List.map binder data, [], kon, expr fn_name e) in
+        CCFun (List.map binder data, [], kon, expr fn_name e types) in
   mk_ccalable desc
 
 (* and pattern p =
@@ -379,7 +383,8 @@ let declaration { decl_desc; decl_loc } =
         let xs = List.map binder xs in
         let pre = List.map (Uterm.term false) pre in
         let ks  = List.map mk_ckont ks in
-        CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e))
+        let m = List.fold_left (fun acc (x, t) -> Ms.add x.id_name t acc) Ms.empty xs in
+        CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e m))
     | DType (_, td) ->
         let type_decls = List.map type_decl td in
         let decl = Dtype (List.flatten type_decls) in
