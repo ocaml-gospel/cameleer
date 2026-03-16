@@ -89,7 +89,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
   | CEApp (c, al, cl) ->
       fprintf fmt ("@[<hov 2>%a @[%a %a@]@]")
         (pp_callable ~_fn_name) c
-        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true ~curly:true)) al
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
         (pp_print_list ~pp_sep:pp_space (pp_callable ~_fn_name)) cl
   | CEIf (a, e1, e2) ->
       fprintf fmt "@[if @[%a@]@;<1 3>@[(-> @[%a@])@\n(-> @[%a@])@]@]"
