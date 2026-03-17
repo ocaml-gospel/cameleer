@@ -23,6 +23,7 @@ val mayraise : Uast.s_expression -> raise_set
 
 val mk_atom : ?loc:location -> atom_desc -> atom
 val mk_expr : ?loc:location -> expr_desc -> expr
+val mk_expr_atom : ?loc:location -> atom_desc -> expr
 
 val mk_decl :
   rec_flag * id * binder list * Uast.term list * kont list * expr -> declaration

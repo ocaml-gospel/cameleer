@@ -249,7 +249,7 @@ let is_binop, get_binop =
 let rec is_atomic e =
   match e.Uast.spexp_desc with
   | Sexp_constant _ | Sexp_ident _ | Sexp_construct (_, None) -> true
-  | Sexp_construct (_, Some e) -> is_atomic e
+  | Sexp_constraint (e, _) | Sexp_construct (_, Some e) -> is_atomic e
   | Sexp_tuple el -> List.for_all is_atomic el
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([(_, e1);(_, e2)]))
     when is_binop (string_of_longident txt) ->
@@ -302,6 +302,10 @@ and atom_of_sexpr e =
       let op = get_binop (string_of_longident txt) in
       let e1 = mk_expr_atom ~loc @@ (atom_of_sexpr e1).atom_desc in
       mk_atom ~loc (AUnop (op, e1))
+  | Sexp_constraint (e, t) ->
+      let loc = location e.spexp_loc in
+      let a = atom_of_sexpr e in
+      mk_atom ~loc (ACast (a, t))
   | _ -> assert false (* unreachable *)
 
 

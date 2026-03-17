@@ -167,8 +167,12 @@ let register_handler fn_name a cases m =
         List.concat_map (fun a -> match a.atom_desc with
           | AId id -> [(id, Ms.find id.id_name m)]
           | _ -> failwith "A match expression must match on an identifier")
+                 (* TODO: this is wrong!
+                    we must add the case of and [AId] inside an [ACast] *)
         al
     | _ -> failwith "A match expression must match on an identifier" in
+           (* TODO: this is wrong!
+              we must add the case of and [AId] inside an [ACast] *)
   let new_handler = {
     args;
     cases = List.map (fun (p, _) -> case_of_branch (List.map fst args) p) cases
