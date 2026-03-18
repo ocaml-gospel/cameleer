@@ -43,7 +43,10 @@ let main file c =
   let f = read_file file mod_name c in
   let f = Declaration_coma.s_structure f in
   printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
+  printf "--BEGIN PAT COMPILATION--@\n";
   let f = List.map Pattern_coma.compile_pattern f in
+  printf "--END PAT COMPILATION--@\n";
+  printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
 
   if !coma then begin
     let file = Filename.basename file in

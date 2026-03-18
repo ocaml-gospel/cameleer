@@ -161,18 +161,15 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
 
 let register_handler fn_name a cases m =
   let key = handler_name_of_id fn_name in
-  let args = match a.atom_desc with
-    | AId id -> [(id, Ms.find id.id_name m)]
-    | ATuple al ->
-        List.concat_map (fun a -> match a.atom_desc with
-          | AId id -> [(id, Ms.find id.id_name m)]
-          | _ -> failwith "A match expression must match on an identifier")
-                 (* TODO: this is wrong!
-                    we must add the case of and [AId] inside an [ACast] *)
-        al
-    | _ -> failwith "A match expression must match on an identifier" in
-           (* TODO: this is wrong!
-              we must add the case of and [AId] inside an [ACast] *)
+  let args =
+    let rec loop a =
+      match a.atom_desc with
+      | AId id -> [(id, Ms.find id.id_name m)]
+      | ATuple al ->
+          List.concat_map loop al
+      | ACast (a,_) -> loop a
+      | _ -> failwith "A match expression must match on an identifier" in
+    loop a in
   let new_handler = {
     args;
     cases = List.map (fun (p, _) -> case_of_branch (List.map fst args) p) cases

@@ -2,13 +2,37 @@ open Ml_lang
 
 module E = Expression_coma
 
+module Sid = Set.Make(struct
+  type t = Ml_lang.id
+  let compare a b = String.compare a.id_name b.id_name
+end)
+
+module Mid = Map.Make(struct
+  type t = Ml_lang.id
+  let compare a b = String.compare a.id_name b.id_name
+end)
+
+let rev2 (l1,l2) = List.(rev l1, rev l2)
+
 (* binds type name to type constructors *)
-let htypes: (string, string list) Hashtbl.t = Hashtbl.create 16
+let htypes
+  (* (string, (string * (Ppxlib.Parsetree.core_type * int)) list) Hashtbl.t = *)
+  = Hashtbl.create 16
 
 let get_constructors t =
   match Hashtbl.find_opt htypes t with
-  | Some cs -> cs
+  | Some cs -> List.map fst cs
   | None -> []
+
+(* let get_arity t s =
+  match Hashtbl.find_opt htypes t with
+  | Some cs -> snd @@ List.assoc s cs
+  | None -> 0 *)
+
+let get_type_informations t s =
+  match Hashtbl.find_opt htypes t with
+  | Some cs -> List.assoc s cs
+  | None -> [], 0
 
 exception NonExhaustive
 
@@ -27,7 +51,17 @@ let t2s t =
   match Parsetree.(t.ptyp_desc) with
   | Parsetree.Ptyp_constr ({ txt; loc = _ }, _) ->
       E.string_of_longident txt
-  | _-> assert false
+  | Parsetree.Ptyp_any -> assert false
+  | Parsetree.Ptyp_var s -> s
+  | Parsetree.Ptyp_arrow (_, _, _) -> assert false
+  | Parsetree.Ptyp_tuple _ -> assert false
+  | Parsetree.Ptyp_object (_, _) -> assert false
+  | Parsetree.Ptyp_class (_, _) -> assert false
+  | Parsetree.Ptyp_alias (_, _) -> assert false
+  | Parsetree.Ptyp_variant (_, _, _) -> assert false
+  | Parsetree.Ptyp_poly (_, _) -> assert false
+  | Parsetree.Ptyp_package _ -> assert false
+  | Parsetree.Ptyp_extension _ -> assert false
 
 let compile
   ~(get_constructors: string -> string list)
@@ -37,26 +71,23 @@ let compile
 
   let rec compile tl rl = match tl,rl with
     | _, [] -> (* no actions *)
+        Format.printf "---%a]@."
+          (Format.pp_print_list
+            ~pp_sep:Format.pp_print_space Pp_ml_lang.pp_atom)
+          tl;
         raise NonExhaustive
     | [], (_,a) :: _ -> (* no terms, at least one action *)
         a
     | t :: tl, _ -> (* process the leftmost column *)
 
-        ignore mk_case;
-
         let expr_t = E.mk_expr_atom t.atom_desc in
         let ty = t_type t in
 
-        (* extract the set of constructors *)
-        let css = get_constructors (t2s ty) in
-        Format.printf "%s ::: %d@." (t2s ty) (List.length css);
-
         (* fc: first column *)
-        let rl_tail, fc = List.fold_left_map
-          (fun acc (pl,a) -> match pl with [] -> assert false
-                             | p::pls -> (pls, a)::acc, p) [] rl in
-
-        let rl_tail, fc = List.(rev rl_tail, rev fc) in
+        let rl_tail, fc = rev2 @@
+          List.fold_left_map
+            (fun acc (pl,a) -> match pl with [] -> assert false
+                               | p::pls -> (pls, a)::acc, p) [] rl in
 
         let simple p = match p.ppat_desc with
           | PWild | PVar _ -> true
@@ -66,6 +97,12 @@ let compile
           | PWild | PVar _ | PTuple _ -> None
           | PCons (c, _) -> Some c
           | PCast (p, _) -> get_constr p in
+
+        let rec is_compat c p = match p.ppat_desc with
+          | PWild | PVar _ -> true
+          | PCons (c2, _) -> c = c2
+          | PCast (p, _) -> is_compat c p
+          | PTuple _ -> false (* non sens? *) in
 
         let simple = List.for_all simple fc in
 
@@ -78,13 +115,111 @@ let compile
                 pl, a
             | _ -> assert false
             ) rl_tail fc in
+          assert (List.length tl < List.length rl_tail);
           compile tl rl_tail
         end else (* not simple *)
 
-          (* then one matrix for each elem of [cs] *)
-          let _cs = List.filter_map get_constr fc in
+          (* the constructors present on the leftmost column *)
+          let col_cons = List.fold_left (fun acc x ->
+            match get_constr x with
+            | None -> acc
+            | Some e -> Sid.add e acc) Sid.empty fc in
 
-          compile tl rl_tail
+          (* extract the list of constructors *)
+          let ty_str = t2s ty in
+          (* let css = get_constructors ty_str in *)
+          ignore get_constructors;
+
+          let type_inf id = get_type_informations ty_str id in
+          (* let arity id = snd @@ type_inf id in *)
+
+          (* let _css = List.fold_left (fun acc a ->
+            let l = List.init (arity a) (fun _ -> E.gen_id ()) in
+            (* récupérer les types dans la liste que je viens de rajouter *)
+            let k = assert false in
+            (* let k:binder = None in *)
+            Mid.add k l acc) Mid.empty css in *)
+
+          (* matrix for constructor [c] *)
+          let mat_c (c: id) arity proj =
+            let nwilds = List.init arity (fun _ -> E.mk_pattern PWild) in
+            (* filtered fc, filtered rl *)
+            let (ffc, rl_tail) = rev2 @@
+              List.fold_left2 (fun (pats,acc) p line ->
+                if is_compat c p then (p :: pats, line :: acc) else (pats, acc)
+              ) ([],[]) fc rl_tail in
+            let a = List.rev @@ List.fold_left2 (
+              fun acc p (pl,a) ->
+                let rec loop p =
+                  match p.ppat_desc with
+                  | PWild ->
+                      let l = nwilds @ pl, a in
+                      l :: acc
+                  | PVar id ->
+                      let a = mk_let (id, Some ty) expr_t a in
+                      let l = nwilds @ pl, a in
+                      l :: acc
+                  | PCons (_, l2) ->
+                      let l = l2 @ pl, a in
+                      l :: acc
+                  | PTuple _ -> assert false
+                  | PCast (p, _) -> loop p
+                in loop p
+            ) [] ffc rl_tail in
+            let tl = proj @ tl in
+            (* if not (List.length tl < List.length a) then begin
+              let open Format in
+              let pla fmt (pl,_) =
+                fprintf fmt "| %a -> action"
+                (pp_print_list ~pp_sep:pp_print_space Pp_ml_lang.pp_pattern) pl
+              in
+              Format.printf "c=%s...@\nt=%a@\ntl=%a@\na=%a@."
+                  c.id_name
+                  (Pp_ml_lang.pp_atom ~paren:false) t
+                  Format.(pp_print_list ~pp_sep:pp_print_space Pp_ml_lang.pp_atom) tl
+                  Format.(pp_print_list ~pp_sep:pp_print_space pla) a;
+              assert false
+            end; *)
+            compile tl a
+          in
+
+          let rec collect_lets_opt ?(ty=None) a p =
+            match p.ppat_desc with
+            | PWild -> Some a
+            | PVar id ->
+                Some (mk_let (id, ty) expr_t a)
+            | PCast (p, t) ->
+                collect_lets_opt ~ty:(Some t) a p
+            | _ -> None in
+
+          let default_mat =
+            let mo =
+              let rl_tail = List.rev @@ List.fold_left2 (fun acc (pl, a) p ->
+                match collect_lets_opt ~ty:(Some ty) a p with
+                | None -> acc
+                | Some a -> (pl, a) :: acc
+              ) [] rl_tail fc in
+              if rl_tail = [] then None (* TODO: is this correct? *)
+              else Some (compile tl rl_tail) in
+            match mo with
+            | Some m -> [E.mk_pattern PWild, m]
+            | None -> [] in
+
+          let pl = Sid.fold (fun c acc ->
+            let ts, arity = type_inf c.id_name in
+            (* projections *)
+            let projs = List.init arity (fun _ -> E.gen_id ()) in
+            let t_ats = List.map2 (fun id ty -> 
+              let a = E.mk_atom @@ AId id in
+              E.mk_atom @@ ACast (a, ty)
+            ) projs ts in
+            let patproj = List.map (fun i -> E.mk_pattern @@ PVar i) projs in
+            let pm = E.mk_pattern @@ PCons(c, patproj) in
+            let mc = pm, mat_c c arity t_ats in
+            mc::acc
+          ) col_cons default_mat in
+
+          mk_case t pl
 
   in
   compile [a] rl
@@ -114,7 +249,9 @@ let rec expr e = match e.expr_desc with
       let expr_desc = EIf (a, e1, e2) in
       { e with expr_desc }
   | EMatch (a, pl) ->
-      let mk_case _ = assert false in
+      let mk_case (a: atom) (pl: (pattern * expr) list) =
+          E.mk_expr @@ EMatch (a, pl)
+        in
       let mk_let b e1 e2 = E.mk_expr (ELet (b, e1, e2)) in
       let pl = List.map (fun (p,e) -> [p],e) pl in
       compile ~get_constructors ~mk_case ~mk_let a pl
@@ -150,24 +287,18 @@ and callable c = match c.callable_desc with
       { c with callable_desc }
 
 
-let get_constructor c =
-  match Parsetree.(c.ptyp_desc) with
-  | Parsetree.Ptyp_constr ({ txt; loc = _ }, _) ->
-      Some (E.string_of_longident txt)
-
-  | Parsetree.Ptyp_any
-  | Parsetree.Ptyp_var _
-  | Parsetree.Ptyp_arrow (_, _, _)
-  | Parsetree.Ptyp_tuple _ -> assert false
-
-  (* untreated *)
-  | Parsetree.Ptyp_alias (_, _)
-  | Parsetree.Ptyp_object (_, _)
-  | Parsetree.Ptyp_class (_, _)
-  | Parsetree.Ptyp_variant (_, _, _)
-  | Parsetree.Ptyp_poly (_, _)
-  | Parsetree.Ptyp_package _
-  | Parsetree.Ptyp_extension _ -> assert false
+let add_type tname (c: Parsetree.type_kind) =
+  match c with
+  | Ptype_open
+  | Ptype_record _
+  | Ptype_abstract -> failwith "not implemented"
+  | Ptype_variant cl ->
+      let cs = List.map (fun Parsetree.{pcd_name={txt;_}; pcd_args; _} ->
+        let n = match pcd_args with
+                | Pcstr_tuple l -> l, List.length l
+                | _ -> failwith "not implemented" in
+        txt, n) cl in
+      Hashtbl.add htypes tname cs
 
 let compile_pattern (d: declaration) =
   match d.decl_desc with
@@ -175,18 +306,8 @@ let compile_pattern (d: declaration) =
       let decl_desc = DFun (r,id,bl,pre,kl, expr e) in
       { d with decl_desc }
   | DType (_, dl) ->
-      List.iter (fun Gospel.Uast.{ tname; tparams; _ } ->
-        let tp = List.filter_map (fun (c, _) -> get_constructor c) tparams in
-        Format.printf "%s +++ %d@." (tname.txt) (List.length tparams);
-        (* TODO question: where are the constructor of the types? *)
-        Hashtbl.add htypes tname.txt tp)
-        dl;
+      let () = List.iter (fun Gospel.Uast.{ tname; tkind; _ } ->
+        add_type tname.txt tkind) dl in
       d
   | DFunction _
   | DProp _ -> d
-
-
-(*
-~/.opam/cameleer/lib/gospel/uast.mli
-~/.opam/cameleer/lib/ocaml/compiler-libs/parsetree.mli
-*)
