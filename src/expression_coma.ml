@@ -156,8 +156,12 @@ let rec identify e =
   | Sexp_extension _ -> eprintf "extension@."
   | Sexp_unreachable -> eprintf "unreachable@."
 
-let identify_fail e = identify e; assert false
-
+let identify_fail e =
+  identify e;
+  Why3.Loc.errorm
+    ~loc:(Uterm.location e.Uast.spexp_loc)
+    "ANF assumption broken"
+  
 let collect_params e =
   let rec loop acc e =
     match e.Uast.spexp_desc with
@@ -278,7 +282,7 @@ let rec atom_of_construct ?(loc=dummy_loc) c = match c with
 and atom_of_sexpr e =
   let loc = location e.spexp_loc in
   if not (is_atomic e) then
-    (Format.printf "ANF assumption broken@."; identify_fail e) else
+    ((* Format.printf "ANF assumption broken@.";  *)identify_fail e) else
   match e.Uast.spexp_desc with
   | Sexp_constant  c      -> mk_atom ~loc (constant c)
   | Sexp_construct (l, e) -> atom_of_construct (l,e)
