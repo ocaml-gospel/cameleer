@@ -236,6 +236,7 @@ let is_binop, get_binop =
       (">=", Some OPGe);
       ("<", Some OPLt);
       (">", Some OPGt);
+      ("&&", Some OPAnd);
       ("<>", None);
       ("=", Some OPEq);
       ("infix ::", None);
