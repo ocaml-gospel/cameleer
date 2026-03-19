@@ -147,11 +147,11 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let var = gen_id ~prefix:"_unused" () in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [var, None], pre)
-  | PTuple ps ->
-      let sub_cases = List.mapi (fun i p ->
-        let arg_i = [List.nth args i] in
+  | PTuple ps -> (* TODO: what is the error here *)
+      let sub_cases = List.map2 (fun a p ->
+        let arg_i = [a] in
         case_of_branch arg_i p
-      ) ps in
+      ) args ps in
       let name = String.concat "_"
         (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
       let vars = List.concat_map (fun (_,vars,_) -> vars) sub_cases in

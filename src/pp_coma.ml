@@ -13,7 +13,7 @@ module WPrint = Mlw_printer
 let pp_newline fmt () = fprintf fmt "@\n"
 let pp_newline_newline fmt () = fprintf fmt "@\n@\n"
 let pp_space fmt () = fprintf fmt " "
-let pp_coma fmt () = fprintf fmt ", "
+let pp_comma fmt () = fprintf fmt ", "
 let pp_and fmt () = fprintf fmt " && "
 let pp_paren fmt () = fprintf fmt ". "
 
@@ -30,7 +30,7 @@ let curly_braces b f =
 
 let pp_op, pp_constant = Pp_ml_lang.(pp_op, pp_constant)
 
-let pp_cpre = (WPrint.pp_term ~attr:false).closed
+let pp_cpre = (WPrint.pp_term ~attr:false).closed (* Bug ici *)
 let pp_pty = (WPrint.pp_pty ~attr:false).closed
 let pp_type_decl = WPrint.pp_decl
 (* FIXME? Why marked? *)
@@ -102,7 +102,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_atom ~paren:false ~curly:true) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   | CELetK(k, x, e1, e2) ->
-      fprintf fmt "@[%a@]@ @[[ %s %a@;<1 2>@[<hov 2>=@ %a]@]"
+      fprintf fmt "@[%a@]@ @[[ %s %a@;<1 2>@[<hov 2>=@ %a@]]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
         (pp_cbinder ~paren:true) x
@@ -113,7 +113,8 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
   | CABinop (e1, op, e2) ->
       fprintf fmt
         (protect_on paren (curly_braces curly "@[%a %a %a@]"))
-        (fun fmt e -> pp_expr fmt e) e1 pp_op op
+        (fun fmt e -> pp_expr fmt e) e1
+         pp_op op
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
   | CAUnop (op, e1) ->
       fprintf fmt
@@ -124,21 +125,25 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
       fprintf fmt (protect_on true "@[fun @[%a@] -> @[<hov 2>%a@]@]")
         (pp_cbinder ~paren:true) binder
         (fun fmt e -> pp_expr fmt e) e
-  | CAId x -> fprintf fmt (curly_braces curly "%s") x.id_name
-  | CATuple al -> (* i think this should be curly braces *)
-      fprintf fmt "@[%a@]"
-        (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:true)) al (* TODO *)
+  | CAId x -> fprintf fmt (protect_on paren @@ curly_braces curly "%s") x.id_name
+  | CATuple al -> (* TODO: wip on tuples *)
+      fprintf fmt (protect_on paren "@[%a@]")
+        (pp_print_list ~pp_sep:pp_comma (pp_atom ~curly(*:true*))) al (* TODO *)
   | CACons (c, []) -> fprintf fmt (curly_braces curly "%s") c.id_name (* TODO *)
   | CACons (c, [a]) ->
       fprintf fmt (curly_braces curly "%s %a")
         c.id_name
         (pp_atom ~paren:false ~curly:false) a (* TODO *)
+  | CACons ({id_name="::";_}, [h;t]) ->
+      fprintf fmt (curly_braces curly "@[%a@] :: @[%a@]")
+        (pp_atom ~paren:true ~curly:false) h
+        (pp_atom ~paren:false ~curly:false) t
   | CACons (c, al) ->
-      fprintf fmt (curly_braces curly "%s @[%a@]")
+      fprintf fmt (protect_on paren @@ curly_braces curly "%s @[%a@]")
         c.id_name
         (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:false)) al (* TODO *)
   | CACast (a, t) ->
-      fprintf fmt (curly_braces curly "@[%a: %a@]")
+      fprintf fmt (protect_on paren @@ curly_braces curly "@[%a: %a@]")
         (pp_atom ~paren ~curly:false) a
         pp_pty t
 
@@ -198,7 +203,7 @@ let print_destructs fn_name fmt =
     let value = Hashtbl.find_opt Ml2coma.destructs key in
     match value with
     | None -> ()
-    | Some (_, handlers) -> 
+    | Some (_, handlers) ->
       List.iteri (fun idx handler ->
         let handler_name = Printf.sprintf "%s%d" key (idx + 1) in
         pp_handler fmt handler_name handler;
@@ -222,6 +227,7 @@ let pp_decl fmt (d: cdeclaration) =
 
 let preamble = "
 use int.Int
+use list.List
 let halt = any
 let fail { false } = any
 let if (b: bool) (then {b}) (else {not b}) = any
