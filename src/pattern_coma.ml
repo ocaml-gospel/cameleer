@@ -83,11 +83,13 @@ let compile
         let expr_t = E.mk_expr_atom t.atom_desc in
         let ty = t_type t in
 
-        (* fc: first column *)
+        (* fc: first column
+           idea: rl = @ (fc_i ++ rl_tail i) *)
         let rl_tail, fc = rev2 @@
-          List.fold_left_map
-            (fun acc (pl,a) -> match pl with [] -> assert false
-                               | p::pls -> (pls, a)::acc, p) [] rl in
+          List.fold_left (fun (rls, fcs) (pl,a) ->
+            match pl with [] -> assert false
+            | p::pls -> (pls, a)::rls, p::fcs)
+          ([],[]) rl in
 
         let simple p = match p.ppat_desc with
           | PWild | PVar _ -> true
@@ -100,9 +102,9 @@ let compile
 
         let rec is_compat c p = match p.ppat_desc with
           | PWild | PVar _ -> true
-          | PCons (c2, _) -> c = c2
+          | PCons (c2, _) -> String.equal c.id_name c2.id_name
           | PCast (p, _) -> is_compat c p
-          | PTuple _ -> false (* non sens? *) in
+          | PTuple _ -> failwith "not implemented" in
 
         let simple = List.for_all simple fc in
 
@@ -115,7 +117,7 @@ let compile
                 pl, a
             | _ -> assert false
             ) rl_tail fc in
-          assert (List.length tl < List.length rl_tail);
+          (* assert (List.length tl < List.length rl_tail); *)
           compile tl rl_tail
         end else (* not simple *)
 
@@ -130,7 +132,7 @@ let compile
           (* let css = get_constructors ty_str in *)
           ignore get_constructors;
 
-          let type_inf id = get_type_informations ty_str id in
+          let type_info id = get_type_informations ty_str id in
           (* let arity id = snd @@ type_inf id in *)
 
           (* let _css = List.fold_left (fun acc a ->
@@ -144,11 +146,13 @@ let compile
           let mat_c (c: id) arity proj =
             let nwilds = List.init arity (fun _ -> E.mk_pattern PWild) in
             (* filtered fc, filtered rl *)
+            Format.printf "compat with %s for (%a)@." c.id_name (Pp_ml_lang.pp_atom ~paren:false) t;
             let (ffc, rl_tail) = rev2 @@
               List.fold_left2 (fun (pats,acc) p line ->
-                if is_compat c p then (p :: pats, line :: acc) else (pats, acc)
+                Format.printf "::: %a@." (Pp_ml_lang.pp_pattern ~paren:false) p;
+                if is_compat c p then (Format.printf"\ttrue@.";p :: pats, line :: acc) else (pats, acc)
               ) ([],[]) fc rl_tail in
-            let a = List.rev @@ List.fold_left2 (
+            let a = List.fold_left2 (
               fun acc p (pl,a) ->
                 let rec loop p =
                   match p.ppat_desc with
@@ -162,24 +166,11 @@ let compile
                   | PCons (_, l2) ->
                       let l = l2 @ pl, a in
                       l :: acc
-                  | PTuple _ -> assert false
+                  | PTuple _ -> failwith "not implemented"
                   | PCast (p, _) -> loop p
                 in loop p
             ) [] ffc rl_tail in
             let tl = proj @ tl in
-            (* if not (List.length tl < List.length a) then begin
-              let open Format in
-              let pla fmt (pl,_) =
-                fprintf fmt "| %a -> action"
-                (pp_print_list ~pp_sep:pp_print_space Pp_ml_lang.pp_pattern) pl
-              in
-              Format.printf "c=%s...@\nt=%a@\ntl=%a@\na=%a@."
-                  c.id_name
-                  (Pp_ml_lang.pp_atom ~paren:false) t
-                  Format.(pp_print_list ~pp_sep:pp_print_space Pp_ml_lang.pp_atom) tl
-                  Format.(pp_print_list ~pp_sep:pp_print_space pla) a;
-              assert false
-            end; *)
             compile tl a
           in
 
@@ -192,24 +183,27 @@ let compile
                 collect_lets_opt ~ty:(Some t) a p
             | _ -> None in
 
+
+          (* TODO TO BE REMOVED *)
+          let dp = if true then PVar (E.mk_id "coucou") else PWild in
+
           let default_mat =
-            let mo =
-              let rl_tail = List.rev @@ List.fold_left2 (fun acc (pl, a) p ->
-                match collect_lets_opt ~ty:(Some ty) a p with
-                | None -> acc
-                | Some a -> (pl, a) :: acc
-              ) [] rl_tail fc in
-              if rl_tail = [] then None (* TODO: is this correct? *)
-              else Some (compile tl rl_tail) in
-            match mo with
-            | Some m -> [E.mk_pattern PWild, m]
-            | None -> [] in
+            let rl_tail = List.rev @@ List.fold_left2 (fun acc (pl, a) p ->
+              match collect_lets_opt ~ty:(Some ty) a p with
+              | None -> acc
+              | Some a -> (pl, a) :: acc
+            ) [] rl_tail fc in
+            if rl_tail = [] then (Format.printf "i:%a@." (Pp_ml_lang.pp_atom ~paren:false) t ; [])
+            else [E.mk_pattern dp, compile tl rl_tail] in
+            (* Format.printf "%d %d : %a@." (List.length tl) (List.length rl_tail)
+              (Pp_ml_lang.pp_atom ~paren:false) t
+            ;
+            try *)
 
           let pl = Sid.fold (fun c acc ->
-            let ts, arity = type_inf c.id_name in
-            (* projections *)
+            let ts, arity = type_info c.id_name in
             let projs = List.init arity (fun _ -> E.gen_id ()) in
-            let t_ats = List.map2 (fun id ty -> 
+            let t_ats = List.map2 (fun id ty ->
               let a = E.mk_atom @@ AId id in
               E.mk_atom @@ ACast (a, ty)
             ) projs ts in

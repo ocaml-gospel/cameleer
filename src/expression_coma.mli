@@ -7,8 +7,11 @@ type raise_set
 val dummy_loc : position * position
 val location : Location.t -> position * position
 
+val mk_id : ?loc:Ml_lang.location -> label -> id
+
 val preid : Identifier.Preid.t -> id
 val gen_id : ?prefix:label -> ?loc:Ml_lang.location -> unit -> id
+
 
 val cst_true  : constant
 val cst_false : constant
