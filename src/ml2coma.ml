@@ -6,21 +6,13 @@ open Gospel
 module Ut = Uterm
 module E = Expression
 
+module Ec = Expression_coma
+
 open Location
 
 module Ms = Map.Make(String)
 
-let dummy_loc =
-  let pos = { Lexing.dummy_pos with
-    Lexing.pos_cnum = 0;
-    pos_bol  = 0;
-    pos_lnum = 1 } in
-  (pos, pos)
-
-let mk_id ?(loc=dummy_loc) id_name  = { id_name; id_loc = loc }
-
-let gen_id ?(loc=dummy_loc) ?(prefix = "_x") () =
-  mk_id ~loc (gen_symbol ~prefix ())
+let dummy_loc = Ec.dummy_loc
 
 let map_pty pty = Option.map E.core_type pty
 
@@ -30,7 +22,7 @@ let rec pattern_to_args (p: Ml_lang.pattern) =
   match p.ppat_desc with
   | PVar id -> [id]
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
-  | PWild -> [gen_id ~prefix:"_unused" ()]
+  | PWild -> [Ec.gen_id ~prefix:"_unused" ()]
   | PTuple ps -> List.concat(List.map pattern_to_args ps)
   | PCast (p, _) -> pattern_to_args p
 
@@ -40,7 +32,7 @@ let rec tpattern_to_args ?(t=None) (p: Ml_lang.pattern) =
     match p.ppat_desc with
     | PVar id -> [id, acc]
     | PCons (_, args) -> List.concat(List.map (tpattern_to_args ~t:acc) args) (* FIXME not sure about this «acc» *)
-    | PWild -> [gen_id ~prefix:"_unused" (), acc]
+    | PWild -> [Ec.gen_id ~prefix:"_unused" (), acc]
     | PTuple ps -> List.concat (List.map (tpattern_to_args ~t:acc) ps) (* FIXME not sure about this «acc» *)
     | PCast (p, t) -> loop (Some t) p in
   loop t p
@@ -67,13 +59,7 @@ let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
   let preid = Identifier.Preid.create id.id_name ~loc in
   Uast.Qpreid preid
 
-let mk_precondition (arg: Ml_lang.id) (case_id: Ml_lang.id)
-  (vars: Ml_lang.binder list)
-=
-  (* Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
-    arg.id_name
-    case_id.id_name
-    (String.concat ", " (List.map (fun v -> v.id_name) vars)); *)
+let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list) =
   let mk_uast_term term_desc loc =
     let term_loc = location loc in
     Uast.{ term_desc; term_loc } in
@@ -105,8 +91,8 @@ let handler_name_of_id fn_name = "destruct_" ^ fn_name
 let rec case_of_branch args (p : Ml_lang.pattern) =
   match p.ppat_desc with
   | PCast ({ppat_desc=PVar id; _}, t) ->
-      let kont_id = mk_id ~loc:id.id_loc "default_case" in
-      let var = gen_id ~loc:id.id_loc () in
+      let kont_id = Ec.mk_id ~loc:id.id_loc "default_case" in
+      let var = Ec.gen_id ~loc:id.id_loc () in
       let b = binder (var, Some t) in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [b], pre)
@@ -116,8 +102,8 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
          since we can reconstruct the type of the variable,
          which is required for Coma. *)
       (* let () = assert false in *)
-      let kont_id = mk_id ~loc:id.id_loc "default_case" in
-      let var = gen_id ~loc:id.id_loc () in
+      let kont_id = Ec.mk_id ~loc:id.id_loc "default_case" in
+      let var = Ec.gen_id ~loc:id.id_loc () in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [var, None], pre)
   | PCast ({ppat_desc=PCons (cid, ps); _}, t) ->
@@ -125,7 +111,7 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let binders = List.map binder vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
-      let id = mk_id ~loc:cid.id_loc id_name in
+      let id = Ec.mk_id ~loc:cid.id_loc id_name in
       (id, binders, pre)
   | PCons (cid, ps) ->
       (* FIXME: same remark as in case [PVar id]? *)
@@ -133,18 +119,18 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let binders = List.map binder vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
-      let id = mk_id ~loc:cid.id_loc id_name in
+      let id = Ec.mk_id ~loc:cid.id_loc id_name in
       (id, binders, pre)
   | PCast ({ppat_desc=PWild; _}, t) ->
-      let kont_id = mk_id "default_case" in
-      let var = gen_id ~prefix:"_unused" () in
+      let kont_id = Ec.mk_id "default_case" in
+      let var = Ec.gen_id ~prefix:"_unused" () in
       let b = binder (var, Some t) in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [b], pre)
   | PWild ->
       (* FIXME: same remark as in case [PVar id]? *)
-      let kont_id = mk_id "default_case" in
-      let var = gen_id ~prefix:"_unused" () in
+      let kont_id = Ec.mk_id "default_case" in
+      let var = Ec.gen_id ~prefix:"_unused" () in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [var, None], pre)
   | PTuple ps ->
@@ -156,7 +142,7 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
         (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
       let vars = List.concat_map (fun (_,vars,_) -> vars) sub_cases in
       let pres = List.concat_map (fun (_,_,pre)  -> pre)  sub_cases in
-      (mk_id ~loc:p.ppat_loc name, vars, pres)
+      (Ec.mk_id ~loc:p.ppat_loc name, vars, pres)
   | PCast (p, _) -> case_of_branch args p
 
 let register_handler fn_name a cases m =

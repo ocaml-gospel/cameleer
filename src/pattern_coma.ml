@@ -152,7 +152,7 @@ let compile
                 Format.printf "::: %a@." (Pp_ml_lang.pp_pattern ~paren:false) p;
                 if is_compat c p then (Format.printf"\ttrue@.";p :: pats, line :: acc) else (pats, acc)
               ) ([],[]) fc rl_tail in
-            let a = List.fold_left2 (
+            let rl_tail = List.rev @@ List.fold_left2 (
               fun acc p (pl,a) ->
                 let rec loop p =
                   match p.ppat_desc with
@@ -170,8 +170,7 @@ let compile
                   | PCast (p, _) -> loop p
                 in loop p
             ) [] ffc rl_tail in
-            let tl = proj @ tl in
-            compile tl a
+            compile (proj @ tl) rl_tail
           in
 
           let rec collect_lets_opt ?(ty=None) a p =
@@ -185,7 +184,7 @@ let compile
 
 
           (* TODO TO BE REMOVED *)
-          let dp = if true then PVar (E.mk_id "coucou") else PWild in
+          let dp = if false then PVar (E.mk_id "coucou") else PWild in
 
           let default_mat =
             let rl_tail = List.rev @@ List.fold_left2 (fun acc (pl, a) p ->
