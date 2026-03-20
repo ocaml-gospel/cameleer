@@ -111,6 +111,8 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let binders = List.map binder vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
+      let id_name = if String.contains id_name '[' then "nil"  else id_name in
+      let id_name = if String.contains id_name ':' then "cons" else id_name in
       let id = Ec.mk_id ~loc:cid.id_loc id_name in
       (id, binders, pre)
   | PCons (cid, ps) ->
@@ -119,6 +121,8 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let binders = List.map binder vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
+      let id_name = if String.contains id_name '[' then "nil"  else id_name in
+      let id_name = if String.contains id_name ':' then "cons" else id_name in
       let id = Ec.mk_id ~loc:cid.id_loc id_name in
       (id, binders, pre)
   | PCast ({ppat_desc=PWild; _}, t) ->
