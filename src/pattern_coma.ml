@@ -81,8 +81,22 @@ let compile
         a
     | {atom_desc=ATuple t; _} :: tl, _ ->
         let tl = t @ tl in
-        let rl = List.map (function[@warning "-8"] ({ppat_desc=PTuple pl;_}::tl,a) ->
+        let rl = List.map (function ({ppat_desc=PTuple pl; _}::tl,a) ->
           (pl @ tl), a
+          | ({ ppat_desc; ppat_loc }::pl, a) ->
+              (match ppat_desc with
+               | PWild ->
+                   let n = List.length tl in
+                   let x = List.length pl in
+                   let ws = List.init (n-x) (fun _ ->
+                     E.mk_pattern ~loc:ppat_loc PWild) in
+                   (* let ws = {ppat_desc=PWild; ppat_loc} *)
+                   ws @ pl, a
+               | PVar _ -> assert false
+               | PCons (_, _) -> assert false
+               | PTuple _ -> assert false
+               | PCast (_, _) -> assert false)
+          | (_, _) -> assert false
         ) rl in
         compile tl rl
     | t :: tl, _ -> (* process the leftmost column *)
@@ -115,13 +129,25 @@ let compile
 
         let simple = List.for_all simple fc in
 
+        (* let rec isget_var t = match t.atom_desc with
+          | AId id -> Some id
+          | ACast (a, _) -> isget_var a
+          | _ -> None in *)
+
         if simple then begin
           let rl_tail = List.map2 (fun (pl, a) p ->
             match p.ppat_desc with
             | PWild -> pl, a
             | PVar id ->
-                let a = mk_let (id, (Some ty)) expr_t a in
-                pl, a
+                (* begin match isget_var t with
+                | None -> *)
+                    let a = mk_let (id, (Some ty)) expr_t a in
+                    pl, a
+                (* | Some _tid ->
+                    Format.printf "%s ## %s@." id.id_name _tid.id_name;
+                    let a = mk_let (id, (Some ty)) expr_t a in
+                    pl, a
+                end *)
             | _ -> assert false
             ) rl_tail fc in
           (* assert (List.length tl < List.length rl_tail); *)
@@ -136,18 +162,9 @@ let compile
 
           (* extract the list of constructors *)
           let ty_str = t2s ty in
-          (* let css = get_constructors ty_str in *)
           ignore get_constructors;
 
           let type_info id = get_type_informations ty_str id in
-          (* let arity id = snd @@ type_inf id in *)
-
-          (* let _css = List.fold_left (fun acc a ->
-            let l = List.init (arity a) (fun _ -> E.gen_id ()) in
-            (* récupérer les types dans la liste que je viens de rajouter *)
-            let k = assert false in
-            (* let k:binder = None in *)
-            Mid.add k l acc) Mid.empty css in *)
 
           (* matrix for constructor [c] *)
           let mat_c (c: id) arity proj =
@@ -174,7 +191,6 @@ let compile
                       let l = l2 @ pl, a in
                       l :: acc
                   | PTuple t ->
-                      (* is this good? *)
                       let l = t @ pl, a in
                       l :: acc
                   | PCast (p, _) -> loop p
@@ -191,7 +207,6 @@ let compile
             | PCast (p, t) ->
                 collect_lets_opt ~ty:(Some t) a p
             | _ -> None in
-
 
           (* TODO TO BE REMOVED *)
           let dp = if false then PVar (E.mk_id "coucou") else PWild in
