@@ -1,0 +1,144 @@
+
+use int.Int
+use list.List
+let halt = any
+let fail { false } = any
+let if (b: bool) (then {b}) (else {not b}) = any
+
+type tree 'a = 
+    | Empty
+    | Node (tree 'a) 'a (tree 'a)
+
+function size (t: tree 'a) : int =
+  match t with
+  | Empty  -> 0
+  | Node l _ r -> (1 + (size l)) + (size r)
+  end
+
+lemma size_nonneg: forall t : tree 'a. (size t) >= 0
+
+lemma size_empty: forall t : tree 'a. (0 = (size t)) <-> (t = Empty)
+
+function occ (v: 'a) (t: tree 'a) : int =
+  match t with
+  | Empty  -> 0
+  | Node l x r -> ((occ v l) + (occ v r)) + (if (x = v) then 1
+                                             else 0)
+  end
+
+lemma occ_nonneg: forall x : 'a, t : tree 'a. (occ x t) >= 0
+
+predicate mem (v: 'a) (t: tree 'a) = 0 < (occ v t)
+
+let destruct_is_empty1 (t: (tree int))
+   (empty {(t = Empty)})
+   (node (l: (tree int)) (x: int) (r: (tree int)) {(t = (Node l x r))})
+= any
+
+let is_empty (t: (tree int)) 
+    (return__001_ (r: bool) {(r <-> (t = Empty))})
+= destruct_is_empty1 {t}
+  (-> return__001_ {true: bool} ) 
+  (fun (l: (tree int)) (x: int) (r: (tree int)) ->
+    return__001_ {false: bool} ) 
+
+type elt = int
+
+predicate le (x: int) (y: int) = x <= y
+
+predicate le_root (e: elt) (t: tree elt) =
+  match t with
+  | Empty  -> true
+  | Node _ x _ -> le e x
+  end
+
+predicate heap (t: tree elt) =
+  match t with
+  | Empty  -> true
+  | Node l x r -> (le_root x l) && (heap l) && (le_root x r) && (heap r)
+  end
+
+function minimum (t: tree elt) : elt
+
+axiom minimum_def: forall l, x, r. (minimum (Node l x r)) = x
+
+predicate is_minimum (x: elt) (t: tree elt) =
+  (mem x t) && (forall e. (mem e t) -> (le x e))
+
+lemma is_min:
+  forall t : tree elt.
+    (heap t) -> ((size t) > 0) -> (is_minimum (minimum t) t)
+
+let empty  
+    (return__002_ (r: (tree int))
+     {(heap r) && ((size r) = 0) && (forall e. not (mem e r))})
+= return__002_ {Empty: (tree int)} 
+
+let destruct_merge1 (t1: (tree int)) (t2: (tree int))
+   (empty_default_case (_unused__009_: (tree int))
+                       {(t1 = Empty) && (t2 = _unused__009_)})
+   (default_case_empty (_unused__010_: (tree int))
+                       {(t1 = _unused__010_) && (t2 = Empty)})
+   (node_node (l1: (tree int)) (x1: int) (r1: (tree int)) (l2: (tree int)) (
+              x2: int) (r2: (tree int))
+              {(t1 = (Node l1 x1 r1)) && (t2 = (Node l2 x2 r2))})
+= any
+
+let rec merge (t1: (tree int)) (t2: (tree int)) 
+    (return__003_ (r: (tree int))
+     {(heap r) && (forall x. (occ x r) = ((occ x t1) + (occ x t2))) && 
+      ((size r)
+       =
+       ((size t1) + (size t2)))})
+= destruct_merge1 {t1} {t2}
+  (fun (_unused__011_: (tree int)) -> return__003_ {t2} ) 
+  (fun (_unused__012_: (tree int)) -> return__003_ {t1} ) 
+  (fun (l1: (tree int)) (x1: int) (r1: (tree int)) (l2: (tree int)) (
+       x2: int) (r2: (tree int)) ->
+    {((heap t1) && (heap t2))}
+    (! if {(x1) < (x2)}
+          (-> merge {r1} {t2} _k__005_
+              [ _k__005_ (l: (tree int))
+                = return__003_ {Node l x1 l1: (tree int)} ])
+          (-> merge {r2} {t1} _k__004_
+              [ _k__004_ (l: (tree int))
+                = return__003_ {Node l x2 l2: (tree int)} ])))
+
+let add (x: int) (t: (tree int)) {(heap t)}
+    (return__006_ (r: (tree int))
+     {(heap r) && ((size r) = ((size t) + 1)) && ((occ x r)
+                                                  =
+                                                  ((occ x t) + 1)) && 
+      (forall y. (y <> x) -> ((occ y r) = (occ y t)))})
+= merge {Node Empty x Empty} {t} return__006_
+
+let destruct_remove_min1 (t: (tree int))
+   (empty {(t = Empty)})
+   (node (l: (tree int)) (_unused__013_: int) (r: (tree int))
+         {(t = (Node l _unused__013_ r))})
+= any
+
+let remove_min (t: (tree int)) {(heap t) && ((size t) > 0)}
+    (return__007_ (r: (tree int))
+     {(heap r) && ((occ (minimum t) r) = ((occ (minimum t) t) - 1)) && 
+      (forall e. (e <> (minimum t)) -> ((occ e r) = (occ e t))) && ((size r)
+                                                                    =
+                                                                    ((size t)
+                                                                    - 1))})
+= destruct_remove_min1 {t}
+  (-> fail) 
+  (fun (l: (tree int)) (_unused__014_: int) (r: (tree int)) ->
+    merge {l} {r} return__007_) 
+
+let destruct_get_min1 (t: (tree int))
+   (empty {(t = Empty)})
+   (node (_unused__015_: (tree int)) (x: int) (_unused__016_: (tree int))
+         {(t = (Node _unused__015_ x _unused__016_))})
+= any
+
+let get_min (t: (tree int)) {(heap t) && ((size t) > 0)}
+    (return__008_ (r: int) {(r = (minimum t))})
+= destruct_get_min1 {t}
+  (-> fail) 
+  (fun (_unused__017_: (tree int)) (x: int) (_unused__018_: (tree int)) ->
+    return__008_ {x} ) 
