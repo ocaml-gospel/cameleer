@@ -774,7 +774,7 @@ and special_binder expr { binder_info_desc; binder_info_loc = loc } =
       List.fold_right (mk_let_pat binder_expr) id_pat_list expr
 
 and case info pat_list =
-  let mk_case (acc_reg, acc_exn) Uast.{ spc_lhs; spc_guard; spc_rhs } =
+  let mk_case (acc_reg, acc_exn) Uast.{ spc_lhs; spc_guard; spc_rhs; _ } =
     check_guard spc_guard;
     let { pat_term; pat_exn_name } = pattern info spc_lhs in
     let expr = expression info spc_rhs in
@@ -786,7 +786,7 @@ and case info pat_list =
   let reg_branch, exn_branch = List.fold_left mk_case ([], []) pat_list in
   (List.rev reg_branch, List.rev exn_branch)
 
-and case_exn info Uast.{ spc_lhs; spc_guard; spc_rhs } =
+and case_exn info Uast.{ spc_lhs; spc_guard; spc_rhs; _ } =
   check_guard spc_guard;
   let q, pat = exception_name_of_pattern info spc_lhs in
   (q, pat, expression info spc_rhs)

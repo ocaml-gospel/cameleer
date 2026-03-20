@@ -128,7 +128,7 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
   | CAId x -> fprintf fmt (protect_on paren @@ curly_braces curly "%s") x.id_name
   | CATuple al -> (* TODO: wip on tuples *)
       fprintf fmt (protect_on paren "@[%a@]")
-        (pp_print_list ~pp_sep:pp_comma (pp_atom ~curly(*:true*))) al (* TODO *)
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~curly(*:true*))) al (* TODO *)
   | CACons (c, []) -> fprintf fmt (curly_braces curly "%s") c.id_name (* TODO *)
   | CACons (c, [a]) ->
       fprintf fmt (curly_braces curly "%s %a")
@@ -165,12 +165,21 @@ and pp_callable ?(_fn_name="") fmt c =
     (pp_pattern ~paren:false) p
     (fun fmt e -> pp_expr fmt e) e *)
 
-and pp_ppat_cexpr fmt (p, e) =
-  fprintf fmt "@[<hov 2>(%s@[%a@]%s->@ @[%a@])@] "
-    (if p = [] then "" else "fun ")
-    (pp_print_list ~pp_sep:pp_space pp_cbinder) p
-    (if p = [] then "" else " ")
-    (fun fmt e -> pp_expr fmt e) e (* TODO *)
+and pp_ppat_cexpr fmt (p, e, spec) =
+  match spec with
+  | [] -> 
+      fprintf fmt "@[<hov 2>(%s@[%a@]%s->@ @[%a@])@] "
+        (if p = [] then "" else "fun ")
+        (pp_print_list ~pp_sep:pp_space pp_cbinder) p
+        (if p = [] then "" else " ")
+        (fun fmt e -> pp_expr fmt e) e (* TODO *)
+  | l ->
+      fprintf fmt "@[<hov 2>(%s@[%a@]%s->@ @[%a@ (! %a@]))@]"
+        (if p = [] then "" else "fun ")
+        (pp_print_list ~pp_sep:pp_space pp_cbinder) p
+        (if p = [] then "" else " ")
+        pp_cpre l
+        (fun fmt e -> pp_expr fmt e) e
 
 let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"

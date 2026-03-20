@@ -203,11 +203,18 @@ let rec atom fn_name { atom_loc; atom_desc } types =
   mk_catom catom_desc
 
 and expr fn_name { expr_loc; expr_desc = e_desc } types =
-  let mk_cexpr cexpr_desc cexpr_pre =
-    { cexpr_loc = expr_loc; cexpr_desc; cexpr_pre } in
-  let mk_ppat_expr (p, _, e) = (tpattern_to_args p, expr fn_name e types) in
+  let mk_pre = function
+    | None -> []
+    | Some U.{fun_req; _} -> List.map (Ut.term false) fun_req in
+  let mk_cexpr cexpr_desc =
+    { cexpr_loc = expr_loc; cexpr_desc } in
+  let mk_ppat_expr (p, s, e) =
+    let info = tpattern_to_args p in
+    let cexpr = expr fn_name e types in
+    let pre = mk_pre s in
+    (info, cexpr, pre) in
   let mk_id name loc = { id_name = name; id_loc = loc } in
-  let mk_binder_cexpr (b, e) = (List.map binder b, e) in
+  let mk_binder_cexpr (b, e, s) = (List.map binder b, e, s) in
   let expr_desc = function
     | EAtom a -> CEAtom (atom fn_name a types)
     | EAssert -> CEAssert
@@ -231,7 +238,7 @@ and expr fn_name { expr_loc; expr_desc = e_desc } types =
         let cases = List.map mk_ppat_expr pel in
         let cases = List.map mk_binder_cexpr cases in
         CEDestruct (id, catom, cases) in
-  mk_cexpr (expr_desc e_desc) [] (* TODO: precondition *)
+  mk_cexpr (expr_desc e_desc)
 
 and callable fn_name { callable_loc; callable_desc } types =
   let mk_ccalable ccallable_desc =

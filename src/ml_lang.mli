@@ -45,7 +45,7 @@ and expr_desc =
   | ELetK of id * binder * expr * expr              (* let_cont h x = e in e *)
   | EApp  of callable * atom list * callable list   (* k a…a k…k             *)
   | EIf of atom * expr * expr
-  | EMatch of atom * (pattern * U.val_spec option * expr) list
+  | EMatch of atom * (pattern * U.fun_spec option * expr) list
 
 and atom = {
   atom_loc: location;
@@ -133,7 +133,6 @@ and cpattern_desc =
 type cexpr = {
   cexpr_loc: location;
   cexpr_desc: cexpr_desc;
-  cexpr_pre: cprecondition;
 }
 
 and cexpr_desc =
@@ -143,7 +142,7 @@ and cexpr_desc =
   | CELetK of id * cbinder * cexpr * cexpr                  (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr
-  | CEDestruct of id * catom * (info_p * cexpr) list
+  | CEDestruct of id * catom * (info_p * cexpr * cprecondition) list
 
 and catom = {
   catom_loc: location;

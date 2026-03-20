@@ -606,14 +606,14 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       expr e (KExpr k) hm
 
   | Sexp_match (e, cases) when is_atomic e ->
+      Format.eprintf "In an atomic match@.";
       let a = atom_of_sexpr e in
       let map k = List.map
-        (fun Uast.{spc_lhs; spc_rhs; _} ->
+        (fun Uast.{spc_lhs; spc_rhs; spc_spec; _} ->
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          (* TODO: val_spec *)
-          pat, None, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
+          pat, spc_spec, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
         cases in
       begin match k with
       | KName k -> EMatch (a, map k) (* TODO *)
@@ -627,13 +627,16 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       end
 
   | Sexp_match (e, cases) ->
+      Format.eprintf "In a match@.";
       let map k = List.map
-        (fun Uast.{spc_lhs; spc_rhs; _} ->
+        (fun Uast.{spc_lhs; spc_rhs; spc_spec; _} ->
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          (* TODO: val_spec *)
-          pat, None, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
+          let () = match spc_spec with
+            | None -> Format.eprintf "Spec is none@."
+            | Some _ -> Format.eprintf "Spec is some@." in
+          pat, spc_spec, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
         cases in
       begin match k with
       | KName k ->
