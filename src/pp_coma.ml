@@ -88,9 +88,9 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
   | CEHide e -> fprintf fmt "(! @[%a@])" (fun fmt e -> pp_expr fmt e) e
   | CELet (x, e1, e2) ->
       fprintf fmt "@[%a@]@\n[%a =@ @[<hov 2>%a@]]"
+        (fun fmt e -> pp_expr fmt e) e2
         (pp_cbinder ~paren:false) x
         (fun fmt e -> pp_expr fmt e) e1
-        (fun fmt e -> pp_expr fmt e) e2
   | CEApp (c, al, cl) ->
       fprintf fmt ("@[<hov 2>%a @[%a %a@]@]")
         (pp_callable ~_fn_name) c
@@ -171,7 +171,7 @@ and pp_callable ?(_fn_name="") fmt c =
     (fun fmt e -> pp_expr fmt e) e *)
 
 and pp_ppat_cexpr fmt (p, e) =
-  fprintf fmt "(%s@[%a@]%s->@<1 2>@[%a@])"
+  fprintf fmt "(%s@[%a@]%s->@;<1 2>@[%a@])"
     (if p = [] then "" else "fun ")
     (pp_print_list ~pp_sep:pp_space pp_cbinder) p
     (if p = [] then "" else " ")
