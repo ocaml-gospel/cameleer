@@ -129,8 +129,9 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       (kont_id, [b], pre)
   | PWild ->
       (* FIXME: same remark as in case [PVar id]? *)
-      let kont_id = Ec.mk_id "default_case" in
-      let var = Ec.gen_id ~prefix:"_unused" () in
+      let loc = p.ppat_loc in
+      let kont_id = Ec.mk_id ~loc "default_case" in
+      let var = Ec.gen_id ~loc ~prefix:"_unused" () in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [var, None], pre)
   | PTuple ps -> (* TODO: what is the error here *)
@@ -150,7 +151,8 @@ let register_handler fn_name a cases m =
   let args =
     let rec loop a =
       match a.atom_desc with
-      | AId id -> [(id, Ms.find id.id_name m)]
+      | AId id ->
+          [(id, Ms.find id.id_name m)]
       | ATuple al ->
           List.concat_map loop al
       | ACast (a,_) -> loop a
@@ -207,11 +209,13 @@ and expr fn_name { expr_loc; expr_desc = e_desc } types =
         CEAssert (mk_pre phi, expr fn_name e types)
     | EHide e -> CEHide (expr fn_name e types)
     | ELet (x, e1, e2) ->
-        let (x, t) = binder x in
-        let table = Ms.add x.id_name t types in
-        CELet ((x, t), expr fn_name e1 types, expr fn_name e2 table) (* TODO *)
+        let ({id_name;_}, t) as x = binder x in
+        let table = Ms.add id_name t types in
+        CELet (x, expr fn_name e1 types, expr fn_name e2 table)
     | ELetK (k, x, e1, e2) ->
-        CELetK (k, binder x, expr fn_name e1 types, expr fn_name e2 types) (* TODO *)
+        let ({id_name;_}, t) as x = binder x in
+        let types = Ms.add id_name t types in
+        CELetK (k, x, expr fn_name e1 types, expr fn_name e2 types)
     | EApp (c, al, cl) ->
         let c = callable fn_name c types in
         let cal = List.map (atom fn_name ^~ types) al in

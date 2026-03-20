@@ -4,7 +4,17 @@ open Ml_lang
 
 let (^~) a b = fun c -> a c b
 
-let dummy_loc = Lexing.dummy_pos, Lexing.dummy_pos
+let dummy_loc =
+  (* TODO the less we use this the better it is *)
+  let p = Lexing.{
+    pos_fname = "";
+    pos_lnum = 0;
+    pos_bol = 0;
+    pos_cnum = 0;
+  } in
+  p,p
+
+  (* Lexing.dummy_pos, Lexing.dummy_pos *)
 
 let location {loc_start; loc_end; _} =
   (loc_start, loc_end)
