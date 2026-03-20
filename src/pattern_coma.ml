@@ -79,6 +79,12 @@ let compile
         raise NonExhaustive
     | [], (_,a) :: _ -> (* no terms, at least one action *)
         a
+    | {atom_desc=ATuple t; _} :: tl, _ ->
+        let tl = t @ tl in
+        let rl = List.map (function[@warning "-8"] ({ppat_desc=PTuple pl;_}::tl,a) ->
+          (pl @ tl), a
+        ) rl in
+        compile tl rl
     | t :: tl, _ -> (* process the leftmost column *)
 
         let expr_t = E.mk_expr_atom t.atom_desc in
@@ -105,7 +111,7 @@ let compile
           | PWild | PVar _ -> true
           | PCons (c2, _) -> String.equal c.id_name c2.id_name
           | PCast (p, _) -> is_compat c p
-          | PTuple _ -> failwith "not implemented" in
+          | PTuple _ -> failwith "unreachable" in
 
         let simple = List.for_all simple fc in
 
@@ -167,7 +173,10 @@ let compile
                   | PCons (_, l2) ->
                       let l = l2 @ pl, a in
                       l :: acc
-                  | PTuple _ -> failwith "not implemented"
+                  | PTuple t ->
+                      (* is this good? *)
+                      let l = t @ pl, a in
+                      l :: acc
                   | PCast (p, _) -> loop p
                 in loop p
             ) [] ffc rl_tail in
@@ -288,14 +297,14 @@ and callable c = match c.callable_desc with
 
 let add_type tname (c: Parsetree.type_kind) =
   match c with
-  | Ptype_open
-  | Ptype_record _
-  | Ptype_abstract -> failwith "not implemented"
+  | Ptype_open -> failwith "not implemented 0"
+  | Ptype_record _ -> failwith "not implemented 1"
+  | Ptype_abstract -> ()
   | Ptype_variant cl ->
       let cs = List.map (fun Parsetree.{pcd_name={txt;_}; pcd_args; _} ->
         let n = match pcd_args with
                 | Pcstr_tuple l -> l, List.length l
-                | _ -> failwith "not implemented" in
+                | _ -> failwith "not implemented 3" in
         txt, n) cl in
       Hashtbl.add htypes tname cs
 

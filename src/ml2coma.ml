@@ -152,7 +152,9 @@ let register_handler fn_name a cases m =
     let rec loop a =
       match a.atom_desc with
       | AId id ->
-          [(id, Ms.find id.id_name m)]
+          (* (try *)
+          [(id, try Ms.find id.id_name m with Not_found -> None)]
+          (* with Not_found -> failwith (Format.sprintf "looking for %s" id.id_name)) *)
       | ATuple al ->
           List.concat_map loop al
       | ACast (a,_) -> loop a
