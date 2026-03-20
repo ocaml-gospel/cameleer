@@ -41,11 +41,14 @@ let (is_ident, get_ident) =
 
 let mk_raise_name eid = "raise_" ^ eid
 
+let mk_id ?(loc=dummy_loc) id =
+  { id_name = id; id_loc = loc}
+
 let gen_id ?(prefix = "_x") ?(loc=dummy_loc) () =
-  { id_name = gen_symbol ~prefix (); id_loc = loc}
+  mk_id ~loc (gen_symbol ~prefix ())
 
 let gen_kid ?(prefix = "_k") ?(loc=dummy_loc) () =
-  { id_name = gen_symbol ~prefix (); id_loc = loc}
+  mk_id ~loc (gen_symbol ~prefix ())
 
 let mk_callable ?(loc=dummy_loc) callable_desc =
   { callable_loc=loc ; callable_desc }
@@ -65,15 +68,13 @@ let mk_decl (rec_flag, id, params, konts, e, spec) =
   { decl_loc  = id.id_loc;
     decl_desc = DFun (rec_flag, id, params, konts, e, spec); }
 
-let mk_id ?(loc=dummy_loc) id_name =
-  { id_name; id_loc=loc }
-
 let eatom ?(loc=dummy_loc) a = EAtom (mk_atom ~loc a)
 
 let rec get_pattern_id (pat: Parsetree.pattern) =
   match pat.ppat_desc with
   | Ppat_var {txt; loc} ->
-      { id_name = txt; id_loc = location loc }, None
+      let loc = location loc in
+      mk_id ~loc txt, None
   | Ppat_constraint (p, pty) ->
       let id, _ = get_pattern_id p in
       id, Some pty
@@ -189,7 +190,7 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
   | Ppat_any ->
       PWild
   | Ppat_var {txt; loc} ->
-      PVar { id_name = txt; id_loc= location loc}
+      PVar (mk_id ~loc:(location loc) txt)
   | Ppat_construct ({txt; loc}, args) ->
       let args = match args with
         | Some ([], { ppat_desc = Ppat_tuple pl; _} ) ->
@@ -197,7 +198,7 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
         | Some ([], p) -> [mk_pattern (pattern p)]
         | None -> []
         | _ -> assert false in
-      let id = { id_name = string_of_longident txt; id_loc = location loc } in
+      let id = mk_id ~loc:(location loc) (string_of_longident txt) in
       PCons (id, args)
   | Ppat_tuple pl ->
       let pl = List.map (fun p -> mk_pattern (pattern p)) pl in
@@ -254,7 +255,7 @@ let is_binop, get_binop =
 let rec is_atomic e =
   match e.Uast.spexp_desc with
   | Sexp_constant _ | Sexp_ident _ | Sexp_construct (_, None) -> true
-  | Sexp_construct (_, Some e) -> is_atomic e
+  | Sexp_constraint (e, _) | Sexp_construct (_, Some e) -> is_atomic e
   | Sexp_tuple el -> List.for_all is_atomic el
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([(_, e1);(_, e2)]))
     when is_binop (string_of_longident txt) ->
@@ -269,15 +270,18 @@ let rec atom_of_construct ?(loc=dummy_loc) c = match c with
   | ({ txt = Lident "false"; _ }, None) -> mk_atom ~loc atom_false
   | ({ txt = Lident "()"; _ }, None)    -> atom_unit
   | ({ txt; loc }, None) ->
-      let id = {id_name = string_of_longident txt; id_loc = location loc} in
-      mk_atom ~loc:id.id_loc (ACons (id, []))
+      let loc = location loc in
+      let id = mk_id ~loc (string_of_longident txt) in
+      mk_atom ~loc (ACons (id, []))
   | ({ txt; loc }, Some Uast.{ spexp_desc = Sexp_tuple expr_list; _ }) ->
-      let id = {id_name = string_of_longident txt; id_loc = location loc} in
+      let loc = location loc in
+      let id = mk_id ~loc (string_of_longident txt) in
       let l = List.map atom_of_sexpr expr_list in
-      mk_atom ~loc:id.id_loc (ACons (id, l))
+      mk_atom ~loc (ACons (id, l))
   | ({ txt; loc }, Some e) ->
-      let id = {id_name = string_of_longident txt; id_loc = location loc} in
-      mk_atom ~loc:id.id_loc (ACons (id, [atom_of_sexpr e]))
+      let loc = location loc in
+      let id = mk_id ~loc (string_of_longident txt) in
+      mk_atom ~loc (ACons (id, [atom_of_sexpr e]))
 
 and atom_of_sexpr e =
   let loc = location e.spexp_loc in
@@ -288,7 +292,7 @@ and atom_of_sexpr e =
   | Sexp_construct (l, e) -> atom_of_construct (l,e)
   | Sexp_ident {txt; loc} ->
       let loc = location loc in
-      let id = { id_name = string_of_longident txt ; id_loc = loc} in
+      let id = mk_id ~loc (string_of_longident txt) in
       (mk_atom ~loc @@ AId id)
   | Sexp_tuple el ->
       let loc = location e.spexp_loc in
@@ -307,6 +311,10 @@ and atom_of_sexpr e =
       let op = get_binop (string_of_longident txt) in
       let e1 = mk_expr_atom ~loc @@ (atom_of_sexpr e1).atom_desc in
       mk_atom ~loc (AUnop (op, e1))
+  | Sexp_constraint (e, t) ->
+      let loc = location e.spexp_loc in
+      let a = atom_of_sexpr e in
+      mk_atom ~loc (ACast (a, t))
   | _ -> assert false (* unreachable *)
 
 
@@ -430,7 +438,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       callk [bind_cast etype a]
 
   | Sexp_ident {txt; _} ->
-      let id = { id_name = string_of_longident txt ; id_loc = loc} in
+      let id = mk_id ~loc (string_of_longident txt) in
       callk [mk_atom ~loc (AId id)]
 
   | Sexp_tuple el ->
@@ -578,7 +586,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let loc = location e.spexp_loc in
       let (c, id) = match e.spexp_desc with
         | Sexp_ident {txt; _} ->
-            let id = { id_name = string_of_longident txt ; id_loc = loc} in
+            let id = mk_id ~loc (string_of_longident txt) in
             CId id, id
         | _ -> assert false (* impossible (type error) *) in
       let args = List.map (fun (_, e) -> atom_of_sexpr e) args in
@@ -588,9 +596,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let gs = try Hashtbl.find raisable_hmap id.id_name
                with Not_found -> S.empty in
       let sl = S.fold
-        (fun s acc ->
-          let s = { id_name = s; id_loc = dummy_loc } in
-          mk_callable (CId s) :: acc)
+        (fun s acc -> mk_callable (CId (mk_id s)) :: acc)
         gs [] in
       EApp (mk_callable ~loc c, args, k::sl)
   | Sexp_apply (e, args) ->
@@ -755,8 +761,7 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let return_pty = get_type_expr pexp in
   let sl = S.fold
     (fun s acc ->
-      let s = { id_name = s; id_loc = dummy_loc } in
-      mk_kont s (arg_id, None) None :: acc)
+      mk_kont (mk_id s) (arg_id, None) None :: acc)
     s [] in
   let () = Hashtbl.add raisable_hmap id.id_name s in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
