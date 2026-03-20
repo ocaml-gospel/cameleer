@@ -39,7 +39,8 @@ exception NonExhaustive
 (** get the type of an atom *)
 let t_type a = match a.atom_desc with
   | ACast (_,t) -> t
-  | AId _ -> assert false
+  | AId id ->
+      failwith (Format.sprintf "missing type for `%s'" id.id_name)
   | ABinop (_, _, _) -> assert false
   | AUnop (_, _) -> assert false
   | ACst _ -> assert false
@@ -284,7 +285,6 @@ and callable c = match c.callable_desc with
       let e = expr e in
       let callable_desc = CFun (x, k, e) in
       { c with callable_desc }
-
 
 let add_type tname (c: Parsetree.type_kind) =
   match c with

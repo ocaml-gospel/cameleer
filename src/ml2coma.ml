@@ -3,16 +3,16 @@ open Ppxlib
 open Why3
 open Ptree
 open Gospel
+
 module Ut = Uterm
 module E = Expression
-
 module Ec = Expression_coma
+module Ms = Map.Make(String)
 
 open Location
 
-module Ms = Map.Make(String)
-
 let dummy_loc = Ec.dummy_loc
+let (^~) f y = fun x -> f x y
 
 let map_pty pty = Option.map E.core_type pty
 
@@ -23,7 +23,7 @@ let rec pattern_to_args (p: Ml_lang.pattern) =
   | PVar id -> [id]
   | PCons (_, args) -> List.concat(List.map pattern_to_args args)
   | PWild -> [Ec.gen_id ~prefix:"_unused" ()]
-  | PTuple ps -> List.concat(List.map pattern_to_args ps)
+  | PTuple ps -> List.concat (List.map pattern_to_args ps)
   | PCast (p, _) -> pattern_to_args p
 
 let rec tpattern_to_args ?(t=None) (p: Ml_lang.pattern) =
@@ -31,9 +31,9 @@ let rec tpattern_to_args ?(t=None) (p: Ml_lang.pattern) =
   let rec loop (acc: core_type option) (p: Ml_lang.pattern) =
     match p.ppat_desc with
     | PVar id -> [id, acc]
-    | PCons (_, args) -> List.concat(List.map (tpattern_to_args ~t:acc) args) (* FIXME not sure about this «acc» *)
+    | PCons (_, args) -> List.concat_map (tpattern_to_args ~t:acc) args (* FIXME not sure about this «acc» *)
     | PWild -> [Ec.gen_id ~prefix:"_unused" (), acc]
-    | PTuple ps -> List.concat (List.map (tpattern_to_args ~t:acc) ps) (* FIXME not sure about this «acc» *)
+    | PTuple ps -> List.concat_map (tpattern_to_args ~t:acc) ps (* FIXME not sure about this «acc» *)
     | PCast (p, t) -> loop (Some t) p in
   loop t p
 
@@ -98,7 +98,7 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       (kont_id, [b], pre)
   | PVar id ->
       (* FIXME:
-         this case should be an error
+         this case should be an error?
          since we can reconstruct the type of the variable,
          which is required for Coma. *)
       (* let () = assert false in *)
@@ -180,9 +180,9 @@ let rec atom fn_name { atom_loc; atom_desc } types =
     | AUnop (op, e1) ->
         CAUnop (op, expr fn_name e1 types)
     | ATuple al ->
-        CATuple (List.map (fun a -> atom fn_name a types) al)
+        CATuple (List.map (atom fn_name ^~ types) al)
     | ACons (id, c) ->
-        CACons (id, List.map (fun a -> atom fn_name a types) c)
+        CACons (id, List.map (atom fn_name ^~ types) c)
     | AFun (_, id, e) ->
         CAFun (binder id, expr fn_name e types)
     | ACast (a, t) ->
@@ -212,10 +212,10 @@ and expr fn_name { expr_loc; expr_desc = e_desc } types =
         CELet ((x, t), expr fn_name e1 types, expr fn_name e2 table) (* TODO *)
     | ELetK (k, x, e1, e2) ->
         CELetK (k, binder x, expr fn_name e1 types, expr fn_name e2 types) (* TODO *)
-    | EApp (c, al, _cl) -> (* TODO *)
+    | EApp (c, al, cl) ->
         let c = callable fn_name c types in
-        let cal = List.map (fun a -> atom fn_name a types) al in
-        let ccl = List.map (fun cl -> callable fn_name cl types) _cl in
+        let cal = List.map (atom fn_name ^~ types) al in
+        let ccl = List.map (callable fn_name ^~ types) cl in
         CEApp (c, cal, ccl)
     | EIf (a, e1, e2) ->
         CEIf (atom fn_name a types, expr fn_name e1 types, expr fn_name e2 types) (* TODO *)
