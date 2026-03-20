@@ -13,14 +13,16 @@ type enum = (elt * elt tree) list
       | (x, r) :: e -> x :: (elements r @ enum_elements e) *)
 
 let rec mk_zipper (t : elt tree) (e : enum) =
-  match t with Empty -> e | Node ((l: elt tree), (x: elt), (r: elt tree)) -> mk_zipper l ((x, r) :: e)
+  match (t : elt tree) with
+  | Empty -> e
+  | Node ((l: elt tree), (x: elt), (r: elt tree)) -> mk_zipper l ((x, r) :: e)
 (*@ r = mk_zipper t e
       variant t
       requires true
       ensures enum_elements r = elements t @ enum_elements e *)
 
 let rec eq_enum (e1 : enum) (e2 : enum) =
-  match (e1, e2) with
+  match ((e1 : enum), (e2 : enum)) with
   | [], [] -> true
   | ((x1: elt), (r1:elt tree)) :: (e1: enum), ((x2:elt), (r2: elt tree)) :: (e2: enum) ->
       if x1 = x2 then
