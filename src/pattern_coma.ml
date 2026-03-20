@@ -222,7 +222,13 @@ let rec expr e = match e.expr_desc with
   | EAtom a ->
       let expr_desc = EAtom (atom a) in
       { e with expr_desc }
-  | EAssert -> e
+  | EFail -> e
+  | EAssert (phi,e) ->
+      let expr_desc = EAssert (phi, expr e) in
+      { e with expr_desc }
+  | EHide e ->
+      let expr_desc = EHide (expr e) in
+      { e with expr_desc }
   | ELet (k, e1, e2) ->
       let expr_desc = ELet (k, expr e1, expr e2) in
       { e with expr_desc }
@@ -242,7 +248,7 @@ let rec expr e = match e.expr_desc with
       let expr_desc = EIf (a, e1, e2) in
       { e with expr_desc }
   | EMatch (a, pl) ->
-      let mk_case (a: atom) (pl: (pattern * expr) list) =
+      let mk_case a pl =
           E.mk_expr @@ EMatch (a, pl)
         in
       let mk_let b e1 e2 = E.mk_expr (ELet (b, e1, e2)) in

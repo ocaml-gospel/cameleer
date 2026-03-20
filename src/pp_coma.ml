@@ -80,7 +80,12 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
   match e.cexpr_desc with
   | CEAtom a ->
       fprintf fmt "%a" (pp_atom ~paren:true ~curly:false) a
-  | CEAssert -> fprintf fmt "fail"
+  | CEFail -> fprintf fmt "fail"
+  | CEAssert (phi, e) ->
+      fprintf fmt "@[{@ @[%a@]@ }@]@ @[%a@]"
+        UPrint.term phi
+        (fun fmt e -> pp_expr fmt e) e
+  | CEHide e -> fprintf fmt "(! @[%a@])" (fun fmt e -> pp_expr fmt e) e
   | CELet (x, e1, e2) ->
       fprintf fmt "@[%a@]@\n[%a =@ @[<hov 2>%a@]]"
         (pp_cbinder ~paren:false) x
@@ -165,21 +170,12 @@ and pp_callable ?(_fn_name="") fmt c =
     (pp_pattern ~paren:false) p
     (fun fmt e -> pp_expr fmt e) e *)
 
-and pp_ppat_cexpr fmt (p, e, spec) =
-  match spec with
-  | [] -> 
-      fprintf fmt "@[<hov 2>(%s@[%a@]%s->@ @[%a@])@] "
-        (if p = [] then "" else "fun ")
-        (pp_print_list ~pp_sep:pp_space pp_cbinder) p
-        (if p = [] then "" else " ")
-        (fun fmt e -> pp_expr fmt e) e (* TODO *)
-  | l ->
-      fprintf fmt "@[<hov 2>(%s@[%a@]%s->@ @[%a@ (! %a@]))@]"
-        (if p = [] then "" else "fun ")
-        (pp_print_list ~pp_sep:pp_space pp_cbinder) p
-        (if p = [] then "" else " ")
-        pp_cpre l
-        (fun fmt e -> pp_expr fmt e) e
+and pp_ppat_cexpr fmt (p, e) =
+  fprintf fmt "(%s@[%a@]%s->@<1 2>@[%a@])"
+    (if p = [] then "" else "fun ")
+    (pp_print_list ~pp_sep:pp_space pp_cbinder) p
+    (if p = [] then "" else " ")
+    (fun fmt e -> pp_expr fmt e) e
 
 let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"

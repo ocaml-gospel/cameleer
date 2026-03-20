@@ -158,7 +158,7 @@ let register_handler fn_name a cases m =
     loop a in
   let new_handler = {
     args;
-    cases = List.map (fun (p, _, _) -> case_of_branch (List.map fst args) p) cases
+    cases = List.map (fun (p, _) -> case_of_branch (List.map fst args) p) cases
   } in
   let (len, current) = match Hashtbl.find_opt destructs key with
     | None   -> 0, []
@@ -191,20 +191,21 @@ let rec atom fn_name { atom_loc; atom_desc } types =
 
 and expr fn_name { expr_loc; expr_desc = e_desc } types =
   let mk_pre = function
-    | None -> []
-    | Some U.{fun_req; _} -> List.map (Ut.term false) fun_req in
+    U.{fun_req; _} -> List.map (Ut.term false) fun_req in
   let mk_cexpr cexpr_desc =
     { cexpr_loc = expr_loc; cexpr_desc } in
-  let mk_ppat_expr (p, s, e) =
+  let mk_ppat_expr (p, e) =
     let info = tpattern_to_args p in
     let cexpr = expr fn_name e types in
-    let pre = mk_pre s in
-    (info, cexpr, pre) in
+    (info, cexpr) in
   let mk_id name loc = { id_name = name; id_loc = loc } in
-  let mk_binder_cexpr (b, e, s) = (List.map binder b, e, s) in
+  let mk_binder_cexpr (b, e) = (List.map binder b, e) in
   let expr_desc = function
     | EAtom a -> CEAtom (atom fn_name a types)
-    | EAssert -> CEAssert
+    | EFail -> CEFail
+    | EAssert (phi,e) ->
+        CEAssert (mk_pre phi, expr fn_name e types)
+    | EHide e -> CEHide (expr fn_name e types)
     | ELet (x, e1, e2) ->
         let (x, t) = binder x in
         let table = Ms.add x.id_name t types in

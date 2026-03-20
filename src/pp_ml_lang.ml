@@ -70,8 +70,12 @@ let rec pp_expr fmt (e: expr) =
   match e.expr_desc with
   | EAtom a ->
       fprintf fmt "%a" (pp_atom ~paren:true) a
-  | EAssert ->
+  | EFail ->
       fprintf fmt "fail"
+  | EAssert (_phi, e) ->
+      fprintf fmt "assert { ... };@\n%a" pp_expr e
+  | EHide e ->
+      fprintf fmt "hide @[%a@]" pp_expr e
   | ELet (x, e1, e2) ->
       fprintf fmt "let %a =@;<1 2>@[%a@]@ in@ @[%a@]"
         pp_binder x pp_expr e1 pp_expr e2
@@ -123,7 +127,7 @@ and pp_atom ?(paren=false) fmt (a: atom) =
       fprintf fmt (protect_on paren "%a : ...")
         (pp_atom ~paren) a
 
-and pp_ppat_expr fmt (p, _, e) =
+and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 4>| %a ->@ @[%a@]@]"
     (pp_pattern ~paren:false) p pp_expr e
 

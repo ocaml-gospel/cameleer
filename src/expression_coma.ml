@@ -162,7 +162,7 @@ let identify_fail e =
   Why3.Loc.errorm
     ~loc:(Uterm.location e.Uast.spexp_loc)
     "ANF assumption broken"
-  
+
 let collect_params e =
   let rec loop acc e =
     match e.Uast.spexp_desc with
@@ -619,7 +619,13 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          pat, spc_spec, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
+          let e = mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm in
+          let e = match spc_spec with
+            | None -> e
+            | Some spec ->
+                mk_expr ~loc @@ EAssert (spec,
+                mk_expr ~loc @@ EHide e) in
+          pat, e)
         cases in
       begin match k with
       | KName k -> EMatch (a, map k) (* TODO *)
@@ -642,7 +648,13 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let () = match spc_spec with
             | None -> Format.eprintf "Spec is none@."
             | Some _ -> Format.eprintf "Spec is some@." in
-          pat, spc_spec, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
+          let e = mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm in
+          let e = match spc_spec with
+            | None -> e
+            | Some spec ->
+                mk_expr ~loc @@ EAssert (spec,
+                mk_expr ~loc @@ EHide e) in
+          pat, e)
         cases in
       begin match k with
       | KName k ->
@@ -666,7 +678,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           expr e (KExpr kk) hm
       end
 
-  | Sexp_assert e when is_false e.spexp_desc -> EAssert
+  | Sexp_assert e when is_false e.spexp_desc -> EFail
 
   | Sexp_constraint (e, ty) ->
       expr ~etype:(Some ty) e k hm
@@ -704,7 +716,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
                   mk_expr (callk [atom_unit])),
              cloop)
 
-  | Sexp_unreachable            -> EAssert
+  | Sexp_unreachable            -> EFail
   | Sexp_function _             -> assert false (* TODO *)
   | Sexp_fun (_, _, _, _, _)    -> failwith "unreachable" (* it is not true *)
   (* TBC *)
