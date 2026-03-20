@@ -171,7 +171,7 @@ let register_handler fn_name a cases m =
     | _ -> failwith "A match expression must match on an identifier" in
   let new_handler = {
     args;
-    cases = List.map (fun (p, _) -> case_of_branch (List.map fst args) p) cases
+    cases = List.map (fun (p, _, _) -> case_of_branch (List.map fst args) p) cases
   } in
   let (len, current) = match Hashtbl.find_opt destructs key with
     | None   -> 0, []
@@ -203,8 +203,9 @@ let rec atom fn_name { atom_loc; atom_desc } types =
   mk_catom catom_desc
 
 and expr fn_name { expr_loc; expr_desc = e_desc } types =
-  let mk_cexpr cexpr_desc = { cexpr_loc = expr_loc; cexpr_desc } in
-  let mk_ppat_expr (p, e) = (tpattern_to_args p, expr fn_name e types) in
+  let mk_cexpr cexpr_desc cexpr_pre =
+    { cexpr_loc = expr_loc; cexpr_desc; cexpr_pre } in
+  let mk_ppat_expr (p, _, e) = (tpattern_to_args p, expr fn_name e types) in
   let mk_id name loc = { id_name = name; id_loc = loc } in
   let mk_binder_cexpr (b, e) = (List.map binder b, e) in
   let expr_desc = function
@@ -230,7 +231,7 @@ and expr fn_name { expr_loc; expr_desc = e_desc } types =
         let cases = List.map mk_ppat_expr pel in
         let cases = List.map mk_binder_cexpr cases in
         CEDestruct (id, catom, cases) in
-  mk_cexpr (expr_desc e_desc)
+  mk_cexpr (expr_desc e_desc) [] (* TODO: precondition *)
 
 and callable fn_name { callable_loc; callable_desc } types =
   let mk_ccalable ccallable_desc =

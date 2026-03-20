@@ -123,7 +123,7 @@ and pp_atom ?(paren=false) fmt (a: atom) =
       fprintf fmt (protect_on paren "%a : ...")
         (pp_atom ~paren) a
 
-and pp_ppat_expr fmt (p, e) =
+and pp_ppat_expr fmt (p, _, e) =
   fprintf fmt "@[<hov 4>| %a ->@ @[%a@]@]"
     (pp_pattern ~paren:false) p pp_expr e
 

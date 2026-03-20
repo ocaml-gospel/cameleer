@@ -82,7 +82,9 @@ let rec merge (t1: int tree) (t2: int tree) : int tree =
     | Empty, (_: int tree) -> t2
     | (_: int tree), Empty -> t1
     | Node ((l1: int tree), (x1: int), (r1: int tree)),
-      Node ((l2: int tree), (x2: int), (r2: int tree)) ->
+      Node ((l2: int tree), (x2: int), (r2: int tree))
+        [@gospel {| requires heap t1 && heap t2 |}]
+      ->
        if x1 < x2 then
          let (l: int tree) = merge r1 t2 in
          Node (l, x1, l1)
@@ -91,8 +93,6 @@ let rec merge (t1: int tree) (t2: int tree) : int tree =
          Node (l, x2, l2)
 (*@ r = merge t1 t2
       variant  size t1 + size t2
-      requires heap t1
-      requires heap t2
       ensures  heap r
       ensures  forall x. occ x r = occ x t1 + occ x t2
       ensures  size r = size t1 + size t2 *)

@@ -612,10 +612,11 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          pat, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
+          (* TODO: val_spec *)
+          pat, None, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
         cases in
       begin match k with
-      | KName k -> EMatch (a, map k)
+      | KName k -> EMatch (a, map k) (* TODO *)
       | KExpr k ->
           let aid = gen_id  () in
           let kid = gen_kid () in
@@ -631,7 +632,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          pat, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
+          (* TODO: val_spec *)
+          pat, None, mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm)
         cases in
       begin match k with
       | KName k ->
@@ -639,7 +641,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let cases = map k in
           let kk = mk_callable @@
               CFun ([z, etype],[],
-                    mk_expr @@ EMatch (mk_atom (AId z),cases)) in
+                    mk_expr @@ EMatch (mk_atom (AId z), cases)) in
           expr e (KExpr kk) hm
       | KExpr k ->
           let kid = gen_kid () in
