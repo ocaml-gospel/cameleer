@@ -20,7 +20,7 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
       0 < occ v t *)
 
 let[@logic] is_empty (t: int tree) : bool =
-  match t with
+  match (t: int tree) with
   | Empty -> true
   | Node ((l: int tree), (x: int), (r: int tree)) -> false
 (*@ r = is_empty t
@@ -78,7 +78,7 @@ let empty: int tree = (Empty: int tree)
 (* let le a b = true (* TODO *) *)
 
 let rec merge (t1: int tree) (t2: int tree) : int tree =
-    match t1, t2 with
+    match (t1 : elt tree), (t2 : elt tree) with
     | Empty, (_: int tree) -> t2
     | (_: int tree), Empty -> t1
     | (Node ((l1: int tree), (x1: int), (r1: int tree)),
@@ -107,7 +107,7 @@ let add (x: int) (t: int tree) : int tree =
       ensures  forall y. y <> x -> occ y r = occ y t *)
 
 let remove_min (t: int tree) : int tree =
-  match t with
+  match (t : elt tree) with
   | Empty      -> assert false
   | Node ((l: int tree), (_: int), (r: int tree)) -> merge l r
 (*@ r = remove_min t
@@ -119,7 +119,7 @@ let remove_min (t: int tree) : int tree =
       ensures  size r = size t - 1 *)
 
 let get_min (t: int tree) : int =
-  match t with
+  match (t : elt tree) with
   | Empty      -> assert false
   | Node ((_: int tree), (x: int), (_: int tree)) -> x
 (*@ r = get_min t

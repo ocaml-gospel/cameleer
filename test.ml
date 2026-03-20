@@ -1,5 +1,8 @@
 (* How to run this file:
-   `dune exec bin/cli_coma.exe -- --coma ./test.ml` *)
+   `dune exec bin/cli_coma.exe -- --coma ./test.ml`
+
+   + to compile pattern-matchings simply add `--pat`
+ *)
 
 (* ------------------------------------------------------------------------- *)
 (*- Types -*)
@@ -11,7 +14,7 @@ type t = A of t | B | C | D of t
 (* ------------------------------------------------------------------------- *)
 (* Simple functions (+optional toplevel specification) *)
 let is_empty (t: 'a tree) : bool =
-  match t with
+  match (t: 'a tree) with
   | Empty -> true
   | Node ((l: 'a tree), (x: 'a), (r: 'a tree)) -> false
 (*@ r = is_empty t
@@ -48,7 +51,7 @@ let sum_t (x: bool) (y: bool) =
   else D c
 
 let match_t (x: t) (y: bool) =
-  match x with
+  match (x: t) with
   | A _ -> sum true false
   | B   -> sum false false
   | x   ->
