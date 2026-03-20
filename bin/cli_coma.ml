@@ -8,11 +8,13 @@ module T = Cameleer.Uterm
 let fname = ref None
 let debug = ref false
 let coma = ref false
+let compile_patterns = ref false
 
 let spec =
   [
     ("--debug", Arg.Unit (fun () -> debug := true), "print debug information");
     ("--coma", Arg.Unit (fun () -> coma := true), "compile to Coma");
+    ("--pat", Arg.Unit (fun () -> compile_patterns := true), "compile pattern matchings");
   ]
 
 let usage_msg = sprintf "%s <file>.ml\nCompile <file> to Coma\n" Sys.argv.(0)
@@ -43,10 +45,14 @@ let main file c =
   let f = read_file file mod_name c in
   let f = Declaration_coma.s_structure f in
   printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
-  printf "--BEGIN PAT COMPILATION--@\n";
-  let f = List.map Pattern_coma.compile_pattern f in
-  printf "--END PAT COMPILATION--@\n";
-  printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
+  let f = if not !compile_patterns then f else
+    begin
+      printf "--BEGIN PAT COMPILATION--@\n";
+      let f = List.map Pattern_coma.compile_pattern f in
+      printf "--END PAT COMPILATION--@\n";
+      printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
+      f
+    end in
 
   if !coma then begin
     let file = Filename.basename file in
