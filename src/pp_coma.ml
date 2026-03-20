@@ -30,7 +30,7 @@ let curly_braces b f =
 
 let pp_op, pp_constant = Pp_ml_lang.(pp_op, pp_constant)
 
-let pp_cpre = (WPrint.pp_term ~attr:false).closed (* Bug ici *)
+let pp_cpre = (WPrint.pp_term ~attr:false).closed
 let pp_pty = (WPrint.pp_pty ~attr:false).closed
 let pp_type_decl = WPrint.pp_decl
 (* FIXME? Why marked? *)
@@ -38,27 +38,8 @@ let pp_type_decl = WPrint.pp_decl
 let pp_cpre fmt = function
   | [] -> ()
   | pre ->
-      fprintf fmt "{@[%a@]}"
+      fprintf fmt "{@ @[%a@]@ }"
         (pp_print_list ~pp_sep:pp_and pp_cpre) pre
-
-(* let rec pp_pattern ?(paren=false) fmt {cppat_desc; _} =
-  let non_wild_args args = List.filter (fun p -> match p.cppat_desc with
-    | CPWild -> false
-    | _ -> true) args in
-  match cppat_desc with
-  | CPWild -> () (* FIXME? *)
-  | CPVar x -> fprintf fmt "%s" x.id_name (* FIXME *)
-  | CPCons (_, []) -> () (* TODO *)
-  | CPCons (_, args) ->
-      let al = non_wild_args args in
-      fprintf fmt (protect_on paren "@[fun @[%a@]@]@ ")
-        (pp_print_list ~pp_sep:pp_space pp_pattern) al
-  | CPTuple args ->
-      let al = non_wild_args args in
-      fprintf fmt (protect_on paren "@[fun @[%a@]@]@ ")
-        (pp_print_list ~pp_sep:pp_space pp_pattern) al
-  | CPCast (p, pty) ->
-      fprintf fmt "@[(%a: %a)@]" (pp_pattern ~paren) p pp_pty pty *)
 
 let pp_id ?(paren=false) fmt {id_name; _} =
   fprintf fmt (protect_on paren "%s") id_name
@@ -70,7 +51,7 @@ let pp_cbinder ?(paren=true) fmt (id, pty) =
       fprintf fmt (protect_on paren "@[%a: %a@]") (pp_id ~paren:false) id
         pp_pty pty
 
-let pp_pre fmt = function
+let _pp_pre fmt = function
   | [] -> ()
   | l ->
       fprintf fmt "{@[%a@]}"
@@ -82,8 +63,8 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
       fprintf fmt "%a" (pp_atom ~paren:true ~curly:false) a
   | CEFail -> fprintf fmt "fail"
   | CEAssert (phi, e) ->
-      fprintf fmt "@[{@ @[%a@]@ }@]@ @[%a@]"
-        UPrint.term phi
+      fprintf fmt "@[%a@]@ @[%a@]"
+        pp_cpre phi
         (fun fmt e -> pp_expr fmt e) e
   | CEHide e -> fprintf fmt "(! @[%a@])" (fun fmt e -> pp_expr fmt e) e
   | CELet (x, e1, e2) ->
@@ -159,7 +140,7 @@ and pp_callable ?(_fn_name="") fmt c =
       fprintf fmt (protect_on true "@[fun @[%a@]%s@[%a@]%s@[%a@]%s-> @[<hov 2>%a@]@]")
         (pp_print_list ~pp_sep:pp_space pp_cbinder) data
         (if data = [] && pre = [] then "" else " ")
-        pp_pre pre
+        pp_cpre pre
         (if kon = [] && pre = [] then "" else " ")
         (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) kon
         (if kon = [] then "" else " ")
