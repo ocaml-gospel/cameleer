@@ -108,18 +108,22 @@ let _qualid = function
 let mk_expr_atom ?(loc=dummy_loc) ad =
   mk_expr ~loc (eatom ~loc ad)
 
-let constant = function
+let constant_int = function
   | Pconst_integer (s, _) ->
       if s.[0] = '-' then
         let s = String.sub s 1 (String.length s - 1) in
         let n = Why3.Number.int_literal ILitDec ~neg:false s in
         let n = Why3.Number.neg_int n in
         let n = Why3.Number.to_small_integer n in
-        atom_num n
+        cst_num n
       else
         let n = Why3.Number.int_literal ILitDec ~neg:false s in
         let n = Why3.Number.to_small_integer n in
-        atom_num n
+        cst_num n
+  | _ -> assert false
+
+let constant s = match s with
+  | Pconst_integer _ -> ACst (constant_int s)
   | _ -> assert false
 
 (* TO BE REMOVED? debugging only *)
@@ -215,7 +219,7 @@ let rec pattern (p: Parsetree.pattern) = match p.ppat_desc with
       PTuple pl
   | Ppat_constraint (p, c) ->
       PCast (mk_pattern (pattern p), c)
-  | Ppat_constant _
+  | Ppat_constant c -> PCst (constant_int c)
   | Ppat_or (_, _)
   | Ppat_interval (_, _)
   | Ppat_alias (_, _)
@@ -531,6 +535,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
         | PCast  (p,_) -> get_mlpattern_id p
         | PWild -> gen_id ~prefix:"_unused" ()
         | PCons (_,[p]) -> get_mlpattern_id p
+        | PCst _ -> assert false
         | PCons (_,_) -> assert false
         | PTuple _ -> assert false in
       let ctx, kid = match k with
@@ -629,15 +634,24 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          let e = mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm in
           let e = match spc_spec with
-            | None -> e
+            | None -> mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm
             | Some spec ->
-                mk_expr ~loc @@ EAssert (spec,
-                mk_expr ~loc @@ EHide e) in
+                let kid = gen_kid () in
+                let ckid = mk_callable (CId k) in
+                let e = mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm in
+                let result = mk_id "result" in
+                let aresult = mk_atom (AId result) in
+                mk_expr @@
+                  ELetK (kid, (result, etype),
+                           mk_expr ~loc @@ EAssert (spec.fun_ens,
+                           mk_expr ~loc @@ EHide (
+                           mk_expr ~loc @@ EApp (ckid, [aresult], []))),
+                         mk_expr ~loc @@ EAssert (spec.fun_req,
+                         mk_expr ~loc @@ EHide e)) in
           pat, e)
         cases in
-      begin match k with
+      begin match k with (* TODO inline this somehow *)
       | KName k -> EMatch (a, map k) (* TODO *)
       | KExpr k ->
           let aid = gen_id  () in
@@ -658,15 +672,24 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let () = match spc_spec with
             | None -> Format.eprintf "Spec is none@."
             | Some _ -> Format.eprintf "Spec is some@." in
-          let e = mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm in
           let e = match spc_spec with
-            | None -> e
+            | None -> mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm
             | Some spec ->
-                mk_expr ~loc @@ EAssert (spec,
-                mk_expr ~loc @@ EHide e) in
+                let kid = gen_kid () in
+                let ckid = mk_callable (CId k) in
+                let e = mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm in
+                let result = mk_id "result" in
+                let aresult = mk_atom (AId result) in
+                mk_expr @@
+                  ELetK (kid, (result, etype),
+                           mk_expr ~loc @@ EAssert (spec.fun_ens,
+                           mk_expr ~loc @@ EHide (
+                           mk_expr ~loc @@ EApp (ckid, [aresult], []))),
+                         mk_expr ~loc @@ EAssert (spec.fun_req,
+                         mk_expr ~loc @@ EHide e)) in
           pat, e)
         cases in
-      begin match k with
+      begin match k with (* TODO inline this somehow *)
       | KName k ->
           let z = gen_id ~loc () in
           let cases = map k in

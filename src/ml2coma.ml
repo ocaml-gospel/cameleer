@@ -18,19 +18,12 @@ let map_pty pty = Option.map E.core_type pty
 
 let binder (id, pty) = (id, map_pty pty)
 
-let rec pattern_to_args (p: Ml_lang.pattern) =
-  match p.ppat_desc with
-  | PVar id -> [id]
-  | PCons (_, args) -> List.concat(List.map pattern_to_args args)
-  | PWild -> [Ec.gen_id ~prefix:"_unused" ()]
-  | PTuple ps -> List.concat (List.map pattern_to_args ps)
-  | PCast (p, _) -> pattern_to_args p
-
 let rec tpattern_to_args ?(t=None) (p: Ml_lang.pattern) =
   (* problem here: we need the types! *)
   let rec loop (acc: core_type option) (p: Ml_lang.pattern) =
     match p.ppat_desc with
     | PVar id -> [id, acc]
+    | PCst _n -> assert false
     | PCons (_, args) -> List.concat_map (tpattern_to_args ~t:acc) args (* FIXME not sure about this «acc» *)
     | PWild -> [Ec.gen_id ~prefix:"_unused" (), acc]
     | PTuple ps -> List.concat_map (tpattern_to_args ~t:acc) ps (* FIXME not sure about this «acc» *)
@@ -88,36 +81,22 @@ let destructs = Hashtbl.create 16
 let handler_name_of_id fn_name = "destruct_" ^ fn_name
 
 (* Branch pattern as (case_name, bound_vars, preconditions) *)
-let rec case_of_branch args (p : Ml_lang.pattern) =
+let rec case_of_branch ?(ty=None) args (p : Ml_lang.pattern) =
   match p.ppat_desc with
-  | PCast ({ppat_desc=PVar id; _}, t) ->
+  | PCast (p, ty) -> case_of_branch ~ty:(Some ty) args p
+  | PVar id ->
       let kont_id = Ec.mk_id ~loc:id.id_loc "default_case" in
       let var = Ec.gen_id ~loc:id.id_loc () in
-      let b = binder (var, Some t) in
+      let b = binder (var, ty) in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [b], pre)
-  | PVar id ->
-      (* FIXME:
-         this case should be an error?
-         since we can reconstruct the type of the variable,
-         which is required for Coma. *)
-      (* let () = assert false in *)
-      let kont_id = Ec.mk_id ~loc:id.id_loc "default_case" in
+  | PCst _n -> assert false
+      (* let kont_id = Ec.mk_id ~loc:id.id_loc "default_case" in
       let var = Ec.gen_id ~loc:id.id_loc () in
       let pre = mk_precondition (List.hd args) var [] in
-      (kont_id, [var, None], pre)
-  | PCast ({ppat_desc=PCons (cid, ps); _}, t) ->
-      let vars = List.concat_map (tpattern_to_args ~t:(Some t) ) ps in
-      let binders = List.map binder vars in
-      let pre = mk_precondition (List.hd args) cid vars in
-      let id_name = String.uncapitalize_ascii cid.id_name in
-      let id_name = if String.contains id_name '[' then "nil"  else id_name in
-      let id_name = if String.contains id_name ':' then "cons" else id_name in
-      let id = Ec.mk_id ~loc:cid.id_loc id_name in
-      (id, binders, pre)
+      (kont_id, [var, None], pre) *)
   | PCons (cid, ps) ->
-      (* FIXME: same remark as in case [PVar id]? *)
-      let vars = List.concat_map tpattern_to_args ps in
+      let vars = List.concat_map (tpattern_to_args ~t:ty) ps in
       let binders = List.map binder vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
@@ -125,20 +104,13 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let id_name = if String.contains id_name ':' then "cons" else id_name in
       let id = Ec.mk_id ~loc:cid.id_loc id_name in
       (id, binders, pre)
-  | PCast ({ppat_desc=PWild; _}, t) ->
+  | PWild ->
       let kont_id = Ec.mk_id "default_case" in
       let var = Ec.gen_id ~prefix:"_unused" () in
-      let b = binder (var, Some t) in
+      let b = binder (var, ty) in
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [b], pre)
-  | PWild ->
-      (* FIXME: same remark as in case [PVar id]? *)
-      let loc = p.ppat_loc in
-      let kont_id = Ec.mk_id ~loc "default_case" in
-      let var = Ec.gen_id ~loc ~prefix:"_unused" () in
-      let pre = mk_precondition (List.hd args) var [] in
-      (kont_id, [var, None], pre)
-  | PTuple ps -> (* TODO: what is the error here *)
+  | PTuple ps ->
       let sub_cases = List.map2 (fun a p ->
         let arg_i = [a] in
         case_of_branch arg_i p
@@ -148,7 +120,6 @@ let rec case_of_branch args (p : Ml_lang.pattern) =
       let vars = List.concat_map (fun (_,vars,_) -> vars) sub_cases in
       let pres = List.concat_map (fun (_,_,pre)  -> pre)  sub_cases in
       (Ec.mk_id ~loc:p.ppat_loc name, vars, pres)
-  | PCast (p, _) -> case_of_branch args p
 
 let register_handler fn_name a cases m =
   let key = handler_name_of_id fn_name in
@@ -198,8 +169,7 @@ let rec atom fn_name { atom_loc; atom_desc } types =
   mk_catom catom_desc
 
 and expr fn_name { expr_loc; expr_desc = e_desc } types =
-  let mk_pre = function
-    U.{fun_req; _} -> List.map (Ut.term false) fun_req in
+  let mk_pre tl = List.map (Ut.term false) tl in
   let mk_cexpr cexpr_desc =
     { cexpr_loc = expr_loc; cexpr_desc } in
   let mk_ppat_expr (p, e) =

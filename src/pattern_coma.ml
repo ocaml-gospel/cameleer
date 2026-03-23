@@ -85,16 +85,15 @@ let compile
           (pl @ tl), a
           | ({ ppat_desc; ppat_loc }::pl, a) ->
               (match ppat_desc with
-               | PWild ->
+               | PWild
+               | PCast({ppat_desc=PWild;_},_) ->
                    let n = List.length tl in
                    let x = List.length pl in
                    let ws = List.init (n-x) (fun _ ->
                      E.mk_pattern ~loc:ppat_loc PWild) in
                    (* let ws = {ppat_desc=PWild; ppat_loc} *)
                    ws @ pl, a
-               | PVar _ -> assert false
-               | PCons (_, _) -> assert false
-               | PTuple _ -> assert false
+               | PVar _ | PCst _ | PCons (_, _) | PTuple _
                | PCast (_, _) -> assert false)
           | (_, _) -> assert false
         ) rl in
@@ -117,11 +116,12 @@ let compile
           | _ -> false in
 
         let rec get_constr p = match p.ppat_desc with
-          | PWild | PVar _ | PTuple _ -> None
+          | PCst _ | PWild | PVar _ | PTuple _ -> None
           | PCons (c, _) -> Some c
           | PCast (p, _) -> get_constr p in
 
         let rec is_compat c p = match p.ppat_desc with
+          | PCst _ -> false
           | PWild | PVar _ -> true
           | PCons (c2, _) -> String.equal c.id_name c2.id_name
           | PCast (p, _) -> is_compat c p
@@ -190,9 +190,7 @@ let compile
                   | PCons (_, l2) ->
                       let l = l2 @ pl, a in
                       l :: acc
-                  | PTuple t ->
-                      let l = t @ pl, a in
-                      l :: acc
+                  | PCst _ | PTuple _ -> failwith "unreachable"
                   | PCast (p, _) -> loop p
                 in loop p
             ) [] ffc rl_tail in

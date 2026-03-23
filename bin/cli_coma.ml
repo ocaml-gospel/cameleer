@@ -60,7 +60,6 @@ let main file c =
     let fout = let cout = open_out f_coma in
       formatter_of_out_channel cout in
     let fc = List.map Ml2coma.declaration f in
-    (* fprintf fout "-------@\n"; *)
     fprintf fout "%a@." Pp_coma.pp_program fc
   end
 

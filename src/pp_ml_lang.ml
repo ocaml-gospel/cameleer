@@ -65,6 +65,9 @@ let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   | PCast (p, _) ->
       fprintf fmt (protect_on paren "@[%a: ...@]")
         (pp_pattern ~paren:true) p
+  | PCst c ->
+      fprintf fmt (protect_on paren "@[%a@]")
+      pp_constant c
 
 let rec pp_expr fmt (e: expr) =
   match e.expr_desc with

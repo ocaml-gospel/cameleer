@@ -32,6 +32,7 @@ and pattern_desc =
   | PCons of id * pattern list                (* constructor:   Cons(x, xs)  *)
   | PTuple of pattern list                    (* multiple pattern: p1, p2, … *)
   | PCast of pattern * P.core_type            (* [P: T] *)
+  | PCst  of constant
 
 type expr = {
   expr_loc: location;
@@ -46,7 +47,7 @@ and expr_desc =
   | EApp  of callable * atom list * callable list   (* k a…a k…k             *)
   | EIf of atom * expr * expr
   | EHide of expr
-  | EAssert of U.fun_spec * expr
+  | EAssert of U.term list * expr               (* U.term list = “U.fun_req” *)
   | EMatch of atom * (pattern * expr) list
 
 and atom = {
