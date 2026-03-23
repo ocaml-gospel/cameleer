@@ -183,7 +183,7 @@ type cdeclaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and cdeclaration_desc =
-  | CDFun of rec_flag * id * cbinder list * cprecondition * ckont list * cexpr
+  | CDFun of rec_flag * id * cbinder list * (cprecondition * bool) * ckont list * cexpr
   | CDLogic of Ptree.decl (* Purely logical WhyML declarations *)
 
 type cprogram = cdeclaration list

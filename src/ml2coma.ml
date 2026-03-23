@@ -364,10 +364,14 @@ let declaration { decl_desc; decl_loc } =
   let cdecl = match decl_desc with
     | DFun (rec_flag, id, xs, pre, ks, e) ->
         let xs = List.map binder xs in
-        let pre = List.map (Uterm.term false) pre in
+        let b, pre = List.fold_left (fun (b,acc) e ->
+          match e with
+          | Uast.{ term_desc=Tbang; _ } -> true, acc
+          | _ -> b, Uterm.term false e :: acc
+        ) (false, []) pre in
         let ks  = List.map mk_ckont ks in
         let m = List.fold_left (fun acc (x, t) -> Ms.add x.id_name t acc) Ms.empty xs in
-        CDFun (rec_flag, id, xs, pre, ks, (expr id.id_name e m))
+        CDFun (rec_flag, id, xs, (pre, b), ks, (expr id.id_name e m))
     | DType (_, td) ->
         let type_decls = List.map type_decl td in
         let decl = Dtype (List.flatten type_decls) in

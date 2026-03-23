@@ -198,13 +198,14 @@ let print_destructs fn_name fmt =
 
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
-  | CDFun (rec_flag, id, xs, pre, ks, e) ->
+  | CDFun (rec_flag, id, xs, (pre, b), ks, e) ->
       print_destructs id.id_name fmt;
-      fprintf fmt "let%a %s @[%a@]@;<1 4>@[%a@]@;<1 4>@[%a@]@\n= @[%a@]"
+      fprintf fmt "let%a %s @[%a@]@;<1 4>@[%a%s@]@;<1 4>@[%a@]@\n= @[%a@]"
         pp_rec rec_flag
         id.id_name
         (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
         pp_cpre pre
+        (if b then " {..}" else "")
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
   | CDLogic decl ->
