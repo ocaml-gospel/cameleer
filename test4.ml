@@ -12,4 +12,11 @@ let f (x: t) (n: int) : int =
 (*@ r = f x y
       requires n > 0
       requires x <> C
+      requires !!
       ensures  r > 0 *)
+
+let g (a: t) (x: int) =
+  (* let (a: t) = A 2 in *)
+  f a x
+(*@ r = g x
+      ensures  r > 1 *)

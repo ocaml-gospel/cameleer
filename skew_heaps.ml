@@ -22,7 +22,8 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 let[@logic] is_empty (t: int tree) : bool =
   match (t: int tree) with
   | Empty -> true
-  | Node ((l: int tree), (x: int), (r: int tree)) -> false
+  (* | Node ((l: int tree), (x: int), (r: int tree)) -> false *)
+  | _ -> false
 (*@ r = is_empty t
       ensures r <-> t = Empty *)
 
@@ -80,10 +81,13 @@ let empty: int tree = (Empty: int tree)
 let rec merge (t1: int tree) (t2: int tree) : int tree =
     match (t1 : elt tree), (t2 : elt tree) with
     | Empty, (_: int tree) -> t2
-    | (_: int tree), Empty -> t1
+    | ((_: int tree), Empty) -> t1
     | (Node ((l1: int tree), (x1: int), (r1: int tree)),
        Node ((l2: int tree), (x2: int), (r2: int tree)))
-        [@gospel {| requires heap t1 && heap t2 |}]
+        [@gospel {| requires heap t1 && heap t2
+                    ensures  heap result
+                    ensures  forall x. occ x result = occ x t1 + occ x t2
+                    ensures  size result = size t1 + size t2 |}]
       ->
        if x1 < x2 then
          let (l: int tree) = merge r1 t2 in
@@ -92,14 +96,20 @@ let rec merge (t1: int tree) (t2: int tree) : int tree =
          let (l: int tree) = merge r2 t1 in
          Node (l, x2, l2)
 (*@ r = merge t1 t2
-      variant  size t1 + size t2
-      ensures  heap r
-      ensures  forall x. occ x r = occ x t1 + occ x t2
-      ensures  size r = size t1 + size t2 *)
+      variant  size t1 + size t2 *)
+
+(*
+
+let merge t1 t2 k =
+  compilation_match ...
+  ( -> k t2)
+  ( -> let k1 = {Q1}! ... in k1 t1)
+  (l1 x1 r1 l2 x2 r2 -> let k2 = {Q2}! ... in k2  )
+ *)
 
 let add (x: int) (t: int tree) : int tree =
   merge (Node (Empty, x, Empty)) t
-(*@ r = add x t
+(* @ r = add x t
       requires heap t
       ensures  heap r
       ensures  size r = size t + 1
@@ -110,7 +120,7 @@ let remove_min (t: int tree) : int tree =
   match (t : elt tree) with
   | Empty      -> assert false
   | Node ((l: int tree), (_: int), (r: int tree)) -> merge l r
-(*@ r = remove_min t
+(* @ r = remove_min t
       requires heap t
       requires size t > 0
       ensures  heap r
@@ -122,7 +132,7 @@ let get_min (t: int tree) : int =
   match (t : elt tree) with
   | Empty      -> assert false
   | Node ((_: int tree), (x: int), (_: int tree)) -> x
-(*@ r = get_min t
+(* @ r = get_min t
       requires heap t
       requires size t > 0
       ensures  r = minimum t *)
