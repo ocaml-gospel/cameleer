@@ -814,7 +814,6 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let body = mk_expr ~loc:expr_loc (expr ~etype pexp (KName k) empty_map) in
   let kont = mk_kont k (arg_id, return_pty) spec in
   (* FIXME: type of [k],
-
      Where is the type annotation of functions (svb)? *)
   (* Mário: it is the type of the body expression. *)
   let pre = pre_of_spec spec in

@@ -18,17 +18,22 @@ let map_pty pty = Option.map E.core_type pty
 
 let binder (id, pty) = (id, map_pty pty)
 
-let rec tpattern_to_args ?(t=None) (p: Ml_lang.pattern) =
+let binder (id, pty) =
+  binder (id, pty)
+
+let rec tpattern_to_args ?(ty=None) (p: Ml_lang.pattern) =
   (* problem here: we need the types! *)
-  let rec loop (acc: core_type option) (p: Ml_lang.pattern) =
-    match p.ppat_desc with
-    | PVar id -> [id, acc]
+  let rec loop ty p =
+    match p.Ml_lang.ppat_desc with
+    | PVar id -> [id, ty]
     | PCst _n -> assert false
-    | PCons (_, args) -> List.concat_map (tpattern_to_args ~t:acc) args (* FIXME not sure about this «acc» *)
-    | PWild -> [Ec.gen_id ~prefix:"_unused" (), acc]
-    | PTuple ps -> List.concat_map (tpattern_to_args ~t:acc) ps (* FIXME not sure about this «acc» *)
+    | PCons (_, args) -> List.concat_map (tpattern_to_args ~ty) args (* FIXME not sure about this «acc» *)
+    | PWild ->
+        assert (ty <> None);
+        [Ec.gen_id ~prefix:"_unused_ml2coma" (), ty]
+    | PTuple ps -> List.concat_map (tpattern_to_args ~ty) ps (* FIXME not sure about this «acc» *)
     | PCast (p, t) -> loop (Some t) p in
-  loop t p
+  loop ty p
 
 (* ! PATTERN MATCHING HANDLERS CONSTRUCTION *)
 
@@ -91,12 +96,8 @@ let rec case_of_branch ?(ty=None) args (p : Ml_lang.pattern) =
       let pre = mk_precondition (List.hd args) var [] in
       (kont_id, [b], pre)
   | PCst _n -> assert false
-      (* let kont_id = Ec.mk_id ~loc:id.id_loc "default_case" in
-      let var = Ec.gen_id ~loc:id.id_loc () in
-      let pre = mk_precondition (List.hd args) var [] in
-      (kont_id, [var, None], pre) *)
   | PCons (cid, ps) ->
-      let vars = List.concat_map (tpattern_to_args ~t:ty) ps in
+      let vars = List.concat_map (tpattern_to_args ~ty) ps in
       let binders = List.map binder vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in

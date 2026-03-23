@@ -107,6 +107,7 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
         (protect_on paren (curly_braces curly "@[%a %a@]"))
         pp_op op (fun fmt e -> pp_expr fmt e) e1
   | CACst c -> fprintf fmt (curly_braces curly "%a") pp_constant c
+  | CAFun ((_,None), _) -> assert false
   | CAFun (binder, e) ->
       fprintf fmt (protect_on true "@[fun @[%a@] -> @[<hov 2>%a@]@]")
         (pp_cbinder ~paren:true) binder
@@ -137,6 +138,7 @@ and pp_callable ?(_fn_name="") fmt c =
   match c.ccallable_desc with
   | CCId id -> fprintf fmt "%s" id.id_name
   | CCFun (data, pre, kon, e) ->
+      assert (List.for_all (fun (_,b) -> b <> None) data);
       fprintf fmt (protect_on true "@[fun @[%a@]%s@[%a@]%s@[%a@]%s-> @[<hov 2>%a@]@]")
         (pp_print_list ~pp_sep:pp_space pp_cbinder) data
         (if data = [] && pre = [] then "" else " ")
@@ -152,6 +154,8 @@ and pp_callable ?(_fn_name="") fmt c =
     (fun fmt e -> pp_expr fmt e) e *)
 
 and pp_ppat_cexpr fmt (p, e) =
+  List.iter (fun (x,b) ->
+    if b = None then (Format.printf "ppcoma --> (%s)@." x.id_name)) p;
   fprintf fmt "(%s@[%a@]%s->@;<1 2>@[%a@])"
     (if p = [] then "" else "fun ")
     (pp_print_list ~pp_sep:pp_space pp_cbinder) p

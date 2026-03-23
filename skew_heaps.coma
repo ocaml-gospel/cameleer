@@ -31,16 +31,16 @@ lemma occ_nonneg: forall x : 'a, t : tree 'a. (occ x t) >= 0
 predicate mem (v: 'a) (t: tree 'a) = 0 < (occ v t)
 
 let destruct_is_empty1 (t: (tree int))
-   (empty {(t = Empty)})
-   (node (l: (tree int)) (x: int) (r: (tree int)) {(t = (Node l x r))})
+   (empty { (t = Empty)
+   })
+   (default_case (_unused__010_: (tree int)) { (t = _unused__010_) })
 = any
 
 let is_empty (t: (tree int)) 
-    (return__001_ (r: bool) {(r <-> (t = Empty))})
-= destruct_is_empty1 {t}
-  (-> return__001_ {true: bool} ) 
-  (fun (l: (tree int)) (x: int) (r: (tree int)) ->
-    return__001_ {false: bool} ) 
+    (return__001_ (r: bool) { (r <-> (t = Empty)) })
+= destruct_is_empty1 {t: (tree int)}
+  (-> return__001_ {true: bool} )
+  (fun (_unused_ml2coma__011_: (tree int)) -> return__001_ {false: bool} )
 
 type elt = int
 
@@ -71,74 +71,80 @@ lemma is_min:
 
 let empty  
     (return__002_ (r: (tree int))
-     {(heap r) && ((size r) = 0) && (forall e. not (mem e r))})
+     { (heap r) && ((size r) = 0) && (forall e. not (mem e r)) })
 = return__002_ {Empty: (tree int)} 
 
 let destruct_merge1 (t1: (tree int)) (t2: (tree int))
-   (empty_default_case (_unused__009_: (tree int))
-                       {(t1 = Empty) && (t2 = _unused__009_)})
-   (default_case_empty (_unused__010_: (tree int))
-                       {(t1 = _unused__010_) && (t2 = Empty)})
+   (empty_default_case (_unused__012_: (tree int)) {
+                       (t1 = Empty) && (t2 = _unused__012_) })
+   (default_case_empty (_unused__013_: (tree int)) {
+                       (t1 = _unused__013_) && (t2 = Empty) })
    (node_node (l1: (tree int)) (x1: int) (r1: (tree int)) (l2: (tree int)) (
-              x2: int) (r2: (tree int))
-              {(t1 = (Node l1 x1 r1)) && (t2 = (Node l2 x2 r2))})
+              x2: int) (r2: (tree int)) {
+              (t1 = (Node l1 x1 r1)) && (t2 = (Node l2 x2 r2)) })
 = any
 
 let rec merge (t1: (tree int)) (t2: (tree int)) 
-    (return__003_ (r: (tree int))
-     {(heap r) && (forall x. (occ x r) = ((occ x t1) + (occ x t2))) && 
-      ((size r)
-       =
-       ((size t1) + (size t2)))})
-= destruct_merge1 {t1} {t2}
-  (fun (_unused__011_: (tree int)) -> return__003_ {t2} ) 
-  (fun (_unused__012_: (tree int)) -> return__003_ {t1} ) 
+    (return__003_ (r: (tree int)) )
+= destruct_merge1 {t1: (tree elt)} {t2: (tree elt)}
+  (fun (_unused_ml2coma__014_: (tree int)) ->
+    return__003_ {t2} )
+  (fun (_unused_ml2coma__015_: (tree int)) ->
+    return__003_ {t1} )
   (fun (l1: (tree int)) (x1: int) (r1: (tree int)) (l2: (tree int)) (
        x2: int) (r2: (tree int)) ->
-    {((heap t1) && (heap t2))}
+    { ((heap t1) && (heap t2)) }
     (! if {(x1) < (x2)}
-          (-> merge {r1} {t2} _k__005_
+          (-> merge {r1} {t2} _k__006_
+              [ _k__006_ (l: (tree int))
+                = _k__004_ {Node l x1 l1: (tree int)} ])
+          (-> merge {r2} {t1} _k__005_
               [ _k__005_ (l: (tree int))
-                = return__003_ {Node l x1 l1: (tree int)} ])
-          (-> merge {r2} {t1} _k__004_
-              [ _k__004_ (l: (tree int))
-                = return__003_ {Node l x2 l2: (tree int)} ])))
+                = _k__004_ {Node l x2 l2: (tree int)} ]))
+    [ _k__004_ (result: (tree int))
+      =
+        {
+        (heap result) && (forall x.
+                            (occ x result)
+                            =
+                            ((occ x t1) + (occ x t2))) && ((size result)
+                                                           =
+                                                           ((size t1)
+                                                              + (size t2)))
+        } (! return__003_ {result} )])
 
-let add (x: int) (t: (tree int)) {(heap t)}
-    (return__006_ (r: (tree int))
-     {(heap r) && ((size r) = ((size t) + 1)) && ((occ x r)
-                                                  =
-                                                  ((occ x t) + 1)) && 
-      (forall y. (y <> x) -> ((occ y r) = (occ y t)))})
-= merge {Node Empty x Empty} {t} return__006_
+let add (x: int) (t: (tree int)) 
+    (return__007_ (result: (tree int)) )
+= merge {Node Empty x Empty} {t} return__007_
 
 let destruct_remove_min1 (t: (tree int))
-   (empty {(t = Empty)})
-   (node (l: (tree int)) (_unused__013_: int) (r: (tree int))
-         {(t = (Node l _unused__013_ r))})
+   (empty { (t = Empty)
+   })
+   (node (l: (tree int)) (_unused_ml2coma__016_: int) (r: (tree int)) {
+         (t = (Node l _unused_ml2coma__016_ r)) })
 = any
 
-let remove_min (t: (tree int)) {(heap t) && ((size t) > 0)}
-    (return__007_ (r: (tree int))
-     {(heap r) && ((occ (minimum t) r) = ((occ (minimum t) t) - 1)) && 
-      (forall e. (e <> (minimum t)) -> ((occ e r) = (occ e t))) && ((size r)
-                                                                    =
-                                                                    ((size t)
-                                                                    - 1))})
-= destruct_remove_min1 {t}
-  (-> fail) 
-  (fun (l: (tree int)) (_unused__014_: int) (r: (tree int)) ->
-    merge {l} {r} return__007_) 
+let remove_min (t: (tree int)) 
+    (return__008_ (result: (tree int)) )
+= destruct_remove_min1 {t: (tree elt)}
+  (->
+    fail)
+  (fun (l: (tree int)) (_unused_ml2coma__017_: int) (r: (tree int)) ->
+    merge {l} {r} return__008_)
 
 let destruct_get_min1 (t: (tree int))
-   (empty {(t = Empty)})
-   (node (_unused__015_: (tree int)) (x: int) (_unused__016_: (tree int))
-         {(t = (Node _unused__015_ x _unused__016_))})
+   (empty { (t = Empty)
+   })
+   (node (_unused_ml2coma__018_: (tree int)) (x: int) (_unused_ml2coma__019_: 
+                                                       (tree int))
+         { (t = (Node _unused_ml2coma__018_ x _unused_ml2coma__019_)) })
 = any
 
-let get_min (t: (tree int)) {(heap t) && ((size t) > 0)}
-    (return__008_ (r: int) {(r = (minimum t))})
-= destruct_get_min1 {t}
-  (-> fail) 
-  (fun (_unused__017_: (tree int)) (x: int) (_unused__018_: (tree int)) ->
-    return__008_ {x} ) 
+let get_min (t: (tree int)) 
+    (return__009_ (result: int) )
+= destruct_get_min1 {t: (tree elt)}
+  (->
+    fail)
+  (fun (_unused_ml2coma__020_: (tree int)) (x: int) (_unused_ml2coma__021_: 
+                                                     (tree int)) ->
+    return__009_ {x} )

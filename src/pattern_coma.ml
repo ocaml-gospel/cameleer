@@ -111,8 +111,9 @@ let compile
             | p::pls -> (pls, a)::rls, p::fcs)
           ([],[]) rl in
 
-        let simple p = match p.ppat_desc with
+        let rec simple p = match p.ppat_desc with
           | PWild | PVar _ -> true
+          | PCast (p, _) -> simple p
           | _ -> false in
 
         let rec get_constr p = match p.ppat_desc with
@@ -136,19 +137,13 @@ let compile
 
         if simple then begin
           let rl_tail = List.map2 (fun (pl, a) p ->
-            match p.ppat_desc with
-            | PWild -> pl, a
-            | PVar id ->
-                (* begin match isget_var t with
-                | None -> *)
-                    let a = mk_let (id, (Some ty)) expr_t a in
-                    pl, a
-                (* | Some _tid ->
-                    Format.printf "%s ## %s@." id.id_name _tid.id_name;
-                    let a = mk_let (id, (Some ty)) expr_t a in
-                    pl, a
-                end *)
-            | _ -> assert false
+            let rec loop t p =
+              match p.ppat_desc with
+              | PWild -> a
+              | PVar id -> mk_let (id, (Some t)) expr_t a
+              | PCast (p, t) -> loop t p
+              | _ -> assert false in
+            pl, loop ty p
             ) rl_tail fc in
           (* assert (List.length tl < List.length rl_tail); *)
           compile tl rl_tail
@@ -206,9 +201,6 @@ let compile
                 collect_lets_opt ~ty:(Some t) a p
             | _ -> None in
 
-          (* TODO TO BE REMOVED *)
-          let dp = if false then PVar (E.mk_id "coucou") else PWild in
-
           let default_mat =
             let rl_tail = List.rev @@ List.fold_left2 (fun acc (pl, a) p ->
               match collect_lets_opt ~ty:(Some ty) a p with
@@ -216,7 +208,7 @@ let compile
               | Some a -> (pl, a) :: acc
             ) [] rl_tail fc in
             if rl_tail = [] then (Format.printf "i:%a@." (Pp_ml_lang.pp_atom ~paren:false) t ; [])
-            else [E.mk_pattern dp, compile tl rl_tail] in
+            else [E.mk_pattern PWild, compile tl rl_tail] in
             (* Format.printf "%d %d : %a@." (List.length tl) (List.length rl_tail)
               (Pp_ml_lang.pp_atom ~paren:false) t
             ;
@@ -229,7 +221,10 @@ let compile
               let a = E.mk_atom @@ AId id in
               E.mk_atom @@ ACast (a, ty)
             ) projs ts in
-            let patproj = List.map (fun i -> E.mk_pattern @@ PVar i) projs in
+            let patproj = List.map2 (fun i ty ->
+              E.mk_pattern @@ PCast (
+              E.mk_pattern @@ PVar i, ty)
+            ) projs ts in
             let pm = E.mk_pattern @@ PCons(c, patproj) in
             let mc = pm, mat_c c arity t_ats in
             mc::acc
@@ -274,7 +269,9 @@ let rec expr e = match e.expr_desc with
       let mk_case a pl =
           E.mk_expr @@ EMatch (a, pl)
         in
-      let mk_let b e1 e2 = E.mk_expr (ELet (b, e1, e2)) in
+      let mk_let (_,bt as b) e1 e2 =
+        assert (bt <> None);
+        E.mk_expr (ELet (b, e1, e2)) in
       let pl = List.map (fun (p,e) -> [p],e) pl in
       compile ~get_constructors ~mk_case ~mk_let a pl
 
