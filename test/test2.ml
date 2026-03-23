@@ -17,7 +17,7 @@ let get_int (t: 'a tree) : int =
   match (t: 'a tree) with
   | Empty -> 1
   | Node (Empty, (x: 'a), (r: 'a tree)) -> 2
-  | Node (_,     (x: 'a), (r: 'a tree)) -> 3
+  | Node ((_: 'a tree), (x: 'a), (r: 'a tree)) -> 3
 
 (* bugs:
   - the order in the match is wrong
@@ -27,6 +27,6 @@ let match_t (x: t) =
   match (x: t) with
   | A B -> 1
   | A C -> 10
-  | A _ -> 100
-  | B   -> 2
-  | (x: t)   -> 3
+  | A (_: t) -> 100
+  | B      -> 2
+  | (x: t) -> 3

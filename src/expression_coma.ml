@@ -74,6 +74,9 @@ let mk_expr ?(loc=dummy_loc) expr_desc =
 let mk_pattern ?(loc=dummy_loc) ppat_desc =
   { ppat_loc=loc; ppat_desc }
 
+let mk_tpattern ?(loc=dummy_loc) ppat_desc ty =
+  mk_pattern ~loc @@ PCast (mk_pattern ~loc ppat_desc, ty)
+
 let mk_decl (rec_flag, id, params, konts, e, spec) =
   { decl_loc  = id.id_loc;
     decl_desc = DFun (rec_flag, id, params, konts, e, spec); }

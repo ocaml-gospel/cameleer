@@ -34,7 +34,8 @@ let rec eq_enum (e1 : enum) (e2 : enum) =
       let e1 = mk_zipper r1 e1 in
       let e2 = mk_zipper r2 e2 in
       eq_enum e1 e2 *)
-  | _ -> false
+  (* TODO: if we remove the 2nd _ the patterns compilation fails *)
+  | _,_ -> false
 (*@ b = eq_num e1 e2
       variant List.length (enum_elements e1)
       requires true

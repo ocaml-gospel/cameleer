@@ -83,18 +83,20 @@ let compile
         let tl = t @ tl in
         let rl = List.map (function ({ppat_desc=PTuple pl; _}::tl,a) ->
           (pl @ tl), a
-          | ({ ppat_desc; ppat_loc }::pl, a) ->
-              (match ppat_desc with
-               | PWild
-               | PCast({ppat_desc=PWild;_},_) ->
-                   let n = List.length tl in
-                   let x = List.length pl in
-                   let ws = List.init (n-x) (fun _ ->
-                     E.mk_pattern ~loc:ppat_loc PWild) in
-                   (* let ws = {ppat_desc=PWild; ppat_loc} *)
-                   ws @ pl, a
-               | PVar _ | PCst _ | PCons (_, _) | PTuple _
-               | PCast (_, _) -> assert false)
+          | (p::pl, a) ->
+              let rec loop p =
+                match p.ppat_desc with
+                 | PWild ->
+                     let r = ref 0 in
+                     let () = try List.iter2 (fun _ _ -> incr r) tl pl
+                              with Invalid_argument _ -> () in
+                     let loc = p.ppat_loc in
+                     let ws = List.init !r (fun _ ->
+                       E.(mk_pattern ~loc @@ PWild)) in
+                     ws @ pl, a
+                 | PCast (p,_) -> loop p
+                 | PVar _ | PCst _ | PCons (_, _) | PTuple _ -> assert false in
+              loop p
           | (_, _) -> assert false
         ) rl in
         compile tl rl
@@ -145,8 +147,8 @@ let compile
               | _ -> assert false in
             pl, loop ty p
             ) rl_tail fc in
-          (* assert (List.length tl < List.length rl_tail); *)
           compile tl rl_tail
+
         end else (* not simple *)
 
           (* the constructors present on the leftmost column *)
@@ -162,14 +164,13 @@ let compile
           let type_info id = get_type_informations ty_str id in
 
           (* matrix for constructor [c] *)
-          let mat_c (c: id) arity proj =
-            let nwilds = List.init arity (fun _ -> E.mk_pattern PWild) in
+          let mat_c (c: id) _arity proj ts =
+            let nwilds = List.map (fun t ->
+              E.(mk_tpattern ~loc:c.id_loc PWild t)) ts in
             (* filtered fc, filtered rl *)
-            Format.printf "compat with %s for (%a)@." c.id_name (Pp_ml_lang.pp_atom ~paren:false) t;
             let (ffc, rl_tail) = rev2 @@
               List.fold_left2 (fun (pats,acc) p line ->
-                Format.printf "::: %a@." (Pp_ml_lang.pp_pattern ~paren:false) p;
-                if is_compat c p then (Format.printf"\ttrue@.";p :: pats, line :: acc) else (pats, acc)
+                if is_compat c p then (p::pats, line::acc) else (pats, acc)
               ) ([],[]) fc rl_tail in
             let rl_tail = List.rev @@ List.fold_left2 (
               fun acc p (pl,a) ->
@@ -207,12 +208,8 @@ let compile
               | None -> acc
               | Some a -> (pl, a) :: acc
             ) [] rl_tail fc in
-            if rl_tail = [] then (Format.printf "i:%a@." (Pp_ml_lang.pp_atom ~paren:false) t ; [])
-            else [E.mk_pattern PWild, compile tl rl_tail] in
-            (* Format.printf "%d %d : %a@." (List.length tl) (List.length rl_tail)
-              (Pp_ml_lang.pp_atom ~paren:false) t
-            ;
-            try *)
+            if rl_tail = [] then []
+            else [E.(mk_tpattern PWild ty), compile tl rl_tail] in
 
           let pl = Sid.fold (fun c acc ->
             let ts, arity = type_info c.id_name in
@@ -222,11 +219,9 @@ let compile
               E.mk_atom @@ ACast (a, ty)
             ) projs ts in
             let patproj = List.map2 (fun i ty ->
-              E.mk_pattern @@ PCast (
-              E.mk_pattern @@ PVar i, ty)
-            ) projs ts in
-            let pm = E.mk_pattern @@ PCons(c, patproj) in
-            let mc = pm, mat_c c arity t_ats in
+              E.mk_tpattern (PVar i) ty) projs ts in
+            let pm = E.mk_pattern @@ PCons (c, patproj) in
+            let mc = pm, mat_c c arity t_ats ts in
             mc::acc
           ) col_cons default_mat in
 

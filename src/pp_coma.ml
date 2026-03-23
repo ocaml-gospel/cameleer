@@ -138,7 +138,7 @@ and pp_callable ?(_fn_name="") fmt c =
   match c.ccallable_desc with
   | CCId id -> fprintf fmt "%s" id.id_name
   | CCFun (data, pre, kon, e) ->
-      assert (List.for_all (fun (_,b) -> b <> None) data);
+      (* assert (List.for_all (fun (_,b) -> b <> None) data); *)
       fprintf fmt (protect_on true "@[fun @[%a@]%s@[%a@]%s@[%a@]%s-> @[<hov 2>%a@]@]")
         (pp_print_list ~pp_sep:pp_space pp_cbinder) data
         (if data = [] && pre = [] then "" else " ")

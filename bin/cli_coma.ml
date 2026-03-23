@@ -55,8 +55,8 @@ let main file c =
     end in
 
   if !coma then begin
-    let file = Filename.basename file in
-    let f_coma = (Filename.chop_extension file) ^ ".coma" in
+    let dir, file = Filename.(dirname file, basename file) in
+    let f_coma = Filename.(concat dir (chop_extension file ^ ".coma")) in
     let fout = let cout = open_out f_coma in
       formatter_of_out_channel cout in
     let fc = List.map Ml2coma.declaration f in

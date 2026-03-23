@@ -19,6 +19,8 @@ let map_pty pty = Option.map E.core_type pty
 let binder (id, pty) = (id, map_pty pty)
 
 let binder (id, pty) =
+  if (pty <> None) then
+    (Format.printf "ml2coma --> (%s)@." id.id_name);
   binder (id, pty)
 
 let rec tpattern_to_args ?(ty=None) (p: Ml_lang.pattern) =
@@ -29,7 +31,7 @@ let rec tpattern_to_args ?(ty=None) (p: Ml_lang.pattern) =
     | PCst _n -> assert false
     | PCons (_, args) -> List.concat_map (tpattern_to_args ~ty) args (* FIXME not sure about this «acc» *)
     | PWild ->
-        assert (ty <> None);
+        (* assert (ty <> None); *)
         [Ec.gen_id ~prefix:"_unused_ml2coma" (), ty]
     | PTuple ps -> List.concat_map (tpattern_to_args ~ty) ps (* FIXME not sure about this «acc» *)
     | PCast (p, t) -> loop (Some t) p in

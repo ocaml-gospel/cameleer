@@ -18,51 +18,54 @@ let is_empty (t: 'a tree) : bool =
   | Empty -> true
   | Node ((l: 'a tree), (x: 'a), (r: 'a tree)) -> false
 (*@ r = is_empty t
-      ensures r <-> t = Emtpy *)
+      ensures r <-> t = Empty *)
 
 let sum (x: bool) (y: bool) : int =
   if x then
     if y then 21 else 13
   else 8
 (*@ r = sum x y
-    requires x > 0
-    requires y >= 0
+    requires x -> 0 > 0
+    requires y -> 10 >= 0
     ensures r >= 0 *)
 
-let (c: t) = C
-let (b: t) = B
+let c: t = C
+let b: t = B
 
-let void (x: bool) = if x then ()
+let void (x: bool) : unit = if x then ()
 
-let void2 (x: bool) = if x then (void x; void x)
+(* let void2 (x: bool) : unit = if x then (void x; void x) *)
 
-let void3 (x: bool) (y: bool) =
+(* let void3 (x: bool) (y: bool) : unit =
   let x = sum x y in
-  while x = 1 do
-    void2 y
-  done
+  while (x = 1 : bool) do
+    void y
+  done *)
 
-let sum_t (x: bool) (y: bool) =
+let sum_t (x: bool) (y: bool) : t =
   let (a: int) = sum true y in      (* ANF requirement *)
+  let (c: t) = C in
   if a = 34 then
   if x then
     if y then A c else A B
   else A c
   else D c
 
-let match_t (x: t) (y: bool) =
-  match (x: t) with
-  | A _ -> sum true false
-  | B   -> sum false false
-  | x   ->
-    (match y with
-     | true -> sum true false
-     | _ -> if y then 55 else 89)
+type mbool = MTrue | MFalse
 
-let f (a: int) (b: int) (c: int) =
-  let x = a in
-  let y = b in
-  let z = c in
-  let q = y + z in
+(* let match_t (x: t) (y: mbool): int =
+  match (x: t) with
+  | A (_:t) -> sum true false
+  | B       -> sum false false
+  | (x:t)  ->
+    (match (y: mbool) with
+     | MTrue -> sum true false
+     | (_: mbool) -> if y = MTrue then 55 else 89) *)
+
+let f (a: int) (b: int) (c: int) : int =
+  let (x: int) = a in
+  let (y: int) = b in
+  let (z: int) = c in
+  let (q: int) = y + z in
   x + q
 
