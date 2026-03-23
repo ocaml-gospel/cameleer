@@ -23,7 +23,7 @@ let[@logic] is_empty (t: int tree) : bool =
   match (t: int tree) with
   | Empty -> true
   (* | Node ((l: int tree), (x: int), (r: int tree)) -> false *)
-  | _ -> false
+  | (_: int tree) -> false
 (*@ r = is_empty t
       ensures r <-> t = Empty *)
 
