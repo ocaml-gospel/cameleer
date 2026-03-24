@@ -39,7 +39,7 @@ let pp_type_decl = WPrint.pp_decl
 let pp_cpre fmt = function
   | [] -> ()
   | pre ->
-      fprintf fmt "{@ @[%a@]@ }"
+      fprintf fmt "@[{ %a }@]"
         (pp_print_list ~pp_sep:pp_and pp_cpre) pre
 
 let pp_id ?(paren=false) fmt {id_name; _} =
@@ -166,7 +166,7 @@ let pp_rec fmt = function
   | Nonrecursive -> ()
 
 let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
-  fprintf fmt (protect_on true "@[%a @[%a@]@ @[%a@]@]")
+  fprintf fmt (protect_on true "@[%a@ @[%a@]@ @[%a@]@]")
     (pp_id ~paren:false) ckont_id
     (pp_cbinder ~paren:true) ckont_arg
     pp_cpre ckont_pre
@@ -181,29 +181,25 @@ let pp_handler_case fmt (case_id, vars, pre) =
         (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) vars
         pp_cpre pre
 
-let pp_handler fmt name (h : Ml2coma.handler) =
-  fprintf fmt "@[<hov 2>let %s %a@\n @[%a@]\n= any@]"
-    name
-    (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) h.args
-    (pp_print_list ~pp_sep:pp_newline pp_handler_case) h.cases
-
 let print_destructs fn_name fmt =
     let key = Ml2coma.handler_name_of_id fn_name in
     let value = Hashtbl.find_opt Ml2coma.destructs key in
     match value with
     | None -> ()
-    | Some (_, handlers) ->
-      List.iteri (fun idx handler ->
-        let handler_name = Printf.sprintf "%s%d" key (idx + 1) in
-        pp_handler fmt handler_name handler;
-        pp_newline_newline fmt ()
+    | Some (len, handlers) ->
+      List.iteri (fun i (h : Ml2coma.handler) ->
+        Format.fprintf fmt "@[let %s%d@;<1 4>@[@[%a@]@ @[%a@]@]@]@\n= any%a"
+          key (len - i)
+          (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) h.args
+          (pp_print_list ~pp_sep:pp_newline pp_handler_case) h.cases
+          pp_newline_newline ()
       ) handlers
 
 let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
   | CDFun (rec_flag, id, xs, (pre, b), ks, e) ->
       print_destructs id.id_name fmt;
-      fprintf fmt "let%a %s @[%a@]@;<1 4>@[%a%s@]@;<1 4>@[%a@]@\n= @[%a@]"
+      fprintf fmt "@[let%a %s@;<1 4>@[@[%a@]@ @[%a%s@]@ @[%a@]@]@]@\n= @[%a@]%a"
         pp_rec rec_flag
         id.id_name
         (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
@@ -211,7 +207,8 @@ let pp_decl fmt (d: cdeclaration) =
         (if b then " {..}" else "")
         (pp_print_list ~pp_sep:pp_space pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
-  | CDLogic decl ->
+        pp_newline_newline ()
+| CDLogic decl ->
       fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
 
 let preamble = "
