@@ -30,6 +30,7 @@ let curly_braces b f =
 
 let pp_op, pp_constant = Pp_ml_lang.(pp_op, pp_constant)
 
+(* TODO: special case for [+++] *)
 let pp_cpre = (WPrint.pp_term ~attr:false).closed
 let pp_pty = (WPrint.pp_pty ~attr:false).closed
 let pp_type_decl = WPrint.pp_decl
@@ -117,15 +118,18 @@ and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
       let pp_sep = if comma_tuple then pp_comma else pp_space in
       fprintf fmt (protect_on paren "@[%a@]")
         (pp_print_list ~pp_sep (pp_atom ~curly(*:true*))) al (* TODO *)
+  (* case of list *)
+  | CACons ({id_name="[]";_}, []) -> fprintf fmt (curly_braces curly "Nil")
+  | CACons ({id_name="::";_}, [h;t]) ->
+      fprintf fmt (curly_braces curly "Cons @[%a@] @[%a@]")
+        (pp_atom ~comma_tuple ~paren:true ~curly:false) h
+        (pp_atom ~comma_tuple ~paren:false ~curly:false) t
+  (* standard constructors *)
   | CACons (c, []) -> fprintf fmt (curly_braces curly "%s") c.id_name (* TODO *)
   | CACons (c, [a]) ->
       fprintf fmt (curly_braces curly "%s %a")
         c.id_name
         (pp_atom ~comma_tuple ~paren:false ~curly:false) a (* TODO *)
-  | CACons ({id_name="::";_}, [h;t]) ->
-      fprintf fmt (curly_braces curly "@[%a@] :: @[%a@]")
-        (pp_atom ~comma_tuple ~paren:true ~curly:false) h
-        (pp_atom ~comma_tuple ~paren:false ~curly:false) t
   | CACons (c, al) ->
       fprintf fmt (protect_on paren @@ curly_braces curly "%s @[%a@]")
         c.id_name
@@ -139,7 +143,6 @@ and pp_callable ?(_fn_name="") fmt c =
   match c.ccallable_desc with
   | CCId id -> fprintf fmt "%s" id.id_name
   | CCFun (data, pre, kon, e) ->
-      (* assert (List.for_all (fun (_,b) -> b <> None) data); *)
       fprintf fmt (protect_on true "@[fun @[%a@]%s@[%a@]%s@[%a@]%s-> @[<hov 2>%a@]@]")
         (pp_print_list ~pp_sep:pp_space pp_cbinder) data
         (if data = [] && pre = [] then "" else " ")
@@ -148,11 +151,6 @@ and pp_callable ?(_fn_name="") fmt c =
         (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) kon
         (if kon = [] then "" else " ")
         (fun fmt e -> pp_expr fmt e) e
-
-(* and pp_ppat_expr fmt (p, e) =
-  fprintf fmt "@[<hov 2>(%a->@ @[%a@])@]"
-    (pp_pattern ~paren:false) p
-    (fun fmt e -> pp_expr fmt e) e *)
 
 and pp_ppat_cexpr fmt (p, e) =
   List.iter (fun (x,b) ->
@@ -216,10 +214,10 @@ let pp_decl fmt (d: cdeclaration) =
   | CDLogic decl ->
       fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
 
-
 let preamble = "
 use int.Int
 use list.List
+use list.Append
 let halt = any
 let fail { false } = any
 let if (b: bool) (then {b}) (else {not b}) = any

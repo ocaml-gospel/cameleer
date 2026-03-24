@@ -85,7 +85,6 @@ let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
   let loc_l = location arg.id_loc in
   let loc_r = location case_id.id_loc in
   let lhs = mk_uast_term ~loc:loc_l (Uast.Tpreid (ml_id_to_qualid arg)) in
-
   let qid = ml_id_to_qualid case_id in
   let rhs_args = List.map (fun vs ->
     let vars_terms = List.map
@@ -96,12 +95,10 @@ let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
     match vars_terms with
     | [] -> assert false
     | [x] -> x
-    | xs -> mk_uast_term ~loc:loc_r (Uast.Ttuple xs)) vars
-  in
+    | xs -> mk_uast_term ~loc:loc_r (Uast.Ttuple xs)) vars in
   let rhs = match rhs_args with
     | [] -> mk_uast_term ~loc:loc_r (Uast.Tpreid qid)
     | rs -> mk_uast_term ~loc:loc_r (Uast.Tidapp (qid, rs)) in
-
   let eq_term = Identifier.Preid.create ~loc:loc_l "infix =" in
   let pre = mk_uast_term ~loc:loc_l (Uast.Tinfix (lhs, eq_term, rhs)) in
   [ Uterm.term false pre ]
@@ -109,9 +106,8 @@ let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
 (* Hashtable that stores handlers
    key: handler name (e.g. "destruct_height")
    value: list of handler records *)
-let destructs = Hashtbl.create 16
+let destructs: (string, int * handler list) Hashtbl.t = Hashtbl.create 16
 
-(* "t" -> "destruct_t" *)
 let handler_name_of_id fn_name = "destruct_" ^ fn_name
 
 (* Branch pattern as (case_name, bound_vars, preconditions) *)
@@ -130,8 +126,10 @@ let rec case_of_branch ?(ty=None) args (p : Ml_lang.pattern) =
       let binders = List.map (List.map binder) vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
-      let id_name = if String.contains id_name '[' then "nil"  else id_name in
-      let id_name = if String.contains id_name ':' then "cons" else id_name in
+      let id_name = match id_name with
+        | "::" -> "nil"
+        | "[]" -> "cons"
+        | _ -> id_name in
       let id = Ec.mk_id ~loc:cid.id_loc id_name in
       (id, List.flatten binders, pre)
   | PWild ->
@@ -157,9 +155,8 @@ let register_handler fn_name a cases m =
     let rec loop a =
       match a.atom_desc with
       | AId id ->
-          (* (try *)
-          [(id, try Ms.find id.id_name m with Not_found -> None)]
-          (* with Not_found -> failwith (Format.sprintf "looking for %s" id.id_name)) *)
+          let ty = try Ms.find id.id_name m with Not_found -> None in
+          [ id, ty ]
       | ATuple al ->
           List.concat_map loop al
       | ACast (a,_) -> loop a
@@ -179,60 +176,62 @@ let register_handler fn_name a cases m =
 
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
 
-let rec atom fn_name { atom_loc; atom_desc } types =
+let rec atom fn_name { atom_loc; atom_desc } mty =
   let mk_catom catom_desc = { catom_loc = atom_loc; catom_desc } in
   let catom_desc = match atom_desc with
     | AId id -> CAId id
     | ACst c -> CACst c
     | ABinop (e1, op, e2) ->
-        CABinop (expr fn_name e1 types, op, expr fn_name e2 types)
+        CABinop (expr fn_name e1 mty, op, expr fn_name e2 mty)
     | AUnop (op, e1) ->
-        CAUnop (op, expr fn_name e1 types)
+        CAUnop (op, expr fn_name e1 mty)
     | ATuple al ->
-        CATuple (List.map (atom fn_name ^~ types) al)
+        CATuple (List.map (atom fn_name ^~ mty) al)
     | ACons (id, c) ->
-        CACons (id, List.map (atom fn_name ^~ types) c)
+        CACons (id, List.map (atom fn_name ^~ mty) c)
     | AFun (_, id, e) ->
-        CAFun (binder id, expr fn_name e types)
+        CAFun (binder id, expr fn_name e mty)
     | ACast (a, t) ->
-        CACast (atom fn_name a types, E.core_type t) in
+        CACast (atom fn_name a mty, E.core_type t) in
   mk_catom catom_desc
 
-and expr fn_name { expr_loc; expr_desc = e_desc } types =
+and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
   let mk_pre tl = List.map (Ut.term false) tl in
   let mk_cexpr cexpr_desc =
     { cexpr_loc = expr_loc; cexpr_desc } in
   let mk_ppat_expr (p, e) =
     let info = tpattern_to_args p in
-    let cexpr = expr fn_name e types in
+    let cexpr = expr fn_name e mty in
     (info, cexpr) in
   let mk_id name loc = { id_name = name; id_loc = loc } in
   let mk_binder_cexpr (b, e) = (List.map binder b, e) in
   let expr_desc = function
-    | EAtom a -> CEAtom (atom fn_name a types)
+    | EAtom a -> CEAtom (atom fn_name a mty)
     | EFail -> CEFail
     | EAssert (phi,e) ->
-        CEAssert (mk_pre phi, expr fn_name e types)
-    | EHide e -> CEHide (expr fn_name e types)
+        CEAssert (mk_pre phi, expr fn_name e mty)
+    | EHide e -> CEHide (expr fn_name e mty)
     | ELet (x, e1, e2) ->
         let ({id_name;_}, t) as x = binder x in
-        let table = Ms.add id_name t types in
-        CELet (x, expr fn_name e1 types, expr fn_name e2 table)
+        let table = Ms.add id_name t mty in
+        CELet (x, expr fn_name e1 mty, expr fn_name e2 table)
     | ELetK (k, x, e1, e2) ->
         let ({id_name;_}, t) as x = binder x in
-        let types = Ms.add id_name t types in
+        let types = Ms.add id_name t mty in
         CELetK (k, x, expr fn_name e1 types, expr fn_name e2 types)
     | EApp (c, al, cl) ->
-        let c = callable fn_name c types in
-        let cal = List.map (atom fn_name ^~ types) al in
-        let ccl = List.map (callable fn_name ^~ types) cl in
+        let c = callable fn_name c mty in
+        let cal = List.map (atom fn_name ^~ mty) al in
+        let ccl = List.map (callable fn_name ^~ mty) cl in
         CEApp (c, cal, ccl)
     | EIf (a, e1, e2) ->
-        CEIf (atom fn_name a types, expr fn_name e1 types, expr fn_name e2 types) (* TODO *)
+        CEIf (atom fn_name a mty,
+              expr fn_name e1 mty,
+              expr fn_name e2 mty) (* TODO *)
     | EMatch (a, pel) ->
-        let name  = register_handler fn_name a pel types in
+        let name  = register_handler fn_name a pel mty in
         let id    = mk_id name expr_loc in
-        let catom = atom fn_name a types in
+        let catom = atom fn_name a mty in
         let cases = List.map mk_ppat_expr pel in
         let cases = List.map mk_binder_cexpr cases in
         CEDestruct (id, catom, cases) in
@@ -246,16 +245,6 @@ and callable fn_name { callable_loc; callable_desc } types =
     | CFun (data, kon, e) -> (* TODO: specification for the generated fun *)
         CCFun (List.map binder data, [], kon, expr fn_name e types) in
   mk_ccalable desc
-
-(* and pattern p =
-  let cppat_desc =
-    match p.ppat_desc with
-    | PVar id -> CPVar id
-    | PCons (id, args) -> CPCons (id, List.map pattern args)
-    | PWild -> CPWild
-    | PTuple ps -> CPTuple (List.map pattern ps)
-    | PCast (p, pty) -> CPCast (pattern p, E.core_type pty) in
-  { cppat_desc; cppat_loc=p.ppat_loc } *)
 
 let td_params (cty, _) =
   match cty.ptyp_desc with
@@ -400,7 +389,8 @@ let declaration { decl_desc; decl_loc } =
           | _ -> b, Uterm.term false e :: acc
         ) (false, []) pre in
         let ks  = List.map mk_ckont ks in
-        let m = List.fold_left (fun acc (x, t) -> Ms.add x.id_name t acc) Ms.empty xs in
+        let m = List.fold_left (fun acc (x, t) ->
+          Ms.add x.id_name t acc) Ms.empty xs in
         CDFun (rec_flag, id, xs, (pre, b), ks, (expr id.id_name e m))
     | DType (_, td) ->
         let type_decls = List.map type_decl td in
