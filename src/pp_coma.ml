@@ -88,10 +88,13 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (id.id_name)
         (pp_atom ~comma_tuple:false ~paren:false ~curly:true) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
-  | CELetK(k, x, e1, e2) ->
-      fprintf fmt "@[%a@]@ @[[ %s %a@;<1 2>@[<hov 2>=@ %a@]]@]"
+  | CELetK(k, x, o, e1, e2) ->
+      let ppo fmt (id, ty) =
+        fprintf fmt "(%a:%a)" (pp_id ~paren:false) id pp_pty ty in
+      fprintf fmt "@[%a@]@ @[[ %s %a %a@;<1 2>@[<hov 2>=@ %a@]]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
+        (pp_print_option ppo) o
         (pp_cbinder ~paren:true) x
         (fun fmt e -> pp_expr fmt e) e1
 
@@ -108,7 +111,7 @@ and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
         (protect_on paren (curly_braces curly "@[%a %a@]"))
         pp_op op (fun fmt e -> pp_expr fmt e) e1
   | CACst c -> fprintf fmt (curly_braces curly "%a") pp_constant c
-  | CAFun ((_,None), _) -> assert false
+  (* | CAFun ((_,None), _) -> assert false *)
   | CAFun (binder, e) ->
       fprintf fmt (protect_on true "@[fun @[%a@] -> @[<hov 2>%a@]@]")
         (pp_cbinder ~paren:true) binder

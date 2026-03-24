@@ -1,0 +1,1 @@
+(dirs :standard \ test*) ;; exclude all dirs that start with test or foo

@@ -215,10 +215,11 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
         let ({id_name;_}, t) as x = binder x in
         let table = Ms.add id_name t mty in
         CELet (x, expr fn_name e1 mty, expr fn_name e2 table)
-    | ELetK (k, x, e1, e2) ->
+    | ELetK (k, x, _, e1, e2) ->
+        (* if true then assert false; *)
         let ({id_name;_}, t) as x = binder x in
         let types = Ms.add id_name t mty in
-        CELetK (k, x, expr fn_name e1 types, expr fn_name e2 types)
+        CELetK (k, x, None, expr fn_name e1 types, expr fn_name e2 types)
     | EApp (c, al, cl) ->
         let c = callable fn_name c mty in
         let cal = List.map (atom fn_name ^~ mty) al in

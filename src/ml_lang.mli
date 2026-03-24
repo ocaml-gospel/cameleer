@@ -42,9 +42,10 @@ type expr = {
 and expr_desc =
   | EAtom of atom
   | EFail
-  | ELet  of binder * expr * expr                   (* let p = e in e        *)
-  | ELetK of id * binder * expr * expr              (* let_cont h x = e in e *)
-  | EApp  of callable * atom list * callable list   (* k a…a k…k             *)
+  | ELet  of binder * expr * expr                 (* let p = e in e          *)
+  | ELetK of id * binder * (id * P.core_type) option * expr * expr
+                                        (* let_cont h x (o (_: ty) = e in e  *)
+  | EApp  of callable * atom list * callable list (* k a…a k…k               *)
   | EIf of atom * expr * expr
   | EHide of expr
   | EAssert of U.term list * expr               (* U.term list = “U.fun_req” *)
@@ -144,7 +145,8 @@ and cexpr_desc =
   | CEAssert of cprecondition * cexpr
   | CEHide of cexpr
   | CELet of cbinder * cexpr * cexpr
-  | CELetK of id * cbinder * cexpr * cexpr             (* let_cont h x = e in e *)
+  | CELetK of id * cbinder * (id * Ptree.pty) option * cexpr * cexpr
+                                                       (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr
   | CEDestruct of id * catom * (info_p * cexpr) list

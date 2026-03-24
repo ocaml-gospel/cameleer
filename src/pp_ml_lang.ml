@@ -44,7 +44,7 @@ let pp_binder fmt (id, pty) =
   | None -> fprintf fmt "%a" pp_id id
   | Some pty ->
       ignore pty; (* TODO: print type *)
-      fprintf fmt "%a: ..." pp_id id
+      fprintf fmt "(%a: ...)" pp_id id
   
 let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   match ppat_desc with
@@ -88,19 +88,17 @@ let rec pp_expr fmt (e: expr) =
         (pp_print_list ~pp_sep:pp_space pp_callable) cl
   | EIf (a, e1, e2) ->
       fprintf fmt "if@ %a@ @[then@;<1 2>@[%a@]@\nelse@;<1 2>@[%a@]@]"
-      (* "if @[%a@] then@;<1 2>@[%a@]@ else@;<1 2>@[%a@]" *)
         (pp_atom ~paren:false) a pp_expr e1 pp_expr e2
-
   | EMatch (a, pel) ->
-      (* List.iter (fun (p, _) ->
-        Format.eprintf "DEBUG pattern: %a\n%!" (pp_pattern ~paren:false) p
-      ) pel; *)
       fprintf fmt "@[match @[%a@] with@\n@[%a@]@]"
         (pp_atom ~paren:false) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
-  | ELetK (k, x, e1, e2) ->
-      fprintf fmt "let %s %a =@;<1 2>@[%a@]@ in@ @[%a@]"
+  | ELetK (k, x, o, e1, e2) ->
+      let ppo fmt (o,_t) =
+        fprintf fmt "(%s (_: ...)) " o.id_name in
+      fprintf fmt "let %s %a %a=@;<1 2>@[%a@]@ in@ @[%a@]"
         k.id_name pp_binder x
+        (pp_print_option ppo) o
         pp_expr e1 pp_expr e2
 
 and pp_atom ?(paren=false) fmt (a: atom) =
@@ -113,7 +111,7 @@ and pp_atom ?(paren=false) fmt (a: atom) =
   | ACst c -> fprintf fmt "%a" pp_constant c
   | AFun (_, binder, e) ->
       let (x, _) = binder in
-      fprintf fmt (protect_on paren "fun %s ->@;<1 2>@[%a@]")
+      fprintf fmt (protect_on true "fun %s ->@;<1 2>@[%a@]")
         x.id_name pp_expr e
   | AId x -> fprintf fmt "%s" x.id_name
   | ATuple al ->
@@ -138,7 +136,7 @@ and pp_callable fmt c =
   match c.callable_desc with
   | CId id -> fprintf fmt "%a" pp_id id
   | CFun (xs, ks, e) ->
-      fprintf fmt "fun %a%s%a ->@;<1 2>@[%a@]"
+      fprintf fmt "(fun %a%s%a ->@;<1 2>@[%a@])"
         (pp_print_list pp_binder) xs
         (if xs <> [] && ks <> [] then " " else "")
         (pp_print_list pp_id) ks

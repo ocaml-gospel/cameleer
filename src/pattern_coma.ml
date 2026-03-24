@@ -248,8 +248,8 @@ let rec expr e = match e.expr_desc with
   | ELet (k, e1, e2) ->
       let expr_desc = ELet (k, expr e1, expr e2) in
       { e with expr_desc }
-  | ELetK (k, id, e1, e2) ->
-      let expr_desc = ELetK (k, id, expr e1, expr e2) in
+  | ELetK (k, id, o, e1, e2) ->
+      let expr_desc = ELetK (k, id, o, expr e1, expr e2) in
       { e with expr_desc }
   | EApp (c, al, cl) ->
       let c = callable c in
