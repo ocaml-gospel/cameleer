@@ -42,14 +42,14 @@ let pp_cpre fmt = function
       fprintf fmt "@[{ %a }@]"
         (pp_print_list ~pp_sep:pp_and pp_cpre) pre
 
-let pp_id ?(paren=false) fmt {id_name; _} =
-  fprintf fmt (protect_on paren "%s") id_name
+let pp_id fmt {id_name; _} =
+  fprintf fmt "%s" id_name
 
 let pp_cbinder ?(paren=true) fmt (id, pty) =
   match pty with
-  | None -> fprintf fmt "%a" (pp_id ~paren) id
+  | None -> fprintf fmt "%a" pp_id id
   | Some pty ->
-      fprintf fmt (protect_on paren "@[%a: %a@]") (pp_id ~paren:false) id
+      fprintf fmt (protect_on paren "@[%a: %a@]") pp_id id
         pp_pty pty
 
 let _pp_pre fmt = function
@@ -90,7 +90,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   | CELetK(k, x, o, e1, e2) ->
       let ppo fmt (id, ty) =
-        fprintf fmt "(%a:%a)" (pp_id ~paren:false) id pp_pty ty in
+        fprintf fmt "(%a:%a)" pp_id id pp_pty ty in
       fprintf fmt "@[%a@]@ @[[ %s %a %a@;<1 2>@[<hov 2>=@ %a@]]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
@@ -151,7 +151,7 @@ and pp_callable ?(_fn_name="") fmt c =
         (if data = [] && pre = [] then "" else " ")
         pp_cpre pre
         (if kon = [] && pre = [] then "" else " ")
-        (pp_print_list ~pp_sep:pp_space (pp_id ~paren:true)) kon
+        (pp_print_list ~pp_sep:pp_space pp_id) kon
         (if kon = [] then "" else " ")
         (fun fmt e -> pp_expr fmt e) e
 
@@ -170,14 +170,14 @@ let pp_rec fmt = function
 
 let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
   fprintf fmt (protect_on true "@[%a@ @[%a@]@ @[%a@]@]")
-    (pp_id ~paren:false) ckont_id
+    pp_id ckont_id
     (pp_cbinder ~paren:true) ckont_arg
     pp_cpre ckont_pre
 
 let pp_handler_case fmt (case_id, vars, pre) =
   match vars with
   | [] ->
-      fprintf fmt "(%a %a)" (pp_id ~paren:false) case_id pp_cpre pre
+      fprintf fmt "(%a %a)" pp_id case_id pp_cpre pre
   | _ ->
       fprintf fmt "(%s @[%a@ %a@])"
         case_id.id_name
