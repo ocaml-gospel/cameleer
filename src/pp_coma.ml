@@ -60,7 +60,7 @@ let _pp_pre fmt = function
 let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
   match e.cexpr_desc with
   | CEAtom a ->
-      fprintf fmt "%a" (pp_atom ~paren:true ~curly:false) a
+      fprintf fmt "%a" (pp_atom ~comma_tuple:true ~paren:true ~curly:false) a
   | CEFail -> fprintf fmt "fail"
   | CEAssert (phi, e) ->
       fprintf fmt "@[%a@]@ @[%a@]"
@@ -79,13 +79,13 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_print_list ~pp_sep:pp_space (pp_callable ~_fn_name)) cl
   | CEIf (a, e1, e2) ->
       fprintf fmt "@[if @[%a@]@;<1 3>@[(-> @[%a@])@\n(-> @[%a@])@]@]"
-        (pp_atom ~paren:false ~curly:true) a
+        (pp_atom ~comma_tuple:true ~paren:false ~curly:true) a
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
   | CEDestruct (id, a, pel) ->
       fprintf fmt "@[%s @[%a@]@\n@[%a@]@]"
         (id.id_name)
-        (pp_atom ~paren:false ~curly:true) a
+        (pp_atom ~comma_tuple:false ~paren:false ~curly:true) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   | CELetK(k, x, e1, e2) ->
       fprintf fmt "@[%a@]@ @[[ %s %a@;<1 2>@[<hov 2>=@ %a@]]@]"
@@ -94,7 +94,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_cbinder ~paren:true) x
         (fun fmt e -> pp_expr fmt e) e1
 
-and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
+and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
   match a.catom_desc with
   | CABinop (e1, op, e2) ->
       fprintf fmt
@@ -114,24 +114,25 @@ and pp_atom ?(paren=false) ?(curly=false) fmt (a: catom) =
         (fun fmt e -> pp_expr fmt e) e
   | CAId x -> fprintf fmt (protect_on paren @@ curly_braces curly "%s") x.id_name
   | CATuple al -> (* TODO: wip on tuples *)
+      let pp_sep = if comma_tuple then pp_comma else pp_space in
       fprintf fmt (protect_on paren "@[%a@]")
-        (pp_print_list ~pp_sep:pp_space (pp_atom ~curly(*:true*))) al (* TODO *)
+        (pp_print_list ~pp_sep (pp_atom ~curly(*:true*))) al (* TODO *)
   | CACons (c, []) -> fprintf fmt (curly_braces curly "%s") c.id_name (* TODO *)
   | CACons (c, [a]) ->
       fprintf fmt (curly_braces curly "%s %a")
         c.id_name
-        (pp_atom ~paren:false ~curly:false) a (* TODO *)
+        (pp_atom ~comma_tuple ~paren:false ~curly:false) a (* TODO *)
   | CACons ({id_name="::";_}, [h;t]) ->
       fprintf fmt (curly_braces curly "@[%a@] :: @[%a@]")
-        (pp_atom ~paren:true ~curly:false) h
-        (pp_atom ~paren:false ~curly:false) t
+        (pp_atom ~comma_tuple ~paren:true ~curly:false) h
+        (pp_atom ~comma_tuple ~paren:false ~curly:false) t
   | CACons (c, al) ->
       fprintf fmt (protect_on paren @@ curly_braces curly "%s @[%a@]")
         c.id_name
         (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:false)) al (* TODO *)
   | CACast (a, t) ->
       fprintf fmt (protect_on paren @@ curly_braces curly "@[%a: %a@]")
-        (pp_atom ~paren ~curly:false) a
+        (pp_atom ~comma_tuple ~paren ~curly:false) a
         pp_pty t
 
 and pp_callable ?(_fn_name="") fmt c =

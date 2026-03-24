@@ -19,7 +19,7 @@ let map_pty pty = Option.map E.core_type pty
 let binder (id, pty) = (id, map_pty pty)
 
 let binder (id, pty) =
-  if (pty <> None) then
+  if (pty = None) then
     (Format.printf "ml2coma --> (%s)@." id.id_name);
   binder (id, pty)
 
@@ -59,25 +59,52 @@ let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
   let preid = Identifier.Preid.create id.id_name ~loc in
   Uast.Qpreid preid
 
-let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list) =
-  let mk_uast_term term_desc loc =
-    let term_loc = location loc in
-    Uast.{ term_desc; term_loc } in
-  let arg_loc = arg.id_loc in
-  let arg_term = mk_uast_term (Uast.Tpreid (ml_id_to_qualid arg)) arg_loc in
-  let pp_term = match vars with
-    | [] -> mk_uast_term (Uast.Tpreid (ml_id_to_qualid case_id)) case_id.id_loc
-    | _ ->
-        let vars_terms = List.map
-          (fun (v,_ty) ->
-            mk_uast_term (Uast.Tpreid (ml_id_to_qualid v)) v.id_loc)
-          vars in
-        let t = Uast.Tidapp (ml_id_to_qualid case_id, vars_terms) in
-        mk_uast_term t case_id.id_loc in
-  let eq_term = Identifier.Preid.create "infix =" ~loc:(location arg_loc) in
-  let pre = mk_uast_term (Uast.Tinfix (arg_term, eq_term, pp_term)) arg_loc in
-  [ Uterm.term false pre ]
 
+module TMP = struct
+open Format
+open Ml_lang
+open Gospel
+module UPrint = Upretty_printer
+
+open Why3
+module WPrint = Mlw_printer
+
+let pp_cpre = (WPrint.pp_term ~attr:false).closed
+let pp_pty = (WPrint.pp_pty ~attr:false).closed
+let pp_type_decl = WPrint.pp_decl
+
+let pp_cbinder fmt (id, pty) =
+  match pty with
+  | None -> fprintf fmt "%s" id.id_name
+  | Some pty -> fprintf fmt "@[%s: %a@]" id.id_name pp_pty pty
+end
+
+let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
+  let mk_uast_term ~loc term_desc =
+    Uast.{ term_desc; term_loc=loc } in
+  let loc_l = location arg.id_loc in
+  let loc_r = location case_id.id_loc in
+  let lhs = mk_uast_term ~loc:loc_l (Uast.Tpreid (ml_id_to_qualid arg)) in
+
+  let qid = ml_id_to_qualid case_id in
+  let rhs_args = List.map (fun vs ->
+    let vars_terms = List.map
+      (fun ((v:Ml_lang.id),_ty) ->
+        let loc = location v.id_loc in
+        mk_uast_term ~loc (Uast.Tpreid (ml_id_to_qualid v)))
+      vs in
+    match vars_terms with
+    | [] -> assert false
+    | [x] -> x
+    | xs -> mk_uast_term ~loc:loc_r (Uast.Ttuple xs)) vars
+  in
+  let rhs = match rhs_args with
+    | [] -> mk_uast_term ~loc:loc_r (Uast.Tpreid qid)
+    | rs -> mk_uast_term ~loc:loc_r (Uast.Tidapp (qid, rs)) in
+
+  let eq_term = Identifier.Preid.create ~loc:loc_l "infix =" in
+  let pre = mk_uast_term ~loc:loc_l (Uast.Tinfix (lhs, eq_term, rhs)) in
+  [ Uterm.term false pre ]
 
 (* Hashtable that stores handlers
    key: handler name (e.g. "destruct_height")
@@ -99,14 +126,14 @@ let rec case_of_branch ?(ty=None) args (p : Ml_lang.pattern) =
       (kont_id, [b], pre)
   | PCst _n -> assert false
   | PCons (cid, ps) ->
-      let vars = List.concat_map (tpattern_to_args ~ty) ps in
-      let binders = List.map binder vars in
+      let vars = List.map (tpattern_to_args ~ty) ps in
+      let binders = List.map (List.map binder) vars in
       let pre = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
       let id_name = if String.contains id_name '[' then "nil"  else id_name in
       let id_name = if String.contains id_name ':' then "cons" else id_name in
       let id = Ec.mk_id ~loc:cid.id_loc id_name in
-      (id, binders, pre)
+      (id, List.flatten binders, pre)
   | PWild ->
       let kont_id = Ec.mk_id "default_case" in
       let var = Ec.gen_id ~prefix:"_unused" () in

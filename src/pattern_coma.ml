@@ -48,14 +48,14 @@ let t_type a = match a.atom_desc with
   | ATuple _ -> assert false
   | ACons (_, _) -> assert false
 
-let t2s t =
+let rec type_name t =
   match Parsetree.(t.ptyp_desc) with
   | Parsetree.Ptyp_constr ({ txt; loc = _ }, _) ->
-      E.string_of_longident txt
+      [E.string_of_longident txt]
+  | Parsetree.Ptyp_tuple tl -> List.concat_map type_name tl
   | Parsetree.Ptyp_any -> assert false
-  | Parsetree.Ptyp_var s -> s
+  | Parsetree.Ptyp_var s -> [s]
   | Parsetree.Ptyp_arrow (_, _, _) -> assert false
-  | Parsetree.Ptyp_tuple _ -> assert false
   | Parsetree.Ptyp_object (_, _) -> assert false
   | Parsetree.Ptyp_class (_, _) -> assert false
   | Parsetree.Ptyp_alias (_, _) -> assert false
@@ -79,8 +79,8 @@ let compile
         raise NonExhaustive
     | [], (_,a) :: _ -> (* no terms, at least one action *)
         a
-    | {atom_desc=ATuple t; _} :: tl, _ ->
-        let tl = t @ tl in
+    | ({atom_desc=ATuple at; _} :: tl, _)  ->
+        let tl = at @ tl in
         let rl = List.map (function ({ppat_desc=PTuple pl; _}::tl,a) ->
           (pl @ tl), a
           | (p::pl, a) ->
@@ -100,6 +100,9 @@ let compile
           | (_, _) -> assert false
         ) rl in
         compile tl rl
+    (* | t :: tl,_ when
+        match type_name (t_type t) with [_] -> true | _ -> false
+      -> assert false *)
     | t :: tl, _ -> (* process the leftmost column *)
 
         let expr_t = E.mk_expr_atom t.atom_desc in
@@ -158,7 +161,7 @@ let compile
             | Some e -> Sid.add e acc) Sid.empty fc in
 
           (* extract the list of constructors *)
-          let ty_str = t2s ty in
+          let[@warning "-8"] [ty_str] = type_name ty in
           ignore get_constructors;
 
           let type_info id = get_type_informations ty_str id in
