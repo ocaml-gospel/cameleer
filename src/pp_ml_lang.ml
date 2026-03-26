@@ -124,9 +124,7 @@ and pp_atom ?(paren=false) fmt (a: atom) =
       fprintf fmt (protect_on paren "%s @[(%a)@]") c.id_name
         (pp_print_list ~pp_sep:pp_coma pp_atom) al
   | ACast (a, _t) ->
-      (* TODO *)
-      fprintf fmt (protect_on paren "%a : ...")
-        (pp_atom ~paren) a
+      fprintf fmt (protect_on paren "%a : ...") (pp_atom ~paren) a
 
 and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 4>| %a ->@ @[%a@]@]"
@@ -149,14 +147,16 @@ let pp_rec fmt = function
 let pp_id fmt {id_name; _} =
   fprintf fmt "%s" id_name
 
-let pp_kont fmt {kont_id; _} =
-  fprintf fmt "%a" pp_id kont_id
+let rec pp_kont fmt {kont_id; kont_arg; kont_kont; _} =
+  fprintf fmt (protect_on true "%a@;<1 4>@[%a@]@;<1 4>@[%a@]") pp_id kont_id
+    (pp_print_list pp_binder) kont_arg
+    (pp_print_list ~pp_sep:pp_newline pp_kont) kont_kont
 
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with
   | DFun (rec_flag, id, xs, pre, ks, e) ->
       ignore pre; (* TODO *)
-      fprintf fmt "@[let%a %s %a%s%a@ =@;<1 2>@[%a@]@]"
+      fprintf fmt "@[let%a %s @[%a@]%s@[%a@]@ =@;<1 2>@[%a@]@]"
         pp_rec rec_flag id.id_name
         (pp_print_list ~pp_sep:pp_space pp_binder) xs
         (if xs <> [] && ks <> [] then " " else "")

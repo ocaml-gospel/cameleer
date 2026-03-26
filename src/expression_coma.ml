@@ -4,15 +4,11 @@ open Ml_lang
 
 let (^~) a b = fun c -> a c b
 
+let dummy_pos = Lexing.{ pos_fname = ""; pos_lnum = 0; pos_bol = 0; pos_cnum = 0; }
+
 let dummy_loc =
   (* TODO the less we use this the better it is *)
-  let p = Lexing.{
-    pos_fname = "";
-    pos_lnum = 0;
-    pos_bol = 0;
-    pos_cnum = 0;
-  } in
-  p,p
+  dummy_pos, dummy_pos
 
   (* Lexing.dummy_pos, Lexing.dummy_pos *)
 
@@ -77,9 +73,9 @@ let mk_pattern ?(loc=dummy_loc) ppat_desc =
 let mk_tpattern ?(loc=dummy_loc) ppat_desc ty =
   mk_pattern ~loc @@ PCast (mk_pattern ~loc ppat_desc, ty)
 
-let mk_decl (rec_flag, id, params, konts, e, spec) =
+let mk_decl (rec_flag, id, params, pre, konts, e) =
   { decl_loc  = id.id_loc;
-    decl_desc = DFun (rec_flag, id, params, konts, e, spec); }
+    decl_desc = DFun (rec_flag, id, params, pre, konts, e); }
 
 let eatom ?(loc=dummy_loc) a = EAtom (mk_atom ~loc a)
 
@@ -181,18 +177,34 @@ let identify_fail e =
     "ANF assumption broken"
 
 let collect_params e =
-  let rec loop acc e =
+  let rec loop (accd, acck) e =
     match e.Uast.spexp_desc with
     | Sexp_fun (_, None, pat, e, _) ->
-        let arg, pty = get_pattern_id pat in
-        let binder = arg, pty in
-        loop (binder :: acc) e
-    | _ -> List.rev acc, e
+        let name, pty = get_pattern_id pat in
+        begin match pty with
+        | Some ({ ptyp_desc = Ptyp_arrow (_,a,b); _ } as _tarr) ->
+            let kont = {
+              kont_id   = name;
+              kont_arg  = [mk_id "result", Some a];
+              kont_kont = [
+                { kont_id   = { name with id_name = "_" ^ name.id_name };
+                  kont_arg  = [mk_id "result2", Some b];
+                  kont_kont = [];
+                  kont_pre  = [];
+                } ];
+              kont_pre  = [];
+            } in
+            loop (accd, kont :: acck) e
+        | _ ->
+            let b = name, pty in
+            loop (b :: accd, acck) e
+        end
+    | _ -> List.rev accd, List.rev acck, e
   in
-  loop [] e
+  loop ([], []) e
 
 let mk_kont kont_id kont_arg spec =
-  let mk_kont kont_pre = { kont_id; kont_arg; kont_pre } in
+  let mk_kont kont_pre = { kont_id; kont_arg; kont_kont=[]; kont_pre } in
   let pre = match spec with
     | None -> []
     | Some U.{sp_post; _} -> sp_post in
@@ -426,8 +438,18 @@ let mayraise e =
 type kont_type = KName of id | KExpr of callable
 
 
-let tybool = None (* TODO *)
-let tyunit = None (* TODO *)
+let caml_dummy_loc =
+  { loc_start = dummy_pos ;
+    loc_end = dummy_pos;
+    loc_ghost = false; }
+
+let mk_typ s =
+  { ptyp_desc = Ptyp_constr ({ txt = Lident s; loc = caml_dummy_loc }, []) ;
+    ptyp_loc = caml_dummy_loc;
+    ptyp_loc_stack = [];
+    ptyp_attributes = []; }
+let tyunit = Some (mk_typ "unit")
+let tybool = Some (mk_typ "unit")
 
 let bind_cast ty a =
   match ty with
@@ -451,6 +473,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
   let loc = location e.spexp_loc in
   match e.spexp_desc with
   | Sexp_constant c ->
+      (* if true then assert false; *)
       let a = mk_atom ~loc (constant c) in
       callk [bind_cast etype a]
 
@@ -503,16 +526,34 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       callk [bind_cast etype a]
 
   | Sexp_let ((Nonrecursive | Recursive), [svb], e2) ->
-      let id, pty = get_pattern_id svb.spvb_pat in
-      let e1 = svb.spvb_expr in
-      let loc1 = location e1.spexp_loc in
-      let loc2 = location e2.spexp_loc in
-      let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
-      let kid = gen_kid () in
-      ELetK (kid, (id, pty), None, body,
-             mk_expr ~loc:loc1 @@ expr ~etype:pty e1 (KName kid) hm)
+      let id, (pty : core_type option) = get_pattern_id svb.spvb_pat in
+      begin match pty with
+      | Some ({ ptyp_desc = Ptyp_arrow _; _ } as tarr) ->
+          let rec collect b e acc = match b, e.Uast.spexp_desc with
+          | { ptyp_desc = Ptyp_arrow (_,a,b); _ }, Sexp_fun (_, _, pat, e, _)
+            -> let x = get_pattern_id pat in
+               collect b e ((a, x) :: acc)
+          | _ -> List.rev acc, e
+          in
+          let r = collect tarr svb.spvb_expr [] in
+          let[@warning "-8"] [(ty_retk, x)], ek = r in
+          let loc1 = location ek.spexp_loc in
+          let loc2 = location e2.spexp_loc in
+          let retkid = gen_kid () in
+          let bodyk = mk_expr ~loc:loc1 @@ expr ek (KName retkid) hm in
+          ELetK (id, x, Some (retkid, ty_retk), bodyk,
+                 mk_expr ~loc:loc2 @@ expr ~etype e2 k hm)
+      | _ ->
+          let e1 = svb.spvb_expr in
+          let loc1 = location e1.spexp_loc in
+          let loc2 = location e2.spexp_loc in
+          let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
+          let kid = gen_kid ~prefix:"_letk" () in
+          ELetK (kid, (id, pty), None, body,
+                 mk_expr ~loc:loc1 @@ expr ~etype:pty e1 (KName kid) hm)
+      end;
 
-  | Sexp_let (Nonrecursive, svb::svbs, e2) ->
+  | Sexp_let (Nonrecursive, svb::svbs, e2) -> (* TODO: extend this to lambdas *)
       let id, pty = get_pattern_id svb.spvb_pat in
       let e1 = svb.spvb_expr in
       let loc1 = location e1.spexp_loc in
@@ -726,8 +767,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
 
   | Sexp_sequence (e1, e2) ->
       let k = mk_expr ~loc:(location e2.spexp_loc) @@ expr ~etype e2 k hm in
-                           (* TODO: replace [None] by [unit] somehow *)
-      let u = (gen_id ~prefix:"_unused" ()), None in
+      let u = (gen_id ~prefix:"_unit" ()), tyunit in
       let k = KExpr (mk_callable (CFun ([u],[], k))) in
       expr ~etype:tyunit e1 k hm
 
@@ -748,9 +788,10 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
          ```
         *)
       let cloop = mk_expr ~loc:loc1 (expr ~etype:tybool e1 (KName id_loop) hm) in
-      let u = (gen_id ~prefix:"_unused" ()), None in
+      let u = (gen_id ~prefix:"_unused" ()), tyunit in
       let kcloop = KExpr (mk_callable (CFun ([u], [], cloop))) in
       let z = gen_id () in
+      (* TODO types instead of None *)
       ELetK (id_loop, (z,None), None, mk_expr @@
              EIf (mk_atom @@ AId z,
                   mk_expr (expr ~etype:tyunit e2 kcloop hm),
@@ -764,11 +805,12 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let sub =
         let eloc = location e.spexp_loc in
         mk_expr ~loc:eloc @@ expr e (KName jid) hm in
-      let f = gen_id () in
+      let f = gen_kid () in
       let c = mk_callable ~loc @@ CId f in
       let ine = mk_expr ~loc @@ match k with
         | KName k -> EApp (mk_callable ~loc:k.id_loc (CId k), [], [c])
-        | KExpr k -> EApp (k, [], [c]) in
+        | KExpr k ->
+            EApp (k, [], [c]) in
       ELetK (f, x, Some (jid, tx), sub, ine)
 
   | Sexp_unreachable            -> EFail
@@ -820,22 +862,22 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
 
      Let us ignore it, for now. *)
   ignore pty; (* TODO *)
-  let params, pexp = collect_params svb.spvb_expr in
+  let params, kparams, pexp = collect_params svb.spvb_expr in
   let s = mayraise pexp in
   let spec = svb.spvb_vspec in
   let arg_id = return_id_of_spec spec in
   let return_pty = get_type_expr pexp in
   let sl = S.fold
     (fun s acc ->
-      mk_kont (mk_id s) (arg_id, None) None :: acc)
+      mk_kont (mk_id s) [(arg_id, None)] None :: acc)
     s [] in
   let () = Hashtbl.add raisable_hmap id.id_name s in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let etype = return_pty in (* return type of the function *)
   let body = mk_expr ~loc:expr_loc (expr ~etype pexp (KName k) empty_map) in
-  let kont = mk_kont k (arg_id, return_pty) spec in
+  let kont = mk_kont k [(arg_id, return_pty)] spec in
   (* FIXME: type of [k],
      Where is the type annotation of functions (svb)? *)
   (* Mário: it is the type of the body expression. *)
   let pre = pre_of_spec spec in
-  mk_decl (rec_flag, id, params, pre, kont :: sl, body)
+  mk_decl (rec_flag, id, params, pre, kparams @ (kont :: sl), body)

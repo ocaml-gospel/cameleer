@@ -18,11 +18,6 @@ let map_pty pty = Option.map E.core_type pty
 
 let binder (id, pty) = (id, map_pty pty)
 
-let binder (id, pty) =
-  if (pty = None) then
-    (Format.printf "ml2coma --> (%s)@." id.id_name);
-  binder (id, pty)
-
 let rec tpattern_to_args ?(ty=None) (p: Ml_lang.pattern) =
   (* problem here: we need the types! *)
   let rec loop ty p =
@@ -221,11 +216,16 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
         let ({id_name;_}, t) as x = binder x in
         let table = Ms.add id_name t mty in
         CELet (x, expr fn_name e1 mty, expr fn_name e2 table)
-    | ELetK (k, x, _, e1, e2) ->
-        (* if true then assert false; *)
+    | ELetK (k, x, None, e1, e2) ->
+        Format.printf "---%a@." (Pp_ml_lang.pp_binder) x;
         let ({id_name;_}, t) as x = binder x in
         let types = Ms.add id_name t mty in
         CELetK (k, x, None, expr fn_name e1 types, expr fn_name e2 types)
+    | ELetK (k, x, o, e1, e2) ->
+        let ({id_name;_}, t) as x = binder x in
+        let types = Ms.add id_name t mty in
+        let o = Option.map (fun (x,t) -> x, E.core_type t) o in
+        CELetK (k, x, o, expr fn_name e1 types, expr fn_name e2 types)
     | EApp (c, al, cl) ->
         let c = callable fn_name c mty in
         let cal = List.map (atom fn_name ^~ mty) al in
@@ -250,7 +250,13 @@ and callable fn_name { callable_loc; callable_desc } types =
   let desc = match callable_desc with
     | CId id -> CCId id
     | CFun (data, kon, e) -> (* TODO: specification for the generated fun *)
-        CCFun (List.map binder data, [], kon, expr fn_name e types) in
+        Format.printf "-%d-@." (List.length data);
+        List.iter (fun b -> Format.printf "-->%a@." Pp_ml_lang.pp_binder b) data;
+        (* try *)
+        CCFun (List.map binder data, [], kon, expr fn_name e types)
+        (* with _ -> failwith "iii" *)
+  in
+
   mk_ccalable desc
 
 let td_params (cty, _) =
@@ -383,9 +389,12 @@ let type_decl Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
 
 let declaration { decl_desc; decl_loc } =
   let mk_cdecl cdecl_desc = { cdecl_loc = decl_loc; cdecl_desc } in
-  let mk_ckont { kont_id; kont_arg = (arg, pty); kont_pre } =
+  let rec mk_ckont { kont_id; kont_arg; kont_kont; kont_pre } =
+    let ckont_kont = List.map mk_ckont kont_kont in
+    let ckont_arg = List.map (fun (i,t) -> i, Option.map E.core_type t) kont_arg in
     { ckont_id  = kont_id;
-      ckont_arg = arg, Option.map E.core_type pty;
+      ckont_arg;
+      ckont_kont;
       ckont_pre = List.map (Uterm.term false) kont_pre } in
   let cdecl = match decl_desc with
     | DFun (rec_flag, id, xs, pre, ks, e) ->

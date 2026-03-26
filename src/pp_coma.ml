@@ -90,12 +90,12 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   | CELetK(k, x, o, e1, e2) ->
       let ppo fmt (id, ty) =
-        fprintf fmt "(%a:%a)" pp_id id pp_pty ty in
+        fprintf fmt "(%a (_r:%a))" pp_id id pp_pty ty in
       fprintf fmt "@[%a@]@ @[[ %s %a %a@;<1 2>@[<hov 2>=@ %a@]]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
-        (pp_print_option ppo) o
         (pp_cbinder ~paren:true) x
+        (pp_print_option ppo) o
         (fun fmt e -> pp_expr fmt e) e1
 
 and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
@@ -168,11 +168,12 @@ let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"
   | Nonrecursive -> ()
 
-let pp_kont fmt {ckont_id; ckont_pre; ckont_arg} =
-  fprintf fmt (protect_on true "@[%a@ @[%a@]@ @[%a@]@]")
+let rec pp_kont fmt {ckont_id; ckont_pre; ckont_kont; ckont_arg} =
+  fprintf fmt (protect_on true "@[%a@ @[%a@]@ @[%a@]@ @[%a@]@]")
     pp_id ckont_id
-    (pp_cbinder ~paren:true) ckont_arg
+    (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) ckont_arg
     pp_cpre ckont_pre
+    (pp_print_list ~pp_sep:pp_space pp_kont) ckont_kont
 
 let pp_handler_case fmt (case_id, vars, pre) =
   match vars with

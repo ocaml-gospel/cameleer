@@ -81,7 +81,8 @@ type precondition = U.term list
 
 type kont = {
   kont_id: id;
-  kont_arg: binder;
+  kont_arg: binder list;
+  kont_kont: kont list;
   kont_pre: precondition;
 }
 
@@ -118,7 +119,8 @@ type info_p = cbinder list
 
 type ckont = {
   ckont_id: id;
-  ckont_arg: cbinder;
+  ckont_arg: cbinder list;
+  ckont_kont: ckont list;
   ckont_pre: cprecondition;
 }
 
