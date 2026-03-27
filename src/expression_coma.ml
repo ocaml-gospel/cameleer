@@ -863,6 +863,30 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
      Let us ignore it, for now. *)
   ignore pty; (* TODO *)
   let params, kparams, pexp = collect_params svb.spvb_expr in
+  let _params_id_of_spec = function
+    (* FIXME? Paul [27-03-2026 11h42]
+       Use this function to apply a substitution of variable names
+       inside the specifiation.
+       Currently, these names are not used at all and the following does not work
+       ```ocaml
+       let f a b = a + b
+       (*@ r = f c d
+               ensures P c d *)
+       ```
+       To solve this problem we can either:
+       - apply a substitution [c->a, d->b]
+         (either in the body of f, or in the logical terms)
+       - ouse the «contract-let» of Coma:
+         ```coma
+         let f (a b: int) [c: int = a] [d: int = b] { P c d } (return ...) = ...
+                          ^^^^^^^^^^^^ ^^^^^^^^^^^^
+                          this is valid Coma where [c] and [d] are bound as if
+                          they where parameters
+                          -> in the contract *and* the body of f
+         ``` *)
+    | None | Some U.{sp_header = None; _} -> List.map fst params
+    | Some U.{sp_header = Some header; _} ->
+        List.map labelled_arg header.sp_hd_args in
   let s = mayraise pexp in
   let spec = svb.spvb_vspec in
   let arg_id = return_id_of_spec spec in

@@ -31,11 +31,12 @@ let h (x:int): int =
   g (A x) (x+1)
 (*@ r = h x
       requires x > 0
+      requires !!
       ensures  r > -2 *)
 
 
 let h2 (x:int): int =
-  g B x
-(*@ r = h x
+  h x
+(*@ r = h2 x
       requires x <> 1
       ensures  r > -2 *)
