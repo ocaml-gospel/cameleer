@@ -75,12 +75,12 @@ let pp_cbinder fmt (id, pty) =
 end
 
 let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
-  Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
+  (* Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
   arg.id_name
   case_id.id_name
   (String.concat ", " 
     (List.concat_map (fun vs ->
-      List.map (fun (v, _) -> v.id_name) vs) vars));
+      List.map (fun (v, _) -> v.id_name) vs) vars)); *)
   let mk_uast_term ~loc term_desc =
     Uast.{ term_desc; term_loc=loc } in
   let loc_l = location arg.id_loc in
