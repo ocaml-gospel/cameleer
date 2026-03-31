@@ -111,7 +111,7 @@ let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
           let v = Identifier.Preid.create ~loc:loc_l v.id_name in
           (v, None)) bound_vars in
           mk_uast_term ~loc:loc_l (Uast.Tquant (Uast.Tforall, binders, negative_pre_bare)) in
-  [(Uterm.term false positive_pre, Uterm.term false negative_pre)]
+  (Uterm.term false positive_pre, Uterm.term false negative_pre)
 
 (* Hashtable that stores handlers
    key: handler name (e.g. "destruct_height")
@@ -128,36 +128,37 @@ let rec case_of_branch ?(ty=None) args (p : Ml_lang.pattern) =
       let kont_id = Ec.mk_id ~loc:id.id_loc "default_case" in
       let var = Ec.gen_id ~loc:id.id_loc () in
       let b = binder (var, ty) in
-      let pre = mk_precondition (List.hd args) var [] in
-      (kont_id, [b], pre)
+      let (positive_pre, negative_pre) = mk_precondition (List.hd args) var [] in
+      (kont_id, [b], [positive_pre], [negative_pre])
   | PCst _n -> assert false
   | PCons (cid, ps) ->
       let vars = List.map (tpattern_to_args ~ty) ps in
       let binders = List.map (List.map binder) vars in
-      let pre = mk_precondition (List.hd args) cid vars in
+      let (positive_pre, negative_pre) = mk_precondition (List.hd args) cid vars in
       let id_name = String.uncapitalize_ascii cid.id_name in
       let id_name = match id_name with
         | "::" -> "cons"
         | "[]" -> "nil"
         | _ -> id_name in
       let id = Ec.mk_id ~loc:cid.id_loc id_name in
-      (id, List.flatten binders, pre)
+      (id, List.flatten binders, [positive_pre], [negative_pre])
   | PWild ->
       let kont_id = Ec.mk_id "default_case" in
       let var = Ec.gen_id ~prefix:"_unused" () in
       let b = binder (var, ty) in
-      let pre = mk_precondition (List.hd args) var [] in
-      (kont_id, [b], pre)
+      let (positive_pre, negative_pre) = mk_precondition (List.hd args) var [] in
+      (kont_id, [b], [positive_pre], [negative_pre])
   | PTuple ps ->
       let sub_cases = List.map2 (fun a p ->
         let arg_i = [a] in
         case_of_branch arg_i p
       ) args ps in
       let name = String.concat "_"
-        (List.map (fun (id,_,_) -> id.id_name) sub_cases) in
-      let vars = List.concat_map (fun (_,vars,_) -> vars) sub_cases in
-      let pres = List.concat_map (fun (_,_,pre)  -> pre)  sub_cases in
-      (Ec.mk_id ~loc:p.ppat_loc name, vars, pres)
+        (List.map (fun (id,_,_,_) -> id.id_name) sub_cases) in
+      let vars = List.concat_map (fun (_,vars,_,_) -> vars) sub_cases in
+      let pos_pres = List.concat_map (fun (_,_,pos,_) -> pos) sub_cases in
+      let neg_pres = List.concat_map (fun (_,_,_,neg) -> neg) sub_cases in
+      (Ec.mk_id ~loc:p.ppat_loc name, vars, pos_pres, neg_pres)
 
 let register_handler fn_name a cases m =
   let key = handler_name_of_id fn_name in
@@ -177,12 +178,10 @@ let register_handler fn_name a cases m =
       match cases with
       | [] -> []
       | (p, _) :: rest ->
-          let case_id, vars, pre = case_of_branch (List.map fst args) p in
-          let pos_pre = List.map (fun (t, _) -> t) pre in
-          let neg_pre = List.map (fun (_, n) -> n) pre in
+          let case_id, vars, pos_pre, neg_pre = case_of_branch (List.map fst args) p in
           let case = (case_id, vars, pos_pre @ acc_pre) in
           let new_pre = acc_pre @ neg_pre in
-          case :: process_cases rest (acc_pre @ new_pre) in
+          case :: process_cases rest new_pre in
 
   let cases = process_cases cases [] in
   let new_handler = {
