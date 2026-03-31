@@ -101,8 +101,17 @@ let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
     | [] -> mk_uast_term ~loc:loc_r (Uast.Tpreid qid)
     | rs -> mk_uast_term ~loc:loc_r (Uast.Tidapp (qid, rs)) in
   let eq_term = Identifier.Preid.create ~loc:loc_l "infix =" in
-  let pre = mk_uast_term ~loc:loc_l (Uast.Tinfix (lhs, eq_term, rhs)) in
-  [ Uterm.term false pre ]
+  let dif_term = Identifier.Preid.create ~loc:loc_l "infix <>" in
+  let positive_pre = mk_uast_term ~loc:loc_l (Uast.Tinfix (lhs, eq_term, rhs)) in
+  let negative_pre_bare = mk_uast_term ~loc:loc_l (Uast.Tinfix (lhs, dif_term, rhs)) in
+  let negative_pre = match List.concat vars with
+    | [] -> negative_pre_bare
+    | bound_vars -> 
+        let binders = List.map (fun (v, _) ->
+          let v = Identifier.Preid.create ~loc:loc_l v.id_name in
+          (v, None)) bound_vars in
+          mk_uast_term ~loc:loc_l (Uast.Tquant (Uast.Tforall, binders, negative_pre_bare)) in
+  [(Uterm.term false positive_pre, Uterm.term false negative_pre)]
 
 (* Hashtable that stores handlers
    key: handler name (e.g. "destruct_height")
@@ -163,9 +172,22 @@ let register_handler fn_name a cases m =
       | ACast (a,_) -> loop a
       | _ -> failwith "A match expression must match on an identifier" in
     loop a in
+  
+    let rec process_cases cases acc_pre =
+      match cases with
+      | [] -> []
+      | (p, _) :: rest ->
+          let case_id, vars, pre = case_of_branch (List.map fst args) p in
+          let pos_pre = List.map (fun (t, _) -> t) pre in
+          let neg_pre = List.map (fun (_, n) -> n) pre in
+          let case = (case_id, vars, pos_pre @ acc_pre) in
+          let new_pre = acc_pre @ neg_pre in
+          case :: process_cases rest (acc_pre @ new_pre) in
+
+  let cases = process_cases cases [] in
   let new_handler = {
     args;
-    cases = List.map (fun (p, _) -> case_of_branch (List.map fst args) p) cases
+    cases;
   } in
   let (len, current) = match Hashtbl.find_opt destructs key with
     | None   -> 0, []
