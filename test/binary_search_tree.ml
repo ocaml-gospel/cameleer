@@ -32,12 +32,12 @@ let rec insert (x: elt) (t: elt tree): elt tree =
         let o1 = insert x l in Node (o1, y, r)
       else 
         let o2 = insert x r in Node (l, y, o2)
-(*@ t = insert x t
+(*@ r = insert x t
       requires bst t
       variant  t
-      ensures  forall y. y <> x -> occ y t = occ y t
-      ensures  occ x t = occ x t || occ x t = 1 + occ x t
-      ensures  bst t *)
+      ensures  forall y. y <> x -> occ y r = occ y t
+      ensures  occ x r = occ x t || occ x r = 1 + occ x t
+      ensures  bst r *)
 
 let rec mem (x: elt) (t: elt tree) =
   match (t: elt tree) with
@@ -50,3 +50,35 @@ let rec mem (x: elt) (t: elt tree) =
       requires bst t
       variant  t
       ensures  b <-> mem x t *)
+
+(*@ function size (t: 'a tree) : integer = match t with
+      | Empty -> 0
+      | Node l _ r -> 1 + size l + size r *)
+
+(*@ function minimum (t: elt tree) : elt *)
+(*@ axiom minimum_def: forall l v r. 
+      minimum (Node l v r) = 
+        if size l = 0 then v else minimum l *)
+
+(*@ predicate is_minimum (x: elt) (t: elt tree) =
+      mem x t && forall e. mem e t -> x <= e *)
+
+(* the smallest element is on the leftmost path *)
+(*@ lemma is_min: forall t: elt tree.
+      bst t -> size t > 0 ->
+      is_minimum (minimum t) t *)
+
+let rec remove_min (t: elt tree) : elt tree =
+  match (t: elt tree) with
+  | Empty -> assert false
+  | Node (Empty, _, r) -> r
+  | Node (l, v, r) -> 
+      let o1 = remove_min l in Node (o1, v, r)
+(*@ r = remove_min t
+      requires bst t
+      requires size t > 0
+      variant  t
+      ensures  occ (minimum t) r = occ (minimum t) t - 1
+      ensures  forall e. e <> minimum t -> occ e r = occ e t
+      ensures  size r = size t - 1
+      ensures  bst r *)
