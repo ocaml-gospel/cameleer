@@ -473,7 +473,6 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
   let loc = location e.spexp_loc in
   match e.spexp_desc with
   | Sexp_constant c ->
-      (* if true then assert false; *)
       let a = mk_atom ~loc (constant c) in
       callk [bind_cast etype a]
 
@@ -798,7 +797,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
                   mk_expr (callk [atom_unit])),
              cloop)
 
-  (* currently, this is false *)
+  (* TODO
+     currently, this is *false* *)
   | Sexp_fun (_, _, pat, e, _) ->
       let[@warning "-8"] (_,Some tx) as x = get_pattern_id pat in
       let jid = gen_kid () in
@@ -897,11 +897,8 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
     s [] in
   let () = Hashtbl.add raisable_hmap id.id_name s in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
-  let etype = return_pty in (* return type of the function *)
+  let etype = return_pty in
   let body = mk_expr ~loc:expr_loc (expr ~etype pexp (KName k) empty_map) in
   let kont = mk_kont k [(arg_id, return_pty)] spec in
-  (* FIXME: type of [k],
-     Where is the type annotation of functions (svb)? *)
-  (* Mário: it is the type of the body expression. *)
   let pre = pre_of_spec spec in
   mk_decl (rec_flag, id, params, pre, kparams @ (kont :: sl), body)

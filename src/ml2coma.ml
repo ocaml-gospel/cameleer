@@ -54,6 +54,8 @@ let ml_id_to_qualid (id : Ml_lang.id) : Uast.qualid =
   let preid = Identifier.Preid.create id.id_name ~loc in
   Uast.Qpreid preid
 
+let mk_ccalable ?(loc=dummy_loc) ccallable_desc =
+  { ccallable_loc = loc; ccallable_desc }
 
 module TMP = struct
 open Format
@@ -78,7 +80,7 @@ let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
   (* Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
   arg.id_name
   case_id.id_name
-  (String.concat ", " 
+  (String.concat ", "
     (List.concat_map (fun vs ->
       List.map (fun (v, _) -> v.id_name) vs) vars)); *)
   let mk_uast_term ~loc term_desc =
@@ -106,7 +108,7 @@ let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
   let negative_pre_bare = mk_uast_term ~loc:loc_l (Uast.Tinfix (lhs, dif_term, rhs)) in
   let negative_pre = match List.concat vars with
     | [] -> negative_pre_bare
-    | bound_vars -> 
+    | bound_vars ->
         let binders = List.map (fun (v, _) ->
           let v = Identifier.Preid.create ~loc:loc_l v.id_name in
           (v, None)) bound_vars in
@@ -173,7 +175,7 @@ let register_handler fn_name a cases m =
       | ACast (a,_) -> loop a
       | _ -> failwith "A match expression must match on an identifier" in
     loop a in
-  
+
     let rec process_cases cases acc_pre =
       match cases with
       | [] -> []
@@ -259,26 +261,22 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
     | EMatch (a, pel) ->
         let name  = register_handler fn_name a pel mty in
         let id    = mk_id name expr_loc in
+        let cid   = mk_ccalable ~loc:expr_loc @@ CCId id in
         let catom = atom fn_name a mty in
-        let cases = List.map mk_ppat_expr pel in
-        let cases = List.map mk_binder_cexpr cases in
-        CEDestruct (id, catom, cases) in
+        let cases = List.map (fun pe ->
+          let i,e = mk_ppat_expr pe |> mk_binder_cexpr in
+          mk_ccalable ~loc:e.cexpr_loc @@ CCFun (i,[],e)) pel in
+        CEApp (cid, [catom], cases) in
   mk_cexpr (expr_desc e_desc)
 
-and callable fn_name { callable_loc; callable_desc } types =
-  let mk_ccalable ccallable_desc =
-    { ccallable_loc = callable_loc; ccallable_desc } in
+and callable fn_name { callable_loc=loc; callable_desc } types =
   let desc = match callable_desc with
     | CId id -> CCId id
     | CFun (data, kon, e) -> (* TODO: specification for the generated fun *)
         Format.printf "-%d-@." (List.length data);
         List.iter (fun b -> Format.printf "-->%a@." Pp_ml_lang.pp_binder b) data;
-        (* try *)
-        CCFun (List.map binder data, [], kon, expr fn_name e types)
-        (* with _ -> failwith "iii" *)
-  in
-
-  mk_ccalable desc
+        CCFun (List.map binder data, kon, expr fn_name e types) in
+  mk_ccalable ~loc desc
 
 let td_params (cty, _) =
   match cty.ptyp_desc with

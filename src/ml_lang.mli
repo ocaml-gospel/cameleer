@@ -40,7 +40,7 @@ type expr = {
 }
 
 and expr_desc =
-  | EAtom of atom
+  | EAtom of atom (* TODO is this useful? does it make sense in CPS? *)
   | EFail
   | ELet  of binder * expr * expr                 (* let p = e in e          *)
   | ELetK of id * binder * (id * P.core_type) option * expr * expr
@@ -151,7 +151,6 @@ and cexpr_desc =
                                                        (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr
-  | CEDestruct of id * catom * (info_p * cexpr) list
 
 and catom = {
   catom_loc: location;
@@ -175,8 +174,8 @@ and ccallable = {
 
 and ccallable_desc =
   | CCId  of id (* handler name *)
-  | CCFun of cbinder list * cprecondition * id list * cexpr
-  (* data params, precondition, kont params, body *)
+  | CCFun of cbinder list * id list * cexpr
+  (* data params, kont params, body *)
 
 type cdeclaration = {
   cdecl_loc: location;

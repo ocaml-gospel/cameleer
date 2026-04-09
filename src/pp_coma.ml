@@ -74,20 +74,15 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_cbinder ~paren:false) x
         (fun fmt e -> pp_expr fmt e) e1
   | CEApp (c, al, cl) ->
-      fprintf fmt ("@[<hov 2>%a @[%a %a@]@]")
+      fprintf fmt ("@[%a @[%a@]@\n@[%a@]@]")
         (pp_callable ~_fn_name) c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
-        (pp_print_list ~pp_sep:pp_space (pp_callable ~_fn_name)) cl
+        (pp_print_list ~pp_sep:pp_newline (pp_callable ~_fn_name)) cl
   | CEIf (a, e1, e2) ->
-      fprintf fmt "@[if @[%a@]@;<1 3>@[(-> @[%a@])@\n(-> @[%a@])@]@]"
+      fprintf fmt "@[if @[%a@]@;<1 3>@[(-> @[%a)@]@\n(-> @[%a)@]@]@]"
         (pp_atom ~comma_tuple:true ~paren:false ~curly:true) a
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
-  | CEDestruct (id, a, pel) ->
-      fprintf fmt "@[%s @[%a@]@\n@[%a@]@]"
-        (id.id_name)
-        (pp_atom ~comma_tuple:false ~paren:false ~curly:true) a
-        (pp_print_list ~pp_sep:pp_newline pp_ppat_cexpr) pel
   | CELetK(k, x, o, e1, e2) ->
       let ppo fmt (id, ty) =
         fprintf fmt "(%a (_r:%a))" pp_id id pp_pty ty in
@@ -145,12 +140,11 @@ and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
 and pp_callable ?(_fn_name="") fmt c =
   match c.ccallable_desc with
   | CCId id -> fprintf fmt "%s" id.id_name
-  | CCFun (data, pre, kon, e) ->
-      fprintf fmt (protect_on true "@[fun @[%a@]%s@[%a@]%s@[%a@]%s-> @[<hov 2>%a@]@]")
+  | CCFun (data, kon, e) ->
+      fprintf fmt (protect_on true "@[%s@[%a@]%s@[%a@]%s->@;<1 2>@[%a@]@]")
+        (if data = [] && kon = [] then "" else "fun ")
         (pp_print_list ~pp_sep:pp_space pp_cbinder) data
-        (if data = [] && pre = [] then "" else " ")
-        pp_cpre pre
-        (if kon = [] && pre = [] then "" else " ")
+        (if data = [] then "" else " ")
         (pp_print_list ~pp_sep:pp_space pp_id) kon
         (if kon = [] then "" else " ")
         (fun fmt e -> pp_expr fmt e) e
@@ -158,7 +152,7 @@ and pp_callable ?(_fn_name="") fmt c =
 and pp_ppat_cexpr fmt (p, e) =
   List.iter (fun (x,b) ->
     if b = None then (Format.printf "ppcoma --> (%s)@." x.id_name)) p;
-  fprintf fmt "(%s@[%a@]%s->@;<1 2>@[%a@])"
+  fprintf fmt "(%s@[%a@]%s->@;<1 2>@[%a)@]"
     (if p = [] then "" else "fun ")
     (pp_print_list ~pp_sep:pp_space pp_cbinder) p
     (if p = [] then "" else " ")
