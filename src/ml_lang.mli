@@ -141,7 +141,6 @@ type cexpr = {
 }
 
 and cexpr_desc =
-  | CEAtom of catom
   | CEFail
   | CEAssert of cprecondition * cexpr
   | CEHide of cexpr

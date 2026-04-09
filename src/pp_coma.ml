@@ -60,8 +60,6 @@ let _pp_pre fmt = function
 
 let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
   match e.cexpr_desc with
-  | CEAtom a ->
-      fprintf fmt "%a" (pp_atom ~comma_tuple:true ~paren:true ~curly:false) a
   | CEFail -> fprintf fmt "fail"
   | CEAssert (phi, e) ->
       fprintf fmt "@[%a@]@ @[%a@]"
