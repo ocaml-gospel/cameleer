@@ -71,17 +71,15 @@ let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
 
 let rec pp_expr fmt (e: expr) =
   match e.expr_desc with
-  | EAtom a ->
-      fprintf fmt "%a" (pp_atom ~paren:true) a
   | EFail ->
       fprintf fmt "fail"
   | EAssert (_phi, e) ->
       fprintf fmt "assert { ... };@\n%a" pp_expr e
   | EHide e ->
       fprintf fmt "hide @[%a@]" pp_expr e
-  | ELet (x, e1, e2) ->
+  | ELet (x, a1, e2) ->
       fprintf fmt "let %a =@;<1 2>@[%a@]@ in@ @[%a@]"
-        pp_binder x pp_expr e1 pp_expr e2
+        pp_binder x (fun fmt a -> pp_atom fmt a) a1 pp_expr e2
   | EApp (c, al, cl) ->
       fprintf fmt "@[<hov 2>%a @[%a@] @[%a@]@]" pp_callable c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true)) al
@@ -103,11 +101,13 @@ let rec pp_expr fmt (e: expr) =
 
 and pp_atom ?(paren=false) fmt (a: atom) =
   match a.atom_desc with
-  | ABinop (e1, op, e2) ->
-      fprintf fmt (protect_on paren "@[%a %a %a@]") pp_expr e1 pp_op op
-        pp_expr e2
-  | AUnop (op, e1) ->
-      fprintf fmt (protect_on paren "@[%a %a@]") pp_op op pp_expr e1
+  | ABinop (a1, op, a2) ->
+      fprintf fmt (protect_on paren "@[%a %a %a@]")
+        (pp_atom ~paren) a1
+        pp_op op
+        (pp_atom ~paren) a2
+  | AUnop (op, a1) ->
+      fprintf fmt (protect_on paren "@[%a %a@]") pp_op op (pp_atom ~paren) a1
   | ACst c -> fprintf fmt "%a" pp_constant c
   | AFun (_, binder, e) ->
       let (x, _) = binder in

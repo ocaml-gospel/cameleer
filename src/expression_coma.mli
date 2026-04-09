@@ -27,7 +27,6 @@ val mayraise : Uast.s_expression -> raise_set
 
 val mk_atom : ?loc:location -> atom_desc -> atom
 val mk_expr : ?loc:location -> expr_desc -> expr
-val mk_expr_atom : ?loc:location -> atom_desc -> expr
 val mk_pattern : ?loc:location -> pattern_desc -> pattern
 val mk_tpattern : ?loc:location -> pattern_desc -> core_type -> pattern
 val mk_decl :

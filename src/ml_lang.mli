@@ -40,9 +40,8 @@ type expr = {
 }
 
 and expr_desc =
-  | EAtom of atom (* TODO is this useful? does it make sense in CPS? *)
   | EFail
-  | ELet  of binder * expr * expr                 (* let p = e in e          *)
+  | ELet  of binder * atom * expr                 (* let p = e in e          *)
   | ELetK of id * binder * (id * P.core_type) option * expr * expr
                                         (* let_cont h x (o (_: ty) = e in e  *)
   | EApp  of callable * atom list * callable list (* k a…a k…k               *)
@@ -58,8 +57,8 @@ and atom = {
 
 and atom_desc =
   | AId of id
-  | ABinop of expr * op * expr
-  | AUnop of op * expr
+  | ABinop of atom * op * atom
+  | AUnop of op * atom
   | ACst of constant
   | AFun of bool * binder * expr
   | ATuple of atom list
@@ -146,7 +145,7 @@ and cexpr_desc =
   | CEFail
   | CEAssert of cprecondition * cexpr
   | CEHide of cexpr
-  | CELet of cbinder * cexpr * cexpr
+  | CELet of cbinder * catom * cexpr
   | CELetK of id * cbinder * (id * Ptree.pty) option * cexpr * cexpr
                                                        (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
@@ -159,8 +158,8 @@ and catom = {
 
 and catom_desc =
   | CAId of id
-  | CABinop of cexpr * op * cexpr
-  | CAUnop of op * cexpr
+  | CABinop of catom * op * catom
+  | CAUnop of op * catom
   | CACst of constant
   | CAFun of cbinder * cexpr
   | CATuple of catom list

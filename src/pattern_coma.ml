@@ -67,15 +67,11 @@ let rec type_name t =
 let compile
   ~(get_constructors: string -> string list)
   ~(mk_case: atom -> (pattern * 'a) list -> 'a)
-  ~(mk_let:  binder -> expr -> 'a -> 'a)
+  ~(mk_let:  binder -> atom -> 'a -> 'a)
   (a: atom) (rl: (pattern list * 'a) list) : 'a =
 
   let rec compile tl rl = match tl,rl with
     | _, [] -> (* no actions *)
-        Format.printf "---%a]@."
-          (Format.pp_print_list
-            ~pp_sep:Format.pp_print_space Pp_ml_lang.pp_atom)
-          tl;
         raise NonExhaustive
     | [], (_,a) :: _ -> (* no terms, at least one action *)
         a
@@ -105,7 +101,7 @@ let compile
       -> assert false *)
     | t :: tl, _ -> (* process the leftmost column *)
 
-        let expr_t = E.mk_expr_atom t.atom_desc in
+        let at0 = E.mk_atom t.atom_desc in
         let ty = t_type t in
 
         (* fc: first column
@@ -145,7 +141,7 @@ let compile
             let rec loop t p =
               match p.ppat_desc with
               | PWild -> a
-              | PVar id -> mk_let (id, (Some t)) expr_t a
+              | PVar id -> mk_let (id, (Some t)) at0 a
               | PCast (p, t) -> loop t p
               | _ -> assert false in
             pl, loop ty p
@@ -183,7 +179,7 @@ let compile
                       let l = nwilds @ pl, a in
                       l :: acc
                   | PVar id ->
-                      let a = mk_let (id, Some ty) expr_t a in
+                      let a = mk_let (id, Some ty) at0 a in
                       let l = nwilds @ pl, a in
                       l :: acc
                   | PCons (_, l2) ->
@@ -200,7 +196,7 @@ let compile
             match p.ppat_desc with
             | PWild -> Some a
             | PVar id ->
-                Some (mk_let (id, ty) expr_t a)
+                Some (mk_let (id, ty) at0 a)
             | PCast (p, t) ->
                 collect_lets_opt ~ty:(Some t) a p
             | _ -> None in
@@ -235,9 +231,6 @@ let compile
 
 
 let rec expr e = match e.expr_desc with
-  | EAtom a ->
-      let expr_desc = EAtom (atom a) in
-      { e with expr_desc }
   | EFail -> e
   | EAssert (phi,e) ->
       let expr_desc = EAssert (phi, expr e) in
@@ -245,8 +238,8 @@ let rec expr e = match e.expr_desc with
   | EHide e ->
       let expr_desc = EHide (expr e) in
       { e with expr_desc }
-  | ELet (k, e1, e2) ->
-      let expr_desc = ELet (k, expr e1, expr e2) in
+  | ELet (k, a, e2) ->
+      let expr_desc = ELet (k, atom a, expr e2) in
       { e with expr_desc }
   | ELetK (k, id, o, e1, e2) ->
       let expr_desc = ELetK (k, id, o, expr e1, expr e2) in
@@ -264,9 +257,7 @@ let rec expr e = match e.expr_desc with
       let expr_desc = EIf (a, e1, e2) in
       { e with expr_desc }
   | EMatch (a, pl) ->
-      let mk_case a pl =
-          E.mk_expr @@ EMatch (a, pl)
-        in
+      let mk_case a pl = E.mk_expr @@ EMatch (a, pl) in
       let mk_let (_,bt as b) e1 e2 =
         assert (bt <> None);
         E.mk_expr (ELet (b, e1, e2)) in
@@ -275,11 +266,11 @@ let rec expr e = match e.expr_desc with
 
 and atom a = match a.atom_desc with
   | ACst _ | AId _ -> a
-  | ABinop (e1, o, e2) ->
-      let atom_desc = ABinop (expr e1, o, expr e2) in
+  | ABinop (a1, o, a2) ->
+      let atom_desc = ABinop (atom a1, o, atom a2) in
       { a with atom_desc }
-  | AUnop (o, e) ->
-      let atom_desc = AUnop (o, expr e) in
+  | AUnop (o, a) ->
+      let atom_desc = AUnop (o, atom a) in
       { a with atom_desc }
   | AFun (r, b, e) ->
       let atom_desc = AFun (r, b, expr e) in

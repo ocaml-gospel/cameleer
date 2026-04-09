@@ -68,11 +68,11 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         pp_cpre phi
         (fun fmt e -> pp_expr fmt e) e
   | CEHide e -> fprintf fmt "(! @[%a@])" (fun fmt e -> pp_expr fmt e) e
-  | CELet (x, e1, e2) ->
+  | CELet (x, a, e2) ->
       fprintf fmt "@[%a@]@\n[%a =@ @[<hov 2>%a@]]"
         (fun fmt e -> pp_expr fmt e) e2
         (pp_cbinder ~paren:false) x
-        (fun fmt e -> pp_expr fmt e) e1
+        (fun fmt e -> pp_atom fmt e) a
   | CEApp (c, al, cl) ->
       fprintf fmt ("@[%a @[%a@]@\n@[%a@]@]")
         (pp_callable ~_fn_name) c
@@ -95,18 +95,17 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
 
 and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
   match a.catom_desc with
-  | CABinop (e1, op, e2) ->
+  | CABinop (a1, op, a2) ->
       fprintf fmt
         (protect_on paren (curly_braces curly "@[%a %a %a@]"))
-        (fun fmt e -> pp_expr fmt e) e1
+        (fun fmt a -> pp_atom ~paren fmt a) a1
          pp_op op
-        (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
-  | CAUnop (op, e1) ->
+        (fun fmt a -> pp_atom ~paren fmt a) a2
+  | CAUnop (op, a1) ->
       fprintf fmt
         (protect_on paren (curly_braces curly "@[%a %a@]"))
-        pp_op op (fun fmt e -> pp_expr fmt e) e1
+        pp_op op (fun fmt a -> pp_atom ~paren fmt a) a1
   | CACst c -> fprintf fmt (curly_braces curly "%a") pp_constant c
-  (* | CAFun ((_,None), _) -> assert false *)
   | CAFun (binder, e) ->
       fprintf fmt (protect_on true "@[fun @[%a@] -> @[<hov 2>%a@]@]")
         (pp_cbinder ~paren:true) binder

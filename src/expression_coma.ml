@@ -7,10 +7,8 @@ let (^~) a b = fun c -> a c b
 let dummy_pos = Lexing.{ pos_fname = ""; pos_lnum = 0; pos_bol = 0; pos_cnum = 0; }
 
 let dummy_loc =
-  (* TODO the less we use this the better it is *)
+  (* WARN: the less we use this the better it is *)
   dummy_pos, dummy_pos
-
-  (* Lexing.dummy_pos, Lexing.dummy_pos *)
 
 let location {loc_start; loc_end; _} =
   (loc_start, loc_end)
@@ -77,8 +75,6 @@ let mk_decl (rec_flag, id, params, pre, konts, e) =
   { decl_loc  = id.id_loc;
     decl_desc = DFun (rec_flag, id, params, pre, konts, e); }
 
-let eatom ?(loc=dummy_loc) a = EAtom (mk_atom ~loc a)
-
 let rec get_pattern_id (pat: Parsetree.pattern) =
   match pat.ppat_desc with
   | Ppat_var {txt; loc} ->
@@ -98,14 +94,6 @@ let labelled_arg = function
   | Loptional p
   | Lnamed p
   | Lghost (p, _) -> preid p
-
-(* TODO: to be removed? *)
-let _qualid = function
-  | Uast.Qpreid id -> preid id
-  | Uast.Qdot _ -> assert false
-
-let mk_expr_atom ?(loc=dummy_loc) ad =
-  mk_expr ~loc (eatom ~loc ad)
 
 let constant_int = function
   | Pconst_integer (s, _) ->
@@ -330,15 +318,12 @@ and atom_of_sexpr e =
     when is_binop (string_of_longident txt) ->
       let loc = location e1.spexp_loc in
       let op = get_binop (string_of_longident txt) in
-      let e1 = mk_expr_atom ~loc @@ (atom_of_sexpr e1).atom_desc in
-      let e2 = mk_expr_atom ~loc @@ (atom_of_sexpr e2).atom_desc in
-      mk_atom ~loc (ABinop (e1, op, e2))
+      mk_atom ~loc (ABinop (atom_of_sexpr e1, op, atom_of_sexpr e2))
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, [(_, e1)])
     when is_unop (string_of_longident txt) ->
       let loc = location e1.spexp_loc in
       let op = get_binop (string_of_longident txt) in
-      let e1 = mk_expr_atom ~loc @@ (atom_of_sexpr e1).atom_desc in
-      mk_atom ~loc (AUnop (op, e1))
+      mk_atom ~loc (AUnop (op, atom_of_sexpr e1))
   | Sexp_constraint (e, t) ->
       let loc = location e.spexp_loc in
       let a = atom_of_sexpr e in
@@ -444,10 +429,11 @@ let caml_dummy_loc =
     loc_ghost = false; }
 
 let mk_typ s =
-  { ptyp_desc = Ptyp_constr ({ txt = Lident s; loc = caml_dummy_loc }, []) ;
+  { ptyp_desc = Ptyp_constr ({ txt = Lident s; loc = caml_dummy_loc }, []);
     ptyp_loc = caml_dummy_loc;
     ptyp_loc_stack = [];
     ptyp_attributes = []; }
+
 let tyunit = Some (mk_typ "unit")
 let tybool = Some (mk_typ "unit")
 
@@ -616,9 +602,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let op = get_binop st in
       let[@warning "-8"] [a1;a2] =
         List.map (fun (_, e) -> identify e; atom_of_sexpr e) args in
-      let a1 = mk_expr ~loc:a1.atom_loc (EAtom a1) in
-      let a2 = mk_expr ~loc:a2.atom_loc (EAtom a2) in
-      let a  = mk_atom ~loc:a1.expr_loc @@ ABinop (a1, op, a2) in
+      let a  = mk_atom ~loc:a1.atom_loc @@ ABinop (a1, op, a2) in
       let k = match k with
         | KName k -> mk_callable @@ CId k
         | KExpr k -> k in
@@ -628,8 +612,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
     when is_unop (string_of_longident txt) ->
       let op = get_unop (string_of_longident txt) in
       let a = atom_of_sexpr arg in
-      let a = mk_expr ~loc:a.atom_loc (EAtom a) in
-      let a = mk_atom ~loc:a.expr_loc @@ AUnop (op, a) in
+      let a = mk_atom ~loc:a.atom_loc @@ AUnop (op, a) in
       let k = match k with
         | KName k -> mk_callable @@ CId k
         | KExpr k -> k in

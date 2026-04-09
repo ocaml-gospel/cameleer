@@ -205,10 +205,10 @@ let rec atom fn_name { atom_loc; atom_desc } mty =
   let catom_desc = match atom_desc with
     | AId id -> CAId id
     | ACst c -> CACst c
-    | ABinop (e1, op, e2) ->
-        CABinop (expr fn_name e1 mty, op, expr fn_name e2 mty)
-    | AUnop (op, e1) ->
-        CAUnop (op, expr fn_name e1 mty)
+    | ABinop (a1, op, a2) ->
+        CABinop (atom fn_name a1 mty, op, atom fn_name a2 mty)
+    | AUnop (op, a1) ->
+        CAUnop (op, atom fn_name a1 mty)
     | ATuple al ->
         CATuple (List.map (atom fn_name ^~ mty) al)
     | ACons (id, c) ->
@@ -230,15 +230,14 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
   let mk_id name loc = { id_name = name; id_loc = loc } in
   let mk_binder_cexpr (b, e) = (List.map binder b, e) in
   let expr_desc = function
-    | EAtom a -> CEAtom (atom fn_name a mty)
     | EFail -> CEFail
     | EAssert (phi,e) ->
         CEAssert (mk_pre phi, expr fn_name e mty)
     | EHide e -> CEHide (expr fn_name e mty)
-    | ELet (x, e1, e2) ->
+    | ELet (x, a, e2) ->
         let ({id_name;_}, t) as x = binder x in
         let table = Ms.add id_name t mty in
-        CELet (x, expr fn_name e1 mty, expr fn_name e2 table)
+        CELet (x, atom fn_name a mty, expr fn_name e2 table)
     | ELetK (k, x, None, e1, e2) ->
         Format.printf "---%a@." (Pp_ml_lang.pp_binder) x;
         let ({id_name;_}, t) as x = binder x in

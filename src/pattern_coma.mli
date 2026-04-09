@@ -8,7 +8,7 @@ exception NonExhaustive of pattern list *)
 val compile :
   get_constructors:(string -> string list) ->
   mk_case:(atom -> (pattern * 'a) list -> 'a) ->
-  mk_let:(binder -> expr -> 'a -> 'a) ->
+  mk_let:(binder -> atom -> 'a -> 'a) ->
   atom -> (pattern list * 'a) list -> 'a
   (** [compile get_constructors mk_case mk_let terms branches]
       returns a composition of match- and let-terms equivalent
