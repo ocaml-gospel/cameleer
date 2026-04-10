@@ -211,22 +211,6 @@ let compile
             if rl_tail = [] then []
             else [E.(mk_tpattern PWild ty), compile tl rl_tail] in
 
-          (* let pl = Sid.fold (fun c acc ->
-            let ts, arity = type_info c.id_name in
-            let projs = List.init arity (fun _ -> E.gen_id ()) in
-            let t_ats = List.map2 (fun id ty ->
-              let a = E.mk_atom @@ AId id in
-              E.mk_atom @@ ACast (a, ty)
-            ) projs ts in
-            let patproj = List.map2 (fun i ty ->
-              E.mk_tpattern (PVar i) ty) projs ts in
-            let pm = E.mk_pattern @@ PCons (c, patproj) in
-            let mc = pm, mat_c c arity t_ats ts in
-            mc::acc
-          ) col_cons default_mat in
-
-          mk_case t pl *)
-
           let rec get_args p = match p.ppat_desc with
             | PCons (_, pl) -> pl
             | PCast (p, _) -> get_args p
@@ -254,23 +238,8 @@ let compile
               let a_type = get_type arg ty in
               E.mk_atom @@ ACast (a, a_type)
             ) args ts in
-            (* let patproj = List.map2 (fun arg ty ->
-              let id = get_id arg in
-              let a_type = get_type arg ty in 
-              E.mk_tpattern (PVar id) a_type) args ts in *)
             let mc = c, mat_c cons arity t_args ts in
             mc::acc
-            (* let ts, arity = type_info c.id_name in
-            let projs = List.init arity (fun _ -> E.gen_id ()) in
-            let t_ats = List.map2 (fun id ty ->
-              let a = E.mk_atom @@ AId id in
-              E.mk_atom @@ ACast (a, ty)
-            ) projs ts in
-            let patproj = List.map2 (fun i ty ->
-              E.mk_tpattern (PVar i) ty) projs ts in
-            let pm = E.mk_pattern @@ PCons (c, patproj) in
-            let mc = pm, mat_c c arity t_ats ts in
-            mc::acc *)
           ) default_mat col_cons in
 
           mk_case t pl
