@@ -57,10 +57,17 @@ let rec mem (x: elt) (t: elt tree) : bool =
       | Empty -> 0
       | Node l _ r -> 1 + size l + size r *)
 
+(*@ lemma size_nonneg: forall t: 'a tree.
+      size t >= 0 *)
+
+(*@ lemma size_empty: forall t: 'a tree.
+      size t = 0 <-> t = Empty *)
+
 (*@ function minimum (t: elt tree) : elt *)
-(*@ axiom minimum_def: forall l v r. 
-      minimum (Node l v r) = 
-        if size l = 0 then v else minimum l *)
+(*@ axiom minimum_def_empty: forall v r. 
+      minimum (Node Empty v r) = v *)
+(*@ axiom minimum_def_node: forall l v r.
+      l <> Empty -> minimum (Node l v r) = minimum l *)
 
 (*@ predicate is_minimum (x: elt) (t: elt tree) =
       mem x t && forall e. mem e t -> x <= e *)
