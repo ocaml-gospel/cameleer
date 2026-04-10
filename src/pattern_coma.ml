@@ -151,10 +151,11 @@ let compile
         end else (* not simple *)
 
           (* the constructors present on the leftmost column *)
-          let col_cons = List.fold_left (fun acc x ->
+          (* let col_cons = List.fold_left (fun acc x ->
             match get_constr x with
             | None -> acc
-            | Some e -> Sid.add e acc) Sid.empty fc in
+            | Some e -> Sid.add e acc) Sid.empty fc in *)
+          let col_cons = List.filter (fun p -> get_constr p <> None) fc in
 
           (* extract the list of constructors *)
           let[@warning "-8"] [ty_str] = type_name ty in
@@ -210,7 +211,7 @@ let compile
             if rl_tail = [] then []
             else [E.(mk_tpattern PWild ty), compile tl rl_tail] in
 
-          let pl = Sid.fold (fun c acc ->
+          (* let pl = Sid.fold (fun c acc ->
             let ts, arity = type_info c.id_name in
             let projs = List.init arity (fun _ -> E.gen_id ()) in
             let t_ats = List.map2 (fun id ty ->
@@ -223,6 +224,54 @@ let compile
             let mc = pm, mat_c c arity t_ats ts in
             mc::acc
           ) col_cons default_mat in
+
+          mk_case t pl *)
+
+          let rec get_args p = match p.ppat_desc with
+            | PCons (_, pl) -> pl
+            | PCast (p, _) -> get_args p
+            | _ -> failwith "unreachable" in
+
+          let rec get_id p = match p.ppat_desc with
+            | PVar id -> id
+            | PCast (p, _) -> get_id p
+            | _ -> E.gen_id () in
+
+          let get_type p default = match p.ppat_desc with
+            | PVar _ -> default
+            | PCast (_, t) -> t
+            | _ -> failwith "unreachable" in
+
+          let pl = List.fold_left (fun acc c ->
+            match get_constr c with
+            | None -> acc
+            | Some cons ->
+            let ts, arity = type_info cons.id_name in
+            let args = get_args c in
+            let t_args = List.map2 (fun arg ty ->
+              let id = get_id arg in
+              let a = E.mk_atom @@ AId id in
+              let a_type = get_type arg ty in
+              E.mk_atom @@ ACast (a, a_type)
+            ) args ts in
+            (* let patproj = List.map2 (fun arg ty ->
+              let id = get_id arg in
+              let a_type = get_type arg ty in 
+              E.mk_tpattern (PVar id) a_type) args ts in *)
+            let mc = c, mat_c cons arity t_args ts in
+            mc::acc
+            (* let ts, arity = type_info c.id_name in
+            let projs = List.init arity (fun _ -> E.gen_id ()) in
+            let t_ats = List.map2 (fun id ty ->
+              let a = E.mk_atom @@ AId id in
+              E.mk_atom @@ ACast (a, ty)
+            ) projs ts in
+            let patproj = List.map2 (fun i ty ->
+              E.mk_tpattern (PVar i) ty) projs ts in
+            let pm = E.mk_pattern @@ PCons (c, patproj) in
+            let mc = pm, mat_c c arity t_ats ts in
+            mc::acc *)
+          ) default_mat col_cons in
 
           mk_case t pl
 
