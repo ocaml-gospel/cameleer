@@ -214,7 +214,7 @@ let compile
           let rec get_args p = match p.ppat_desc with
             | PCons (_, pl) -> pl
             | PCast (p, _) -> get_args p
-            | _ -> failwith "unreachable" in
+            | _ -> failwith "unreachable2" in
 
           let rec get_id p = match p.ppat_desc with
             | PVar id -> id
@@ -224,7 +224,8 @@ let compile
           let get_type p default = match p.ppat_desc with
             | PVar _ -> default
             | PCast (_, t) -> t
-            | _ -> failwith "unreachable" in
+            | PCons (_, _) -> default
+            | _ -> failwith "unreachable3" in
 
           let pl = List.fold_left (fun acc c ->
             match get_constr c with
