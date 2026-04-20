@@ -54,7 +54,7 @@ type elt = int
       | (_: elt tree) -> root_is_minimum l;
       match (r: elt tree) with
       | Empty -> ()
-      | (_: elt tree) -> root_is_minimum r;  *)
+      | (_: elt tree) -> root_is_minimum r; *)
 (* @ root_is_minimum t
     requires is_heap t && size t > 0
     variant t
@@ -75,7 +75,7 @@ type elt = int
 (*@ predicate leftist_heap (t: elt tree) = is_heap t && leftist t *)
 
 let empty: elt tree = (Empty: elt tree)
-(*@ r = empty
+(* @ r = empty
       ensures leftist_heap r
       ensures size r = 0
       ensures forall x. occ x r = 0 *)
@@ -91,7 +91,7 @@ let rank (t: elt tree) : int =
   match (t: elt tree) with
   | Empty -> 0
   | Node ((r: int), (_: elt tree), (_: elt), (_: elt tree)) -> r
-(*@ r = rank t
+(* @ r = rank t
       requires leftist t
       ensures r = rank t *)
 
@@ -104,7 +104,7 @@ let make_n (x: elt) (l: elt tree) (r: elt tree) : elt tree =
   else 
     let (o2: int) = rl + 1 in
     Node (o2, r, x, l)
-(*@ res = make_n x l r
+(* @ res = make_n x l r
       requires leftist_heap l && leftist_heap r
       requires le_root x l && le_root x r
       ensures leftist_heap res
@@ -118,7 +118,11 @@ let rec merge (t1: elt tree) (t2: elt tree) : elt tree =
   | (Empty, (_: elt tree)) -> t2
   | (_: elt tree), Empty -> t1
   | (Node ((_: int), (l1: elt tree), (x1: elt), (r1: elt tree)), 
-     Node ((_: int), (l2: elt tree), (x2: elt), (r2: elt tree))) ->
+     Node ((_: int), (l2: elt tree), (x2: elt), (r2: elt tree))) 
+     [@gospel {|          requires leftist_heap t1 && leftist_heap t2 
+                  ensures size result = size t1 + size t2
+                  ensures forall x. occ x result = occ x t1 + occ x t2
+                  ensures leftist_heap result |}] ->
       if x1 <= x2 then 
         let (o1: elt tree) = merge r1 t2 in
         make_n x1 l1 o1
@@ -126,26 +130,23 @@ let rec merge (t1: elt tree) (t2: elt tree) : elt tree =
         let (o2: elt tree) = merge t1 r2 in
         make_n x2 l2 o2
 (*@ r = merge t1 t2
-      requires leftist_heap t1 && leftist_heap t2
-      variant size t1 + size t2
-      ensures size r = size t1 + size t2
-      ensures forall x. occ x r = occ x t1 + occ x t2
-      ensures leftist_heap r *)
+      variant size t1 + size t2 *)
 
 let insert (x: elt) (t: elt tree) : elt tree =
   merge (Node (1, Empty, x, Empty)) t
-(*@ r = insert x t
+(* @ r = insert x t
       requires leftist_heap t
       ensures leftist_heap r
       ensures size r = 1 + size t
       ensures occ x r = 1 + occ x t
       ensures forall y. x <> y -> occ y r = occ y t *)
 
+
 let find_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
   | Node ((_: int), (_: elt tree), (x: elt), (_: elt tree)) -> x
-(*@ r = find_min t
+(* @ r = find_min t
       requires leftist_heap t
       requires size t > 0
       ensures r = minimum t *)
@@ -154,7 +155,7 @@ let delete_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
   | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) -> merge l r
-(*@ r = delete_min t
+(* @ r = delete_min t
       requires leftist_heap t
       requires size t > 0
       ensures leftist_heap r
