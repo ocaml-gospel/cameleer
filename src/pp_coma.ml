@@ -207,9 +207,7 @@ let pp_decl fmt (d: cdeclaration) =
       fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
 
 let preamble = "
-use int.Int
-use list.List
-use list.Append
+use ocamlstdlib.Stdlib
 let halt = any
 let fail { false } = any
 let if (b: bool) (then {b}) (else {not b}) = any
