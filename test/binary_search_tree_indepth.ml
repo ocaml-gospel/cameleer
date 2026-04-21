@@ -82,6 +82,7 @@ let rec remove_min (t: elt tree) : elt tree =
       ensures  occ (minimum t) result = occ (minimum t) t - 1
       ensures  forall e. e <> minimum t -> occ e result = occ e t
       ensures  size result = size t - 1
-      ensures  bst result|}]  -> let (o1: elt tree) = remove_min l in Node (o1, v, r)
+      ensures  bst result|}]  
+      -> let (o1: elt tree) = remove_min l in Node (o1, v, r)
 (*@ r = remove_min t
       variant  t *)

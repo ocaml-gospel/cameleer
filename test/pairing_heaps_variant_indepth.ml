@@ -10,6 +10,7 @@ type heap_type = E | T of elt * elt tree
 
 (*@ axiom transitive: forall x y z. le x y -> le y z -> le x z *)
 
+
 (** Tree functions, predicates, lemmas *)
 (*@ function tree_size (t: 'a tree) : integer = match t with
       | Empty -> 0
@@ -162,7 +163,7 @@ let rec merge_pairs (t: elt tree) : heap_type =
       [@gospel {|requires heap_tree t
                   ensures  heap result
                   ensures  forall e. occ e result = tree_occ e t
-                  ensures  size result = tree_size t |} ] ->
+                  ensures  size result = tree_size t |}] ->
         let (h1: heap_type) = T (x, l) in
         let (h2: heap_type) = T (y, l2) in
         let (mp: heap_type) = merge_pairs r2 in

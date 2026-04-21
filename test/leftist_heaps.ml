@@ -161,3 +161,4 @@ let delete_min (t: elt tree) : elt tree =
       ensures occ (minimum t) r = occ (minimum t) t - 1
       ensures forall e. e <> minimum t -> occ e r = occ e t
       ensures size r = size t - 1 *)
+      
