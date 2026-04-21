@@ -2,13 +2,13 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 type elt = int
 type enum = Done | Next of elt * elt tree * enum
 
-(*@ function elements (t: 'a tree) : 'a list = match t with
+(*@ function elements (t: 'a tree) : 'a sequence = match t with
       | Empty -> Nil
-      | Node l x r ->  (elements l) @ (Cons x (elements r)) *)
+      | Node l x r ->  (elements l) @ (Sequence.cons x (elements r)) *)
 
-(*@ function enum_elements (e : enum) : elt list = match e with
+(*@ function enum_elements (e : enum) : elt sequence = match e with
       | Done -> Nil
-      | Next x r e -> Cons x (elements r @ enum_elements e) *)
+      | Next x r e -> Sequence.cons x (elements r @ enum_elements e) *)
 
 let rec mk_zipper (t : elt tree) (e : enum) : enum =
   match (t : elt tree) with
@@ -25,7 +25,7 @@ let rec eq_enum (e1 : enum) (e2 : enum) : bool =
   | Done, Done -> true
   | (Next ((x1: elt), (r1:elt tree), (e11: enum)), Next ((x2:elt), (r2: elt tree),(e22: enum))) 
   [@gospel {| requires true
-              ensures result <-> (enum_elements e1 = enum_elements e2) |}] ->
+              ensures result <-> (Sequence.(==) (enum_elements e1) (enum_elements e2)) |}] ->
       if x1 = x2 then
         let (e13: enum) = mk_zipper r1 e11 in
         let (e23: enum) = mk_zipper r2 e22 in
