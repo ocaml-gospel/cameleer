@@ -1,4 +1,4 @@
-
+(* To run: dune exec count_lines/count_lines.exe ./test/file_name.ml *)
 {
   open Format
 
