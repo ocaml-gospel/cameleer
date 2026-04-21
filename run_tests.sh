@@ -4,7 +4,7 @@ RESET="\033[0m"
 RED="\033[31m"
 GREEN="\033[32m"
 
-WHY3="${WHY3:-${HOME}/git/why3/bin/why3}"
+WHY3="${WHY3:-${HOME}/.opam/cameleer-tutorial/bin/why3}"
 
 if [ ! -e ${WHY3} ]; then
     printf "${RED}%s${RESET}\n" "${WHY3} is not a valid why3"
