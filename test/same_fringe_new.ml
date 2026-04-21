@@ -2,13 +2,13 @@ type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 type elt = int
 type enum = Done | Next of elt * elt tree * enum
 
-(*@ function elements (t: 'a tree) : 'a list = match t with
+(*@ function elements (t: 'a tree) : 'a sequence = match t with
       | Empty -> Nil
-      | Node l x r ->  (elements l) @ (Cons x (elements r)) *)
+      | Node l x r ->  (elements l) @ (Sequence.cons x (elements r)) *)
 
-(*@ function enum_elements (e : enum) : elt list = match e with
+(*@ function enum_elements (e : enum) : elt sequence = match e with
       | Done -> Nil
-      | Next x r e -> Cons x (elements r @ enum_elements e) *)
+      | Next x r e -> Sequence.cons x (elements r @ enum_elements e) *)
 
 let rec mk_zipper (t : elt tree) (e : enum) : enum =
   match (t : elt tree) with
@@ -32,8 +32,8 @@ let rec eq_enum (e1 : enum) (e2 : enum) : bool =
   | (_: enum), (_: enum) -> false
 (*@ b = eq_enum e1 e2
       requires true
-      ensures b <-> (enum_elements e1 = enum_elements e2)
-      variant List.length (enum_elements e1) *)
+      ensures b <-> (Sequence.(==) (enum_elements e1) (enum_elements e2))
+      variant Sequence.length (enum_elements e1) *)
 
 let same_fringe (t1 : elt tree) (t2 : elt tree) : bool =
   let (e1: enum) = mk_zipper t1 Done in
