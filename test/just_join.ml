@@ -7,41 +7,24 @@ type elt = int
 (*@ function min (x:int) (y: int) : int = if x <= y then x else y *)
 (*@ function max (x:int) (y: int) : int = if x <= y then y else x *)
 
-(*TODO: rever*)
-(* @ function ht (t: elt tree) : integer = 
-      match t with
-      | Empty -> 0
-      | Node h _ _ _ -> h *)
-
-(*TODO: rever*)
-(* @ function node (l: elt tree) (x: elt) (r: elt tree) : elt tree = 
-      Node (1 + max (ht l) (ht r)) l x r *)
-
-(* TODO: rever*)
 let ht (t: elt tree) : int = 
   match (t: elt tree) with
       | Empty -> 0
       | Node ((h: int), (_: elt tree), (_: elt), (_: elt tree)) -> h
 
-(* TODO: rever*)
 let node (l: elt tree) (x: elt) (r: elt tree) : elt tree = 
   let (ht_l: int) = ht l in
   let (ht_r: int) = ht r in
   let (o1: int) = max ht_l ht_r in
   Node (1 + o1, l, x, r)
 
-
 (** VER COMO ESCREVER ISTO  PQ É GHOST *)
-let[@ghost] [@logic] rec height (t: elt tree) : int = 
+(*@ function height (t: elt tree) : int = 
   match (t: elt tree) with
       | Empty -> 0
-      | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) -> 
-        let (ht_l: int) = height l in
-        let (ht_r: int) = height r in
-        let (o1: int) = max ht_l ht_r in
-        1 + o1
-(*@ result = height t 
-    ensures result >= 0 *)
+      | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) -> 1 + max (height l) (height r) *)
+
+(*@ lemma height_nonneg: forall t: 'a tree. height t >= 0 *)
 
 (*@ predicate wf (t: elt tree) = 
       match t with
