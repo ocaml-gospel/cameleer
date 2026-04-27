@@ -118,10 +118,12 @@ let rec join_right (l: elt tree) (x: elt) (r: elt tree) : elt tree =
   | Empty -> assert false
   | Node ((_: int), (ll: elt tree), (lx: elt), (lr: elt tree)) ->
       let (ht_lr: int) = ht lr in
-      let (ht_r: int) = ht r + 1 in
-      if ht_lr <= ht_r then
+      let (ht_r: int) = ht r in
+      if ht_lr <= (ht_r + 1) then
         let (t: elt tree) = node lr x r in
-        if ht t <= ht ll + 1 then node ll lx t
+        let (ht_t: int) = ht t in
+        let (ht_ll: int) = ht ll  in 
+        if ht_t <= (ht_ll + 1) then node ll lx t
         else 
           let (o1: elt tree) = rotate_right t in
           let (node1: elt tree) = node ll lx o1 in
@@ -130,8 +132,8 @@ let rec join_right (l: elt tree) (x: elt) (r: elt tree) : elt tree =
         let (t: elt tree) = join_right lr x r in
         let (t': elt tree) = node ll lx t in
         let (ht_t: int) = ht t in
-        let (ht_ll: int) = ht ll + 1 in
-        if ht_t <= ht_ll then t' else rotate_left t'
+        let (ht_ll: int) = ht ll  in
+        if ht_t <= (ht_ll + 1) then t' else rotate_left t'
 (*@ result = join_right l x r
   requires wf l && wf r
   requires bst l && tree_lt l x
@@ -153,9 +155,13 @@ let rec join_left (l: elt tree) (x: elt) (r: elt tree) : elt tree =
   match (r: elt tree) with
   | Empty -> assert false
   | Node ((_: int), (rl: elt tree), (rx: elt), (rr: elt tree)) ->
-      if ht rl <= ht l + 1 then
+      let (ht_rl: int) = ht rl in
+      let (ht_l: int) = ht l in
+      if ht_rl <= (ht_l + 1) then
         let (t: elt tree) = node l x rl in
-        if ht t <= ht rr + 1 then node t rx rr
+        let (ht_t: int) = ht t in
+        let (ht_rr: int) = ht rr  in 
+        if ht_t <= (ht_rr + 1) then node t rx rr
         else 
           let (o1: elt tree) = rotate_left t in
           let (node1: elt tree) = node o1 rx rr in
@@ -163,7 +169,9 @@ let rec join_left (l: elt tree) (x: elt) (r: elt tree) : elt tree =
       else
         let (t: elt tree) = join_left l x rl in
         let (t': elt tree) = node t rx rr in
-        if ht t <= ht rr + 1 then t' else rotate_right t'
+        let (ht_t: int) = ht t in
+        let (ht_rr: int) = ht rr  in
+        if ht_t <= (ht_rr + 1) then t' else rotate_right t'
 (*@ result = join_left l x r
     requires wf l && wf r
     requires bst l && tree_lt l x
@@ -182,8 +190,10 @@ let rec join_left (l: elt tree) (x: elt) (r: elt tree) : elt tree =
               | _ -> false *)
 
 let join (l: elt tree) (x: elt) (r: elt tree) : elt tree =
-  if ht l > ht r + 1 then join_right l x r
-  else if ht r > ht l + 1 then join_left l x r
+  let (ht_l: int) = ht l in
+  let (ht_r: int) = ht r in 
+  if ht_l > (ht_r + 1) then join_right l x r
+  else if ht_r > (ht_l + 1) then join_left l x r
   else node l x r
 (*@ result = join l x r
   requires wf l && wf r 
