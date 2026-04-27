@@ -4,44 +4,18 @@ type elt = int
 (*@ predicate lt (x y: elt) = x < y *)
 
 (** Ver se são precisas ou não*)
-(* @ function min (x y: int) : int = if x <= y then x else y *)
-(* @ function max (x y: int) : int = if x <= y then y else x *)
+(*@ function min (x:int) (y: int) : int = if x <= y then x else y *)
+(*@ function max (x:int) (y: int) : int = if x <= y then y else x *)
 
 (*TODO: rever*)
-(* @ function ht (t: elt tree) : integer = match t with
+(* @ function ht (t: elt tree) : integer = 
+      match t with
       | Empty -> 0
       | Node h _ _ _ -> h *)
 
 (*TODO: rever*)
-(* @ function node (l: elt tree) (x: elt) (r: elt tree) : elt tree = Node (1 + max (ht l) (ht r)) l x r *)
-
-(** VER COMO ESCREVER ISTO  PQ É GHOST *)
-let[@ghost] [@logic] rec height (t: elt tree) : int = 
-  match (t: elt tree) with
-      | Empty -> 0
-      | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) -> 1 + max (height l) (height r)
-(*@ result = height t 
-    ensures result >= 0 *)
-
-(*@ predicate wf (t: elt tree) = match t with
-      | Empty -> true
-      | Node h l _ r -> h = height t && wf l && wf r *)
-
-(*@ predicate mem (y: elt) (t: elt tree) = match t with
-      | Empty -> false
-      | Node _ l x r -> mem y l || y = x || mem y r *)
-
-(*@ predicate tree_lt (t: elt tree) (y: elt) =  forall x. mem x t -> lt x y *)
-
-(*@ predicate lt_tree (y: elt) (t: elt tree) = forall x. mem x t -> lt y x *)
-
-(*@ predicate bst (t: elt tree) = match t with
-      | Empty -> true
-      | Node _ l x r -> bst l && bst r && tree_lt l x && lt_tree x r *)
-
-(*@ predicate avl (t: elt tree) = match t with
-      | Empty -> true
-      | Node _ l _ r -> avl l && avl r && -1 <= height l - height r <= 1 *)
+(* @ function node (l: elt tree) (x: elt) (r: elt tree) : elt tree = 
+      Node (1 + max (ht l) (ht r)) l x r *)
 
 (* TODO: rever*)
 let ht (t: elt tree) : int = 
@@ -51,8 +25,49 @@ let ht (t: elt tree) : int =
 
 (* TODO: rever*)
 let node (l: elt tree) (x: elt) (r: elt tree) : elt tree = 
-  let (o1: int) = 1 + max (ht l) (ht r) in
-  Node (o1, l, x, r)
+  let (ht_l: int) = ht l in
+  let (ht_r: int) = ht r in
+  let (o1: int) = max ht_l ht_r in
+  Node (1 + o1, l, x, r)
+
+
+(** VER COMO ESCREVER ISTO  PQ É GHOST *)
+let[@ghost] [@logic] rec height (t: elt tree) : int = 
+  match (t: elt tree) with
+      | Empty -> 0
+      | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) -> 
+        let (ht_l: int) = height l in
+        let (ht_r: int) = height r in
+        let (o1: int) = max ht_l ht_r in
+        1 + o1
+(*@ result = height t 
+    ensures result >= 0 *)
+
+(*@ predicate wf (t: elt tree) = 
+      match t with
+      | Empty -> true
+      | Node h l _ r -> h = height t && wf l && wf r *)
+
+(*@ predicate mem (y: elt) (t: elt tree) = 
+      match t with
+      | Empty -> false
+      | Node _ l x r -> mem y l || y = x || mem y r *)
+
+(*@ predicate tree_lt (t: elt tree) (y: elt) = 
+      forall x. mem x t -> lt x y *)
+
+(*@ predicate lt_tree (y: elt) (t: elt tree) = 
+      forall x. mem x t -> lt y x *)
+
+(*@ predicate bst (t: elt tree) = 
+      match t with
+      | Empty -> true
+      | Node _ l x r -> bst l && tree_lt l x && bst r && lt_tree x r *)
+
+(*@ predicate avl (t: elt tree) = 
+      match t with
+      | Empty -> true
+      | Node _ l _ r -> avl l && avl r && (-1 <= height l - height r <= 1) *)
 
 let rotate_left (t: elt tree) : elt tree = 
   match (t: elt tree) with
@@ -114,7 +129,9 @@ let rec join_right (l: elt tree) (x: elt) (r: elt tree) : elt tree =
       else
         let (t: elt tree) = join_right lr x r in
         let (t': elt tree) = node ll lx t in
-        if ht t <= ht ll + 1 then t' else rotate_left t'
+        let (ht_t: int) = ht t in
+        let (ht_ll: int) = ht ll + 1 in
+        if ht_t <= ht_ll then t' else rotate_left t'
 (*@ result = join_right l x r
   requires wf l && wf r
   requires bst l && tree_lt l x
@@ -173,8 +190,7 @@ let join (l: elt tree) (x: elt) (r: elt tree) : elt tree =
   requires bst l && tree_lt l x
   requires bst r && lt_tree x r
   requires avl l && avl r 
-  ensures wf result
-  ensures bst result
+  ensures wf result && bst result
   ensures forall y. mem y result <-> (mem y l || y=x || mem y r)
   ensures avl result
   ensures height result <= 1 + max (height l) (height r) *)
@@ -226,7 +242,7 @@ let rec split_last (t: elt tree) : elt tree * elt =
   ensures tree_lt r m
   ensures forall x. mem x t <-> (mem x r && lt x m || x=m) *)
 
-let join2 (l:elt tree) (r: elt tree) : elt tree =
+let join2 (l: elt tree) (r: elt tree) : elt tree =
   match (l: elt tree) with
   | Empty -> r
   | (_: elt tree) -> 
@@ -246,5 +262,4 @@ let delete (x: elt) (t: elt tree) : elt tree =
   requires wf t && bst t && avl t
   ensures  wf result && bst result && avl result
   ensures  forall y. mem y result <-> (mem y t && y<>x) *)
-
 
