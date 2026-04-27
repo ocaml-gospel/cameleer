@@ -86,7 +86,7 @@ let rotate_right (t: elt tree) : elt tree =
 (*@ result = rotate_right t
     requires wf t && bst t
     requires match t with 
-              | Node _ _ _ (Node _ _ _ _) -> true 
+              | Node _ (Node _ _ _ _) _ _ -> true 
               | _ -> false
     ensures  wf result && bst result
     ensures  match t with 
@@ -188,8 +188,9 @@ let join (l: elt tree) (x: elt) (r: elt tree) : elt tree =
   ensures avl result
   ensures height result <= 1 + max (height l) (height r) *)
 
+type ret_split = elt tree * bool * elt tree
 
-let rec split (t: elt tree) (y: elt) : elt tree * bool * elt tree = 
+let rec split (t: elt tree) (y: elt) : ret_split = 
   match (t: elt tree) with
   | Empty -> (Empty, false, Empty)
   | Node ((_: int), (l: elt tree), (x: elt), (r: elt tree)) ->
@@ -201,24 +202,26 @@ let rec split (t: elt tree) (y: elt) : elt tree * bool * elt tree =
         else     
           let ((rl: elt tree), (b: bool), (rr: elt tree)) = split r y in 
           (join l x rl, b, rr)
-(*@ l, b, r = split t y
+(*@ result = split t y
   requires wf t && bst t && avl t
   variant height t
-  ensures wf l && bst l && avl l
-  ensures tree_lt l y
-  ensures wf r && bst r && avl r 
-  ensures lt_tree y r
-  ensures forall x. mem x t <-> (mem x l || mem x r || b && x=y) *)
+  ensures let l, b, r = result in wf l && bst l && avl l
+  ensures let l, b, r = result in tree_lt l y
+  ensures let l, b, r = result in wf r && bst r && avl r 
+  ensures let l, b, r = result in lt_tree y r
+  ensures let l, b, r = result in forall x. mem x t <-> (mem x l || mem x r || b && x=y) *)
 
-let insert (x: elt) (t: elt tree) : (elt tree) =
+let insert (x: elt) (t: elt tree) : elt tree =
   let ((l: elt tree), (_: bool), (r: elt tree)) = split t x in
   join l x r
 (*@ r = insert x t
   requires wf t && bst t && avl t
   ensures  wf r && bst r && avl r
   ensures  forall y. mem y r <-> (mem y t || y=x) *)
+ 
+type ret_split_last = elt tree * elt
 
-let rec split_last (t: elt tree) : elt tree * elt = 
+let rec split_last (t: elt tree) : ret_split_last = 
   match (t: elt tree) with
   | Node ((_: int), (l: elt tree), (x: elt), (r: elt tree)) -> 
     match (r: elt tree) with
@@ -227,13 +230,13 @@ let rec split_last (t: elt tree) : elt tree * elt =
       let ((r': elt tree), (m: elt)) = split_last r in 
       (join l x r', m)
   | (_: elt tree) -> assert false
-(*@ r, m = split_last t
+(*@ result = split_last t
   requires t <> Empty
   requires wf t && bst t && avl t
   variant height t
-  ensures wf r && bst r && avl r
-  ensures tree_lt r m
-  ensures forall x. mem x t <-> (mem x r && lt x m || x=m) *)
+  ensures let r, m = result in wf r && bst r && avl r
+  ensures let r, m = result in tree_lt r m
+  ensures let r, m = result in forall x. mem x t <-> (mem x r && lt x m || x=m) *)
 
 let join2 (l: elt tree) (r: elt tree) : elt tree =
   match (l: elt tree) with
