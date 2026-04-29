@@ -156,7 +156,7 @@ let rec merge_pairs (t: elt tree) : heap_type =
   match (t: elt tree) with
   | Empty -> E
   | Node ((l: elt tree), (x: elt), (r: elt tree)) ->
-      match r with
+      match (r: elt tree) with
       | Empty -> T (x, l)
       | Node ((l2: elt tree), (y: elt), (r2: elt tree)) ->
         let (h1: heap_type) = T (x, l) in

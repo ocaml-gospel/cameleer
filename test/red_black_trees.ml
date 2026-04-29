@@ -174,26 +174,6 @@ let lbalance (l : tree) (k : key) (v : value) (r : tree) : tree =
             | ((_: color), (_: tree), (_: tree)) -> Node (Black, l, k, v, r)
         end
     | (_: tree) -> Node (Black, l, k, v, r)
-
-
-    (* | Node (Red, ll, ky, vy, c) -> 
-        begin 
-            match (ll: tree) with
-            | Node (Red, a, kx, vx, b) ->
-                let (bl_node1: tree) = Node (Black, a, kx, vx, b) in
-                let (bl_node2: tree) = Node (Black, c, k, v, r) in 
-                Node (Red, bl_node1, ky, vy, bl_node2)
-            | (_: tree) -> 
-                begin 
-                    match (c: tree) with
-                    | Node (Red, b, ky2, vy2, c2) ->
-                        let (bl_node1: tree) = Node (Black, ll, ky, vy, b) in
-                        let (bl_node2: tree) = Node (Black, c2, k, v, r) in 
-                        Node (Red, bl_node1, ky2, vy2, bl_node2)
-                    | (_: tree) -> Node (Black, l, k, v, r)
-                end
-        end
-    | (_: tree) -> Node (Black, l, k, v, r) *)
 (*@ result = lbalance l k v r
     requires lt_tree k l /\ gt_tree k r /\ bst l /\ bst r
     ensures bst result /\
@@ -202,7 +182,7 @@ let lbalance (l : tree) (k : key) (v : value) (r : tree) : tree =
         memt result k' v' <->
         if k' = k then v' = v else (memt l k' v' \/ memt r k' v') *)
 
-let rbalance (l : tree) (k : key) (v : value) (r : tree) = 
+let rbalance (l : tree) (k : key) (v : value) (r : tree) : tree= 
     match (r: tree) with
     | Node ((col: color), (rl: tree), (kz: key), (vz: value), (d: tree)) -> 
         begin 
@@ -227,22 +207,6 @@ let rbalance (l : tree) (k : key) (v : value) (r : tree) =
                         Node (Red, bl_node1, kz, vz, bl_node2)
                 end
             | ((_: color), (_: tree), (_: tree)) -> Node (Black, l, k, v, r)
-            (* begin 
-                match (rl: tree) with
-                | Node (Red, b, ky, vy, c) -> 
-                    let (bl_node1: tree) = Node (Black, l, k, v, b) in
-                    let (bl_node2: tree) = Node (Black, c, kz, vz, d) in 
-                    Node (Red, bl_node1, ky, vy, bl_node2)
-                | (_: tree) -> 
-                    begin
-                        match (d: tree) with
-                        | Node (Red, c, kz2, vz2, d2) -> 
-                            let (bl_node1: tree) = Node (Black, l, k, v, rl) in
-                            let (bl_node2: tree) = Node (Black, c, kz2, vz2, d2) in 
-                            Node (Red, bl_node1, kz, vz, bl_node2)
-                        | (_: tree) -> Node (Black, l, k, v, r)
-                    end
-            end *)
         end
     | (_: tree) -> Node (Black, l, k, v, r)
 (*@ result = rbalance l k v r
