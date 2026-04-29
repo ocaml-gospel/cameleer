@@ -280,7 +280,7 @@ let rec expr e = match e.expr_desc with
       let mk_let (_,bt as b) e1 e2 =
         assert (bt <> None);
         E.mk_expr (ELet (b, e1, e2)) in
-      let pl = List.map (fun (p,e) -> [p],e) pl in
+      let pl = List.map (fun (p,e) -> [p], expr e) pl in
       compile ~get_constructors ~mk_case ~mk_let a pl
 
 and atom a = match a.atom_desc with
