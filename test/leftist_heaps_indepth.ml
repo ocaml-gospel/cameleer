@@ -141,7 +141,6 @@ let insert (x: elt) (t: elt tree) : elt tree =
       ensures occ x r = 1 + occ x t
       ensures forall y. x <> y -> occ y r = occ y t *)
 
-
 let find_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
