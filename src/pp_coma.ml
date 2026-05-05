@@ -200,7 +200,7 @@ let pp_decl fmt (d: cdeclaration) =
         (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
         pp_cpre pre
         (if b then " {..}" else "")
-        (pp_print_list ~pp_sep:pp_space pp_kont) ks
+        (pp_print_list ~pp_sep:pp_newline pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
         pp_newline_newline ()
 | CDLogic decl ->

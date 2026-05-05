@@ -18,6 +18,7 @@ let function_ f =
 let prop p =
   ML.DProp p
 
+(* s_structure --> ficheiros .ml, s_signature --> ficheiros .mli *)
 let s_structure, s_signature =
   let rec s_signature s_sig =
     List.flatten (List.map s_signature_item s_sig)
@@ -42,6 +43,12 @@ let s_structure, s_signature =
     | Str_type (rec_flag, type_decl_list) ->
         let decl_desc = ML.DType (rec_flag, type_decl_list) in
         [ ML.{ decl_loc = loc; decl_desc } ]
+    | Str_exception { ptyexn_constructor; _ } ->
+      let name = E.mk_raise_name ptyexn_constructor.pext_name.txt in
+      let arg_type = match ptyexn_constructor.pext_kind with
+        | Pext_decl (_, Pcstr_tuple [ty], _) -> Some ty
+        | _ -> None in
+      Hashtbl.add E.exn_type_hmap name arg_type; []
     | Str_function f ->
         [ ML.{ decl_loc = loc; decl_desc = function_ f } ]
     | Str_prop p ->

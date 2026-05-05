@@ -18,6 +18,10 @@ exception G of int
 
 (* Here CPS[g1] must take additional continuation to handle the [raise]. *)
 let g1 (a: bool): int = if a then raise (E 42) else raise (G 34)
+(*@ res = g1 a
+    ensures res > 30
+    raises E x -> a = true
+    raises G (y: int) -> a = false *)
 
 (* Here only one for [G]. *)
 let g2 : int =
@@ -56,3 +60,4 @@ let f3 (a : bool) (b : bool) : int =
   with E (x : int) -> x
      | G (_ : int) -> 55
      | H (z : int) -> raise (G z)
+(* @ raise G _ -> _ *)

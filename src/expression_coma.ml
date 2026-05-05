@@ -338,7 +338,11 @@ module S = struct
 end
 
 type raise_set = S.t
+(* Maps function's name -> set of exceptions that can be raised *)
 let raisable_hmap: (string, S.t) Hashtbl.t = Hashtbl.create 32
+
+(* Maps exception names -> their argument types *)
+let exn_type_hmap : (string, Ppxlib.core_type option) Hashtbl.t = Hashtbl.create 16
 
 (** Computes the set of exceptions that can escape expression [e]. *)
 let mayraise e =
@@ -373,6 +377,7 @@ let mayraise e =
           (fun acc Uast.{spvb_expr=e;_} -> loop acc e) acc el in
         loop acc2 e
     | Sexp_apply (e, [ (_, arg) ]) when is_raise e.spexp_desc ->
+        (* raise E x -->  adds "raise_E" to the set *)
         let a = atom_of_sexpr arg in
         let s = match a.atom_desc with
           | AId _id -> assert false (* how? *)
@@ -381,6 +386,7 @@ let mayraise e =
           | ACast _ -> assert false in
         loop (S.add s acc) e
     | Sexp_apply (f, el) when is_ident f.spexp_desc ->
+        (* f a b --> checks what f can raise *)
         let acc2 = List.fold_left
           (fun acc (_,e) -> loop acc e) acc el in
         let fname = get_ident f.spexp_desc in
@@ -396,6 +402,7 @@ let mayraise e =
         let acc = loop acc e in
         List.fold_left (fun acc Uast.{spc_rhs=e;_} -> loop acc e) acc cases
     | Sexp_try (e, cases) ->
+        (* subtract from the set of e the exceptions caught by the cases *)
         let se = loop S.empty e in
         let rmv, add = List.fold_left
           (fun (r,a) Uast.{spc_lhs=x;spc_rhs=e;_} ->
@@ -588,10 +595,10 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
             { eid with id_name = mk_raise_name eid.id_name } in
         let pat = get_mlpattern_id (mk_pattern ~loc:ploc p) in
         eid, pat, mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm) in
-      let cases = List.map f cases in
+      let cases = List.map f cases in  (* each branch -> ELetK with raise_E name *)
       let e = mk_expr @@ expr ~etype e k hm in
       let letks = List.fold_left (fun acc (eid, pid, d) ->
-        (* TODO howto reconstruct the type here? howto remove None *)
+        (* TODO how to reconstruct the type here? how to remove None *)
         let loc = eid.id_loc in
         mk_expr ~loc @@ ELetK (eid, (pid, None), None, d, acc)) e cases in
       ctx letks.expr_desc
@@ -872,11 +879,44 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
         List.map labelled_arg header.sp_hd_args in
   let s = mayraise pexp in
   let spec = svb.spvb_vspec in
+  let xpost_of_exn spec exn_name =
+    let string_of_uast_qualid = function
+      | Uast.Qpreid { pid_str; _ } -> pid_str
+      | Uast.Qdot (_, { pid_str; _ }) -> pid_str in
+    let rec id_and_type_args exn_name pat =
+      match pat.Uast.pat_desc with
+      | Uast.Pvar preid -> 
+        let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in 
+        mk_id ~loc:(location preid.pid_loc) preid.pid_str, xpty
+      | Uast.Pcast (p, _) -> 
+        let id, _ = id_and_type_args exn_name p in 
+        (* let pty = Uterm.pty pty in *)
+        id, None (* TODO: use pty *)
+      | _ -> gen_id (), None in
+    match spec with
+    | None -> None
+    | Some U.{ sp_xpost; _ } ->
+        List.find_map (fun (_loc, q_pat_t_list) ->
+          List.find_map (fun (qid, opt) ->
+            if mk_raise_name (string_of_uast_qualid qid) = exn_name then
+              Option.map (fun (pat, term) ->
+                let (id, pty) = id_and_type_args exn_name pat in  
+                (id, pty, [term])) opt
+            else None
+          ) q_pat_t_list
+        ) sp_xpost in
   let arg_id = return_id_of_spec spec in
   let return_pty = get_type_expr pexp in
   let sl = S.fold
     (fun s acc ->
-      mk_kont (mk_id s) [(arg_id, None)] None :: acc)
+      let (xarg, xpty , pre) = match xpost_of_exn spec s with
+        | None -> (arg_id, None, [])
+        | Some (id, pty, terms) -> (id, pty, terms) in
+      { kont_id   = mk_id s;
+        kont_arg  = [(xarg, xpty)];
+        kont_kont = [];
+        kont_pre  = pre }
+      :: acc)
     s [] in
   let () = Hashtbl.add raisable_hmap id.id_name s in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in

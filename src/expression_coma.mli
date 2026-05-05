@@ -24,6 +24,7 @@ val atom_num   : int -> atom_desc
 val string_of_longident : Longident.t -> string
 
 val mayraise : Uast.s_expression -> raise_set
+val mk_raise_name : string -> string
 
 val mk_atom : ?loc:location -> atom_desc -> atom
 val mk_expr : ?loc:location -> expr_desc -> expr
@@ -31,5 +32,7 @@ val mk_pattern : ?loc:location -> pattern_desc -> pattern
 val mk_tpattern : ?loc:location -> pattern_desc -> core_type -> pattern
 val mk_decl :
   rec_flag * id * binder list * Uast.term list * kont list * expr -> declaration
+
+val exn_type_hmap : (string, core_type option) Hashtbl.t
 
 val s_value_binding : rec_flag -> Uast.s_value_binding -> id -> declaration
