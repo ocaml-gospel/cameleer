@@ -411,7 +411,8 @@ let declaration { decl_desc; decl_loc } =
   let mk_cdecl cdecl_desc = { cdecl_loc = decl_loc; cdecl_desc } in
   let rec mk_ckont { kont_id; kont_arg; kont_kont; kont_pre } =
     let ckont_kont = List.map mk_ckont kont_kont in
-    let ckont_arg = List.map (fun (i,t) -> i, Option.map E.core_type t) kont_arg in
+    (* let ckont_arg = List.map (fun (i,t) -> i, Option.map E.core_type t) kont_arg in *)
+    let ckont_arg = kont_arg in
     { ckont_id  = kont_id;
       ckont_arg;
       ckont_kont;

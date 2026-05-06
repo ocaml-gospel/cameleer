@@ -8,12 +8,15 @@ module U = Uast
 open Ppxlib
 module P = Parsetree
 
+open Why3
+
 type location = Lexing.position * Lexing.position
 
 (* Each identifier has a name and a location *)
 type id = { id_name: string; id_loc: location }
 
 type binder = id * P.core_type option
+type cbinder = id * Ptree.pty option
 
 type constant = CNum of int | CBool of bool | CUnit
 
@@ -80,7 +83,7 @@ type precondition = U.term list
 
 type kont = {
   kont_id: id;
-  kont_arg: binder list;
+  kont_arg: cbinder list;
   kont_kont: kont list;
   kont_pre: precondition;
 }
@@ -107,12 +110,9 @@ type program = declaration list
 (** An intermediate AST for a ML-like toy language to COMA.
     All the terms are written in A-normal form to ease
     CPS-conversion later. *)
-open Why3
 
 type cprecondition = Ptree.term list
 (* a WhyML precondition *)
-
-type cbinder = id * Ptree.pty option
 
 type info_p = cbinder list
 

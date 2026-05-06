@@ -2,6 +2,8 @@ open Ppxlib
 open Gospel
 open Ml_lang
 
+module E = Expression
+
 let (^~) a b = fun c -> a c b
 
 let dummy_pos = Lexing.{ pos_fname = ""; pos_lnum = 0; pos_bol = 0; pos_cnum = 0; }
@@ -74,6 +76,8 @@ let mk_tpattern ?(loc=dummy_loc) ppat_desc ty =
 let mk_decl (rec_flag, id, params, pre, konts, e) =
   { decl_loc  = id.id_loc;
     decl_desc = DFun (rec_flag, id, params, pre, konts, e); }
+
+let map_pty pty = Option.map E.core_type pty
 
 let rec get_pattern_id (pat: Parsetree.pattern) =
   match pat.ppat_desc with
@@ -173,10 +177,10 @@ let collect_params e =
         | Some ({ ptyp_desc = Ptyp_arrow (_,a,b); _ } as _tarr) ->
             let kont = {
               kont_id   = name;
-              kont_arg  = [mk_id "result", Some a];
+              kont_arg  = [mk_id "result", map_pty (Some a)];
               kont_kont = [
                 { kont_id   = { name with id_name = "_" ^ name.id_name };
-                  kont_arg  = [mk_id "result2", Some b];
+                  kont_arg  = [mk_id "result2", map_pty (Some b)];
                   kont_kont = [];
                   kont_pre  = [];
                 } ];
@@ -567,12 +571,19 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
            `try e with E x -> e` and
            `try e with E _ -> e`
        *)
-      let rec get_mlpattern_id pat =
+      let rec get_mlpattern_id_typ pat exn_name =
         match pat.ppat_desc with
-        | PVar id -> id
-        | PCast  (p,_) -> get_mlpattern_id p
-        | PWild -> gen_id ~prefix:"_unused" ()
-        | PCons (_,[p]) -> get_mlpattern_id p
+        | PVar id -> 
+          let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in 
+          id, xpty
+        | PCast  (p, pty) -> 
+          let id, _ = get_mlpattern_id_typ p exn_name in
+          id, Some pty
+        | PWild -> 
+          let id = gen_id ~prefix:"_unused" () in
+          let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in 
+          id, xpty
+        | PCons (_,[p]) -> get_mlpattern_id_typ p exn_name
         | PCst _ -> assert false
         | PCons (_,_) -> assert false
         | PTuple _ -> assert false in
@@ -593,14 +604,14 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
         let[@warning"-8"] eid = (* TODO: complete cases? *)
           match p with PCons (eid,_) ->
             { eid with id_name = mk_raise_name eid.id_name } in
-        let pat = get_mlpattern_id (mk_pattern ~loc:ploc p) in
-        eid, pat, mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm) in
+        let pat, pty = get_mlpattern_id_typ (mk_pattern ~loc:ploc p) eid.id_name in
+        eid, pat, pty, mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm) in
+
       let cases = List.map f cases in  (* each branch -> ELetK with raise_E name *)
       let e = mk_expr @@ expr ~etype e k hm in
-      let letks = List.fold_left (fun acc (eid, pid, d) ->
-        (* TODO how to reconstruct the type here? how to remove None *)
+      let letks = List.fold_left (fun acc (eid, pid, pty, d) ->
         let loc = eid.id_loc in
-        mk_expr ~loc @@ ELetK (eid, (pid, None), None, d, acc)) e cases in
+        mk_expr ~loc @@ ELetK (eid, (pid, pty), None, d, acc)) e cases in
       ctx letks.expr_desc
 
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([_;_] as args))
@@ -887,11 +898,13 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
       match pat.Uast.pat_desc with
       | Uast.Pvar preid -> 
         let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in 
+        let xpty = map_pty xpty in
         mk_id ~loc:(location preid.pid_loc) preid.pid_str, xpty
-      | Uast.Pcast (p, _) -> 
-        let id, _ = id_and_type_args exn_name p in 
-        (* let pty = Uterm.pty pty in *)
-        id, None (* TODO: use pty *)
+      | Uast.Pcast (p, pty) ->
+        let id, _ = id_and_type_args exn_name p in
+        let pty = Uterm.pty pty in
+        id, Some pty
+        (* id, Some (uast_pty_to_core_type pty) *)
       | _ -> gen_id (), None in
     match spec with
     | None -> None
@@ -922,6 +935,6 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let etype = return_pty in
   let body = mk_expr ~loc:expr_loc (expr ~etype pexp (KName k) empty_map) in
-  let kont = mk_kont k [(arg_id, return_pty)] spec in
+  let kont = mk_kont k [(arg_id, map_pty return_pty)] spec in
   let pre = pre_of_spec spec in
   mk_decl (rec_flag, id, params, pre, kparams @ (kont :: sl), body)
