@@ -7,7 +7,7 @@ let f (t: tree) : int =
                 ensures  Q1 |}]   -> 1
   | E [@gospel {| requires P2
                   ensures  Q2 |}] -> 2
-  | N (_, _) -> 3
+  | N ((_: tree), ( _: tree)) -> 3
   | (_: tree) -> 30
 (*@ r = f t
       requires Pre

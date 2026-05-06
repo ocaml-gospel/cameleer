@@ -74,7 +74,7 @@ let rec remove_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
   | Node ((l: elt tree), (v: elt), (r: elt tree)) -> 
-      match l with 
+      match (l: elt tree) with 
       | (Empty: elt tree) -> r
       | (_: elt tree) -> 
             let (o1: elt tree) = remove_min l in Node (o1, v, r)

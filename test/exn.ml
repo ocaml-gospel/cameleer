@@ -26,7 +26,7 @@ let g1 (a: bool): int = if a then raise (E 42) else raise (G 34)
 (* Here only one for [G]. *)
 let g2 : int =
   try raise (E 42)
-  with E (x : int) -> x
+  with E x -> x
 
 (* [f1] uses [g1] without handler,
    does [f1] requires an additional continuation? yes *)

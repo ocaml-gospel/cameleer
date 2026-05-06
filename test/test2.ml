@@ -23,7 +23,7 @@ let get_int (t: 'a tree) : int =
   - the order in the match is wrong
   [x] the actions are shuffled *)
 
-let match_t (x: t) =
+let match_t (x: t) : int =
   match (x: t) with
   | A B -> 1
   | A C -> 10
