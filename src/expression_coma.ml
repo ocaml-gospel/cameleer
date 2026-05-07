@@ -598,14 +598,14 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
                                    mk_expr ~loc e) in
             f, gen_kid () in
       let f = (fun Uast.{spc_lhs; spc_rhs; _} ->
-        let loc = location spc_rhs.spexp_loc in
+        (* let loc = location spc_rhs.spexp_loc in *)
         let ploc = location spc_lhs.ppat_loc in
         let p = pattern spc_lhs in
         let[@warning"-8"] eid = (* TODO: complete cases? *)
           match p with PCons (eid,_) ->
             { eid with id_name = mk_raise_name eid.id_name } in
         let pat, pty = get_mlpattern_id_typ (mk_pattern ~loc:ploc p) eid.id_name in
-        eid, pat, pty, mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm) in
+        eid, pat, pty, expr_opt spc_rhs kid hm) in
 
       let cases = List.map f cases in  (* each branch -> ELetK with raise_E name *)
       let e = mk_expr @@ expr ~etype e k hm in
@@ -621,20 +621,14 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let[@warning "-8"] [a1;a2] =
         List.map (fun (_, e) -> identify e; atom_of_sexpr e) args in
       let a  = mk_atom ~loc:a1.atom_loc @@ ABinop (a1, op, a2) in
-      let k = match k with
-        | KName k -> mk_callable @@ CId k
-        | KExpr k -> k in
-      EApp (k, [a], [])
+      callk [a]
 
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, [(_, arg)])
     when is_unop (string_of_longident txt) ->
       let op = get_unop (string_of_longident txt) in
       let a = atom_of_sexpr arg in
       let a = mk_atom ~loc:a.atom_loc @@ AUnop (op, a) in
-      let k = match k with
-        | KName k -> mk_callable @@ CId k
-        | KExpr k -> k in
-      EApp (k, [a], [])
+      callk [a]
 
   | Sexp_apply (s, [ (_, arg) ]) when is_raise s.spexp_desc ->
       let a = atom_of_sexpr arg in
@@ -683,11 +677,11 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
           let e = match spc_spec with
-            | None -> mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm
+            | None -> expr_opt spc_rhs k hm
             | Some spec ->
                 let kid = gen_kid () in
                 let ckid = mk_callable (CId k) in
-                let e = mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm in
+                let e = expr_opt spc_rhs kid hm in
                 let result = mk_id "result" in
                 let aresult = mk_atom (AId result) in
                 mk_expr @@
@@ -714,20 +708,20 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       Format.eprintf "In a match@.";
       let map k = List.map
         (fun Uast.{spc_lhs; spc_rhs; spc_spec; _} ->
-          let loc = location spc_rhs.spexp_loc in
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
           let () = match spc_spec with
             | None -> Format.eprintf "Spec is none@."
             | Some _ -> Format.eprintf "Spec is some@." in
           let e = match spc_spec with
-            | None -> mk_expr ~loc @@ expr ~etype spc_rhs (KName k) hm
+            | None -> expr_opt spc_rhs k hm
             | Some spec ->
                 let kid = gen_kid () in
                 let ckid = mk_callable (CId k) in
-                let e = mk_expr ~loc @@ expr ~etype spc_rhs (KName kid) hm in
+                let e = expr_opt spc_rhs kid hm in
                 let result = mk_id "result" in
                 let aresult = mk_atom (AId result) in
+                let loc = location spc_rhs.spexp_loc in
                 mk_expr @@
                   ELetK (kid, (result, etype), None,
                            mk_expr ~loc @@ EAssert (spec.fun_ens,
