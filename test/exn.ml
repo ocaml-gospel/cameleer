@@ -32,6 +32,10 @@ let g2 : int =
    does [f1] requires an additional continuation? yes *)
 let f1 (a : bool): int =
   g1 a
+(*@ res = f1 a
+    ensures res > 30
+    raises E x -> a = true
+    raises G (y: int) -> a = false *)
 
 (* one additional continuation *)
 let f2 (a : bool): int =
