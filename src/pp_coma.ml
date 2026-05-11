@@ -81,13 +81,13 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_atom ~comma_tuple:true ~paren:false ~curly:true) a
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
-  | CELetK(k, x, o, e1, e2) ->
+  | CELetK(k, xs, o, e1, e2) ->
       let ppo fmt (id, ty) =
         fprintf fmt "(%a (_r:%a))" pp_id id pp_pty ty in
       fprintf fmt "@[%a@]@ @[[ %s %a %a@;<1 2>@[<hov 2>=@ %a@]]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
-        (pp_cbinder ~paren:true) x
+        (pp_print_list ~pp_sep:(fun fmt () -> fprintf fmt " ") (pp_cbinder ~paren:true)) xs
         (pp_print_option ppo) o
         (fun fmt e -> pp_expr fmt e) e1
 

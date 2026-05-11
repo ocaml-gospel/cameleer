@@ -45,7 +45,7 @@ type expr = {
 and expr_desc =
   | EFail
   | ELet  of binder * atom * expr                 (* let p = e in e          *)
-  | ELetK of id * binder * (id * P.core_type) option * expr * expr
+  | ELetK of id * binder list * (id * P.core_type) option * expr * expr
                                         (* let_cont h x (o (_: ty) = e in e  *)
   | EApp  of callable * atom list * callable list (* k a…a k…k               *)
   | EIf of atom * expr * expr
@@ -145,7 +145,7 @@ and cexpr_desc =
   | CEAssert of cprecondition * cexpr
   | CEHide of cexpr
   | CELet of cbinder * catom * cexpr
-  | CELetK of id * cbinder * (id * Ptree.pty) option * cexpr * cexpr
+  | CELetK of id * cbinder list * (id * Ptree.pty) option * cexpr * cexpr
                                                        (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr

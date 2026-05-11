@@ -91,11 +91,12 @@ let rec pp_expr fmt (e: expr) =
       fprintf fmt "@[match @[%a@] with@\n@[%a@]@]"
         (pp_atom ~paren:false) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
-  | ELetK (k, x, o, e1, e2) ->
+  | ELetK (k, xs, o, e1, e2) ->
       let ppo fmt (o,_t) =
         fprintf fmt "(%s (_: ...)) " o.id_name in
       fprintf fmt "let %s %a %a=@;<1 2>@[%a@]@ in@ @[%a@]"
-        k.id_name pp_binder x
+        k.id_name
+        (pp_print_list ~pp_sep:(fun fmt () -> fprintf fmt " ") pp_binder) xs
         (pp_print_option ppo) o
         pp_expr e1 pp_expr e2
 

@@ -240,16 +240,17 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
         let ({id_name;_}, t) as x = binder x in
         let table = Ms.add id_name t mty in
         CELet (x, atom fn_name a mty, expr fn_name e2 table)
-    | ELetK (k, x, None, e1, e2) ->
-        Format.printf "---%a@." (Pp_ml_lang.pp_binder) x;
-        let ({id_name;_}, t) as x = binder x in
-        let types = Ms.add id_name t mty in
-        CELetK (k, x, None, expr fn_name e1 types, expr fn_name e2 types)
-    | ELetK (k, x, o, e1, e2) ->
-        let ({id_name;_}, t) as x = binder x in
-        let types = Ms.add id_name t mty in
+    | ELetK (k, xs, None, e1, e2) ->
+        let xs = List.map binder xs in
+        let types = List.fold_left (fun acc ({id_name;_}, t) ->
+          Ms.add id_name t acc) mty xs in
+        CELetK (k, xs, None, expr fn_name e1 types, expr fn_name e2 types)
+    | ELetK (k, xs, o, e1, e2) ->
+        let xs = List.map binder xs in
+        let types = List.fold_left (fun acc ({id_name;_}, t) ->
+          Ms.add id_name t acc) mty xs in
         let o = Option.map (fun (x,t) -> x, E.core_type t) o in
-        CELetK (k, x, o, expr fn_name e1 types, expr fn_name e2 types)
+        CELetK (k, xs, o, expr fn_name e1 types, expr fn_name e2 types)
     | EApp (c, al, cl) ->
         let c = callable fn_name c mty in
         let cal = List.map (atom fn_name ^~ mty) al in
