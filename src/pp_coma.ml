@@ -71,8 +71,12 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (fun fmt e -> pp_expr fmt e) e2
         (pp_cbinder ~paren:false) x
         (fun fmt e -> pp_atom fmt e) a
+  | CEApp (c, al, []) ->
+      fprintf fmt "@[%a @[%a@]@]"
+        (pp_callable ~_fn_name) c
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
   | CEApp (c, al, cl) ->
-      fprintf fmt ("@[%a @[%a@]@\n@[%a@]@]")
+      fprintf fmt "@[%a @[%a@]@\n@[%a@]@]"
         (pp_callable ~_fn_name) c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
         (pp_print_list ~pp_sep:pp_newline (pp_callable ~_fn_name)) cl

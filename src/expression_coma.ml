@@ -446,7 +446,7 @@ let mk_typ s =
     ptyp_attributes = []; }
 
 let tyunit = Some (mk_typ "unit")
-let tybool = Some (mk_typ "unit")
+let tybool = Some (mk_typ "bool")
 
 let bind_cast ty a =
   match ty with
@@ -481,21 +481,57 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       callk @@ List.map atom_of_sexpr el
 
   | Sexp_ifthenelse (e1, e2, e3) when is_atomic e1 ->
+
+      let exp e k = 
+         match e.Uast.spexp_spec with
+        | None -> expr_opt e k hm
+        | Some spec ->
+            let kid = gen_kid () in
+            let ckid = mk_callable (CId k) in
+            let e = expr_opt e kid hm in
+            let result = mk_id "result" in
+            let aresult = mk_atom (AId result) in
+            mk_expr @@
+              ELetK (kid, [(result, etype)], None,
+                        mk_expr ~loc @@ EAssert (spec.fun_ens,
+                        mk_expr ~loc @@ EHide (
+                        mk_expr ~loc @@ EApp (ckid, [aresult], []))),
+                        mk_expr ~loc @@ EAssert (spec.fun_req,
+                        mk_expr ~loc @@ EHide e)) in
+
       let a = atom_of_sexpr e1 in
       let e3 kid = match e3 with
-        | Some e3 -> expr_opt e3 kid hm
+        | Some e3 -> exp e3 kid
         | None -> mk_expr @@ EApp (mk_callable (CId kid), [atom_unit], []) in
+
       begin match k with
-      | KName k -> EIf (a, expr_opt e2 k hm, e3 k)
+      | KName k -> EIf (a, exp e2 k , e3 k)
       | KExpr k ->
           let z   = gen_id () in
           let kid = gen_kid () in
-          let e2  = expr_opt e2 kid hm in
+          let e2  = exp e2 kid in
           ELetK (kid, [(z,tybool)], None,
                        mk_expr @@ EApp (k, [mk_atom @@ AId z], []),
                        mk_expr @@ EIf (a, e2, e3 kid))
       end
   | Sexp_ifthenelse (e1, e2, e3) ->
+      let exp e k = 
+         match e.Uast.spexp_spec with
+        | None -> expr_opt e k hm
+        | Some spec ->
+            let kid = gen_kid () in
+            let ckid = mk_callable (CId k) in
+            let e = expr_opt e kid hm in
+            let result = mk_id "result" in
+            let aresult = mk_atom (AId result) in
+            mk_expr @@
+              ELetK (kid, [(result, etype)], None,
+                        mk_expr ~loc @@ EAssert (spec.fun_ens,
+                        mk_expr ~loc @@ EHide (
+                        mk_expr ~loc @@ EApp (ckid, [aresult], []))),
+                        mk_expr ~loc @@ EAssert (spec.fun_req,
+                        mk_expr ~loc @@ EHide e)) in
+
       let z = gen_id ~loc:(location e1.spexp_loc) () in
       let f, kid = match k with
       | KName k ->
@@ -508,15 +544,14 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let az2 = mk_atom (AId z2) in
           let f e2 e3 = mk_callable @@ CFun ([z, tybool], [],
             mk_expr @@ ELetK (kid, [(z2, etype)], None,
-              mk_expr @@ EApp (k, [az2], []),
+            mk_expr @@ EApp (k, [az2], []),
             mk_expr @@ EIf (mk_atom (AId z), e2, e3))) in
           f, kid in
-      let e2 = expr_opt e2 kid hm in
+      let e2 = exp e2 kid in
       let e3 = match e3 with
-       | Some e3 -> expr_opt e3 kid hm
+       | Some e3 -> exp e3 kid
        | None -> mk_expr @@ EApp (mk_callable (CId kid), [atom_unit], []) in
       expr ~etype:tybool e1 (KExpr (f e2 e3)) hm
-
   | Sexp_construct (l,e) ->
       let a = atom_of_construct (l,e) in
       callk [bind_cast etype a]
@@ -560,11 +595,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let kid = gen_kid () in
       ELetK (kid, [(id,pty)], None, body,
              mk_expr ~loc:loc1 @@ expr ~etype:pty e1 (KName kid) hm)
-
   | Sexp_let (Recursive, _svb::_svbs, _e) -> assert false (* TODO *)
-
   | Sexp_let ((Nonrecursive|Recursive), [], _) -> assert false (* unreachable *)
-
   | Sexp_try (e, cases) ->
       (* remark:
            for now we only consider `try-catch` of the form
