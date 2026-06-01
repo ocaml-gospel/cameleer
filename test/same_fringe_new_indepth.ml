@@ -33,7 +33,7 @@ let rec eq_enum (e1 : enum) (e2 : enum) : bool =
       else false
   | (_: enum), (_: enum) -> false
 (*@ b = eq_enum e1 e2
-      variant List.length (enum_elements e1) *)
+      variant Sequence.length (enum_elements e1) *)
 
 let same_fringe (t1 : elt tree) (t2 : elt tree) : bool =
   let (e1: enum) = mk_zipper t1 Done in
@@ -41,5 +41,4 @@ let same_fringe (t1 : elt tree) (t2 : elt tree) : bool =
   eq_enum e1 e2
 (* @ b = same_fringe t1 t2
       requires true 
-      ensures b <-> elements t1 = elements t2 *)
-      
+      ensures b <-> Sequence.(==) (elements t1) (elements t2) *)

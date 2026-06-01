@@ -41,4 +41,4 @@ let same_fringe (t1 : elt tree) (t2 : elt tree) : bool =
   eq_enum e1 e2
 (*@ b = same_fringe t1 t2 
       requires true
-      ensures b <-> elements t1 = elements t2 *)
+      ensures b <-> Sequence.(==) (elements t1) (elements t2) *)
