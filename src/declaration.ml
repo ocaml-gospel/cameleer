@@ -184,8 +184,8 @@ let val_decl loc vd ghost =
     let id = Vspec.ident_of_lb_arg lb_arg in
     let id_loc = id.id_loc in
     let pty = E.core_type ct in
-    (* since why3 1.5.0, I no longer have access to extraction attrubutes, as
-     * the [ocaml] module is now oppaque *)
+    (* since why3 1.5.0, I no longer have access to extraction
+       attributes, as the [OCaml] module is now oppaque *)
     let named_arg = Ident.create_attribute "ocaml:named" in
     let optional_arg = Ident.create_attribute "ocaml:optional" in
     let id, ghost, pty =
@@ -309,6 +309,11 @@ let function_ f =
   (* in *)
   (* ({ ld_loc; ld_ident; ld_params; ld_type; ld_def }, coercion) *)
 
+let gospel_function f =
+  let let_func_loc = T.location f.Uast.fun_loc in
+  let f, _ = function_ f in
+  O.(mk_function { let_func_loc; let_func_def = f })
+
 let prop p =
   let kind =
     match p.Uast.prop_kind with Uast.Plemma -> Decl.Plemma | _ -> Decl.Paxiom
@@ -332,6 +337,10 @@ let mk_ind loc ind =
 let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
   O.mk_dprop loc prop_kind prop_name prop_term
+
+let gospel_prop p =
+  let loc = p.Uast.prop_loc in
+  mk_prop (T.location loc) p
 
 let mk_exn loc ptyexn_constructor =
   let id, pty, mask = E.exception_constructor ptyexn_constructor in

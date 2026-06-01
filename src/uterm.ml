@@ -129,6 +129,7 @@ let rec term in_post Uast.{ term_desc = t_desc; term_loc } =
   let term_desc = function
     | Uast.Ttrue -> Ttrue
     | Uast.Tfalse -> Tfalse
+    | Uast.Tbang -> assert false
     | Uast.Tconst c -> Tconst (constant c)
     | Uast.Tpreid id -> Tident (qualid id)
     | Uast.Tidapp (q, tl) -> Tidapp (qualid q, List.map (term in_post) tl)
@@ -183,6 +184,7 @@ let rec expr Uast.{ term_desc = t_desc; term_loc } =
   let expr_desc = function
     | Uast.Ttrue -> Etrue
     | Uast.Tfalse -> Efalse
+    | Uast.Tbang -> assert false
     | Uast.Tconst c -> Econst (constant c)
     | Uast.Tpreid id -> Eident (qualid id)
     | Uast.Tidapp ((Qpreid q as qq), [ t1; t2 ]) ->

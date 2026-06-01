@@ -3,3 +3,7 @@
  (name cli)
  (public_name cameleer)
  (package cameleer))
+
+(executable
+ (libraries gospel why3 cameleer)
+ (name cli_coma))
