@@ -23,9 +23,10 @@ for file in ${files}; do
     if [ $? -eq 0 ]; then
         if [ -e "${name}" ]; then
             printf "${GREEN}%s${RESET}\n" "ok: ${name}"
-            if "${WHY3}" prove "./${name}" > /dev/null 2>&1; then
+            if "${WHY3}" prove -L ./src "./${name}" > /dev/null 2>&1; then
                 printf "${GREEN}%s${RESET}\n" "    why3 prove succeed"
             else
+                echo "${WHY3} prove -L ./src ./${name}"
                 printf "${RED}%s${RESET}\n" "    why3 prove failed"
             fi
         else
