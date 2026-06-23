@@ -12,7 +12,7 @@ module Mid = Map.Make(struct
   let compare a b = String.compare a.id_name b.id_name
 end)
 
-let rev2 (l1,l2) = List.(rev l1, rev l2)
+(* let rev2 (l1,l2) = List.(rev l1, rev l2) *)
 
 (* binds type name to type constructors *)
 let htypes
@@ -77,66 +77,49 @@ let compile
         a
     | ({atom_desc=ATuple at; _} :: tl, _)  ->
         let tl = at @ tl in
-        let rl = List.map (function ({ppat_desc=PTuple pl; _}::tl,a) ->
-          (pl @ tl), a
-          | (p::pl, a) ->
+        let rl = List.map (function
+          | {ppat_desc=PTuple pl; _}::tl,a -> (pl @ tl), a
+          | p::pl, a ->
               let rec loop p =
                 match p.ppat_desc with
-                 | PWild ->
-                     let r = ref 0 in
-                     let () = try List.iter2 (fun _ _ -> incr r) tl pl
-                              with Invalid_argument _ -> () in
-                     let loc = p.ppat_loc in
-                     let ws = List.init !r (fun _ ->
-                       E.(mk_pattern ~loc @@ PWild)) in
-                     ws @ pl, a
-                 | PCast (p,_) -> loop p
-                 | PVar _ | PCst _ | PCons (_, _) | PTuple _ -> assert false in
+                | PWild ->
+                    let r = ref 0 in
+                    let () = try List.iter2 (fun _ _ -> incr r) tl pl
+                             with Invalid_argument _ -> () in
+                    let loc = p.ppat_loc in
+                    let ws = List.init !r (fun _ ->
+                      E.(mk_pattern ~loc @@ PWild)) in
+                    ws @ pl, a
+                | PCast (p,_) -> loop p
+                | PVar _ | PCst _ | PCons (_, _) | PTuple _ -> assert false in
               loop p
-          | (_, _) -> assert false
-        ) rl in
+          | _, _ -> assert false) rl in
         compile tl rl
-    (* | t :: tl,_ when
-        match type_name (t_type t) with [_] -> true | _ -> false
-      -> assert false *)
     | t :: tl, _ -> (* process the leftmost column *)
-
         let at0 = E.mk_atom t.atom_desc in
         let ty = t_type t in
-
-        (* fc: first column
+        (* [fc] is the first column of the matrix
            idea: rl = @ (fc_i ++ rl_tail i) *)
-        let rl_tail, fc = rev2 @@
+        let rl_tail, fc = (*rev2 @@*)
           List.fold_left (fun (rls, fcs) (pl,a) ->
             match pl with [] -> assert false
             | p::pls -> (pls, a)::rls, p::fcs)
           ([],[]) rl in
-
         let rec simple p = match p.ppat_desc with
           | PWild | PVar _ -> true
           | PCast (p, _) -> simple p
           | _ -> false in
-
         let rec get_constr p = match p.ppat_desc with
           | PCst _ | PWild | PVar _ | PTuple _ -> None
           | PCons (c, _) -> Some c
           | PCast (p, _) -> get_constr p in
-
         let rec is_compat c p = match p.ppat_desc with
           | PCst _ -> false
           | PWild | PVar _ -> true
           | PCons (c2, _) -> String.equal c.id_name c2.id_name
           | PCast (p, _) -> is_compat c p
           | PTuple _ -> failwith "unreachable" in
-
-        let simple = List.for_all simple fc in
-
-        (* let rec isget_var t = match t.atom_desc with
-          | AId id -> Some id
-          | ACast (a, _) -> isget_var a
-          | _ -> None in *)
-
-        if simple then begin
+        if List.for_all simple fc then begin (* [fc] made of vars / wildcard only! *)
           let rl_tail = List.map2 (fun (pl, a) p ->
             let rec loop t p =
               match p.ppat_desc with
@@ -144,35 +127,32 @@ let compile
               | PVar id -> mk_let (id, (Some t)) at0 a
               | PCast (p, t) -> loop t p
               | _ -> assert false in
-            pl, loop ty p
-            ) rl_tail fc in
+            pl, loop ty p) rl_tail fc in
           compile tl rl_tail
-
         end else (* not simple *)
-
-          (* the constructors present on the leftmost column *)
-          (* let col_cons = List.fold_left (fun acc x ->
-            match get_constr x with
-            | None -> acc
-            | Some e -> Sid.add e acc) Sid.empty fc in *)
-          let col_cons = List.filter (fun p -> get_constr p <> None) fc in
-
+          (* the constructors present on the first column *)
+          let (_, col_cons) = List.fold_left (fun (s,acc) p ->
+            (* we accumulate in a set what is already in the list
+               to avoid duplications *)
+            match get_constr p with
+            | None -> (s, acc)
+            | Some c ->
+                let b = Sid.exists (fun cc -> cc.id_name = c.id_name) s in
+                if b then s, acc else Sid.add c s, (p :: acc)) (Sid.empty,[]) fc in
           (* extract the list of constructors *)
           let[@warning "-8"] [ty_str] = type_name ty in
           ignore get_constructors;
-
           let type_info id = get_type_informations ty_str id in
-
           (* matrix for constructor [c] *)
           let mat_c (c: id) _arity proj ts =
             let nwilds = List.map (fun t ->
               E.(mk_tpattern ~loc:c.id_loc PWild t)) ts in
-            (* filtered fc, filtered rl *)
-            let (ffc, rl_tail) = rev2 @@
+            (* filtered [fc] for [c], filtered [rl] for [c] *)
+            let (ffc, rl_tail) = (*rev2 @@*)   (* remark: this rev2 in inverted by the following one on line +4 *)
               List.fold_left2 (fun (pats,acc) p line ->
                 if is_compat c p then (p::pats, line::acc) else (pats, acc)
               ) ([],[]) fc rl_tail in
-            let rl_tail = List.rev @@ List.fold_left2 (
+            let ffc_rl_tail = (*List.rev @@*) List.fold_left2 (
               fun acc p (pl,a) ->
                 let rec loop p =
                   match p.ppat_desc with
@@ -190,9 +170,7 @@ let compile
                   | PCast (p, _) -> loop p
                 in loop p
             ) [] ffc rl_tail in
-            compile (proj @ tl) rl_tail
-          in
-
+            compile (proj @ tl) ffc_rl_tail in
           let rec collect_lets_opt ?(ty=None) a p =
             match p.ppat_desc with
             | PWild -> Some a
@@ -201,7 +179,6 @@ let compile
             | PCast (p, t) ->
                 collect_lets_opt ~ty:(Some t) a p
             | _ -> None in
-
           let default_mat =
             let rl_tail = List.rev @@ List.fold_left2 (fun acc (pl, a) p ->
               match collect_lets_opt ~ty:(Some ty) a p with
@@ -210,44 +187,42 @@ let compile
             ) [] rl_tail fc in
             if rl_tail = [] then []
             else [E.(mk_tpattern PWild ty), compile tl rl_tail] in
-
           let rec get_args p = match p.ppat_desc with
             | PCons (_, pl) -> pl
             | PCast (p, _) -> get_args p
             | _ -> failwith "unreachable2" in
-
           let rec get_id p = match p.ppat_desc with
             | PVar id -> id
             | PCast (p, _) -> get_id p
             | _ -> E.gen_id () in
-
           let get_type p default = match p.ppat_desc with
             | PVar _ -> default
             | PCast (_, t) -> t
             | PCons (_, _) -> default
             | _ -> failwith "unreachable3" in
-
+          (* Format.printf "---< ";
+          List.iter (fun c -> match get_constr c with None -> () | Some c -> Format.printf "  %s" c.id_name) col_cons;
+          Format.printf "@."; *)
           let pl = List.fold_left (fun acc c ->
             match get_constr c with
-            | None -> acc
+            | None ->
+                (* Format.printf "%s->   (%d)@." (String.make (List.length col_cons) '_')
+                               (List.length acc); *)
+                  acc
             | Some cons ->
-            let ts, arity = type_info cons.id_name in
-            let args = get_args c in
-            let t_args = List.map2 (fun arg ty ->
-              let id = get_id arg in
-              let a = E.mk_atom @@ AId id in
-              let a_type = get_type arg ty in
-              E.mk_atom @@ ACast (a, a_type)
-            ) args ts in
-            let mc = c, mat_c cons arity t_args ts in
-            mc::acc
+                (* Format.printf "%s->%s (%d)@." (String.make (List.length col_cons) ' ')
+                  cons.id_name (List.length acc); *)
+                let ts, arity = type_info cons.id_name in
+                let args = get_args c in
+                let t_args = List.map2 (fun arg ty ->
+                  let a = E.mk_atom @@ AId (get_id arg) in
+                  let ta = get_type arg ty in
+                  E.mk_atom @@ ACast (a, ta)) args ts in
+                let mc = c, mat_c cons arity t_args ts in
+                mc::acc
           ) default_mat col_cons in
-
-          mk_case t pl
-
-  in
+          mk_case t pl in
   compile [a] rl
-
 
 let rec expr e = match e.expr_desc with
   | EFail -> e
