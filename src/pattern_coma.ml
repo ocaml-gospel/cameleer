@@ -12,8 +12,6 @@ module Mid = Map.Make(struct
   let compare a b = String.compare a.id_name b.id_name
 end)
 
-(* let rev2 (l1,l2) = List.(rev l1, rev l2) *)
-
 (* binds type name to type constructors *)
 let htypes
   (* (string, (string * (Ppxlib.Parsetree.core_type * int)) list) Hashtbl.t = *)
@@ -100,7 +98,7 @@ let compile
         let ty = t_type t in
         (* [fc] is the first column of the matrix
            idea: rl = @ (fc_i ++ rl_tail i) *)
-        let rl_tail, fc = (*rev2 @@*)
+        let rl_tail, fc =
           List.fold_left (fun (rls, fcs) (pl,a) ->
             match pl with [] -> assert false
             | p::pls -> (pls, a)::rls, p::fcs)
