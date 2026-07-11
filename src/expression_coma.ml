@@ -632,14 +632,30 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
                                    mk_expr @@ EApp (c, [a], []),
                                    mk_expr ~loc e) in
             f, gen_kid () in
-      let f = (fun Uast.{spc_lhs; spc_rhs; _} ->
+      let f = (fun Uast.{spc_lhs; spc_rhs; spc_spec; _} ->
         let ploc = location spc_lhs.ppat_loc in
         let p = pattern spc_lhs in
         let[@warning"-8"] eid =
           match p with PCons (eid,_) ->
             { eid with id_name = mk_raise_name eid.id_name } in
         let binders = get_mlpattern_binders (mk_pattern ~loc:ploc p) eid.id_name in
-        eid, binders, expr_opt spc_rhs kid hm) in
+        let d = match spc_spec with
+          | None -> expr_opt spc_rhs kid hm
+          | Some spec ->
+              let kid2 = gen_kid () in
+              let ckid = mk_callable (CId kid) in
+              let e = expr_opt spc_rhs kid2 hm in
+              let result = mk_id "result" in
+              let aresult = mk_atom (AId result) in
+              let loc = location spc_rhs.spexp_loc in
+              mk_expr @@
+                ELetK (kid2, [(result, etype)], None,
+                         mk_expr ~loc @@ EAssert (spec.fun_ens,
+                         mk_expr ~loc @@ EHide (
+                         mk_expr ~loc @@ EApp (ckid, [aresult], []))),
+                       mk_expr ~loc @@ EAssert (spec.fun_req,
+                       mk_expr ~loc @@ EHide e)) in
+        eid, binders, d) in
 
       let cases = List.map f cases in  (* each branch -> ELetK with raise_E name *)
       let e = mk_expr @@ expr ~etype e k hm in
