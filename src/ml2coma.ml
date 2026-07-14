@@ -240,6 +240,12 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
         let ({id_name;_}, t) as x = binder x in
         let table = Ms.add id_name t mty in
         CELet (x, atom fn_name a mty, expr fn_name e2 table)
+    | ELetRef (x, a, e2) ->
+        let ({id_name;_}, t) as x = binder x in
+        let table = Ms.add id_name t mty in
+        CELetRef (x, atom fn_name a mty, expr fn_name e2 table)
+    | EAssignRef (id, a, e2) ->
+        CEAssignRef (id, atom fn_name a mty, expr fn_name e2 mty)
     | ELetK (k, xs, None, e1, e2) ->
         let xs = List.map binder xs in
         let types = List.fold_left (fun acc ({id_name;_}, t) ->

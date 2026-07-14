@@ -71,6 +71,16 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (fun fmt e -> pp_expr fmt e) e2
         (pp_cbinder ~paren:false) x
         (fun fmt e -> pp_atom fmt e) a
+  | CELetRef (x, a, e2) ->
+      fprintf fmt "@[%a@]@\n[&%a =@ @[<hov 2>%a@]]"
+        (fun fmt e -> pp_expr fmt e) e2
+        (pp_cbinder ~paren:false) x
+        (fun fmt e -> pp_atom fmt e) a
+  | CEAssignRef (r, a, e2) ->
+      fprintf fmt "@[[&%a <-@ @[<hov 2>%a@]]@]@\n@[%a@]"
+        pp_id r
+        (fun fmt e -> pp_atom fmt e) a
+        (fun fmt e -> pp_expr fmt e) e2
   | CEApp (c, al, []) ->
       fprintf fmt "@[%a @[%a@]@]"
         (pp_callable ~_fn_name) c

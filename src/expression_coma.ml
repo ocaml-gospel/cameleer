@@ -271,6 +271,14 @@ let is_binop, get_binop =
   (fun s -> Hashtbl.mem driver s),
   (fun s -> Option.get @@ Hashtbl.find driver s)
 
+(* let is_deref = function
+  | Uast.Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident "!"; _}; _ }, [_]) -> true
+  | _ -> false *)
+
+let is_ref = function
+  | Uast.Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident "ref"; _}; _ }, [_]) -> true
+  | _ -> false
+
   (** Returns [true] iff [e] is a constant/ident/construct/atomic-tuple. *)
 let rec is_atomic e =
   match e.Uast.spexp_desc with
@@ -282,6 +290,8 @@ let rec is_atomic e =
       is_atomic e1 && is_atomic e2
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, [(_, e1)])
     when is_unop (string_of_longident txt) ->
+      is_atomic e1
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident "!"; _}; _ }, [(_, e1)]) ->
       is_atomic e1
   | _ -> false
 
@@ -328,6 +338,8 @@ and atom_of_sexpr e =
       let loc = location e1.spexp_loc in
       let op = get_binop (string_of_longident txt) in
       mk_atom ~loc (AUnop (op, atom_of_sexpr e1))
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident "!"; _}; _ }, [(_, e1)]) ->
+      atom_of_sexpr e1
   | Sexp_constraint (e, t) ->
       let loc = location e.spexp_loc in
       let a = atom_of_sexpr e in
@@ -556,6 +568,15 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let a = atom_of_construct (l,e) in
       callk [bind_cast etype a]
 
+  | Sexp_let ((Nonrecursive | Recursive), [svb], e2)
+    when is_ref svb.spvb_expr.spexp_desc ->
+      let id, pty = get_pattern_id svb.spvb_pat in
+      let[@warning "-8"] Uast.Sexp_apply (_, [(_, e0)]) = svb.spvb_expr.spexp_desc in
+      let a = atom_of_sexpr e0 in
+      let loc2 = location e2.spexp_loc in
+      let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
+      ELetRef ((id, pty), a, body)
+
   | Sexp_let ((Nonrecursive | Recursive), [svb], e2) ->
       let id, (pty : core_type option) = get_pattern_id svb.spvb_pat in
       begin match pty with
@@ -679,6 +700,17 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let a = atom_of_sexpr arg in
       let a = mk_atom ~loc:a.atom_loc @@ AUnop (op, a) in
       callk [a]
+
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident "!"; _}; _ }, [(_, e1)]) ->
+      callk [atom_of_sexpr e1]
+
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident ":="; _}; _ },
+                [(_, x_e); (_, rhs_e)]) ->
+      let id = match x_e.spexp_desc with
+        | Sexp_ident {txt; loc} -> mk_id ~loc:(location loc) (string_of_longident txt)
+        | _ -> assert false (* LHS of := must be a plain reference identifier *) in
+      let a = atom_of_sexpr rhs_e in
+      EAssignRef (id, a, mk_expr ~loc (callk [atom_unit]))
 
   | Sexp_apply (s, [ (_, arg) ]) when is_raise s.spexp_desc ->
       let a = atom_of_sexpr arg in
@@ -808,6 +840,18 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
 
   | Sexp_constraint (e, ty) ->
       expr ~etype:(Some ty) e k hm
+
+  | Sexp_sequence
+      ({ spexp_desc =
+           Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident ":="; _}; _ },
+                       [(_, x_e); (_, rhs_e)]); _ }, e2) ->
+      let id = match x_e.spexp_desc with
+        | Sexp_ident {txt; loc} -> mk_id ~loc:(location loc) (string_of_longident txt)
+        | _ -> assert false (* LHS of := must be a plain reference identifier *) in
+      let a = atom_of_sexpr rhs_e in
+      let loc2 = location e2.spexp_loc in
+      let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
+      EAssignRef (id, a, body)
 
   | Sexp_sequence (e1, e2) ->
       let k = mk_expr ~loc:(location e2.spexp_loc) @@ expr ~etype e2 k hm in

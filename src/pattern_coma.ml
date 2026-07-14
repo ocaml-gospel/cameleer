@@ -233,6 +233,12 @@ let rec expr e = match e.expr_desc with
   | ELet (k, a, e2) ->
       let expr_desc = ELet (k, atom a, expr e2) in
       { e with expr_desc }
+  | ELetRef (k, a, e2) ->
+      let expr_desc = ELetRef (k, atom a, expr e2) in
+      { e with expr_desc }
+  | EAssignRef (r, a, e2) ->
+      let expr_desc = EAssignRef (r, atom a, expr e2) in
+      { e with expr_desc }
   | ELetK (k, id, o, e1, e2) ->
       let expr_desc = ELetK (k, id, o, expr e1, expr e2) in
       { e with expr_desc }

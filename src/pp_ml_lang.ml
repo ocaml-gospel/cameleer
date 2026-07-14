@@ -80,6 +80,12 @@ let rec pp_expr fmt (e: expr) =
   | ELet (x, a1, e2) ->
       fprintf fmt "let %a =@;<1 2>@[%a@]@ in@ @[%a@]"
         pp_binder x (fun fmt a -> pp_atom fmt a) a1 pp_expr e2
+  | ELetRef (x, a1, e2) ->
+      fprintf fmt "let %a = ref@;<1 2>@[%a@]@ in@ @[%a@]"
+        pp_binder x (fun fmt a -> pp_atom fmt a) a1 pp_expr e2
+  | EAssignRef (r, a1, e2) ->
+      fprintf fmt "%s :=@;<1 2>@[%a@];@ @[%a@]"
+        r.id_name (fun fmt a -> pp_atom fmt a) a1 pp_expr e2
   | EApp (c, al, cl) ->
       fprintf fmt "@[<hov 2>%a @[%a@] @[%a@]@]" pp_callable c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true)) al
