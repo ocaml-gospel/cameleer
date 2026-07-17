@@ -279,7 +279,7 @@ let is_ref = function
   | Uast.Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident "ref"; _}; _ }, [_]) -> true
   | _ -> false
 
-  (** Returns [true] iff [e] is a constant/ident/construct/atomic-tuple. *)
+(** Returns [true] iff [e] is a constant/ident/construct/atomic-tuple. *)
 let rec is_atomic e =
   match e.Uast.spexp_desc with
   | Sexp_constant _ | Sexp_ident _ | Sexp_construct (_, None) -> true
@@ -293,7 +293,8 @@ let rec is_atomic e =
       is_atomic e1
   | Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident "!"; _}; _ }, [(_, e1)]) ->
       is_atomic e1
-  | _ -> false
+  | _ ->
+      identify e; false
 
 let rec atom_of_construct ?(loc=dummy_loc) c = match c with
   | ({ txt = Lident "true"; _ },  None) -> mk_atom ~loc atom_true
@@ -493,9 +494,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       callk @@ List.map atom_of_sexpr el
 
   | Sexp_ifthenelse (e1, e2, e3) when is_atomic e1 ->
-
-      let exp e k = 
-         match e.Uast.spexp_spec with
+      let exp e k = match e.Uast.spexp_spec with
         | None -> expr_opt e k hm
         | Some spec ->
             let kid = gen_kid () in
@@ -505,17 +504,15 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
             let aresult = mk_atom (AId result) in
             mk_expr @@
               ELetK (kid, [(result, etype)], None,
-                        mk_expr ~loc @@ EAssert (spec.fun_ens,
-                        mk_expr ~loc @@ EHide (
-                        mk_expr ~loc @@ EApp (ckid, [aresult], []))),
-                        mk_expr ~loc @@ EAssert (spec.fun_req,
-                        mk_expr ~loc @@ EHide e)) in
-
+                       mk_expr ~loc @@ EAssert (spec.fun_ens,
+                       mk_expr ~loc @@ EHide (
+                       mk_expr ~loc @@ EApp (ckid, [aresult], []))),
+                     mk_expr ~loc @@ EAssert (spec.fun_req,
+                     mk_expr ~loc @@ EHide e)) in
       let a = atom_of_sexpr e1 in
       let e3 kid = match e3 with
         | Some e3 -> exp e3 kid
         | None -> mk_expr @@ EApp (mk_callable (CId kid), [atom_unit], []) in
-
       begin match k with
       | KName k -> EIf (a, exp e2 k , e3 k)
       | KExpr k ->
@@ -527,8 +524,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
                        mk_expr @@ EIf (a, e2, e3 kid))
       end
   | Sexp_ifthenelse (e1, e2, e3) ->
-      let exp e k = 
-         match e.Uast.spexp_spec with
+      let exp e k =
+        match e.Uast.spexp_spec with
         | None -> expr_opt e k hm
         | Some spec ->
             let kid = gen_kid () in
@@ -538,12 +535,11 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
             let aresult = mk_atom (AId result) in
             mk_expr @@
               ELetK (kid, [(result, etype)], None,
-                        mk_expr ~loc @@ EAssert (spec.fun_ens,
-                        mk_expr ~loc @@ EHide (
-                        mk_expr ~loc @@ EApp (ckid, [aresult], []))),
-                        mk_expr ~loc @@ EAssert (spec.fun_req,
-                        mk_expr ~loc @@ EHide e)) in
-
+                       mk_expr ~loc @@ EAssert (spec.fun_ens,
+                       mk_expr ~loc @@ EHide (
+                       mk_expr ~loc @@ EApp  (ckid, [aresult], []))),
+                     mk_expr ~loc @@ EAssert (spec.fun_req,
+                     mk_expr ~loc @@ EHide e)) in
       let z = gen_id ~loc:(location e1.spexp_loc) () in
       let f, kid = match k with
       | KName k ->
@@ -564,6 +560,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
        | Some e3 -> exp e3 kid
        | None -> mk_expr @@ EApp (mk_callable (CId kid), [atom_unit], []) in
       expr ~etype:tybool e1 (KExpr (f e2 e3)) hm
+
   | Sexp_construct (l,e) ->
       let a = atom_of_construct (l,e) in
       callk [bind_cast etype a]
@@ -738,8 +735,10 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
         (fun s acc -> mk_callable (CId (mk_id s)) :: acc)
         gs [] in
       EApp (mk_callable ~loc c, args, k::sl)
-  | Sexp_apply (e, args) ->
-      let loc = location e.spexp_loc in
+
+  (* TODO: is this unreachable? *)
+  | Sexp_apply (_e, _args) -> assert false
+      (* let loc = location e.spexp_loc in
       let z = gen_id ~loc () in
       let args = List.map (fun (_, e) -> atom_of_sexpr e) args in
       let k = match k with
@@ -748,7 +747,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let k = mk_callable ~loc @@
         CFun ([z, etype],[], mk_expr @@
               EApp (mk_callable @@ CId z, args, [k])) in
-      expr e (KExpr k) hm
+      expr e (KExpr k) hm *)
 
   | Sexp_match (e, cases) when is_atomic e ->
       Format.eprintf "In an atomic match@.";
@@ -984,13 +983,13 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
       | Uast.Qdot (_, { pid_str; _ }) -> pid_str in
     let rec id_and_type_args exn_name pat =
       match pat.Uast.pat_desc with
-      | Uast.Pvar preid -> 
-        let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in 
+      | Uast.Pvar preid ->
+        let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in
         let xpty = map_pty xpty in
         mk_id ~loc:(location preid.pid_loc) preid.pid_str, xpty
-      | Uast.Pwild -> 
+      | Uast.Pwild ->
         let id = gen_id ~prefix:"_unused" () in
-        let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in 
+        let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in
         let xpty = map_pty xpty in
         id, xpty
       | Uast.Pcast (p, pty) ->
@@ -1005,7 +1004,7 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
           List.find_map (fun (qid, opt) ->
             if mk_raise_name (string_of_uast_qualid qid) = exn_name then
               Option.map (fun (pat, term) ->
-                let (id, pty) = id_and_type_args exn_name pat in  
+                let (id, pty) = id_and_type_args exn_name pat in
                 (id, pty, [term])) opt
             else None
           ) q_pat_t_list

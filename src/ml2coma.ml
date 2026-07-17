@@ -77,28 +77,28 @@ let pp_cbinder fmt (id, pty) =
 end
 
 let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
-  Printf.eprintf "DEBUG mk_precondition: arg=%s case_id=%s vars=[%s]----------------------------------------\n%!"
-  arg.id_name
-  case_id.id_name
-  (String.concat ", "
-    (List.concat_map (fun vs ->
-      List.map (fun (v, _) -> v.id_name) vs) vars));
+  Format.printf "D: arg=%-5s case_id=%-7s vars=[%s]@."
+    arg.id_name
+    case_id.id_name
+    (String.concat ", "
+      (List.concat_map (List.map (fun (v, _) -> v.id_name)) vars));
   let mk_uast_term ~loc term_desc =
     Uast.{ term_desc; term_loc=loc } in
   let loc_l = location arg.id_loc in
   let loc_r = location case_id.id_loc in
   let lhs = mk_uast_term ~loc:loc_l (Uast.Tpreid (ml_id_to_qualid arg)) in
   let qid = ml_id_to_qualid case_id in
-  let rhs_args = List.map (fun vs ->
-    let vars_terms = List.map
-      (fun ((v:Ml_lang.id),_ty) ->
+  let rhs_args = List.filter_map (function
+    | [] -> None
+    | [(v: Ml_lang.id),_ty] ->
         let loc = location v.id_loc in
-        mk_uast_term ~loc (Uast.Tpreid (ml_id_to_qualid v)))
-      vs in
-    match vars_terms with
-    | [] -> assert false
-    | [x] -> x
-    | xs -> mk_uast_term ~loc:loc_r (Uast.Ttuple xs)) vars in
+        Some (mk_uast_term ~loc (Uast.Tpreid (ml_id_to_qualid v)))
+    | xs ->
+        List.map (fun ((v: Ml_lang.id),_ty) ->
+          let loc = location v.id_loc in
+          mk_uast_term ~loc (Uast.Tpreid (ml_id_to_qualid v))) xs
+        |> fun xxx -> Some (mk_uast_term ~loc:loc_r (Uast.Ttuple xxx))
+    ) vars in
   let rhs = match rhs_args with
     | [] -> mk_uast_term ~loc:loc_r (Uast.Tpreid qid)
     | rs -> mk_uast_term ~loc:loc_r (Uast.Tidapp (qid, rs)) in
