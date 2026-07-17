@@ -14,7 +14,7 @@ let pp_newline fmt () = fprintf fmt "@\n"
 let pp_newline_newline fmt () = fprintf fmt "@\n@\n"
 let pp_space fmt () = fprintf fmt " "
 let pp_comma fmt () = fprintf fmt ", "
-let pp_and fmt () = fprintf fmt " && "
+let pp_and fmt () = fprintf fmt " &&@ "
 let pp_paren fmt () = fprintf fmt ". "
 
 let pp_sep f fmt () =
@@ -39,7 +39,7 @@ let pp_type_decl = WPrint.pp_decl
 let pp_cpre fmt = function
   | [] -> ()
   | pre ->
-      fprintf fmt "@[{ %a }@]"
+      fprintf fmt "{ @[%a@] }"
         (pp_print_list ~pp_sep:pp_and pp_cpre) pre
 
 let pp_id fmt {id_name; _} =
@@ -55,7 +55,7 @@ let pp_cbinder ?(paren=true) fmt (id, pty) =
 let _pp_pre fmt = function
   | [] -> ()
   | l ->
-      fprintf fmt "{@[%a@]}"
+      fprintf fmt "{ @[%a@] }"
         (pp_print_list ~pp_sep:pp_and UPrint.term) l
 
 let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
@@ -85,8 +85,13 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
       fprintf fmt "@[%a @[%a@]@]"
         (pp_callable ~_fn_name) c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
+  | CEApp (c, al, [cl1]) ->
+      fprintf fmt "@[%a @[%a %a@]@]"
+        (pp_callable ~_fn_name) c
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
+        (pp_callable ~_fn_name) cl1
   | CEApp (c, al, cl) ->
-      fprintf fmt "@[%a @[%a@]@\n@[%a@]@]"
+      fprintf fmt "@[%a @[%a@]@\n  @[%a@]@]"
         (pp_callable ~_fn_name) c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
         (pp_print_list ~pp_sep:pp_newline (pp_callable ~_fn_name)) cl
@@ -98,7 +103,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
   | CELetK(k, xs, o, e1, e2) ->
       let ppo fmt (id, ty) =
         fprintf fmt "(%a (_r:%a))" pp_id id pp_pty ty in
-      fprintf fmt "@[%a@]@ @[[ %s %a %a@;<1 2>@[<hov 2>=@ %a@]]@]"
+      fprintf fmt "@[%a@]@ @[[ %s %a %a@;<1 2>= @[%a@]]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
         (pp_print_list ~pp_sep:(fun fmt () -> fprintf fmt " ") (pp_cbinder ~paren:true)) xs
@@ -185,7 +190,7 @@ let pp_handler_case fmt (case_id, vars, pre) =
   | [] ->
       fprintf fmt "(%a %a)" pp_id case_id pp_cpre pre
   | _ ->
-      fprintf fmt "(%s @[%a@ %a@])"
+      fprintf fmt "(%s @[%a@ @[%a@]@])"
         case_id.id_name
         (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) vars
         pp_cpre pre
