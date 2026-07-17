@@ -6,6 +6,14 @@ module E = Expression
 
 let (^~) a b = fun c -> a c b
 
+let rec split_at i l =
+  if i <= 0 then [], l else
+  match l with
+  | [] -> assert false
+  | h :: t ->
+      let a, b = split_at (i-1) t in
+      (h :: a), b
+
 let dummy_pos = Lexing.{ pos_fname = ""; pos_lnum = 0; pos_bol = 0; pos_cnum = 0; }
 
 let dummy_loc =
@@ -357,6 +365,8 @@ end
 type raise_set = S.t
 (* Maps function's name -> set of exceptions that can be raised *)
 let raisable_hmap: (string, S.t) Hashtbl.t = Hashtbl.create 32
+let toplevel_fun_types:
+  (string, (int * binder list) * (int * kont list)) Hashtbl.t = Hashtbl.create 32
 
 (* Maps exception names -> their argument types *)
 let exn_type_hmap : (string, Ppxlib.core_type option) Hashtbl.t = Hashtbl.create 16
@@ -579,11 +589,10 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       begin match pty with
       | Some ({ ptyp_desc = Ptyp_arrow _; _ } as tarr) ->
           let rec collect b e acc = match b, e.Uast.spexp_desc with
-          | { ptyp_desc = Ptyp_arrow (_,a,b); _ }, Sexp_fun (_, _, pat, e, _)
-            -> let x = get_pattern_id pat in
-               collect b e ((a, x) :: acc)
-          | _ -> List.rev acc, e
-          in
+            | { ptyp_desc = Ptyp_arrow (_,a,b); _ }, Sexp_fun (_, _, pat, e, _)
+              -> let x = get_pattern_id pat in
+                 collect b e ((a, x) :: acc)
+            | _ -> List.rev acc, e in
           let r = collect tarr svb.spvb_expr [] in
           let[@warning "-8"] [(ty_retk, x)], ek = r in
           let loc1 = location ek.spexp_loc in
@@ -600,7 +609,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           let kid = gen_kid ~prefix:"_letk" () in
           ELetK (kid, [(id, pty)], None, body,
                  mk_expr ~loc:loc1 @@ expr ~etype:pty e1 (KName kid) hm)
-      end;
+      end
 
   | Sexp_let (Nonrecursive, svb::svbs, e2) -> (* TODO: extend this to lambdas *)
       let id, pty = get_pattern_id svb.spvb_pat in
@@ -615,6 +624,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
              mk_expr ~loc:loc1 @@ expr ~etype:pty e1 (KName kid) hm)
   | Sexp_let (Recursive, _svb::_svbs, _e) -> assert false (* TODO *)
   | Sexp_let ((Nonrecursive|Recursive), [], _) -> assert false (* unreachable *)
+
   | Sexp_try (e, cases) ->
       (* remark:
            for now we only consider `try-catch` of the form
@@ -674,7 +684,6 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
                        mk_expr ~loc @@ EAssert (spec.fun_req,
                        mk_expr ~loc @@ EHide e)) in
         eid, binders, d) in
-
       let cases = List.map f cases in  (* each branch -> ELetK with raise_E name *)
       let e = mk_expr @@ expr ~etype e k hm in
       let letks = List.fold_left (fun acc (eid, binders, d) ->
@@ -725,7 +734,19 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
             let id = mk_id ~loc (string_of_longident txt) in
             CId id, id
         | _ -> assert false (* impossible (type error) *) in
+
       let args = List.map (fun (_, e) -> atom_of_sexpr e) args in
+
+      let pargs, kargs =
+        try
+          let (lp, _), _ = Hashtbl.find toplevel_fun_types id.id_name in
+          let pargs, kargs = split_at lp args in
+          let kargs = List.map (function
+              | { atom_loc = loc; atom_desc = AId id } -> mk_callable ~loc @@ CId id
+              | _ -> assert false) kargs in
+          pargs, kargs
+        with Not_found -> args, [] in
+      Format.printf "-------------- id %s:: %d / %d@." id.id_name (List.length pargs) (List.length kargs);
       let k = match k with
         | KName k -> mk_callable @@ CId k
         | KExpr k -> k in
@@ -734,7 +755,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let sl = S.fold
         (fun s acc -> mk_callable (CId (mk_id s)) :: acc)
         gs [] in
-      EApp (mk_callable ~loc c, args, k::sl)
+      EApp (mk_callable ~loc c, pargs, kargs @ (k::sl))
 
   (* TODO: is this unreachable? *)
   | Sexp_apply (_e, _args) -> assert false
@@ -888,7 +909,9 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
   (* TODO
      currently, this is *false* *)
   | Sexp_fun (_, _, pat, e, _) ->
-      let[@warning "-8"] (_,Some tx) as x = get_pattern_id pat in
+      let x, tx = match get_pattern_id pat with
+        | (_,Some tx) as x -> x, tx
+        | _ -> failwith "arbitrary closures are not implemented, we allow only 1 arg" in
       let jid = gen_kid () in
       let sub =
         let eloc = location e.spexp_loc in
@@ -897,8 +920,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let c = mk_callable ~loc @@ CId f in
       let ine = mk_expr ~loc @@ match k with
         | KName k -> EApp (mk_callable ~loc:k.id_loc (CId k), [], [c])
-        | KExpr k ->
-            EApp (k, [], [c]) in
+        | KExpr k -> EApp (k, [], [c]) in
       ELetK (f, [x], Some (jid, tx), sub, ine)
 
   | Sexp_unreachable            -> EFail
@@ -951,6 +973,8 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
      Let us ignore it, for now. *)
   ignore pty; (* TODO *)
   let params, kparams, pexp = collect_params svb.spvb_expr in
+  let lp, lk = List.length params, List.length kparams in
+  let () = Hashtbl.add toplevel_fun_types id.id_name ((lp, params), (lk, kparams)) in
   let _params_id_of_spec = function
     (* FIXME? Paul [27-03-2026 11h42]
        Use this function to apply a substitution of variable names
