@@ -18,6 +18,19 @@ let map_pty pty = Option.map E.core_type pty
 
 let binder (id, pty) = (id, map_pty pty)
 
+(** Free identifiers of an (untranslated) ML atom — used to decide whether
+    a [ref] initializer may be safely grouped with sibling [ref]s into a
+    single parallel `[ &r = .. | &l = .. ]` COMA block. *)
+let rec atom_free_ids (a: Ml_lang.atom) : string list =
+  match a.atom_desc with
+  | AId id -> [id.id_name]
+  | ACst _ -> []
+  | ABinop (a1, _, a2) -> atom_free_ids a1 @ atom_free_ids a2
+  | AUnop (_, a1) -> atom_free_ids a1
+  | ATuple al | ACons (_, al) -> List.concat_map atom_free_ids al
+  | ACast (a1, _) -> atom_free_ids a1
+  | AFun (_, _, _) -> [] 
+
 let rec tpattern_to_args ?(ty=None) (p: Ml_lang.pattern) =
   (* problem here: we need the types! *)
   let rec loop ty p =
@@ -242,10 +255,26 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
         CELet (x, atom fn_name a mty, expr fn_name e2 table)
     | ELetRef (x, a, e2) ->
         let ({id_name;_}, t) as x = binder x in
-        let table = Ms.add id_name t mty in
-        CELetRef (x, atom fn_name a mty, expr fn_name e2 table)
+        let table0 = Ms.add id_name t mty in
+        let rec collect bound table acc e = match e.Ml_lang.expr_desc with
+          | ELetRef (x', a', e2')
+            when List.for_all (fun n -> not (List.mem n bound))
+                   (atom_free_ids a') ->
+              let ({id_name;_}, t') as xb = binder x' in
+              let a'' = atom fn_name a' mty in
+              collect (id_name :: bound) (Ms.add id_name t' table)
+                ((xb, a'') :: acc) e2'
+          | _ -> List.rev acc, table, e in
+        let group, table, rest =
+          collect [id_name] table0 [(x, atom fn_name a mty)] e2 in
+        CELetRef (group, expr fn_name rest table)
     | EAssignRef (id, a, e2) ->
-        CEAssignRef (id, atom fn_name a mty, expr fn_name e2 mty)
+        let rec collect acc e = match e.Ml_lang.expr_desc with
+          | EAssignRef (id', a', e2') ->
+              collect ((id', atom fn_name a' mty) :: acc) e2'
+          | _ -> List.rev acc, e in
+        let group, rest = collect [(id, atom fn_name a mty)] e2 in
+        CEAssignRef (group, expr fn_name rest mty)
     | ELetK (k, xs, None, e1, e2) ->
         let xs = List.map binder xs in
         let types = List.fold_left (fun acc ({id_name;_}, t) ->

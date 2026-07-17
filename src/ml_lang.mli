@@ -147,8 +147,8 @@ and cexpr_desc =
   | CEAssert of cprecondition * cexpr
   | CEHide of cexpr
   | CELet of cbinder * catom * cexpr
-  | CELetRef of cbinder * catom * cexpr               (* [ &r: t = e ] e *)
-  | CEAssignRef of id * catom * cexpr                 (* [ &r <- e ] e   *)
+  | CELetRef of (cbinder * catom) list * cexpr        (* e [ &r: t = e | ... ] *)
+  | CEAssignRef of (id * catom) list * cexpr          (* [ &r <- e | ... ] e   *)
   | CELetK of id * cbinder list * (id * Ptree.pty) option * cexpr * cexpr
                                                        (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
