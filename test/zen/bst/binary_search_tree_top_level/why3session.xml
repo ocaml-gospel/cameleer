@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"https://www.why3.org/why3session.dtd">
+<why3session shape_version="6">
+<prover id="3" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="coma" proved="true">
+<path name=".."/><path name="binary_search_tree_top_level.coma"/>
+<theory name="Coma" proved="true">
+ <goal name="vc_halt" proved="true">
+ <proof prover="3"><result status="valid" time="0.036230" steps="27640"/></proof>
+ </goal>
+ <goal name="vc_fail" proved="true">
+ <proof prover="3"><result status="valid" time="0.029725" steps="27640"/></proof>
+ </goal>
+ <goal name="vc_if" proved="true">
+ <proof prover="3"><result status="valid" time="0.032747" steps="27640"/></proof>
+ </goal>
+ <goal name="occ_nonneg" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="occ_nonneg.0" proved="true">
+  <proof prover="3" timelimit="5"><result status="valid" time="0.050263" steps="31491"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="vc_empty" proved="true">
+ <proof prover="3"><result status="valid" time="0.036260" steps="28896"/></proof>
+ </goal>
+ <goal name="vc_destruct_insert1" proved="true">
+ <proof prover="3"><result status="valid" time="0.031141" steps="28896"/></proof>
+ </goal>
+ <goal name="vc_insert" proved="true">
+ <proof prover="3"><result status="valid" time="0.159985" steps="65485"/></proof>
+ </goal>
+ <goal name="vc_destruct_mem1" proved="true">
+ <proof prover="3"><result status="valid" time="0.037843" steps="28896"/></proof>
+ </goal>
+ <goal name="vc_mem" proved="true">
+ <proof prover="3"><result status="valid" time="0.070065" steps="35421"/></proof>
+ </goal>
+ <goal name="size_nonneg" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="size_nonneg.0" proved="true">
+  <proof prover="3" timelimit="5"><result status="valid" time="0.051409" steps="31935"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="size_empty" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="size_empty.0" proved="true">
+  <proof prover="3" timelimit="5"><result status="valid" time="0.056752" steps="32991"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="is_min" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="is_min.0" proved="true">
+  <proof prover="3" timelimit="5"><result status="valid" time="0.127809" steps="61330"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="vc_destruct_remove_min2" proved="true">
+ <proof prover="3"><result status="valid" time="0.041063" steps="29847"/></proof>
+ </goal>
+ <goal name="vc_destruct_remove_min1" proved="true">
+ <proof prover="3"><result status="valid" time="0.043495" steps="29847"/></proof>
+ </goal>
+ <goal name="vc_remove_min" proved="true">
+ <proof prover="3"><result status="valid" time="0.129861" steps="61896"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
