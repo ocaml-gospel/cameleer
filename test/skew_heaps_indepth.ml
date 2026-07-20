@@ -112,3 +112,34 @@ let get_min (t: int tree) : int =
       requires heap t
       requires size t > 0
       ensures  r = minimum t *)
+
+
+let main : int tree =
+      let (r: int tree) = add 0 (Empty: int tree) in
+      r
+(*@ requires true
+    ensures heap result 
+    ensures is_minimum 0 result *)
+
+
+let main2 : int tree =
+      let (r: int tree) = add 0 (Empty: int tree) in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 r in
+      r
+(*@ requires true
+    ensures heap result 
+    ensures is_minimum 0 result *)
