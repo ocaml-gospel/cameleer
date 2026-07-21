@@ -45,7 +45,7 @@ let pp_binder fmt (id, pty) =
   | Some pty ->
       ignore pty; (* TODO: print type *)
       fprintf fmt "(%a: ...)" pp_id id
-  
+
 let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   match ppat_desc with
   | PWild ->
