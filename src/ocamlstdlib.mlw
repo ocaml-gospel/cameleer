@@ -12,6 +12,7 @@ module Stdlib
   use export ref.Refint
 
   use import seq.Seq as Seq
+  use seq.FreeMonoid
 
   type sequence 'a = seq 'a
 

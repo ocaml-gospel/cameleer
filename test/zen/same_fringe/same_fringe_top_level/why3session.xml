@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"https://www.why3.org/why3session.dtd">
+<why3session shape_version="6">
+<prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Z3" version="4.15.8" timelimit="5" steplimit="0" memlimit="1000"/>
+<prover id="3" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="coma" proved="true">
+<path name=".."/><path name="same_fringe_top_level.coma"/>
+<theory name="Coma" proved="true">
+ <goal name="vc_halt" proved="true">
+ <proof prover="3"><result status="valid" time="0.030863" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_fail" proved="true">
+ <proof prover="3"><result status="valid" time="0.030839" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_if" proved="true">
+ <proof prover="3"><result status="valid" time="0.030563" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_destruct_mk_zipper1" proved="true">
+ <proof prover="3"><result status="valid" time="0.034868" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_mk_zipper" proved="true">
+ <proof prover="1"><result status="valid" time="0.032068" steps="380"/></proof>
+ </goal>
+ <goal name="vc_destruct_eq_enum3" proved="true">
+ <proof prover="3"><result status="valid" time="0.030439" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_destruct_eq_enum2" proved="true">
+ <proof prover="3"><result status="valid" time="0.033914" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_destruct_eq_enum1" proved="true">
+ <proof prover="3"><result status="valid" time="0.033674" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_eq_enum" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="vc_eq_enum.0" proved="true">
+  <proof prover="3" timelimit="5"><result status="valid" time="0.072115" steps="40917"/></proof>
+  </goal>
+  <goal name="vc_eq_enum.1" proved="true">
+  <proof prover="3"><result status="valid" time="0.068860" steps="36181"/></proof>
+  </goal>
+  <goal name="vc_eq_enum.2" proved="true">
+  <transf name="destruct_term" proved="true" arg1="e2">
+   <goal name="vc_eq_enum.2.0" proved="true">
+   <proof prover="3"><result status="valid" time="0.063938" steps="32867"/></proof>
+   </goal>
+   <goal name="vc_eq_enum.2.1" proved="true">
+   <proof prover="3"><result status="valid" time="0.033381" steps="35597"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="vc_eq_enum.3" proved="true">
+  <proof prover="2"><result status="valid" time="0.025881" steps="125582"/></proof>
+  </goal>
+  <goal name="vc_eq_enum.4" proved="true">
+  <transf name="destruct_term" proved="true" arg1="e2">
+   <goal name="vc_eq_enum.4.0" proved="true">
+   <proof prover="3"><result status="valid" time="0.048749" steps="35612"/></proof>
+   </goal>
+   <goal name="vc_eq_enum.4.1" proved="true">
+   <proof prover="3"><result status="valid" time="0.064303" steps="32368"/></proof>
+   </goal>
+  </transf>
+  </goal>
+  <goal name="vc_eq_enum.5" proved="true">
+  <transf name="destruct_term" proved="true" arg1="e1">
+   <goal name="vc_eq_enum.5.0" proved="true">
+   <proof prover="3"><result status="valid" time="0.063625" steps="32884"/></proof>
+   </goal>
+   <goal name="vc_eq_enum.5.1" proved="true">
+   <proof prover="3"><result status="valid" time="0.046450" steps="32352"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="vc_same_fringe" proved="true">
+ <proof prover="3"><result status="valid" time="0.062232" steps="38298"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

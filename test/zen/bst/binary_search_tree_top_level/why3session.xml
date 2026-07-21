@@ -67,6 +67,15 @@
  <goal name="vc_remove_min" proved="true">
  <proof prover="3"><result status="valid" time="0.129861" steps="61896"/></proof>
  </goal>
+ <goal name="vc_destruct_remove_min22" proved="true">
+ <proof prover="3" timelimit="5"><result status="valid" time="0.034149" steps="29847"/></proof>
+ </goal>
+ <goal name="vc_destruct_remove_min21" proved="true">
+ <proof prover="3" timelimit="5"><result status="valid" time="0.033352" steps="29847"/></proof>
+ </goal>
+ <goal name="vc_remove_min2" proved="true">
+ <proof prover="3"><result status="valid" time="0.209179" steps="84129"/></proof>
+ </goal>
 </theory>
 </file>
 </why3session>
