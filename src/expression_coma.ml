@@ -81,9 +81,9 @@ let mk_pattern ?(loc=dummy_loc) ppat_desc =
 let mk_tpattern ?(loc=dummy_loc) ppat_desc ty =
   mk_pattern ~loc @@ PCast (mk_pattern ~loc ppat_desc, ty)
 
-let mk_decl (rec_flag, id, params, pre, konts, e) =
+let mk_decl (rec_flag, id, params, pre, olds, konts, e) =
   { decl_loc  = id.id_loc;
-    decl_desc = DFun (rec_flag, id, params, pre, konts, e); }
+    decl_desc = DFun (rec_flag, id, params, pre, olds, konts, e); }
 
 let map_pty pty = Option.map E.core_type pty
 
@@ -202,6 +202,92 @@ let collect_params e =
     | _ -> List.rev accd, List.rev acck, e
   in
   loop ([], []) e
+
+(** Rewrites [old x] (for a plain identifier [x]) into a reference to
+    [old_x], and collects the names of every variable found under [old].
+    [old] applied to anything other than a bare identifier is not
+    supported yet. *)
+let rec extract_old (t: Uast.term) : Uast.term * string list =
+  let mk d = Uast.{ t with term_desc = d } in
+  match t.Uast.term_desc with
+  | Uast.Ttrue | Uast.Tfalse | Uast.Tbang | Uast.Tconst _ | Uast.Tpreid _ ->
+      t, []
+  | Uast.Tidapp (Uast.Qpreid {Uast.Preid.pid_str; _}, [t1])
+    when pid_str = "!" || pid_str = "prefix !" ->
+      (* COMA specs reference a mutable variable directly (no deref
+         operator) — drop the "!" and keep translating the inner term
+         (which may itself contain [old]). *)
+      extract_old t1
+  | Uast.Tidapp (q, tl) ->
+      let tl', ns = extract_old_list tl in
+      mk (Uast.Tidapp (q, tl')), ns
+  | Uast.Tfield (t1, q) ->
+      let t1', ns = extract_old t1 in
+      mk (Uast.Tfield (t1', q)), ns
+  | Uast.Tapply (t1, t2) ->
+      let t1', ns1 = extract_old t1 in
+      let t2', ns2 = extract_old t2 in
+      mk (Uast.Tapply (t1', t2')), ns1 @ ns2
+  | Uast.Tnot t1 ->
+      let t1', ns = extract_old t1 in
+      mk (Uast.Tnot t1'), ns
+  | Uast.Tattr (a, t1) ->
+      let t1', ns = extract_old t1 in
+      mk (Uast.Tattr (a, t1')), ns
+  | Uast.Tcast (t1, ty) ->
+      let t1', ns = extract_old t1 in
+      mk (Uast.Tcast (t1', ty)), ns
+  | Uast.Ttuple tl ->
+      let tl', ns = extract_old_list tl in
+      mk (Uast.Ttuple tl'), ns
+  | Uast.Trecord q_t_list ->
+      let qs, ts = List.split q_t_list in
+      let ts', ns = extract_old_list ts in
+      mk (Uast.Trecord (List.combine qs ts')), ns
+  | Uast.Tscope (q, t1) ->
+      let t1', ns = extract_old t1 in
+      mk (Uast.Tscope (q, t1')), ns
+  | Uast.Tcase (t1, pt_list) ->
+      let t1', ns1 = extract_old t1 in
+      let ps, ts = List.split pt_list in
+      let ts', ns2 = extract_old_list ts in
+      mk (Uast.Tcase (t1', List.combine ps ts')), ns1 @ ns2
+  | Uast.Tlet (id, t1, t2) ->
+      let t1', ns1 = extract_old t1 in
+      let t2', ns2 = extract_old t2 in
+      mk (Uast.Tlet (id, t1', t2')), ns1 @ ns2
+  | Uast.Tinfix (t1, id, t2) ->
+      let t1', ns1 = extract_old t1 in
+      let t2', ns2 = extract_old t2 in
+      mk (Uast.Tinfix (t1', id, t2')), ns1 @ ns2
+  | Uast.Tbinop (t1, op, t2) ->
+      let t1', ns1 = extract_old t1 in
+      let t2', ns2 = extract_old t2 in
+      mk (Uast.Tbinop (t1', op, t2')), ns1 @ ns2
+  | Uast.Told t1 ->
+      (match t1.Uast.term_desc with
+       | Uast.Tpreid (Uast.Qpreid preid) ->
+           let old_preid = Identifier.Preid.create
+             ("old_" ^ preid.Uast.Preid.pid_str) ~loc:preid.Uast.Preid.pid_loc in
+           mk (Uast.Tpreid (Uast.Qpreid old_preid)), [preid.Uast.Preid.pid_str]
+       | _ -> failwith "old: only 'old <var>' is supported for now")
+  | Uast.Tif (t1, t2, t3) ->
+      let t1', ns1 = extract_old t1 in
+      let t2', ns2 = extract_old t2 in
+      let t3', ns3 = extract_old t3 in
+      mk (Uast.Tif (t1', t2', t3')), ns1 @ ns2 @ ns3
+  | Uast.Tupdate (t1, q_t_list) ->
+      let t1', ns1 = extract_old t1 in
+      let qs, ts = List.split q_t_list in
+      let ts', ns2 = extract_old_list ts in
+      mk (Uast.Tupdate (t1', List.combine qs ts')), ns1 @ ns2
+  | Uast.Tquant (q, bl, t1) ->
+      let t1', ns = extract_old t1 in
+      mk (Uast.Tquant (q, bl, t1')), ns
+
+and extract_old_list tl =
+  let tl', nss = List.split (List.map extract_old tl) in
+  tl', List.concat nss
 
 let mk_kont kont_id kont_arg spec =
   let mk_kont kont_pre = { kont_id; kont_arg; kont_kont=[]; kont_pre } in
@@ -1050,9 +1136,26 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
       :: acc)
     s [] in
   let () = Hashtbl.add raisable_hmap id.id_name s in
+  let old_names, spec =
+    match spec with
+    | None -> [], None
+    | Some (U.{ sp_post; _ } as vspec) ->
+        let posts, nss = List.split (List.map extract_old sp_post) in
+        let names = List.sort_uniq compare (List.concat nss) in
+        names, Some { vspec with U.sp_post = posts } in
+  let old_bindings = List.filter_map (fun name ->
+    match List.find_opt (fun (i,_) -> i.id_name = name) params with
+    | None -> None
+    | Some (pid, pty) ->
+        let inner_ty = match pty with
+          | Some { ptyp_desc = Ptyp_constr ({txt=Lident "ref";_}, [t]); _ } -> Some t
+          | other -> other in
+        let old_id = mk_id ("old_" ^ name) in
+        Some ((old_id, inner_ty), mk_atom (AId pid))
+    ) old_names in
   let expr_loc = location svb.Uast.spvb_expr.spexp_loc in
   let etype = return_pty in
   let body = mk_expr ~loc:expr_loc (expr ~etype pexp (KName k) empty_map) in
   let kont = mk_kont k [(arg_id, map_pty return_pty)] spec in
   let pre = pre_of_spec spec in
-  mk_decl (rec_flag, id, params, pre, kparams @ (kont :: sl), body)
+  mk_decl (rec_flag, id, params, pre, old_bindings, kparams @ (kont :: sl), body)

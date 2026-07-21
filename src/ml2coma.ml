@@ -454,7 +454,7 @@ let declaration { decl_desc; decl_loc } =
       ckont_kont;
       ckont_pre = List.map (Uterm.term false) kont_pre } in
   let cdecl = match decl_desc with
-    | DFun (rec_flag, id, xs, pre, ks, e) ->
+    | DFun (rec_flag, id, xs, pre, olds, ks, e) ->
         let xs = List.map binder xs in
         let b, pre = List.fold_left (fun (b,acc) e ->
           match e with
@@ -464,7 +464,8 @@ let declaration { decl_desc; decl_loc } =
         let ks  = List.map mk_ckont ks in
         let m = List.fold_left (fun acc (x, t) ->
           Ms.add x.id_name t acc) Ms.empty xs in
-        CDFun (rec_flag, id, xs, (pre, b), ks, (expr id.id_name e m))
+        let olds = List.map (fun (ob, a) -> binder ob, atom id.id_name a m) olds in
+        CDFun (rec_flag, id, xs, (pre, b), olds, ks, (expr id.id_name e m))
     | DType (_, td) ->
         let type_decls = List.map type_decl td in
         let decl = Dtype (List.flatten type_decls) in

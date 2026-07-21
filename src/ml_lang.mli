@@ -99,7 +99,9 @@ type declaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and declaration_desc =
-  | DFun of rec_flag * id * binder list * precondition * kont list * expr
+  | DFun of rec_flag * id * binder list * precondition
+            * (binder * atom) list (* [old] snapshot bindings *)
+            * kont list * expr
   | DType of rec_flag * U.s_type_declaration list
   | DFunction of U.function_
   | DProp of U.prop
@@ -188,7 +190,9 @@ type cdeclaration = {
     2nd [id list] is for continuation parameters
     and [expr] is the body. *)
 and cdeclaration_desc =
-  | CDFun of rec_flag * id * cbinder list * (cprecondition * bool) * ckont list * cexpr
+  | CDFun of rec_flag * id * cbinder list * (cprecondition * bool)
+             * (cbinder * catom) list (* [old] snapshot bindings *)
+             * ckont list * cexpr
   | CDLogic of Ptree.decl (* Purely logical WhyML declarations *)
 
 type cprogram = cdeclaration list

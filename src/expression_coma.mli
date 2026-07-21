@@ -31,7 +31,7 @@ val mk_expr : ?loc:location -> expr_desc -> expr
 val mk_pattern : ?loc:location -> pattern_desc -> pattern
 val mk_tpattern : ?loc:location -> pattern_desc -> core_type -> pattern
 val mk_decl :
-  rec_flag * id * binder list * Uast.term list * kont list * expr -> declaration
+  rec_flag * id * binder list * Uast.term list * (binder * atom) list * kont list * expr -> declaration
 
 val exn_type_hmap : (string, core_type option) Hashtbl.t
 
