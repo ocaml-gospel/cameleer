@@ -3,7 +3,6 @@
 "https://www.why3.org/why3session.dtd">
 <why3session shape_version="6">
 <prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
-<prover id="2" name="Z3" version="4.15.8" timelimit="5" steplimit="0" memlimit="1000"/>
 <prover id="3" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
 <file format="coma" proved="true">
 <path name=".."/><path name="same_fringe_top_level.coma"/>
@@ -21,7 +20,7 @@
  <proof prover="3"><result status="valid" time="0.034868" steps="29605"/></proof>
  </goal>
  <goal name="vc_mk_zipper" proved="true">
- <proof prover="1"><result status="valid" time="0.032068" steps="380"/></proof>
+ <proof prover="1"><result status="valid" time="0.034716" steps="380"/></proof>
  </goal>
  <goal name="vc_destruct_eq_enum3" proved="true">
  <proof prover="3"><result status="valid" time="0.030439" steps="29605"/></proof>
@@ -35,7 +34,7 @@
  <goal name="vc_eq_enum" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="vc_eq_enum.0" proved="true">
-  <proof prover="3" timelimit="5"><result status="valid" time="0.072115" steps="40917"/></proof>
+  <proof prover="3"><result status="valid" time="0.183613" steps="40917"/></proof>
   </goal>
   <goal name="vc_eq_enum.1" proved="true">
   <proof prover="3"><result status="valid" time="0.068860" steps="36181"/></proof>
@@ -51,7 +50,7 @@
   </transf>
   </goal>
   <goal name="vc_eq_enum.3" proved="true">
-  <proof prover="2"><result status="valid" time="0.025881" steps="125582"/></proof>
+  <proof prover="3"><result status="valid" time="0.065717" steps="34249"/></proof>
   </goal>
   <goal name="vc_eq_enum.4" proved="true">
   <transf name="destruct_term" proved="true" arg1="e2">
@@ -76,7 +75,7 @@
  </transf>
  </goal>
  <goal name="vc_same_fringe" proved="true">
- <proof prover="3"><result status="valid" time="0.062232" steps="38298"/></proof>
+ <proof prover="3"><result status="valid" time="0.067308" steps="38298"/></proof>
  </goal>
 </theory>
 </file>

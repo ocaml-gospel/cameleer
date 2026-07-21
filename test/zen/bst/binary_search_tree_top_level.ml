@@ -84,3 +84,20 @@ let rec remove_min (t: elt tree) : elt tree =
       ensures  size r = size t - 1
       ensures  bst r
       variant  t *)
+
+let rec remove_min2 (t: elt tree) : elt tree =
+  match (t: elt tree) with
+  | Empty -> assert false
+  | Node ((l: elt tree), (v: elt), (r: elt tree)) ->
+      match (l: elt tree) with
+      | Empty -> r
+      | Node ((_: elt tree), (_: elt), (_: elt tree)) ->
+          let (o1: elt tree) = remove_min2 l in Node (o1, v, r)
+(*@ r = remove_min t
+      requires bst t
+      requires size t > 0
+      ensures  occ (minimum t) r = occ (minimum t) t - 1
+      ensures  forall e. e <> minimum t -> occ e r = occ e t
+      ensures  size r = size t - 1
+      ensures  bst r
+      variant  t *)

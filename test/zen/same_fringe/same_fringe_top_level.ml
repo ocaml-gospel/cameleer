@@ -1,10 +1,6 @@
 type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 type elt = int
-
 type enum = Done | Next of elt * elt tree * enum
-
-(*@ open Seq *)
-(*@ open SeqFreeMonoid *)
 
 (*@ function elements (t: 'a tree) : 'a sequence = match t with
       | Empty -> Nil

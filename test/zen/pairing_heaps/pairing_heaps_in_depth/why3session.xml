@@ -129,7 +129,7 @@
  <proof prover="3"><result status="valid" time="0.039417" steps="32107"/></proof>
  </goal>
  <goal name="vc_merge_pairs" proved="true">
- <proof prover="3" timelimit="5"><result status="valid" time="3.164943" steps="1450844"/></proof>
+ <proof prover="3" timelimit="5"><result status="valid" time="2.226618" steps="1450844"/></proof>
  </goal>
  <goal name="vc_destruct_delete_min1" proved="true">
  <proof prover="3"><result status="valid" time="0.046726" steps="32107"/></proof>
