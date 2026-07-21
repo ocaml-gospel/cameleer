@@ -307,8 +307,8 @@ let add_type tname (c: Parsetree.type_kind) =
 
 let compile_pattern (d: declaration) =
   match d.decl_desc with
-  | DFun (r,id,bl,pre,kl,e) ->
-      let decl_desc = DFun (r,id,bl,pre,kl, expr e) in
+  | DFun (r,id,bl,pre,olds,kl,e) ->
+      let decl_desc = DFun (r,id,bl,pre,olds,kl, expr e) in
       { d with decl_desc }
   | DType (_, dl) ->
       let () = List.iter (fun Gospel.Uast.{ tname; tkind; _ } ->
