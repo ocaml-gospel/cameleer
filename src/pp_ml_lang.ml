@@ -161,8 +161,8 @@ let rec pp_kont fmt {kont_id; kont_arg; kont_kont; _} =
 
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with
-  | DFun (rec_flag, id, xs, pre, ks, e) ->
-      ignore pre; (* TODO *)
+  | DFun (rec_flag, id, xs, pre, olds, ks, e) ->
+      ignore pre; ignore olds; (* TODO *)
       fprintf fmt "@[let%a %s @[%a@]%s@[%a@]@ =@;<1 2>@[%a@]@]"
         pp_rec rec_flag id.id_name
         (pp_print_list ~pp_sep:pp_space pp_binder) xs
