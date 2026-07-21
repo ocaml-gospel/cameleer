@@ -150,16 +150,16 @@ let rec find (t : tree) (k : key) : value option =
     almost_rbtree n (Node Black l x v r) -> rbtree n (Node Black l x v r) *)
 
 let lbalance (l : tree) (k : key) (v : value) (r : tree) : tree =
-    match (l: tree) with
-    | Node (Red, Node (Red, (a: tree), (kx: key), (vx: value), (b: tree)), (ky: key), (vy: value), (c: tree)) ->
-        let (b1: tree) = Node (Black, a, kx, vx, b) in
-        let (b2: tree) = Node (Black, c, k, v, r) in
-        Node (Red, b1, ky, vy, b2)
-    | Node (Red, (a: tree), (kx: key), (vx: value), Node (Red, (b: tree), (ky: key), (vy: value), (c:tree))) ->
-        let (b1: tree) = Node (Black, a, kx, vx, b) in
-        let (b2: tree) = Node (Black, c, k, v, r) in
-        Node (Red, b1, ky, vy, b2)
-    | (_: tree) -> Node (Black, l, k, v, r)
+  match (l: tree) with
+  | Node (Red, Node (Red, (a: tree), (kx: key), (vx: value), (b: tree)), (ky: key), (vy: value), (c: tree)) ->
+      let (b1: tree) = Node (Black, a, kx, vx, b) in
+      let (b2: tree) = Node (Black, c, k, v, r) in
+      Node (Red, b1, ky, vy, b2)
+  | Node (Red, (a: tree), (kx: key), (vx: value), Node (Red, (b: tree), (ky: key), (vy: value), (c:tree))) ->
+      let (b1: tree) = Node (Black, a, kx, vx, b) in
+      let (b2: tree) = Node (Black, c, k, v, r) in
+      Node (Red, b1, ky, vy, b2)
+  | (_: tree) -> Node (Black, l, k, v, r)
 (*@ result = lbalance l k v r
     requires lt_tree k l /\ gt_tree k r /\ bst l /\ bst r
     ensures  bst result
@@ -169,16 +169,16 @@ let lbalance (l : tree) (k : key) (v : value) (r : tree) : tree =
               if k' = k then v' = v else (memt l k' v' \/ memt r k' v') *)
 
 let rbalance (l: tree) (k: key) (v: value) (r: tree) : tree =
-    match (r: tree) with
-    | Node (Red, Node (Red, (b: tree), (ky: key), (vy: value), (c: tree)), (kz: key), (vz: value), (d: tree)) ->
-        let (b1: tree) = Node (Black, l, k, v, b) in
-        let (b2: tree) = Node (Black, c, kz, vz, d) in
-        Node (Red, b1, ky, vy, b2)
-    | Node (Red, (b: tree), (ky: key), (vy: value), Node (Red, (c: tree), (kz: key), (vz: value), (d:tree))) ->
-        let (b1: tree) = Node (Black, l, k, v, b) in
-        let (b2: tree) = Node (Black, c, kz, vz, d) in
-        Node (Red, b1, ky, vy, b2)
-    | (_: tree) -> Node (Black, l, k, v, r)
+  match (r: tree) with
+  | Node (Red, Node (Red, (b: tree), (ky: key), (vy: value), (c: tree)), (kz: key), (vz: value), (d: tree)) ->
+      let (b1: tree) = Node (Black, l, k, v, b) in
+      let (b2: tree) = Node (Black, c, kz, vz, d) in
+      Node (Red, b1, ky, vy, b2)
+  | Node (Red, (b: tree), (ky: key), (vy: value), Node (Red, (c: tree), (kz: key), (vz: value), (d:tree))) ->
+      let (b1: tree) = Node (Black, l, k, v, b) in
+      let (b2: tree) = Node (Black, c, kz, vz, d) in
+      Node (Red, b1, ky, vy, b2)
+  | (_: tree) -> Node (Black, l, k, v, r)
 (*@ result = rbalance l k v r
     requires lt_tree k l /\ gt_tree k r /\ bst l /\ bst r
     ensures  bst result
@@ -196,7 +196,7 @@ let rec insert (t : tree) (k : key) (v : value) : tree =
           Node (Red, o1, k', v', r)
       else if k' < k then
           let (o2: tree) = insert r k v in
-          Node (Red, l, k, v', o2)
+          Node (Red, l, k', v', o2)
       else Node (Red, l, k', v, r)
   | Node (Black, (l: tree), (k': key), (v':value), (r:tree)) ->
       if k < k' then
@@ -211,12 +211,16 @@ let rec insert (t : tree) (k : key) (v : value) : tree =
     requires exists n: int. rbtree n t
     variant  t
     ensures  bst result
-    ensures  forall n : int. rbtree n t ->
-             almost_rbtree n result /\
-             (is_not_red t -> rbtree n result)
+    ensures  forall n. rbtree n t ->
+             (almost_rbtree n result /\
+             (is_not_red t -> rbtree n result))
+    (* ensures  forall n.
+               rbtree n t -> almost_rbtree n result
+    ensures  forall n.
+               rbtree n t -> is_not_red t -> rbtree n result *)
     ensures  memt result k v
     ensures  forall k':key, v':value.
-                 memt result k' v' <-> if k' = k then v' = v else memt t k' v' *)
+               memt result k' v' <-> if k' = k then v' = v else memt t k' v' *)
 
 let add (t : tree) (k : key) (v : value) : tree =
   let (o1: tree) = insert t k v in
@@ -231,4 +235,3 @@ let add (t : tree) (k : key) (v : value) : tree =
     ensures  memt result k v
     ensures  forall k':key, v':value.
              memt result k' v' <-> if k' = k then v' = v else memt t k' v' *)
-
