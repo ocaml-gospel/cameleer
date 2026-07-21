@@ -22,7 +22,16 @@ let incr_twice (r: int ref) : int =
   r := !r + 1;
   r := !r + 1;
   !r
-(* @ ensures !r = !(old r) + 2 *)
+(*@ requires true
+    ensures !r = !(old r) + 2 *)
+
+let incr_twice2 (r: int ref) (t: int ref) : int * int =
+  r := !r + 1;
+  r := !r + 1;
+  t := !t + 2;
+  (!r, !t)
+(*@ requires true
+    ensures !r = !(old r) + 2 && !t = !(old t) + 2 *)
 
 (* let postIncrPro (r: int ref) : int =
   let (v: int) = !r in
