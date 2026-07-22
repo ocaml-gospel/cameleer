@@ -6,7 +6,6 @@ open Ml_lang
 exception NonExhaustive of pattern list *)
 
 val compile :
-  get_constructors:(string -> string list) ->
   mk_case:(atom -> (pattern * 'a) list -> 'a) ->
   mk_let:(binder -> atom -> 'a -> 'a) ->
   atom -> (pattern list * 'a) list -> 'a

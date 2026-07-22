@@ -81,6 +81,8 @@ let mk_pattern ?(loc=dummy_loc) ppat_desc =
 let mk_tpattern ?(loc=dummy_loc) ppat_desc ty =
   mk_pattern ~loc @@ PCast (mk_pattern ~loc ppat_desc, ty)
 
+let mk_wild_typed ?(loc=dummy_loc) t = mk_tpattern ~loc PWild t
+
 let mk_decl (rec_flag, id, params, pre, olds, konts, e) =
   { decl_loc  = id.id_loc;
     decl_desc = DFun (rec_flag, id, params, pre, olds, konts, e); }

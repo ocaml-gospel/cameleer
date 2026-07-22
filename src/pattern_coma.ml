@@ -22,15 +22,20 @@ let get_constructors t =
   | Some cs -> List.map fst cs
   | None -> []
 
+let () = ignore get_constructors
+
 (* let get_arity t s =
   match Hashtbl.find_opt htypes t with
   | Some cs -> snd @@ List.assoc s cs
   | None -> 0 *)
 
 let get_type_informations t s =
-  match Hashtbl.find_opt htypes t with
-  | Some cs -> List.assoc s cs
-  | None -> [], 0
+  try
+    match Hashtbl.find_opt htypes t with
+    | Some cs ->
+        List.assoc s cs
+    | None -> [], 0
+  with e -> Format.printf "ERROR : %s %s@." t s; raise e
 
 exception NonExhaustive
 
@@ -46,13 +51,12 @@ let t_type a = match a.atom_desc with
   | ATuple _ -> assert false
   | ACons (_, _) -> assert false
 
-let rec type_name t =
+let type_name t =
   match Parsetree.(t.ptyp_desc) with
-  | Parsetree.Ptyp_constr ({ txt; loc = _ }, _) ->
-      [E.string_of_longident txt]
-  | Parsetree.Ptyp_tuple tl -> List.concat_map type_name tl
+  | Parsetree.Ptyp_constr ({ txt; loc = _ }, _) -> E.string_of_longident txt
+  | Parsetree.Ptyp_tuple _tl -> failwith "todo"
+  | Parsetree.Ptyp_var s -> s
   | Parsetree.Ptyp_any -> assert false
-  | Parsetree.Ptyp_var s -> [s]
   | Parsetree.Ptyp_arrow (_, _, _) -> assert false
   | Parsetree.Ptyp_object (_, _) -> assert false
   | Parsetree.Ptyp_class (_, _) -> assert false
@@ -63,7 +67,6 @@ let rec type_name t =
   | Parsetree.Ptyp_extension _ -> assert false
 
 let compile
-  ~(get_constructors: string -> string list)
   ~(mk_case: atom -> (pattern * 'a) list -> 'a)
   ~(mk_let:  binder -> atom -> 'a -> 'a)
   (a: atom) (rl: (pattern list * 'a) list) : 'a =
@@ -93,15 +96,12 @@ let compile
           | _, _ -> assert false) rl in
         compile tl rl
     | t :: tl, _ -> (* process the leftmost column *)
-        let at0 = t in
         let ty = t_type t in
-        (* [fc] is the first column of the matrix
-           idea: rl = @ (fc_i ++ rl_tail i) *)
-        let rl_tail, fc =
-          List.fold_left (fun (rls, fcs) (pl,a) ->
+        let rl_tail, fc = (* [fc] = first column of the matrix *)
+          List.fold_right (fun (pl,a) (rl, fc) ->
             match pl with [] -> assert false
-            | p::pls -> (pls, a)::rls, p::fcs)
-          ([],[]) rl in
+            | p::pls -> (pls, a)::rl, p::fc)
+          rl ([],[]) in
         let rec simple p = match p.ppat_desc with
           | PWild | PVar _ -> true
           | PCast (p, _) -> simple p
@@ -110,75 +110,52 @@ let compile
           | PCst _ | PWild | PVar _ | PTuple _ -> None
           | PCons (c, _) -> Some c
           | PCast (p, _) -> get_constr p in
-        let rec is_compat c p = match p.ppat_desc with
-          | PCst _ -> false
-          | PWild | PVar _ -> true
-          | PCons (c2, _) -> String.equal c.id_name c2.id_name
-          | PCast (p, _) -> is_compat c p
-          | PTuple _ -> failwith "unreachable" in
         if List.for_all simple fc then begin (* [fc] made of vars / wildcard only! *)
           let rl_tail = List.map2 (fun (pl, a) p ->
-            let rec loop t p =
+            let rec loop ty p =
               match p.ppat_desc with
               | PWild -> a
-              | PVar id -> mk_let (id, (Some t)) at0 a
+              | PVar id -> mk_let (id, (Some ty)) t a
               | PCast (p, t) -> loop t p
               | _ -> assert false in
             pl, loop ty p) rl_tail fc in
           compile tl rl_tail
         end else (* not simple *)
           (* the constructors present on the first column *)
-          let (_, col_cons) = List.fold_left (fun (s,acc) p ->
-            (* we accumulate in a set what is already in the list
-               to avoid duplications *)
+          let (_, col_cons) = List.fold_right (fun p (s,acc) ->
             match get_constr p with
             | None -> (s, acc)
-            | Some c ->
-                let b = Sid.exists (fun cc -> cc.id_name = c.id_name) s in
-                if b then s, acc else Sid.add c s, (p :: acc)) (Sid.empty,[]) fc in
-          let[@warning "-8"] [ty_str] = type_name ty in
-          ignore get_constructors;
-          let type_info id = get_type_informations ty_str id in
-          (* matrix for constructor [c] *)
-          let mat_c (c: id) _arity proj ts =
-            let nwilds = List.map (fun t ->
-              E.(mk_tpattern ~loc:c.id_loc PWild t)) ts in
-            (* filtered [fc] for [c], filtered [rl] for [c] *)
-            let (ffc, rl_tail) =
-              List.fold_left2 (fun (pats,acc) p line ->
-                if is_compat c p then (p::pats, line::acc) else (pats, acc))
-              ([],[]) fc rl_tail in
-            let ffc_rl_tail = List.fold_left2
-             (fun acc p (pl,a) ->
-                let rec loop p =
+            | Some c -> if Sid.mem c s then s, acc
+                        else Sid.add c s, ((p,c) :: acc)) fc (Sid.empty,[]) in
+          let type_info id = get_type_informations (type_name ty) id in
+          let mat_c (c: id) at types = (* matrix for constructor [c] *)
+            let nwilds = List.map (E.mk_wild_typed ~loc:c.id_loc) types in
+            let filtered = (* filtered [fc] for [c], filtered [rl] for [c] *)
+              List.fold_right2 (fun p (pl,a) acc ->
+                let rec take p =
                   match p.ppat_desc with
-                  | PWild ->
-                      let l = nwilds @ pl, a in
-                      l :: acc
+                  | PWild -> (nwilds @ pl, a) :: acc
                   | PVar id ->
-                      let a = mk_let (id, Some ty) at0 a in
-                      let l = nwilds @ pl, a in
-                      l :: acc
-                  | PCons (_, l2) ->
-                      let l = l2 @ pl, a in
-                      l :: acc
+                      let a = mk_let (id, Some ty) t a in
+                      (nwilds @ pl, a) :: acc
+                  | PCons (cc, l2) when c.id_name = cc.id_name -> (l2 @ pl, a) :: acc
+                  | PCons _ -> acc
                   | PCst _ | PTuple _ -> failwith "unreachable"
-                  | PCast (p, _) -> loop p
-                in loop p) [] ffc rl_tail in
-            compile (proj @ tl) ffc_rl_tail in
-          let rec collect_lets_opt ?ty a p =
-            match p.ppat_desc with
-            | PWild -> Some a
-            | PVar id ->
-                Some (mk_let (id, ty) at0 a)
-            | PCast (p, t) ->
-                collect_lets_opt ~ty:t a p
-            | _ -> None in
+                  | PCast (p, _) -> take p in
+                take p)
+              fc rl_tail [] in
+            compile (at @ tl) filtered in
           let default_mat =
-            let rl_tail = List.rev @@ List.fold_left2 (fun acc (pl, a) p ->
+            let rec collect_lets_opt ?ty a p =
+              match p.ppat_desc with
+              | PWild        -> Some a
+              | PVar id      -> Some (mk_let (id, ty) t a)
+              | PCast (p, t) -> collect_lets_opt ~ty:t a p
+              | _            -> None in
+            let rl_tail = List.fold_right2 (fun (pl, a) p acc ->
               match collect_lets_opt ~ty a p with
               | None -> acc
-              | Some a -> (pl, a) :: acc) [] rl_tail fc in
+              | Some a -> (pl, a) :: acc) rl_tail fc [] in
             if rl_tail = [] then []
             else [E.(mk_tpattern PWild ty), compile tl rl_tail] in
           let rec get_args p = match p.ppat_desc with
@@ -189,38 +166,39 @@ let compile
             | PCons (c, _) -> { p with ppat_desc = PCons (c, na) }
             | PCast (p, t) -> { p with ppat_desc = PCast (change_args p na, t) }
             | _ -> failwith "unreachable4" in
-          let rec get_id p = match p.ppat_desc with
-            | PVar id -> id
-            | PCast (p, _) -> get_id p
-            | _ -> E.gen_id () in
+          let () = ignore change_args in
+          let rec p2a { ppat_loc=loc; ppat_desc } i =
+            match ppat_desc with
+            | PVar id -> E.mk_atom ~loc @@ AId id
+            | PCast (p, t) -> E.mk_atom ~loc @@ ACast (p2a p i, t)
+            | PWild
+            | PCons (_, _) -> i
+            | PTuple _ | PCst _ -> failwith "unreachable6" in
+          ignore p2a ;
           let get_type p default = match p.ppat_desc with
             | PVar _ -> default
             | PCast (_, t) -> t
             | PCons (_, _) -> default
             | _ -> failwith "unreachable3" in
-          let pl = List.fold_left (fun acc c ->
-            match get_constr c with
-            | None -> assert false (*acc*) (* TODO: what is this case??*)
-            | Some cons ->
-                Format.printf "%s->%s (%d)@." (String.make (List.length col_cons) ' ')
-                  cons.id_name (List.length acc);
-                let ts, arity = type_info cons.id_name in
-                let args = get_args c in
-                Format.printf "\t #args= (%d)@." (List.length args);
-                let t_args = List.map2 (fun arg ty ->
-                  let a = E.mk_atom @@ AId (get_id arg) in
-                  E.mk_atom @@ ACast (a, get_type arg ty)) args ts in
-                Format.printf "\t\t c:=(%a)@." (Pp_ml_lang.pp_pattern ~paren:false) c;
-                let papa = List.map (function[@warning "-8"]
-                  { atom_desc=ACast ({atom_desc=AId i;_}, t); _ } ->
-                    Format.printf "\t|||| %s @." i.id_name;
-                    let pvi = E.mk_pattern (PVar i) in
-                    E.mk_pattern (PCast (pvi, t))) t_args in
-                let c = change_args c papa in
-                Format.printf "\t\t c2:=(%a)@." (Pp_ml_lang.pp_pattern ~paren:false) c;
-                let mc = c, mat_c cons arity t_args ts in
-                mc::acc
-            ) default_mat (Format.printf"{%d}--@."(List.length col_cons); col_cons) in
+          let pl = List.fold_right (fun (p,cons) acc ->
+            let ts, _arity = type_info cons.id_name in
+            let args = get_args p in
+            let (t_args, p_args) = List.fold_right2 (fun arg ty (acct, accp) ->
+              (* TODO ici *)
+              let i = E.gen_id () in
+              let ty = get_type arg ty in
+              (* let a = E.mk_atom (AId i) in *)
+              (* let a = E.mk_atom (ACast (a, ty)) in *)
+              (* let a = p2a arg a in *)
+              let a = E.mk_atom (ACast (E.mk_atom (AId i), ty)) in
+              let p = E.mk_pattern (PVar i) in
+              let p = E.mk_pattern (PCast (p, ty)) in
+              a::acct, p::accp) args ts ([],[]) in
+
+            let c = change_args p p_args in
+            let mc = c, mat_c cons t_args ts in
+            mc::acc) col_cons default_mat in
+
           mk_case t pl in
   compile [a] rl
 
@@ -262,7 +240,7 @@ let rec expr e = match e.expr_desc with
         assert (bt <> None);
         E.mk_expr (ELet (b, e1, e2)) in
       let pl = List.map (fun (p,e) -> [p], expr e) pl in
-      compile ~get_constructors ~mk_case ~mk_let a pl
+      compile ~mk_case ~mk_let a pl
 
 and atom a = match a.atom_desc with
   | ACst _ | AId _ -> a
