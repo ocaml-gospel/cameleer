@@ -211,13 +211,10 @@ let rec insert (t : tree) (k : key) (v : value) : tree =
     requires exists n: int. rbtree n t
     variant  t
     ensures  bst result
-    ensures  forall n. rbtree n t ->
-             (almost_rbtree n result /\
-             (is_not_red t -> rbtree n result))
-    (* ensures  forall n.
+    ensures  forall n.
                rbtree n t -> almost_rbtree n result
     ensures  forall n.
-               rbtree n t -> is_not_red t -> rbtree n result *)
+               rbtree n t -> is_not_red t -> rbtree n result
     ensures  memt result k v
     ensures  forall k':key, v':value.
                memt result k' v' <-> if k' = k then v' = v else memt t k' v' *)
