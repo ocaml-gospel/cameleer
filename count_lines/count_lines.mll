@@ -40,6 +40,8 @@ rule scan = parse
       { prev_state := !state; state := Spec; spec lexbuf; scan lexbuf }
   | "[@gospel {|"
       { prev_state := !state; state := Spec; spec lexbuf; scan lexbuf }
+  | "[@gospel \""
+      { prev_state := !state; state := Spec; spec lexbuf; scan lexbuf }
   | "(*" space* '\n'?
       { prev_state := !state; state := Comment; comment lexbuf; scan lexbuf }
   | '\n' space* '\n'
@@ -59,6 +61,7 @@ and spec = parse
   | ('\n' | space*) "*)" (* do not count last new_line character *)
            { () }
   | "|}]"  { () }
+  | "\"]"  { () }
   | '\n'+  { new_line (); spec lexbuf }
   | _      { spec lexbuf }
   | eof    { failwith "Unterminated specification block.\n" }
