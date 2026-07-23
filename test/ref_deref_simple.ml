@@ -25,11 +25,11 @@ let incr_twice (r: int ref) : int =
 (*@ requires true
     ensures !r = !(old r) + 2 *)
 
-let incr_twice2 (r: int ref) (t: int ref) : int * int =
+let incr_twice2 (r: int ref) (t: int ref) : int  =
   r := !r + 1;
   r := !r + 1;
   t := !t + 2;
-  (!r, !t)
+  !r
 (*@ requires true
     ensures !r = !(old r) + 2 && !t = !(old t) + 2 *)
 

@@ -75,21 +75,15 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (fun fmt e -> pp_expr fmt e) e2
         (pp_cbinder ~paren:false) x
         (fun fmt e -> pp_atom fmt e) a
-  | CELetRef (group, e2) ->
-      let pp_binding fmt (x, a) =
-        fprintf fmt "&%a =@ @[<hov 2>%a@]"
-          (pp_cbinder ~paren:false) x
-          (fun fmt e -> pp_atom fmt e) a in
-      fprintf fmt "@[%a@]@\n[@[%a@]]"
+  | CELetRef (x, a, e2) ->
+      fprintf fmt "@[%a@]@\n[&%a =@ @[<hov 2>%a@]]"
         (fun fmt e -> pp_expr fmt e) e2
-        (pp_print_list ~pp_sep:pp_bar pp_binding) group
-  | CEAssignRef (group, e2) ->
-      let pp_binding fmt (r, a) =
-        fprintf fmt "&%a <-@ @[<hov 2>%a@]"
-          pp_id r
-          (fun fmt e -> pp_atom fmt e) a in
-      fprintf fmt "@[[@[%a@]]@]@\n@[%a@]"
-        (pp_print_list ~pp_sep:pp_bar pp_binding) group
+        (pp_cbinder ~paren:false) x
+        (fun fmt e -> pp_atom fmt e) a
+  | CEAssignRef (r, a, e2) ->
+      fprintf fmt "@[[&%a <-@ @[<hov 2>%a@]]@]@\n@[%a@]"
+        pp_id r
+        (fun fmt e -> pp_atom fmt e) a
         (fun fmt e -> pp_expr fmt e) e2
   | CEApp (c, al, []) ->
       fprintf fmt "@[%a @[%a@]@]"
