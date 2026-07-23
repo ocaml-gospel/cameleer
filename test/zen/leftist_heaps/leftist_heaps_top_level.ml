@@ -122,7 +122,8 @@ let insert (x: elt) (t: elt tree) : elt tree =
 let find_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node ((_: int), (_: elt tree), (x: elt), (_: elt tree)) -> x
+  | Node ((_: int), (_: elt tree), (x: elt), (_: elt tree)) ->
+      x
 (*@ r = find_min t
       requires leftist_heap t
       requires size t > 0
@@ -131,7 +132,8 @@ let find_min (t: elt tree) : elt =
 let delete_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) -> merge l r
+  | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) ->
+      merge l r
 (*@ r = delete_min t
       requires leftist_heap t
       requires size t > 0

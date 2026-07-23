@@ -85,8 +85,8 @@ let rec merge (t1: elt tree) (t2: elt tree) : elt tree =
      [@gospel "requires leftist_heap t1 && leftist_heap t2
                ensures size result = size t1 + size t2
                ensures forall x. occ x result = occ x t1 + occ x t2
-               ensures leftist_heap result"] ->
-      if x1 <= x2 then
+               ensures leftist_heap result"]
+     -> if x1 <= x2 then
         let (o1: elt tree) = merge r1 t2 in
         make_n x1 l1 o1
       else
@@ -101,9 +101,13 @@ let insert (x: elt) (t: elt tree) : elt tree =
 let find_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node ((_: int), (_: elt tree), (x: elt), (_: elt tree)) -> x
+  | Node ((_: int), (_: elt tree), (x: elt), (_: elt tree))
+      [@gospel "requires leftist_heap t
+                ensures result = minimum t"]
+    -> x
 
 let delete_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) -> merge l r
+  | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) ->
+      merge l r
