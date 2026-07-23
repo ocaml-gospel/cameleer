@@ -1,6 +1,6 @@
-type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 type elt = int
-type heap_type = E | T of elt * elt tree
+type tree = Empty | Node of tree * elt * tree
+type heap_type = E | T of elt * tree
 
 (*@ predicate le (x y: int) = x <= y *)
 
@@ -11,38 +11,38 @@ type heap_type = E | T of elt * elt tree
 (*@ axiom transitive: forall x y z. le x y -> le y z -> le x z *)
 
 (** Tree functions, predicates, lemmas *)
-(*@ function tree_size (t: 'a tree) : integer = match t with
+(*@ function tree_size (t: tree) : integer = match t with
       | Empty -> 0
       | Node l _ r -> 1 + tree_size l + tree_size r *)
 
-(*@ lemma size_nonneg_tree: forall t: 'a tree. tree_size t >= 0 *)
+(*@ lemma size_nonneg_tree: forall t: tree. tree_size t >= 0 *)
 
-(*@ lemma size_empty_tree: forall t: 'a tree. 0 = tree_size t <-> t = Empty *)
+(*@ lemma size_empty_tree: forall t: tree. 0 = tree_size t <-> t = Empty *)
 
-(*@ function tree_occ (v: 'a) (t: 'a tree) : integer = match t with
+(*@ function tree_occ (v: elt) (t: tree) : integer = match t with
       | Empty -> 0
       | Node l x r -> tree_occ v l + tree_occ v r + (if x = v then 1 else 0) *)
 
-(*@ lemma occ_nonneg_tree0: forall t: 'a tree, x: 'a. tree_occ x t >= 0 *)
-(*@ lemma occ_nonneg_tree: forall x: 'a, t: 'a tree. tree_occ x t >= 0 *)
+(*@ lemma occ_nonneg_tree0: forall t: tree, x: elt. tree_occ x t >= 0 *)
+(*@ lemma occ_nonneg_tree: forall x: elt, t: tree. tree_occ x t >= 0 *)
 
-(*@ predicate mem_tree (x: elt) (t: elt tree) = 0 < tree_occ x t *)
+(*@ predicate mem_tree (x: elt) (t: tree) = 0 < tree_occ x t *)
 
-(*@ predicate le_root_tree (e: elt) (t: elt tree) = match t with
+(*@ predicate le_root_tree (e: elt) (t: tree) = match t with
       | Empty      -> true
       | Node _ x r -> le e x && le_root_tree e r *)
 
 (*@ lemma le_root_tree_trans: forall x y t. le x y -> le_root_tree y t -> le_root_tree x t*)
 
-(*@ predicate heap_tree (t: elt tree) = match t with
+(*@ predicate heap_tree (t: tree) = match t with
       | Empty      -> true
       | Node l x r -> le_root_tree x l && heap_tree l && heap_tree r *)
 
-(*@ function minimum_tree (t: elt tree) : elt *)
+(*@ function minimum_tree (t: tree) : elt *)
 
 (*@ axiom minimum_def_tree: forall l x r. minimum_tree (Node l x r) = x *)
 
-(*@ predicate is_minimum_tree (x: elt) (t: elt tree) = mem_tree x t && forall e. mem_tree e t -> le x e *)
+(*@ predicate is_minimum_tree (x: elt) (t: tree) = mem_tree x t && forall e. mem_tree e t -> le x e *)
 
 (** Heap functions, predicates, lemmas *)
 (*@ function size (h: heap_type) : integer = match h with
@@ -91,16 +91,16 @@ let merge (h1: heap_type) (h2: heap_type) : heap_type =
     match (h1 : heap_type), (h2 : heap_type) with
     | (E, (_: heap_type)) -> h2
     | ((_: heap_type), E) -> h1
-    | (T ((x1: elt), (t1: elt tree)),
-       T ((x2: elt), (t2: elt tree)))
+    | (T ((x1: elt), (t1: tree)),
+       T ((x2: elt), (t2: tree)))
       [@gospel "requires heap h1 && heap h2
                 ensures  heap result
                 ensures  forall x. occ x result = occ x h1 + occ x h2
                 ensures  size result = size h1 + size h2"]
        -> if x1 < x2 then
-            let (o1: elt tree) = Node (t2, x2, t1) in T (x1, o1)
+            let (o1: tree) = Node (t2, x2, t1) in T (x1, o1)
            else
-            let (o2: elt tree) = Node (t1, x1, t2) in T (x2, o2)
+            let (o2: tree) = Node (t1, x1, t2) in T (x2, o2)
 
 let insert (x: elt) (h: heap_type) : heap_type =
   merge (T (x, Empty)) h
@@ -108,28 +108,24 @@ let insert (x: elt) (h: heap_type) : heap_type =
 let find_min (h: heap_type) : elt =
   match (h: heap_type) with
   | E -> assert false
-  | T ((x: elt), (_: elt tree)) -> x
+  | T ((x: elt), (_: tree)) -> x
 
-let rec merge_pairs (t: elt tree) : heap_type =
-  match (t: elt tree) with
+let rec merge_pairs (t: tree) : heap_type =
+  match (t: tree) with
   | Empty -> E
-  | Node ((l: elt tree), (x: elt), (r: elt tree)) ->
-      match (r: elt tree) with
-      | Empty -> T (x, l)
-      | Node ((l2: elt tree), (y: elt), (r2: elt tree))
-      [@gospel "requires heap_tree t
-                ensures  heap result
-                ensures  forall e. occ e result = tree_occ e t
-                ensures  size result = tree_size t"] ->
-        let (h1: heap_type) = T (x, l) in
-        let (h2: heap_type) = T (y, l2) in
-        let (mp: heap_type) = merge_pairs r2 in
-        let (m: heap_type) = merge h1 h2 in
-        merge m mp
-(*@ r = merge_pairs t
-      variant  tree_size t*)
+  | Node ((l: tree), (x: elt), (Empty: tree)) -> T (x, l)
+  | Node ((l: tree), (x: elt), Node ((l2: tree), (y: elt), (r2: tree)))
+    [@gospel "requires heap_tree t
+              ensures  heap result
+              ensures  forall e. occ e result = tree_occ e t
+              ensures  size result = tree_size t"] ->
+      let (h1: heap_type) = T (x, l) in
+      let (h2: heap_type) = T (y, l2) in
+      let (mp: heap_type) = merge_pairs r2 in
+      let (m: heap_type) = merge h1 h2 in
+      merge m mp
 
 let delete_min (h: heap_type) : heap_type =
   match (h: heap_type) with
   | E -> assert false
-  | T ((_: elt), (t: elt tree)) -> merge_pairs t
+  | T ((_: elt), (t: tree)) -> merge_pairs t

@@ -32,8 +32,6 @@ let rec insert (x: elt) (t: elt tree): elt tree =
         let (o1: elt tree) = insert x l in Node (o1, y, r)
       else
         let (o2: elt tree) = insert x r in Node (l, y, o2)
-(*@ r = insert x t
-      variant  t*)
 
 let rec mem (x: elt) (t: elt tree) : bool =
   match (t: elt tree) with
@@ -44,8 +42,6 @@ let rec mem (x: elt) (t: elt tree) : bool =
       if x = v then true
       else if x < v then mem x l
       else mem x r
-(*@ b = mem x t
-      variant  t *)
 
 (*@ function size (t: 'a tree) : integer = match t with
       | Empty -> 0
@@ -70,14 +66,11 @@ let rec mem (x: elt) (t: elt tree) : bool =
 let rec remove_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node (Empty, (v: elt), (r: elt tree)) -> r
   | Node ((l: elt tree), (v: elt), (r: elt tree))
       [@gospel "requires bst t
-                requires size t > 0
                 ensures  occ (minimum t) result = occ (minimum t) t - 1
                 ensures  forall e. e <> minimum t -> occ e result = occ e t
                 ensures  size result = size t - 1
-                ensures  bst result"] ->
-      let (o1: elt tree) = remove_min l in Node (o1, v, r)
-(*@ r = remove_min t
-      variant  t *)
+                ensures  bst result"]
+    -> match (l: elt tree) with Empty -> r
+       | (_: elt tree) -> let (o1: elt tree) = remove_min l in Node (o1, v, r)

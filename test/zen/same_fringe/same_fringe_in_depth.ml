@@ -17,8 +17,6 @@ let rec mk_zipper (t : elt tree) (e : enum) : enum =
       [@gospel "requires true
                 ensures  enum_elements result = elements t @ enum_elements e"] ->
       mk_zipper l (Next (x, r, e))
-(*@ r = mk_zipper t e
-      variant t *)
 
 let rec eq_enum (e1 : enum) (e2 : enum) : bool =
   match ((e1 : enum), (e2 : enum)) with
@@ -32,10 +30,10 @@ let rec eq_enum (e1 : enum) (e2 : enum) : bool =
         eq_enum e13 e23
       else false
   | (_: enum), (_: enum) -> false
-(*@ b = eq_enum e1 e2
-      variant Sequence.length (enum_elements e1) *)
 
 let same_fringe (t1 : elt tree) (t2 : elt tree) : bool =
   let (e1: enum) = mk_zipper t1 Done in
   let (e2: enum) = mk_zipper t2 Done in
   eq_enum e1 e2
+(*@ requires true
+    ensures result <-> Sequence.(==) (elements t1) (elements t2) *)

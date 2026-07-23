@@ -20,13 +20,13 @@
  <proof prover="3"><result status="valid" time="0.034868" steps="29605"/></proof>
  </goal>
  <goal name="vc_mk_zipper" proved="true">
- <proof prover="1"><result status="valid" time="0.034716" steps="380"/></proof>
+ <proof prover="1"><result status="valid" time="0.034716" steps="379"/></proof>
  </goal>
  <goal name="vc_destruct_eq_enum3" proved="true">
- <proof prover="3"><result status="valid" time="0.030439" steps="29605"/></proof>
+ <proof prover="3"><result status="valid" time="0.039589" steps="29605"/></proof>
  </goal>
  <goal name="vc_destruct_eq_enum2" proved="true">
- <proof prover="3"><result status="valid" time="0.033914" steps="29605"/></proof>
+ <proof prover="3"><result status="valid" time="0.035402" steps="29605"/></proof>
  </goal>
  <goal name="vc_destruct_eq_enum1" proved="true">
  <proof prover="3"><result status="valid" time="0.033674" steps="29605"/></proof>
@@ -34,41 +34,62 @@
  <goal name="vc_eq_enum" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="vc_eq_enum.0" proved="true">
-  <proof prover="3"><result status="valid" time="0.183613" steps="40917"/></proof>
+  <proof prover="3"><result status="valid" time="0.065717" steps="34186"/></proof>
   </goal>
   <goal name="vc_eq_enum.1" proved="true">
-  <proof prover="3"><result status="valid" time="0.068860" steps="36181"/></proof>
-  </goal>
-  <goal name="vc_eq_enum.2" proved="true">
-  <transf name="destruct_term" proved="true" arg1="e2">
-   <goal name="vc_eq_enum.2.0" proved="true">
-   <proof prover="3"><result status="valid" time="0.063938" steps="32867"/></proof>
+  <transf name="destruct_term" proved="true" arg1="e1">
+   <goal name="vc_eq_enum.1.0" proved="true">
+   <proof prover="3"><result status="valid" time="0.054444" steps="34412"/></proof>
    </goal>
-   <goal name="vc_eq_enum.2.1" proved="true">
-   <proof prover="3"><result status="valid" time="0.033381" steps="35597"/></proof>
+   <goal name="vc_eq_enum.1.1" proved="true">
+   <transf name="destruct_term" proved="true" arg1="e2">
+    <goal name="vc_eq_enum.1.1.0" proved="true">
+    <proof prover="3"><result status="valid" time="0.057939" steps="35562"/></proof>
+    </goal>
+    <goal name="vc_eq_enum.1.1.1" proved="true">
+    <proof prover="3"><result status="valid" time="0.033696" steps="32322"/></proof>
+    </goal>
+   </transf>
    </goal>
   </transf>
   </goal>
+  <goal name="vc_eq_enum.2" proved="true">
+  <proof prover="1" timelimit="60"><result status="valid" time="0.021897" steps="304"/></proof>
+  </goal>
   <goal name="vc_eq_enum.3" proved="true">
-  <proof prover="3"><result status="valid" time="0.065717" steps="34249"/></proof>
+  <transf name="destruct_term" proved="true" arg1="e2">
+   <goal name="vc_eq_enum.3.0" proved="true">
+   <proof prover="3"><result status="valid" time="0.048749" steps="36361"/></proof>
+   </goal>
+   <goal name="vc_eq_enum.3.1" proved="true">
+   <proof prover="3"><result status="valid" time="0.064303" steps="34643"/></proof>
+   </goal>
+  </transf>
   </goal>
   <goal name="vc_eq_enum.4" proved="true">
-  <transf name="destruct_term" proved="true" arg1="e2">
+  <transf name="destruct_term" proved="true" arg1="e1">
    <goal name="vc_eq_enum.4.0" proved="true">
-   <proof prover="3"><result status="valid" time="0.048749" steps="35612"/></proof>
+   <transf name="destruct_term" proved="true" arg1="e2">
+    <goal name="vc_eq_enum.4.0.0" proved="true">
+    <proof prover="3"><result status="valid" time="0.044326" steps="32942"/></proof>
+    </goal>
+    <goal name="vc_eq_enum.4.0.1" proved="true">
+    <proof prover="3"><result status="valid" time="0.057568" steps="35777"/></proof>
+    </goal>
+   </transf>
    </goal>
    <goal name="vc_eq_enum.4.1" proved="true">
-   <proof prover="3"><result status="valid" time="0.064303" steps="32368"/></proof>
+   <proof prover="3"><result status="valid" time="0.033824" steps="32376"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="vc_eq_enum.5" proved="true">
   <transf name="destruct_term" proved="true" arg1="e1">
    <goal name="vc_eq_enum.5.0" proved="true">
-   <proof prover="3"><result status="valid" time="0.063625" steps="32884"/></proof>
+   <proof prover="3"><result status="valid" time="0.047069" steps="32884"/></proof>
    </goal>
    <goal name="vc_eq_enum.5.1" proved="true">
-   <proof prover="3"><result status="valid" time="0.046450" steps="32352"/></proof>
+   <proof prover="3"><result status="valid" time="0.034441" steps="32352"/></proof>
    </goal>
   </transf>
   </goal>
