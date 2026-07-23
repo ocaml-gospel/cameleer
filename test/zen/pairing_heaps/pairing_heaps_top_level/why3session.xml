@@ -64,7 +64,14 @@
  <goal name="mem_heap_tree" proved="true">
  <transf name="induction_ty_lex" proved="true" >
   <goal name="mem_heap_tree.0" proved="true">
-  <proof prover="3"><result status="valid" time="0.317096" steps="109902"/></proof>
+  <transf name="split_vc" proved="true" >
+   <goal name="mem_heap_tree.0.0" proved="true">
+   <proof prover="3"><result status="valid" time="0.056816" steps="36141"/></proof>
+   </goal>
+   <goal name="mem_heap_tree.0.1" proved="true">
+   <proof prover="3"><result status="valid" time="0.130236" steps="65518"/></proof>
+   </goal>
+  </transf>
   </goal>
  </transf>
  </goal>
@@ -130,7 +137,26 @@
  <proof prover="3"><result status="valid" time="0.061046" steps="34072"/></proof>
  </goal>
  <goal name="vc_merge_pairs" proved="true">
- <proof prover="1" timelimit="30"><result status="valid" time="0.648803" steps="6257"/></proof>
+ <transf name="split_vc" proved="true" >
+  <goal name="vc_merge_pairs.0" proved="true">
+  <proof prover="3"><result status="valid" time="0.066419" steps="37168"/></proof>
+  </goal>
+  <goal name="vc_merge_pairs.1" proved="true">
+  <proof prover="3"><result status="valid" time="0.067569" steps="37672"/></proof>
+  </goal>
+  <goal name="vc_merge_pairs.2" proved="true">
+  <proof prover="3"><result status="valid" time="0.038938" steps="35134"/></proof>
+  </goal>
+  <goal name="vc_merge_pairs.3" proved="true">
+  <proof prover="3"><result status="valid" time="0.081597" steps="44044"/></proof>
+  </goal>
+  <goal name="vc_merge_pairs.4" proved="true">
+  <proof prover="3"><result status="valid" time="0.075521" steps="38907"/></proof>
+  </goal>
+  <goal name="vc_merge_pairs.5" proved="true">
+  <proof prover="3"><result status="valid" time="0.058146" steps="36054"/></proof>
+  </goal>
+ </transf>
  </goal>
  <goal name="vc_destruct_delete_min1" proved="true">
  <proof prover="3"><result status="valid" time="0.046677" steps="34072"/></proof>
