@@ -77,3 +77,39 @@ let rec remove_min (t: elt tree) : elt tree =
     ensures  forall e. e <> minimum t -> occ e result = occ e t
     ensures  size result = size t - 1
     ensures  bst result *)
+
+(* NEW -------------------------------------------------------- *)
+
+(* trees have the same structure *)
+let rec struct_equal (t1: elt tree) (t2: elt tree) : bool =
+  match ((t1: elt tree), (t2: elt tree)) with
+  | (Empty, Empty) -> true
+  | (Node ((l1: elt tree), (v1: elt), (r1: elt tree)), Node ((l2: elt tree), (v2: elt), (r2: elt tree))) ->
+    let (el: bool) = struct_equal l1 l2 in
+    let (er: bool) = struct_equal r1 r2 in
+    v1 = v2 && el && er
+  | (_ , _) -> false
+(*@ requires bst t1 && bst t2
+    ensures result <-> forall x. occ x t1 = occ x t2 
+    ensures result <-> size t1 = size t2 *)
+
+let rec remove (x: elt) (t: elt tree) : elt tree =
+  match (t: elt tree) with
+  | Empty -> Empty
+  | Node ((l: elt tree), (v: elt), (r: elt tree)) ->
+      if x = v then
+        begin match (r: elt tree) with
+         | Empty -> l
+         | Node ((_: elt tree), (_: elt), (_: elt tree)) ->
+             let (o1: elt tree) = remove_min r in 
+             let (min_val: elt) = get_min r in
+             Node (l, min_val, o1)
+        end
+      else if x < v then
+        let (o2: elt tree) = remove x l in Node (o2, v, r)
+      else
+        let (o3: elt tree) = remove x r in Node (l, v, o3)
+(*@ requires bst t
+    ensures  forall y. y <> x -> occ y result = occ y t
+    ensures  occ x result = occ x t - 1 || occ x result = 0
+    ensures  bst result *)
