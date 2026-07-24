@@ -79,6 +79,14 @@ let rec remove_min (t: elt tree) : elt tree =
     ensures  bst result *)
 
 (* NEW -------------------------------------------------------- *)
+let rec get_min (t: elt tree) : elt =
+  match (t: elt tree) with
+  | Empty -> assert false
+  | Node (Empty, (v: elt), (_: elt tree)) -> v
+  | Node ((l: elt tree), (_: elt), (_: elt tree)) -> get_min l
+(*@ requires bst t
+    requires size t > 0
+    ensures  result = minimum t *)
 
 (* trees have the same structure *)
 let rec struct_equal (t1: elt tree) (t2: elt tree) : bool =
