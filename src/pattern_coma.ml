@@ -97,6 +97,7 @@ let compile
         compile tl rl
     | t :: tl, _ -> (* process the leftmost column *)
         let ty = t_type t in
+        let name_ty = type_name ty in
         let rl_tail, fc = (* [fc] = first column of the matrix *)
           List.fold_right (fun (pl,a) (rl, fc) ->
             match pl with [] -> assert false
@@ -127,10 +128,10 @@ let compile
             | None -> (s, acc)
             | Some c -> if Sid.mem c s then s, acc
                         else Sid.add c s, ((p,c) :: acc)) fc (Sid.empty,[]) in
-          let type_info id = get_type_informations (type_name ty) id in
           let mat_c (c: id) at types = (* matrix for constructor [c] *)
             let nwilds = List.map (E.mk_wild_typed ~loc:c.id_loc) types in
-            let filtered = (* filtered [fc] for [c], filtered [rl] for [c] *)
+            let filtered =
+              (* filtered [fc] for [c], filtered [rl] for [c] *)
               List.fold_right2 (fun p (pl,a) acc ->
                 let rec take p =
                   match p.ppat_desc with
@@ -175,25 +176,23 @@ let compile
             | PCons (_, _) -> i
             | PTuple _ | PCst _ -> failwith "unreachable6" in
           ignore p2a ;
-          let get_type p default = match p.ppat_desc with
-            | PVar _ -> default
+          let get_type p = match p.ppat_desc with
+            | PVar _ -> assert false
+                (* default *)
             | PCast (_, t) -> t
-            | PCons (_, _) -> default
+            | PCons (_, _) -> assert false
             | _ -> failwith "unreachable3" in
           let pl = List.fold_right (fun (p,cons) acc ->
-            let ts, _arity = type_info cons.id_name in
             let args = get_args p in
-            let (t_args, p_args) = List.fold_right2 (fun arg ty (acct, accp) ->
-              (* TODO ici *)
+            let ts, _arity = get_type_informations name_ty cons.id_name in
+            (*Format.printf "%d %d %s %s@." (List.length args) (List.length ts) cons.id_name name_ty; *)
+            let (t_args, p_args) = List.fold_right (fun arg (acct, accp) ->
               let i = E.gen_id () in
-              let ty = get_type arg ty in
-              (* let a = E.mk_atom (AId i) in *)
-              (* let a = E.mk_atom (ACast (a, ty)) in *)
-              (* let a = p2a arg a in *)
+              let ty = get_type arg in
               let a = E.mk_atom (ACast (E.mk_atom (AId i), ty)) in
               let p = E.mk_pattern (PVar i) in
               let p = E.mk_pattern (PCast (p, ty)) in
-              a::acct, p::accp) args ts ([],[]) in
+              a::acct, p::accp) args ([],[]) in
 
             let c = change_args p p_args in
             let mc = c, mat_c cons t_args ts in
