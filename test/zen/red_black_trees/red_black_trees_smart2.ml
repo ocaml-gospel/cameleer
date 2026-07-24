@@ -117,6 +117,7 @@ type tree = Leaf | Node of color * tree * key * value * tree
     forall x: key, v: value, l r: tree, c: color.
     (exists n: int. rbtree n (Node c l x v r)) -> exists n: int. rbtree n r *)
 
+let empty: tree = Leaf
 let rec find (t : tree) (k : key) : value option =
   match (t: tree) with
   | Leaf -> None
@@ -184,34 +185,6 @@ let rbalance (l: tree) (k: key) (v: value) (r: tree) : tree =
                memt result k' v' <->
                if k' = k then v' = v else (memt l k' v' \/ memt r k' v') *)
 
-(* let rec insert (t : tree) (k : key) (v : value) : tree =
-  match (t: tree) with
-  | Leaf -> Node (Red, Leaf, k, v, Leaf)
-  | Node (Red, (l: tree), (k': key), (v':value), (r:tree)) ->
-      if k < k' then
-          let (o1: tree) = insert l k v in
-          Node (Red, o1, k', v', r)
-      else if k' < k then
-          let (o2: tree) = insert r k v in
-          Node (Red, l, k', v', o2)
-      else Node (Red, l, k', v, r)
-  | Node (Black, (l: tree), (k': key), (v':value), (r:tree)) ->
-      if k < k' then
-          let (o1: tree) = insert l k v in
-          lbalance o1 k' v' r
-      else if k' < k then
-          let (o2: tree) = insert r k v in
-          rbalance l k' v' o2
-      else Node (Black, l, k', v, r)
-(*@ requires bst t
-    requires exists n: int. rbtree n t
-    ensures  bst result
-    ensures  forall n. rbtree n t -> almost_rbtree n result
-    ensures  forall n. rbtree n t -> is_not_red t -> rbtree n result
-    ensures  memt result k v
-    ensures  forall k':key, v':value.
-               memt result k' v' <-> if k' = k then v' = v else memt t k' v' *) *)
-
 let rec insert (t : tree) (k : key) (v : value) : tree =
   match (t: tree) with
   | Leaf -> Node (Red, Leaf, k, v, Leaf)
@@ -248,10 +221,12 @@ let add (t : tree) (k : key) (v : value) : tree =
   match (o1: tree) with
   | Leaf -> assert false
   | Node ((_: color), (l: tree), (k': key), (v': value), (r: tree)) -> Node (Black, l, k', v', r)
-(*@ requires bst t
-    requires exists n:int. rbtree n t
-    ensures  bst result
+(*@ ensures  bst result
     ensures  exists n:int. rbtree n result
     ensures  memt result k v
     ensures  forall k':key, v':value.
              memt result k' v' <-> if k' = k then v' = v else memt t k' v' *)
+
+let singleton (k : key) (v : value) : tree =
+  add Leaf k v
+

@@ -117,13 +117,19 @@ type tree = Leaf | Node of color * tree * key * value * tree
     forall x: key, v: value, l r: tree, c: color.
     (exists n: int. rbtree n (Node c l x v r)) -> exists n: int. rbtree n r *)
 
+let empty: tree = Leaf
+(*@ requires true
+    ensures bst result
+    ensures rbtree 0 result
+    ensures forall k v. not (memt result k v) *)
+
 let rec find (t : tree) (k : key) : value option =
   match (t: tree) with
   | Leaf -> None
-  | Node ((_: color), (l: tree), (k': key), (v: value), (r: tree))
-    -> if k = k' then Some v
-       else if k < k' then find l k
-       else find r k
+  | Node ((_: color), (l: tree), (k': key), (v: value), (r: tree)) ->
+      if k = k' then Some v
+      else if k < k' then find l k
+      else find r k
 (*@ requires bst t
     ensures match result with
     | None -> forall v : value. not (memt t k v)
@@ -159,10 +165,10 @@ let lbalance (l : tree) (k : key) (v : value) (r : tree) : tree =
   | (_: tree) -> Node (Black, l, k, v, r)
 (*@ requires lt_tree k l /\ gt_tree k r /\ bst l /\ bst r
     ensures  bst result
-    ensures forall n : int. almost_rbtree n l -> rbtree n r -> rbtree (n+1) result
-    ensures forall k':key, v':value.
-              memt result k' v' <->
-              if k' = k then v' = v else (memt l k' v' \/ memt r k' v') *)
+    ensures  forall n : int. almost_rbtree n l -> rbtree n r -> rbtree (n+1) result
+    ensures  forall k':key, v':value.
+               memt result k' v' <->
+               if k' = k then v' = v else (memt l k' v' \/ memt r k' v') *)
 
 let rbalance (l: tree) (k: key) (v: value) (r: tree) : tree =
   match (r: tree) with
@@ -222,3 +228,10 @@ let add (t : tree) (k : key) (v : value) : tree =
     ensures  memt result k v
     ensures  forall k':key, v':value.
              memt result k' v' <-> if k' = k then v' = v else memt t k' v' *)
+
+let singleton (k : key) (v : value) : tree =
+  add Leaf k v
+(*@ requires true
+    ensures  bst result
+    ensures  forall k' v'. k' <> k -> not (memt result k' v')
+    ensures  memt result k v *)

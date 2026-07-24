@@ -117,6 +117,8 @@ type tree = Leaf | Node of color * tree * key * value * tree
     forall x: key, v: value, l r: tree, c: color.
     (exists n: int. rbtree n (Node c l x v r)) -> exists n: int. rbtree n r *)
 
+let empty: tree = Leaf
+
 let rec find (t : tree) (k : key) : value option =
   match (t: tree) with
   | Leaf -> None
@@ -158,7 +160,6 @@ let lbalance (l : tree) (k : key) (v : value) (r : tree) : tree =
       Node (Red, b1, ky, vy, b2)
   | (_: tree) -> Node (Black, l, k, v, r)
 (*@ requires lt_tree k l /\ gt_tree k r /\ bst l /\ bst r
-    requires !!
     ensures  bst result
     ensures  forall n : int. almost_rbtree n l -> rbtree n r -> rbtree (n+1) result
     ensures  forall k':key, v':value.
@@ -177,7 +178,6 @@ let rbalance (l: tree) (k: key) (v: value) (r: tree) : tree =
       Node (Red, b1, ky, vy, b2)
   | (_: tree) -> Node (Black, l, k, v, r)
 (*@ requires lt_tree k l /\ gt_tree k r /\ bst l /\ bst r
-    requires !!
     ensures  bst result
     ensures  forall n : int. almost_rbtree n r -> rbtree n l -> rbtree (n+1) result
     ensures  forall k':key, v':value.
@@ -224,3 +224,6 @@ let add (t : tree) (k : key) (v : value) : tree =
     ensures  memt result k v
     ensures  forall k':key, v':value.
              memt result k' v' <-> if k' = k then v' = v else memt t k' v' *)
+
+let singleton (k : key) (v : value) : tree =
+  add Leaf k v

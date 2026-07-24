@@ -35,5 +35,3 @@ let same_fringe (t1 : elt tree) (t2 : elt tree) : bool =
   let (e1: enum) = mk_zipper t1 Done in
   let (e2: enum) = mk_zipper t2 Done in
   eq_enum e1 e2
-(*@ requires true
-    ensures result <-> Sequence.(==) (elements t1) (elements t2) *)
