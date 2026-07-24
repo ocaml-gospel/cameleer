@@ -86,7 +86,7 @@ let rec merge (t1: int tree) (t2: int tree) : int tree =
 
 let add (x: int) (t: int tree) : int tree =
   merge (Node (Empty, x, Empty)) t
-(* @ r = add x t
+(*@ r = add x t
       requires heap t
       ensures  heap r
       ensures  size r = size t + 1
@@ -118,28 +118,27 @@ let main : int tree =
       let (r: int tree) = add 0 (Empty: int tree) in
       r
 (*@ requires true
-    ensures heap result 
+    ensures heap result
     ensures is_minimum 0 result *)
-
 
 let main2 : int tree =
-      let (r: int tree) = add 0 (Empty: int tree) in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
-      let (r: int tree) = add 1 r in
+      let (r: int tree) = add 1 (Empty: int tree) in
+      let (r: int tree) = add 2  r in
+      let (r: int tree) = add 3  r in
+      let (r: int tree) = add 4  r in
+      let (r: int tree) = add 5  r in
+      let (r: int tree) = add 6  r in
+      let (r: int tree) = add 7  r in
+      let (r: int tree) = add 8  r in
+      let (r: int tree) = add 9  r in
+      let (r: int tree) = add 10 r in
+      let (r: int tree) = add 11 r in
+      let (r: int tree) = add 12 r in
+      let (r: int tree) = add 13 r in
+      let (r: int tree) = add 14 r in
+      let (r: int tree) = add 15 r in
+      let (r: int tree) = add 16 r in
       r
 (*@ requires true
-    ensures heap result 
-    ensures is_minimum 0 result *)
+    ensures heap result
+    ensures is_minimum 1 result *)
