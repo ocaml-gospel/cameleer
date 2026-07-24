@@ -22,16 +22,16 @@ let empty: elt tree = (Empty: elt tree)
 let rec insert (x: elt) (t: elt tree): elt tree =
   match (t: elt tree) with
   | Empty -> Node (Empty, x, Empty)
-  | Node ((l: elt tree), (y: elt), (r: elt tree))
-    [@gospel "requires bst t
-              ensures  forall y. y <> x -> mem y result = mem y t
-              ensures  mem x result
-              ensures  bst result"] ->
+  | Node ((l: elt tree), (y: elt), (r: elt tree)) ->
       if x = y then Node (l, y, r)
       else if x < y then
         let (o1: elt tree) = insert x l in Node (o1, y, r)
       else
         let (o2: elt tree) = insert x r in Node (l, y, o2)
+(*@ requires bst t
+    ensures  forall y. y <> x -> mem y result = mem y t
+    ensures  mem x result
+    ensures  bst result *)
 
 let singleton (x: elt) : elt tree =
   insert x (Empty: elt tree)
@@ -69,23 +69,23 @@ let rec mem (x: elt) (t: elt tree) : bool =
 let rec remove_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node (Empty, (v: elt), (r: elt tree)) -> r
   | Node ((l: elt tree), (v: elt), (r: elt tree))
     [@gospel "requires bst t
               ensures  not (mem (minimum t) result)
               ensures  forall e. e <> minimum t -> mem e result = mem e t
               ensures  size result = size t - 1
               ensures  bst result"] ->
+      if l = Empty then r else
       let (o: elt tree) = remove_min l in
       Node (o, v, r)
 
 let rec get_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node (Empty, (v: elt), (r: elt tree)) -> v
-  | Node ((l: elt tree), (_: elt), (_: elt tree))
+  | Node ((l: elt tree), (v: elt), (_: elt tree))
     [@gospel "requires bst t
               ensures  result = minimum t"] ->
+      if l = Empty then v else
       get_min l
 
 let rec union (src : elt tree) (dst : elt tree) : elt tree =

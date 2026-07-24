@@ -95,18 +95,6 @@ let rec get_min (t: elt tree) : elt =
     requires size t > 0
     ensures  result = minimum t *)
 
-(* let rec struct_equal (t1: elt tree) (t2: elt tree) : bool =
-  match ((t1: elt tree), (t2: elt tree)) with
-  | (Empty, Empty) -> true
-  | (Node ((l1: elt tree), (v1: elt), (r1: elt tree)), Node ((l2: elt tree), (v2: elt), (r2: elt tree))) ->
-    let (el: bool) = struct_equal l1 l2 in
-    let (er: bool) = struct_equal r1 r2 in
-    v1 = v2 && el && er
-  | (_ , _) -> false
-(*@ requires bst t1 && bst t2
-    ensures result <-> forall x. occ x t1 = occ x t2
-    ensures result <-> size t1 = size t2 *) *)
-
 let rec union (src : elt tree) (dst : elt tree) : elt tree =
   match (src : elt tree) with
   | Empty -> dst
