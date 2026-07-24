@@ -17,8 +17,8 @@ type elt = int
       (forall rv. mem rv r -> rv > v) &&
       bst l && bst r *)
 
-let empty: elt tree = (Empty: elt tree)
-(*@ ensures forall x. occ x result = 0
+let empty: elt tree = Empty
+(*@ ensures forall x. not (mem x result)
     ensures bst result *)
 
 let rec insert (x: elt) (t: elt tree): elt tree =
@@ -31,9 +31,16 @@ let rec insert (x: elt) (t: elt tree): elt tree =
       else
         let (o2: elt tree) = insert x r in Node (l, y, o2)
 (*@ requires bst t
-    ensures  forall y. y <> x -> occ y result = occ y t
-    ensures  occ x result = occ x t || occ x result = 1 + occ x t
+    ensures  forall y. y <> x -> mem y result = mem y t
+    ensures  mem x result
     ensures  bst result *)
+
+let singleton (x: elt) : elt tree =
+  insert x (Empty: elt tree)
+(*@ requires true
+    ensures  bst result
+    ensures  forall y. y <> x -> not (mem y result)
+    ensures  mem x result *)
 
 let rec mem (x: elt) (t: elt tree) : bool =
   match (t: elt tree) with
@@ -70,15 +77,15 @@ let rec remove_min (t: elt tree) : elt tree =
   | Empty -> assert false
   | Node (Empty, (v: elt), (r: elt tree)) -> r
   | Node ((l: elt tree), (v: elt), (r: elt tree)) ->
-      let (o1: elt tree) = remove_min l in Node (o1, v, r)
+      let (o: elt tree) = remove_min l in
+      Node (o, v, r)
 (*@ requires bst t
     requires size t > 0
-    ensures  occ (minimum t) result = occ (minimum t) t - 1
-    ensures  forall e. e <> minimum t -> occ e result = occ e t
+    ensures  not (mem (minimum t) result)
+    ensures  forall e. e <> minimum t -> mem e result = mem e t
     ensures  size result = size t - 1
     ensures  bst result *)
 
-(* NEW -------------------------------------------------------- *)
 let rec get_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
@@ -88,8 +95,7 @@ let rec get_min (t: elt tree) : elt =
     requires size t > 0
     ensures  result = minimum t *)
 
-(* trees have the same structure *)
-let rec struct_equal (t1: elt tree) (t2: elt tree) : bool =
+(* let rec struct_equal (t1: elt tree) (t2: elt tree) : bool =
   match ((t1: elt tree), (t2: elt tree)) with
   | (Empty, Empty) -> true
   | (Node ((l1: elt tree), (v1: elt), (r1: elt tree)), Node ((l2: elt tree), (v2: elt), (r2: elt tree))) ->
@@ -98,26 +104,92 @@ let rec struct_equal (t1: elt tree) (t2: elt tree) : bool =
     v1 = v2 && el && er
   | (_ , _) -> false
 (*@ requires bst t1 && bst t2
-    ensures result <-> forall x. occ x t1 = occ x t2 
-    ensures result <-> size t1 = size t2 *)
+    ensures result <-> forall x. occ x t1 = occ x t2
+    ensures result <-> size t1 = size t2 *) *)
+
+let rec union (src : elt tree) (dst : elt tree) : elt tree =
+  match (src : elt tree) with
+  | Empty -> dst
+  | Node ((l : elt tree), (v : elt), (r : elt tree)) ->
+      let (dst1 : elt tree) = union l dst in
+      let (dst2 : elt tree) = insert v dst1 in
+      union r dst2
+(*@ requires bst dst
+    ensures  forall e. mem e result <-> mem e src || mem e dst
+    ensures  bst result *)
+
+let rec inter (t1 : elt tree) (t2 : elt tree) : elt tree =
+  match (t1 : elt tree) with
+  | Empty -> Empty
+  | Node ((l : elt tree), (v : elt), (r : elt tree)) ->
+      let (l : elt tree) = inter l t2 in
+      let (r : elt tree) = inter r t2 in
+      if mem v t2 then Node (l, v, r)
+      else union l r
+(*@ requires bst t1 && bst t2
+    ensures forall e. mem e result <-> mem e t1 && mem e t2
+    ensures bst result *)
+
+let rec diff (t1 : elt tree) (t2 : elt tree) : elt tree =
+  match (t1 : elt tree) with
+  | Empty -> Empty
+  | Node ((l : elt tree), (v : elt), (r : elt tree)) ->
+      let (l : elt tree) = diff l t2 in
+      let (r : elt tree) = diff r t2 in
+      if mem v t2 then union l r
+      else Node (l, v, r)
+(*@ requires bst t1 && bst t2
+    ensures forall e. mem e result <-> mem e t1 && not (mem e t2)
+    ensures bst result *)
 
 let rec remove (x: elt) (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> Empty
   | Node ((l: elt tree), (v: elt), (r: elt tree)) ->
       if x = v then
-        begin match (r: elt tree) with
-         | Empty -> l
-         | Node ((_: elt tree), (_: elt), (_: elt tree)) ->
-             let (o1: elt tree) = remove_min r in 
-             let (min_val: elt) = get_min r in
-             Node (l, min_val, o1)
-        end
+        if r = Empty then l else
+        let (o1: elt tree) = remove_min r in
+        let (min_val: elt) = get_min r in
+        Node (l, min_val, o1)
       else if x < v then
         let (o2: elt tree) = remove x l in Node (o2, v, r)
       else
         let (o3: elt tree) = remove x r in Node (l, v, o3)
 (*@ requires bst t
-    ensures  forall y. y <> x -> occ y result = occ y t
-    ensures  occ x result = occ x t - 1 || occ x result = 0
+    ensures  forall e. e <> x -> mem e result = mem e t
+    ensures  not (mem x result)
     ensures  bst result *)
+
+let remove2 (x: elt) (t: elt tree) : elt tree =
+  let (tx : elt tree) = singleton x in
+  diff t tx
+(*@ requires bst t
+    ensures  forall e. e <> x -> mem e result = mem e t
+    ensures  not (mem x result)
+    ensures  bst result *)
+
+let rec pop_all (t : elt tree) : elt list =
+  if t = Empty then [] else
+  let (m : elt) = get_min t in
+  let (t : elt tree) = remove_min t in
+  let (l : elt list) = pop_all t in
+  m :: l
+(*@ requires bst t
+    ensures  forall e. mem e t <-> LM.mem e result
+    ensures  sorted result *)
+
+let rec of_list (l : elt list) : elt tree =
+  match (l : elt list) with
+  | ([] : elt list) -> Empty
+  | (x : elt) :: (l : elt list) ->
+      let (t : elt tree) = of_list l in
+      insert x t
+(*@ requires true
+    ensures  forall e. mem e result <-> LM.mem e l
+    ensures  bst result *)
+
+let nop (t : elt tree) : elt tree =
+  let (l : elt list) = pop_all t in
+  of_list l
+(*@ requires bst t
+    ensures  forall e. mem e t <-> mem e result *)
