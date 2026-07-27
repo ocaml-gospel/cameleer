@@ -39,12 +39,34 @@ let pp_op fmt (op: op) =
 let pp_id fmt id =
   fprintf fmt "%s" id.id_name
 
+let rec pp_pty fmt (ty : Parsetree.core_type) =
+  let p fmt = fprintf fmt in
+  let pp_sep = pp_print_space in
+  match ty.ptyp_desc with
+  | Parsetree.Ptyp_any -> p fmt "any"
+  | Parsetree.Ptyp_var v -> p fmt "'%s" v
+  | Parsetree.Ptyp_arrow (_, _, _) -> p fmt "->"
+  | Parsetree.Ptyp_tuple l ->
+      p fmt "ptuple(%a)" (pp_print_list pp_pty ~pp_sep) l
+  | Parsetree.Ptyp_constr (n, []) ->
+      let s = Expression_coma.string_of_longident n.txt in
+      p fmt "%s" s
+  | Parsetree.Ptyp_constr (n, pl) ->
+      let s = Expression_coma.string_of_longident n.txt in
+      p fmt "%s (%a)" s (pp_print_list pp_pty ~pp_sep) pl
+  | Parsetree.Ptyp_object (_, _) -> p fmt "obj"
+  | Parsetree.Ptyp_class (_, _) -> p fmt "class"
+  | Parsetree.Ptyp_alias (_, _) -> p fmt "alias"
+  | Parsetree.Ptyp_variant (_, _, _) -> p fmt "variant"
+  | Parsetree.Ptyp_poly (_, _) -> p fmt "poly"
+  | Parsetree.Ptyp_package _ -> p fmt "package"
+  | Parsetree.Ptyp_extension _ -> p fmt "extension"
+
 let pp_binder fmt (id, pty) =
   match pty with
   | None -> fprintf fmt "%a" pp_id id
   | Some pty ->
-      ignore pty; (* TODO: print type *)
-      fprintf fmt "(%a: ...)" pp_id id
+      fprintf fmt "(%a: %a)" pp_id id pp_pty pty
 
 let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   match ppat_desc with
@@ -62,9 +84,10 @@ let rec pp_pattern ?(paren=false) fmt {ppat_desc; _} =
   | PTuple (args) ->
       fprintf fmt (protect_on paren "@[%a@]")
         (pp_print_list ~pp_sep:pp_coma pp_pattern) args
-  | PCast (p, _) ->
-      fprintf fmt (protect_on paren "@[%a: ...@]")
+  | PCast (p, t) ->
+      fprintf fmt (protect_on paren "@[%a: %a@]")
         (pp_pattern ~paren:true) p
+        pp_pty t
   | PCst c ->
       fprintf fmt (protect_on paren "@[%a@]")
       pp_constant c
@@ -130,8 +153,8 @@ and pp_atom ?(paren=false) fmt (a: atom) =
   | ACons (c, al) ->
       fprintf fmt (protect_on paren "%s @[(%a)@]") c.id_name
         (pp_print_list ~pp_sep:pp_coma pp_atom) al
-  | ACast (a, _t) ->
-      fprintf fmt (protect_on paren "%a : ...") (pp_atom ~paren) a
+  | ACast (a, t) ->
+      fprintf fmt (protect_on paren "%a : %a") (pp_atom ~paren) a pp_pty t
 
 and pp_ppat_expr fmt (p, e) =
   fprintf fmt "@[<hov 4>| %a ->@ @[%a@]@]"
@@ -155,8 +178,9 @@ let pp_id fmt {id_name; _} =
   fprintf fmt "%s" id_name
 
 let rec pp_kont fmt {kont_id; kont_arg; kont_kont; _} =
+  let ppp fmt (a,_) = fprintf fmt "%a" pp_id a in
   fprintf fmt (protect_on true "%a@;<1 4>@[%a@]@;<1 4>@[%a@]") pp_id kont_id
-    (pp_print_list pp_binder) kont_arg
+    (pp_print_list ppp) kont_arg
     (pp_print_list ~pp_sep:pp_newline pp_kont) kont_kont
 
 let pp_decl fmt (d: declaration) =
