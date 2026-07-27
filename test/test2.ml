@@ -1,14 +1,14 @@
 
 type t = A of t | B | C | D of t
+type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 
 let is_empty (x: t) : bool =
   match (x: t) with
   | (x:t) -> true
   | (y:t) -> false
 
-type 'a tree = Empty | Node of 'a tree * 'a * 'a tree
 
-let is_empty (ttttt: 'a tree) : bool =
+let is_empty2 (ttttt: 'a tree) : bool =
   match (ttttt: 'a tree) with
   | Empty -> true
   | Node ((l: 'a tree), (x :'a), (r: 'a tree)) -> false
