@@ -93,13 +93,12 @@ let empty: heap_type = (E: heap_type)
 
 let merge (h1: heap_type) (h2: heap_type) : heap_type =
   match (h1 : heap_type), (h2 : heap_type) with
-  | (E, (_: heap_type)) -> h2
-  | ((_: heap_type), E) -> h1
-  | (T ((x1: elt), (t1: tree)),
-     T ((x2: elt), (t2: tree))) ->
-       if x1 < x2 then
+  | E, _ -> h2
+  | _, E -> h1
+  | (T (x1, t1), T (x2, t2)) ->
+      if x1 < x2 then
         let (o1: tree) = Node (t2, x2, t1) in T (x1, o1)
-       else
+      else
         let (o2: tree) = Node (t1, x1, t2) in T (x2, o2)
 (*@ requires heap h1 && heap h2
     ensures  heap result
@@ -117,7 +116,7 @@ let insert (x: elt) (h: heap_type) : heap_type =
 let find_min (h: heap_type) : elt =
   match (h: heap_type) with
   | E -> assert false
-  | T ((x: elt), (_: tree)) -> x
+  | T (x, _) -> x
 (*@ requires heap h
     requires 0 < size h
     ensures result = minimum h *)
@@ -125,8 +124,8 @@ let find_min (h: heap_type) : elt =
 let rec merge_pairs (t: tree) : heap_type =
   match (t: tree) with
   | Empty -> E
-  | Node ((l: tree), (x: elt), Empty) -> T (x, l)
-  | Node ((l: tree), (x: elt), Node ((l2: tree), (y: elt), (r2: tree))) ->
+  | Node (l, x, Empty) -> T (x, l)
+  | Node (l, x, Node (l2, y, r2)) ->
       let (h1: heap_type) = T (x, l) in
       let (h2: heap_type) = T (y, l2) in
       let (mp: heap_type) = merge_pairs r2 in
@@ -140,7 +139,7 @@ let rec merge_pairs (t: tree) : heap_type =
 let delete_min (h: heap_type) : heap_type =
   match (h: heap_type) with
   | E -> assert false
-  | T ((_: elt), (t: tree)) -> merge_pairs t
+  | T (_, t) -> merge_pairs t
 (*@ requires heap h && 0 < size h
     ensures heap result
     ensures occ (minimum h) result = occ (minimum h) h - 1

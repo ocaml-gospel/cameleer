@@ -7,7 +7,7 @@ let o (x:int):int = 10
 
 let f (x: t) (n: int) : int =
   match (x: t) with
-  | A (i:int)
+  | A i
         [@gospel {| requires 0 < i
                     requires i < n
                     ensures  0 < result < n |}] -> n - i

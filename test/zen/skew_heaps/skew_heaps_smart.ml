@@ -42,16 +42,15 @@ let empty: int tree = (Empty: int tree)
 
 let rec merge (t1: int tree) (t2: int tree) : int tree =
   match (t1 : elt tree), (t2 : elt tree) with
-  | Empty, (_: int tree) -> t2
-  | ((_: int tree), Empty) -> t1
-  | (Node ((l1: int tree), (x1: int), (r1: int tree)),
-     Node ((l2: int tree), (x2: int), (r2: int tree))) ->
-       if x1 < x2 then
-         let (l: int tree) = merge r1 t2 in
-         Node (l, x1, l1)
-       else
-         let (l: int tree) = merge r2 t1 in
-         Node (l, x2, l2)
+  | Empty, _ -> t2
+  | _, Empty -> t1
+  | (Node (l1, x1, r1), Node (l2, x2, r2)) ->
+      if x1 < x2 then
+        let (l: int tree) = merge r1 t2 in
+        Node (l, x1, l1)
+      else
+        let (l: int tree) = merge r2 t1 in
+        Node (l, x2, l2)
 (*@ requires heap t1 && heap t2
     ensures  heap result
     ensures  forall x. occ x result = occ x t1 + occ x t2
@@ -62,10 +61,10 @@ let add (x: int) (t: int tree) : int tree =
 
 let remove_min (t: int tree) : int tree =
   match (t : elt tree) with
-  | Empty      -> assert false
-  | Node ((l: int tree), (_: int), (r: int tree)) -> merge l r
+  | Empty -> assert false
+  | Node (l, _, r) -> merge l r
 
 let get_min (t: int tree) : int =
   match (t : elt tree) with
-  | Empty      -> assert false
-  | Node ((_: int tree), (x: int), (_: int tree)) -> x
+  | Empty -> assert false
+  | Node (_, x, _) -> x

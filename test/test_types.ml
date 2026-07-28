@@ -2,7 +2,7 @@ type t = A of int | B | C
 
 let f (x: t) (n: int) : int =
   match (x: t) with
-  | A (i:int) -> i
+  | A i -> i
   | B -> 10
   | C -> -1
 (*@ requires true

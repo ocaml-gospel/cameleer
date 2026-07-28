@@ -64,7 +64,7 @@ let empty: elt tree = (Empty: elt tree)
 let rank (t: elt tree) : int =
   match (t: elt tree) with
   | Empty -> 0
-  | Node ((r: int), (_: elt tree), (_: elt), (_: elt tree)) -> r
+  | Node (r, _, _, _) -> r
 
 let make_n (x: elt) (l: elt tree) (r: elt tree) : elt tree =
   let (rl: int) = rank l in
@@ -78,10 +78,9 @@ let make_n (x: elt) (l: elt tree) (r: elt tree) : elt tree =
 
 let rec merge (t1: elt tree) (t2: elt tree) : elt tree =
   match (t1: elt tree), (t2: elt tree) with
-  | (Empty, (_: elt tree)) -> t2
-  | (_: elt tree), Empty -> t1
-  | (Node ((_: int), (l1: elt tree), (x1: elt), (r1: elt tree)),
-     Node ((_: int), (l2: elt tree), (x2: elt), (r2: elt tree)))
+  | Empty, _ -> t2
+  | _, Empty -> t1
+  | (Node (_, l1, x1, r1), Node (_, l2, x2, r2))
      [@gospel "requires leftist_heap t1 && leftist_heap t2
                ensures size result = size t1 + size t2
                ensures forall x. occ x result = occ x t1 + occ x t2
@@ -92,8 +91,6 @@ let rec merge (t1: elt tree) (t2: elt tree) : elt tree =
       else
         let (o2: elt tree) = merge t1 r2 in
         make_n x2 l2 o2
-(*@ r = merge t1 t2
-      variant size t1 + size t2 *)
 
 let insert (x: elt) (t: elt tree) : elt tree =
   merge (Node (1, Empty, x, Empty)) t
@@ -101,7 +98,7 @@ let insert (x: elt) (t: elt tree) : elt tree =
 let find_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node ((_: int), (_: elt tree), (x: elt), (_: elt tree))
+  | Node (_, _, x, _)
       [@gospel "requires leftist_heap t
                 ensures result = minimum t"]
     -> x
@@ -109,5 +106,5 @@ let find_min (t: elt tree) : elt =
 let delete_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node ((_: int), (l: elt tree), (_: elt), (r: elt tree)) ->
+  | Node (_, l, _, r) ->
       merge l r

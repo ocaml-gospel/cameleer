@@ -20,12 +20,13 @@ type l = Nil | Cons of t * l0
 
 (* À résoudre *)
 let f1 (a : l): int = match (a : l) with
-  | Cons ((_ : t), (_ : l)) -> 0
+  | Cons (_, _) -> 0
+  | _ -> assert false
 
 (* À résoudre *)
 let f2 (a : l): int = match (a : l) with
-  | Cons ((E : t), (_ : l)) -> 0
-  | (_ : l) -> 0
+  | Cons (E, _) -> 0
+  | _ -> 0
 
 (* let compare (a : l) = match (a: l) with
   | Cons (E, (b : l)) -> 0 *)

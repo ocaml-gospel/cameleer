@@ -97,7 +97,20 @@ let rec get_pattern_id (pat: Parsetree.pattern) =
   | Ppat_constraint (p, pty) ->
       let id, _ = get_pattern_id p in
       id, Some pty
-  | _ -> assert false
+  | Ppat_any -> assert false | Ppat_alias (_, _) -> assert false | Ppat_constant _ -> assert false
+  | Ppat_interval (_, _) -> assert false
+  | Ppat_tuple _ -> assert false
+  | Ppat_construct (_, _) -> assert false
+  | Ppat_variant (_, _) -> assert false
+  | Ppat_record (_, _) -> assert false
+  | Ppat_array _ -> assert false
+  | Ppat_or (_, _) -> assert false
+  | Ppat_type _ -> assert false
+  | Ppat_lazy _ -> assert false
+  | Ppat_unpack _ -> assert false
+  | Ppat_exception _ -> assert false
+  | Ppat_extension _ -> assert false
+  | Ppat_open (_, _) -> assert false
 
 let preid Uast.Preid.{ pid_str; pid_loc; _ } =
   mk_id ~loc:(location pid_loc) pid_str
