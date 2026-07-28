@@ -22,7 +22,7 @@ let empty: elt tree = (Empty: elt tree)
 let rec insert (x: elt) (t: elt tree): elt tree =
   match (t: elt tree) with
   | Empty -> Node (Empty, x, Empty)
-  | Node ((l: elt tree), (y: elt), (r: elt tree)) ->
+  | Node (l, y, r) ->
       if x = y then Node (l, y, r)
       else if x < y then
         let (o1: elt tree) = insert x l in Node (o1, y, r)
@@ -39,7 +39,7 @@ let singleton (x: elt) : elt tree =
 let rec mem (x: elt) (t: elt tree) : bool =
   match (t: elt tree) with
   | Empty -> false
-  | Node ((l: elt tree), (v: elt), (r: elt tree))
+  | Node (l, v, r)
     [@gospel "requires bst t
               ensures  result <-> mem x t"] ->
       if x = v then true
@@ -69,7 +69,7 @@ let rec mem (x: elt) (t: elt tree) : bool =
 let rec remove_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node ((l: elt tree), (v: elt), (r: elt tree))
+  | Node (l, v, r)
     [@gospel "requires bst t
               ensures  not (mem (minimum t) result)
               ensures  forall e. e <> minimum t -> mem e result = mem e t
@@ -82,7 +82,7 @@ let rec remove_min (t: elt tree) : elt tree =
 let rec get_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node ((l: elt tree), (v: elt), (_: elt tree))
+  | Node (l, v, _)
     [@gospel "requires bst t
               ensures  result = minimum t"] ->
       if l = Empty then v else
@@ -91,7 +91,7 @@ let rec get_min (t: elt tree) : elt =
 let rec union (src : elt tree) (dst : elt tree) : elt tree =
   match (src : elt tree) with
   | Empty -> dst
-  | Node ((l : elt tree), (v : elt), (r : elt tree))
+  | Node (l, v, r)
     [@gospel "requires bst dst
               ensures  forall e. mem e result <-> mem e src || mem e dst
               ensures  bst result"] ->
@@ -102,7 +102,7 @@ let rec union (src : elt tree) (dst : elt tree) : elt tree =
 let rec inter (t1 : elt tree) (t2 : elt tree) : elt tree =
   match (t1 : elt tree) with
   | Empty -> Empty
-  | Node ((l : elt tree), (v : elt), (r : elt tree))
+  | Node (l, v, r)
     [@gospel "requires bst t1 && bst t2
               ensures forall e. mem e result <-> mem e t1 && mem e t2
               ensures bst result"] ->
@@ -114,7 +114,7 @@ let rec inter (t1 : elt tree) (t2 : elt tree) : elt tree =
 let rec diff (t1 : elt tree) (t2 : elt tree) : elt tree =
   match (t1 : elt tree) with
   | Empty -> Empty
-  | Node ((l : elt tree), (v : elt), (r : elt tree))
+  | Node (l, v, r)
     [@gospel "requires bst t1 && bst t2
               ensures forall e. mem e result <-> mem e t1 && not (mem e t2)
               ensures bst result"] ->
@@ -126,7 +126,7 @@ let rec diff (t1 : elt tree) (t2 : elt tree) : elt tree =
 let rec remove (x: elt) (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> Empty
-  | Node ((l: elt tree), (v: elt), (r: elt tree))
+  | Node (l, v, r)
     [@gospel "requires bst t
               ensures  forall e. e <> x -> mem e result = mem e t
               ensures  not (mem x result)

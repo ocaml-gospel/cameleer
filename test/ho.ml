@@ -27,11 +27,11 @@ let rec a (s: int list) (r: re) (i: int) (k: int -> unit): unit =
 
   | Epsilon -> k i
 
-  | Char (c: int) ->
+  | Char c ->
       let (n: int) = len s in
       if i < n then let (si: int) = nth s i in if si = c then k (i + 1)
 
-  | Alt ((r1: re), (r2: re)) ->
+  | Alt (r1, r2) ->
       a s r1 i k;
       a s r2 i k
 

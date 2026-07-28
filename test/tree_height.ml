@@ -18,7 +18,7 @@ let max (x: int) (y: int) : int =
 let rec height (t: 'a tree) : int =
   match (t: 'a tree) with
   | Empty -> 0
-  | Node ((l: 'a tree), (_: 'a), (r: 'a tree)) ->
+  | Node (l, _, r) ->
       let (o1: int) = height l in
       let (o2: int) = height r in
       let (m: int) = max o1 o2 in

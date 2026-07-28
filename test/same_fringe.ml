@@ -15,7 +15,7 @@ type enum = (elt * elt tree) list
 let rec mk_zipper (t : elt tree) (e : enum) : enum =
   match (t : elt tree) with
   | Empty -> e
-  | Node ((l: elt tree), (x: elt), (r: elt tree)) -> mk_zipper l ((x, r) :: e)
+  | Node (l, x, r) -> mk_zipper l ((x, r) :: e)
 (*@ r = mk_zipper t e
       variant t
       requires true
@@ -24,16 +24,12 @@ let rec mk_zipper (t : elt tree) (e : enum) : enum =
 let rec eq_enum (e1 : enum) (e2 : enum) : bool =
   match ((e1 : enum), (e2 : enum)) with
   | [], [] -> true
-  | ((x1: elt), (r1:elt tree)) :: (e1: enum), ((x2:elt), (r2: elt tree)) :: (e2: enum) ->
+  | (x1, r1) :: e1, (x2, r2) :: e2 ->
       if x1 = x2 then
         let (e1: enum) = mk_zipper r1 e1 in
         let (e2: enum) = mk_zipper r2 e2 in
         eq_enum e1 e2
       else false
-      (* x1 = x2 &&
-      let e1 = mk_zipper r1 e1 in
-      let e2 = mk_zipper r2 e2 in
-      eq_enum e1 e2 *)
   (* TODO: if we remove the 2nd _ the patterns compilation fails *)
   | _,_ -> false
 (*@ b = eq_num e1 e2

@@ -17,13 +17,6 @@ type elt = int
 
 (*@ predicate mem (v: 'a) (t: 'a tree) = 0 < occ v t *)
 
-(* let[@logic] is_empty (t: int tree) : bool =
-  match (t: int tree) with
-  | Empty -> true
-  | (_: int tree) -> false *)
-(* @ r = is_empty t
-      ensures r <-> t = Empty *)
-
 (*@ predicate le (x y: int) = x <= y *)
 
 (* [e] is no greater than the root of [t], if any *)
@@ -43,19 +36,7 @@ type elt = int
 (*@ predicate is_minimum (x: elt) (t: elt tree) = mem x t && forall e. mem e t -> le x e *)
 
 (* the root is the smallest element *)
-
 (*@ lemma is_min: forall t: elt tree. heap t -> size t > 0 -> is_minimum (minimum t) t *)
-
-(* let[@lemma] rec is_min (t: elt tree) =
-  match t with
-  | Empty -> assert false
-  | Node (l, _, r) ->
-      if not (is_empty l) then is_min l;
-      if not (is_empty r) then is_min r *)
-(* @ root_is_min t
-      variant  t
-      requires heap t && size t > 0
-      ensures  is_minimum (minimum t) t *)
 
 let empty: int tree = (Empty: int tree)
 (*@ r = empty
@@ -63,82 +44,74 @@ let empty: int tree = (Empty: int tree)
       ensures size r = 0
       ensures forall e. not (mem e r) *)
 
-(* let le a b = true (* TODO *) *)
-
 let rec merge (t1: int tree) (t2: int tree) : int tree =
     match (t1 : elt tree), (t2 : elt tree) with
-    | Empty, (_: int tree) -> t2
-    | ((_: int tree), Empty) -> t1
-    | (Node ((l1: int tree), (x1: int), (r1: int tree)),
-       Node ((l2: int tree), (x2: int), (r2: int tree))) ->
+    | Empty, _ -> t2
+    | _, Empty -> t1
+    | Node (l1, x1, r1), Node (l2, x2, r2) ->
        if x1 < x2 then
          let (l: int tree) = merge r1 t2 in
          Node (l, x1, l1)
        else
          let (l: int tree) = merge r2 t1 in
          Node (l, x2, l2)
-(*@ r = merge t1 t2
-      requires heap t1 && heap t2
-      ensures  heap r
-      ensures  forall x. occ x r = occ x t1 + occ x t2
-      ensures  size r = size t1 + size t2
-      variant  size t1 + size t2 *)
+(*@ requires heap t1 && heap t2
+    ensures  heap result
+    ensures  forall x. occ x result = occ x t1 + occ x t2
+    ensures  size result = size t1 + size t2 *)
 
 let add (x: int) (t: int tree) : int tree =
   merge (Node (Empty, x, Empty)) t
-(*@ r = add x t
-      requires heap t
-      ensures  heap r
-      ensures  size r = size t + 1
-      ensures  occ x r = occ x t + 1
-      ensures  forall y. y <> x -> occ y r = occ y t *)
+(*@ requires heap t
+    ensures  heap result
+    ensures  size result = size t + 1
+    ensures  occ x result = occ x t + 1
+    ensures  forall y. y <> x -> occ y result = occ y t *)
 
 let remove_min (t: int tree) : int tree =
   match (t : elt tree) with
-  | Empty      -> assert false
-  | Node ((l: int tree), (_: int), (r: int tree)) -> merge l r
-(*@ r = remove_min t
-      requires heap t
-      requires size t > 0
-      ensures  heap r
-      ensures  occ (minimum t) r = occ (minimum t) t - 1
-      ensures  forall e. e <> minimum t -> occ e r = occ e t
-      ensures  size r = size t - 1 *)
+  | Empty -> assert false
+  | Node (l, _, r) -> merge l r
+(*@ requires heap t
+    requires size t > 0
+    ensures  heap result
+    ensures  occ (minimum t) result = occ (minimum t) t - 1
+    ensures  forall e. e <> minimum t -> occ e result = occ e t
+    ensures  size result = size t - 1 *)
 
 let get_min (t: int tree) : int =
   match (t : elt tree) with
   | Empty      -> assert false
-  | Node ((_: int tree), (x: int), (_: int tree)) -> x
-(*@ r = get_min t
-      requires heap t
-      requires size t > 0
-      ensures  r = minimum t *)
+  | Node (_, x, _) -> x
+(*@ requires heap t
+    requires size t > 0
+    ensures  result = minimum t *)
 
 let main : int tree =
-      let (r: int tree) = add 0 (Empty: int tree) in
-      r
+  let (r: int tree) = add 0 (Empty: int tree) in
+  r
 (*@ requires true
     ensures heap result
     ensures is_minimum 0 result *)
 
 let main2 : int tree =
-      let (r: int tree) = add 1 (Empty: int tree) in
-      let (r: int tree) = add 2  r in
-      let (r: int tree) = add 3  r in
-      let (r: int tree) = add 4  r in
-      let (r: int tree) = add 5  r in
-      let (r: int tree) = add 6  r in
-      let (r: int tree) = add 7  r in
-      let (r: int tree) = add 8  r in
-      let (r: int tree) = add 9  r in
-      let (r: int tree) = add 10 r in
-      let (r: int tree) = add 11 r in
-      let (r: int tree) = add 12 r in
-      let (r: int tree) = add 13 r in
-      let (r: int tree) = add 14 r in
-      let (r: int tree) = add 15 r in
-      let (r: int tree) = add 16 r in
-      r
+  let (r: int tree) = add 1 (Empty: int tree) in
+  let (r: int tree) = add 2  r in
+  let (r: int tree) = add 3  r in
+  let (r: int tree) = add 4  r in
+  let (r: int tree) = add 5  r in
+  let (r: int tree) = add 6  r in
+  let (r: int tree) = add 7  r in
+  let (r: int tree) = add 8  r in
+  let (r: int tree) = add 9  r in
+  let (r: int tree) = add 10 r in
+  let (r: int tree) = add 11 r in
+  let (r: int tree) = add 12 r in
+  let (r: int tree) = add 13 r in
+  let (r: int tree) = add 14 r in
+  let (r: int tree) = add 15 r in
+  let (r: int tree) = add 16 r in
+  r
 (*@ requires true
     ensures heap result
     ensures is_minimum 1 result *)

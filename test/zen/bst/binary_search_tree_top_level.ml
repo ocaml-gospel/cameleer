@@ -24,7 +24,7 @@ let empty: elt tree = Empty
 let rec insert (x: elt) (t: elt tree): elt tree =
   match (t: elt tree) with
   | Empty -> Node (Empty, x, Empty)
-  | Node ((l: elt tree), (y: elt), (r: elt tree)) ->
+  | Node (l, y, r) ->
       if x = y then Node (l, y, r)
       else if x < y then
         let (o1: elt tree) = insert x l in Node (o1, y, r)
@@ -45,7 +45,7 @@ let singleton (x: elt) : elt tree =
 let rec mem (x: elt) (t: elt tree) : bool =
   match (t: elt tree) with
   | Empty -> false
-  | Node ((l: elt tree), (v: elt), (r: elt tree)) ->
+  | Node (l, v, r) ->
       if x = v then true
       else if x < v then mem x l
       else mem x r
@@ -75,8 +75,8 @@ let rec mem (x: elt) (t: elt tree) : bool =
 let rec remove_min (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node (Empty, (v: elt), (r: elt tree)) -> r
-  | Node ((l: elt tree), (v: elt), (r: elt tree)) ->
+  | Node (Empty, _, r) -> r
+  | Node (l, v, r) ->
       let (o: elt tree) = remove_min l in
       Node (o, v, r)
 (*@ requires bst t
@@ -89,8 +89,8 @@ let rec remove_min (t: elt tree) : elt tree =
 let rec get_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
-  | Node (Empty, (v: elt), (_: elt tree)) -> v
-  | Node ((l: elt tree), (_: elt), (_: elt tree)) -> get_min l
+  | Node (Empty, v, _) -> v
+  | Node (l, _, _) -> get_min l
 (*@ requires bst t
     requires size t > 0
     ensures  result = minimum t *)
@@ -98,7 +98,7 @@ let rec get_min (t: elt tree) : elt =
 let rec union (src : elt tree) (dst : elt tree) : elt tree =
   match (src : elt tree) with
   | Empty -> dst
-  | Node ((l : elt tree), (v : elt), (r : elt tree)) ->
+  | Node (l, v, r) ->
       let (dst1 : elt tree) = union l dst in
       let (dst2 : elt tree) = insert v dst1 in
       union r dst2
@@ -109,7 +109,7 @@ let rec union (src : elt tree) (dst : elt tree) : elt tree =
 let rec inter (t1 : elt tree) (t2 : elt tree) : elt tree =
   match (t1 : elt tree) with
   | Empty -> Empty
-  | Node ((l : elt tree), (v : elt), (r : elt tree)) ->
+  | Node (l, v, r) ->
       let (l : elt tree) = inter l t2 in
       let (r : elt tree) = inter r t2 in
       if mem v t2 then Node (l, v, r)
@@ -121,7 +121,7 @@ let rec inter (t1 : elt tree) (t2 : elt tree) : elt tree =
 let rec diff (t1 : elt tree) (t2 : elt tree) : elt tree =
   match (t1 : elt tree) with
   | Empty -> Empty
-  | Node ((l : elt tree), (v : elt), (r : elt tree)) ->
+  | Node (l, v, r) ->
       let (l : elt tree) = diff l t2 in
       let (r : elt tree) = diff r t2 in
       if mem v t2 then union l r
@@ -133,7 +133,7 @@ let rec diff (t1 : elt tree) (t2 : elt tree) : elt tree =
 let rec remove (x: elt) (t: elt tree) : elt tree =
   match (t: elt tree) with
   | Empty -> Empty
-  | Node ((l: elt tree), (v: elt), (r: elt tree)) ->
+  | Node (l, v, r) ->
       if x = v then
         if r = Empty then l else
         let (o1: elt tree) = remove_min r in

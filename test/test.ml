@@ -16,7 +16,7 @@ type t = A of t | B | C | D of t
 let is_empty (t: 'a tree) : bool =
   match (t: 'a tree) with
   | Empty -> true
-  | Node ((l: 'a tree), (x: 'a), (r: 'a tree)) -> false
+  | Node (l, x, r) -> false
 (*@ r = is_empty t
       ensures r <-> t = Empty *)
 
@@ -50,17 +50,6 @@ let sum_t (x: bool) (y: bool) : t =
     if y then A c else A B
   else A c
   else D c
-
-type mbool = MTrue | MFalse
-
-(* let match_t (x: t) (y: mbool): int =
-  match (x: t) with
-  | A (_:t) -> sum true false
-  | B       -> sum false false
-  | (x:t)  ->
-    (match (y: mbool) with
-     | MTrue -> sum true false
-     | (_: mbool) -> if y = MTrue then 55 else 89) *)
 
 let f (a: int) (b: int) (c: int) : int =
   let (x: int) = a in

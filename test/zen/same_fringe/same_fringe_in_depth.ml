@@ -13,7 +13,7 @@ type enum = Done | Next of elt * elt tree * enum
 let rec mk_zipper (t : elt tree) (e : enum) : enum =
   match (t : elt tree) with
   | Empty -> e
-  | Node ((l: elt tree), (x: elt), (r: elt tree))
+  | Node (l, x, r)
       [@gospel "requires true
                 ensures  enum_elements result = elements t @ enum_elements e"] ->
       mk_zipper l (Next (x, r, e))
@@ -21,7 +21,7 @@ let rec mk_zipper (t : elt tree) (e : enum) : enum =
 let rec eq_enum (e1 : enum) (e2 : enum) : bool =
   match ((e1 : enum), (e2 : enum)) with
   | Done, Done -> true
-  | (Next ((x1: elt), (r1:elt tree), (e11: enum)), Next ((x2:elt), (r2: elt tree),(e22: enum)))
+  | (Next (x1, r1, e11), Next (x2, r2, e22))
     [@gospel "requires true
               ensures result <-> Sequence.(==) (enum_elements e1) (enum_elements e2)"] ->
       if x1 = x2 then
@@ -29,7 +29,7 @@ let rec eq_enum (e1 : enum) (e2 : enum) : bool =
         let (e23: enum) = mk_zipper r2 e22 in
         eq_enum e13 e23
       else false
-  | (_: enum), (_: enum) -> false
+  | _, _ -> false
 
 let same_fringe (t1 : elt tree) (t2 : elt tree) : bool =
   let (e1: enum) = mk_zipper t1 Done in
