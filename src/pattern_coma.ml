@@ -62,6 +62,18 @@ let rec get_tuple a =
   | ATuple at -> at
   | _ -> assert false
 
+let rec p_is_tuple p = match p.ppat_desc with
+  | PCast (p, _) -> p_is_tuple p
+  | PTuple _ -> true
+  | _ -> false
+
+let rec p_get_tuple p =
+  assert (p_is_tuple p);
+  match p.ppat_desc with
+  | PCast (p, _) -> p_get_tuple p
+  | PTuple at -> at
+  | _ -> assert false
+
 let rec is_simple p = match p.ppat_desc with
   | PWild | PVar _ -> true
   | PCast (p, _) -> is_simple p
@@ -161,7 +173,7 @@ let compile
         let at = get_tuple t in
         let tl = at @ tl in
         let rl = List.map (function
-          | {ppat_desc=PTuple pl; _} :: tl,a -> (pl @ tl), a
+          | p :: tl, a when p_is_tuple p -> (p_get_tuple p @ tl), a
           | p :: pl, a ->
               let rec loop p =
                 match p.ppat_desc with
@@ -283,11 +295,12 @@ let annot a pl =
             let ptyp_loc = dummy_location in
             Parsetree.
             { ptyp_desc; ptyp_loc; ptyp_loc_stack=[]; ptyp_attributes=[] } in
-          let sl = List.map (function Abstract s
-            | Concrete s ->
-                let loc = dummy_location in
-                let txt = Longident.Lident s in
-                mk_core_type @@ Parsetree.Ptyp_constr ({loc;txt}, [])
+          let sl = List.map (fun s ->
+            let loc = dummy_location in
+            let txt = Longident.Lident (match s with
+              | Abstract s -> "'" ^ s
+              | Concrete s -> s) in
+            mk_core_type @@ Parsetree.Ptyp_constr ({loc;txt}, [])
             ) sl in
           List.map (instanciate sl) tys in
         let () = if false then
@@ -304,19 +317,22 @@ let annot a pl =
         let pc = E.mk_pattern (PCons (c, pl2)) in
         let ppat_desc = PCast (pc, ty) in
         { p with ppat_desc } in
-  let rec split_ptuple p =
+  let rec split_ptuple p ts =
     match p.ppat_desc with
     | PCast (p', t) ->
         List.map (fun p -> { p with ppat_desc = PCast (p, t) })
-                 (split_ptuple p')
+                 (split_ptuple p' ts)
     | PTuple l -> l
-    | _ -> assert false in
+    | PWild        -> List.map E.mk_wild_typed ts
+    | PVar _       -> assert false
+    | PCons (_, _) -> assert false
+    | PCst _       -> assert false in
   match atom_types a with
   | [    ] -> assert false (* unreachable *)
   | [ ty ] -> List.map (fun (p,action) -> f ty p, action) pl
   | ts ->
       List.map (fun (p,a) ->
-        let sp = split_ptuple p in
+        let sp = split_ptuple p ts in
         let sp = List.map2 f ts sp in
         let pt = { p with ppat_desc = PTuple sp } in
         pt, a) pl
