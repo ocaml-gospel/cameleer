@@ -44,11 +44,11 @@ let rec merge (t1: int tree) (t2: int tree) : int tree =
   match (t1 : elt tree), (t2 : elt tree) with
   | Empty, _ -> t2
   | _, Empty -> t1
-  | Node (l1, x1, r1), Node (l2, x2, r2)
-     [@gospel  "requires heap t1 && heap t2
-                ensures  heap result
-                ensures  forall x. occ x result = occ x t1 + occ x t2
-                ensures  size result = size t1 + size t2" ] ->
+  | (Node (l1, x1, r1), Node (l2, x2, r2))
+    [@gospel  "requires heap t1 && heap t2
+               ensures  heap result
+               ensures  forall x. occ x result = occ x t1 + occ x t2
+               ensures  size result = size t1 + size t2" ] ->
        if x1 < x2 then
          let (l: int tree) = merge r1 t2 in
          Node (l, x1, l1)
@@ -61,12 +61,12 @@ let add (x: int) (t: int tree) : int tree =
 
 let remove_min (t: int tree) : int tree =
   match (t : elt tree) with
-  | Empty      -> assert false
+  | Empty -> assert false
   | Node (l, _, r) -> merge l r
 
 let get_min (t: int tree) : int =
   match (t : elt tree) with
-  | Empty      -> assert false
+  | Empty -> assert false
   | Node (_, x, _) -> x
 
 let main : int tree =

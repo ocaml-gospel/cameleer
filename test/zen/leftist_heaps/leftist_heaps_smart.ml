@@ -97,20 +97,19 @@ let rec merge (t1: elt tree) (t2: elt tree) : elt tree =
         make_n x2 l2 o2
 (*@ r = merge t1 t2
       requires leftist_heap t1 && leftist_heap t2
-      variant size t1 + size t2
-      ensures size r = size t1 + size t2
-      ensures forall x. occ x r = occ x t1 + occ x t2
-      ensures leftist_heap r *)
+      ensures  size r = size t1 + size t2
+      ensures  forall x. occ x r = occ x t1 + occ x t2
+      ensures  leftist_heap r *)
 
 let insert (x: elt) (t: elt tree) : elt tree =
   merge (Node (1, Empty, x, Empty)) t
 
-let find_min (t: elt tree) : elt = ->
+let find_min (t: elt tree) : elt =
   match (t: elt tree) with
   | Empty -> assert false
   | Node (_, _, x, _)
-      [@gospel "requires leftist_heap t
-                ensures result = minimum t"]
+    [@gospel "requires leftist_heap t
+              ensures result = minimum t"]
     -> x
 
 let delete_min (t: elt tree) : elt tree =

@@ -24,14 +24,14 @@ let rec mk_zipper (t : elt tree) (e : enum) : enum =
 let rec eq_enum (e1 : enum) (e2 : enum) : bool =
   match ((e1 : enum), (e2 : enum)) with
   | [], [] -> true
-  | (x1, r1) :: e1, (x2, r2) :: e2 ->
+  | ((x1, r1) : (elt * elt tree)) :: (e1 : (elt * elt tree) list),
+    ((x2, r2) : (elt * elt tree)) :: (e2 : (elt * elt tree) list) ->
       if x1 = x2 then
         let (e1: enum) = mk_zipper r1 e1 in
         let (e2: enum) = mk_zipper r2 e2 in
         eq_enum e1 e2
       else false
-  (* TODO: if we remove the 2nd _ the patterns compilation fails *)
-  | _,_ -> false
+  | _, _ -> false
 (*@ b = eq_num e1 e2
       variant List.length (enum_elements e1)
       requires true

@@ -91,8 +91,6 @@ let rec merge (t1: elt tree) (t2: elt tree) : elt tree =
       else
         let (o2: elt tree) = merge t1 r2 in
         make_n x2 l2 o2
-(*@ r = merge t1 t2
-      variant size t1 + size t2 *)
 
 let insert (x: elt) (t: elt tree) : elt tree =
   merge (Node (1, Empty, x, Empty)) t

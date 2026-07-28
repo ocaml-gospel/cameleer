@@ -104,7 +104,6 @@ let rec merge (t1: elt tree) (t2: elt tree) : elt tree =
         make_n x2 l2 o2
 (*@ r = merge t1 t2
       requires leftist_heap t1 && leftist_heap t2
-      variant size t1 + size t2
       ensures size r = size t1 + size t2
       ensures forall x. occ x r = occ x t1 + occ x t2
       ensures leftist_heap r *)
