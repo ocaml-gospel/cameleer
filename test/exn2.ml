@@ -1,4 +1,5 @@
 exception Empty
+exception H of int
 
 type list = Nil | Cons of int * list
 
@@ -21,3 +22,14 @@ let main (default: int) (l: list) : int =
 (*@ res = main default l
     requires non_neg l && default >= 0
     ensures res >= 0 *)
+
+let main2 (default: int) (l: list) : int =
+  try 
+    hd l
+  with 
+    | Empty [@gospel 
+    {|requires non_neg l && default >= 0
+    ensures result >= 0|}] -> default
+    | H z [@gospel 
+    {|requires non_neg l && default >= 0
+    ensures result >= 0|}] -> 2
