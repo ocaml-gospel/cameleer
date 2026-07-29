@@ -204,3 +204,6 @@ let pp_decl fmt (d: declaration) =
 
 let pp_program fmt =
   pp_print_list ~pp_sep:pp_newline_newline pp_decl fmt
+
+let print_program p =
+  Format.printf "%a@." pp_program p

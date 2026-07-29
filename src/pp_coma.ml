@@ -240,14 +240,19 @@ let pp_decl fmt (d: cdeclaration) =
 | CDLogic decl ->
       fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
 
-let preamble = "
+let preamble stdlist =
+  let pp fmt = fprintf fmt "use %s" in
+  let pp_sep = pp_newline in
+  asprintf
+"
 use ocamlstdlib.Stdlib
+%a
 let halt = any
 let fail { false } = any
 let if (b: bool) (then {b}) (else {not b}) = any
 "
+  (pp_print_list ~pp_sep pp) stdlist
 
-let pp_program fmt =
-  fprintf fmt "%s" preamble;
+let pp_program stdlist fmt =
+  fprintf fmt "%s" (preamble stdlist);
   pp_print_list ~pp_sep:pp_newline_newline pp_decl fmt
-

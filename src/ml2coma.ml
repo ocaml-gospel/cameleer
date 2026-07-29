@@ -313,8 +313,6 @@ and callable fn_name { callable_loc=loc; callable_desc } types =
   let desc = match callable_desc with
     | CId id -> CCId id
     | CFun (data, kon, e) -> (* TODO: specification for the generated fun *)
-        Format.printf "-%d-@." (List.length data);
-        List.iter (fun b -> Format.printf "-->%a@." Pp_ml_lang.pp_binder b) data;
         CCFun (List.map binder data, kon, expr fn_name e types) in
   mk_ccalable ~loc desc
 

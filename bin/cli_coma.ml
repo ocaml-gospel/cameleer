@@ -1,9 +1,8 @@
-open Format
-open Gospel
-open Parser_frontend
 open Cameleer
-module E = Cameleer.Expression
-module T = Cameleer.Uterm
+
+module GP     = Gospel.Parser_frontend
+module PPML   = Pp_ml_lang
+module PPComa = Pp_coma
 
 let fname = ref None
 let debug = ref false
@@ -17,7 +16,7 @@ let spec =
     ("--pat", Arg.Unit (fun () -> compile_patterns := true), "compile pattern matchings");
   ]
 
-let usage_msg = sprintf "%s <file>.ml\nCompile <file> to Coma\n" Sys.argv.(0)
+let usage_msg = Format.sprintf "%s <file>.ml\nCompile <file> to Coma\n" Sys.argv.(0)
 
 let usage () =
   Arg.usage spec usage_msg;
@@ -29,13 +28,14 @@ let set_file f =
   | _ -> usage ()
 
 let () = Arg.parse spec set_file usage_msg
+
 let fname = match !fname with None -> usage () | Some f -> f
 
 let read_file filename nm c =
   let lb = Lexing.from_channel c in
   Location.init lb filename;
-  let ocaml_structure = parse_ocaml_structure_lb lb in
-  parse_structure_gospel ~filename ocaml_structure nm
+  let ocaml_structure = GP.parse_ocaml_structure_lb lb in
+  GP.parse_structure_gospel ~filename ocaml_structure nm
 
 let main file c =
   if !debug then Format.eprintf "Reading file '%s'@." file;
@@ -44,23 +44,25 @@ let main file c =
     String.capitalize_ascii (Filename.chop_extension f) in
   let f = read_file file mod_name c in
   let f = Declaration_coma.s_structure f in
-  printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
+  PPML.print_program f;
   let f = if not !compile_patterns then f else
     begin
-      printf "--BEGIN PAT COMPILATION--@\n";
+      if !debug then Format.printf "== BEGIN PM@\n";
       let f = List.map Pattern_coma.compile_pattern f in
-      printf "--END PAT COMPILATION--@\n";
-      printf "%a@\n" (pp_print_list ~pp_sep:pp_print_newline Pp_ml_lang.pp_decl) f;
+      if !debug then Format.printf "== END PM @\n";
+      PPML.print_program f;
       f
     end in
 
   if !coma then begin
     let dir, file = Filename.(dirname file, basename file) in
     let f_coma = Filename.(concat dir (chop_extension file ^ ".coma")) in
-    let fout = let cout = open_out f_coma in
-      formatter_of_out_channel cout in
+    let fout =
+      let cout = open_out f_coma in
+      Format.formatter_of_out_channel cout in
     let fc = List.map Ml2coma.declaration f in
-    fprintf fout "%a@." Pp_coma.pp_program fc
+    let stdlist = [] in
+    Format.fprintf fout "%a@." (PPComa.pp_program stdlist) fc
   end
 
 let () = main fname (open_in fname)

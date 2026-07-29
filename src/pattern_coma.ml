@@ -1,30 +1,24 @@
 open Ml_lang
 
-module E = Expression_coma
-
+module E      = Expression_coma
+module PPML   = Pp_ml_lang
+module PPComa = Pp_coma
 module Sid = Set.Make(struct
-  type t = Ml_lang.id
+  type t = id
   let compare a b = String.compare a.id_name b.id_name
 end)
 
-module Mid = Map.Make(struct
-  type t = Ml_lang.id
-  let compare a b = String.compare a.id_name b.id_name
-end)
+let dummy_location =
+  let loc_start, loc_end = E.dummy_loc in
+  let loc_ghost = false in
+  Location.{ loc_start ; loc_end ; loc_ghost }
 
 exception NonExhaustive
 exception ListCons
 
-(* binds type name to type constructors+params *)
+(* type_name \leadsto (constructors, params) *)
 let (htypes : (string, (string * Parsetree.core_type list) list) Hashtbl.t)
   = Hashtbl.create 16
-
-let get_constructors t =
-  match Hashtbl.find_opt htypes t with
-  | Some cs -> List.map fst cs
-  | None -> []
-
-let () = ignore get_constructors
 
 let get_type_informations t s =
   if s = "::" then raise ListCons else
@@ -115,13 +109,13 @@ let core_type_to_string t =
   | Parsetree.Ptyp_extension _ -> assert false
 
 type tov = Concrete of string | Abstract of string
-let pp_tov fmt =
+let _pp_tov fmt =
   let open Format in
   function Concrete s -> fprintf fmt "%s" s
          | Abstract s -> fprintf fmt "'%s" s
 
 let rec get_vars_core_type t =
-  match Parsetree.(t.ptyp_desc) with
+  match t.Parsetree.ptyp_desc with
   | Parsetree.Ptyp_constr ({ txt; _}, []) -> [ Concrete (E.string_of_longident txt) ]
   | Parsetree.Ptyp_constr (_, l) -> List.concat_map get_vars_core_type l
   | Parsetree.Ptyp_var s -> [ Abstract s ]
@@ -138,27 +132,25 @@ let rec get_vars_core_type t =
 
 let instanciate sl t =
   let rec loop t =
-    let open Parsetree in
-    match t.ptyp_desc with
-    | Ptyp_constr (c, l) ->
+    match t.Parsetree.ptyp_desc with
+    | Parsetree.Ptyp_constr (c, l) ->
         let l = List.map loop l in
-        let ptyp_desc = Ptyp_constr (c, l) in
+        let ptyp_desc = Parsetree.Ptyp_constr (c, l) in
         { t with ptyp_desc }
-    | Ptyp_var _a ->
+    | Parsetree.Ptyp_var _a ->
         (try List.hd sl with _ -> failwith "broken assumption 1 type argument maximum")
         (* generalize line -1 with: List.assoc a sl *)
-    | Ptyp_tuple _ -> assert false
-    | Ptyp_any -> assert false
-    | Ptyp_arrow (_, _, _) -> assert false
-    | Ptyp_object (_, _) -> assert false
-    | Ptyp_class (_, _) -> assert false
-    | Ptyp_alias (_, _) -> assert false
-    | Ptyp_variant (_, _, _) -> assert false
-    | Ptyp_poly (_, _) -> assert false
-    | Ptyp_package _ -> assert false
-    | Ptyp_extension _ -> assert false in
+    | Parsetree.Ptyp_tuple _ -> assert false
+    | Parsetree.Ptyp_any -> assert false
+    | Parsetree.Ptyp_arrow (_, _, _) -> assert false
+    | Parsetree.Ptyp_object (_, _) -> assert false
+    | Parsetree.Ptyp_class (_, _) -> assert false
+    | Parsetree.Ptyp_alias (_, _) -> assert false
+    | Parsetree.Ptyp_variant (_, _, _) -> assert false
+    | Parsetree.Ptyp_poly (_, _) -> assert false
+    | Parsetree.Ptyp_package _ -> assert false
+    | Parsetree.Ptyp_extension _ -> assert false in
   loop t
-
 
 let compile
   ~(mk_case: atom -> (pattern * 'a) list -> 'a)
@@ -254,7 +246,6 @@ let compile
               try get_type_informations name_ty cons.id_name
               with ListCons -> List.map pattern_type pargs
             in
-            Format.printf "%d %d %s %s@." (List.length pargs) (List.length ts) cons.id_name name_ty;
             let (t_args, p_args) = List.fold_right2 (fun arg tsi (acct, accp) ->
               let i = E.gen_id () in
               let ty = try pattern_type arg with Invalid_argument _ -> tsi in
@@ -267,11 +258,6 @@ let compile
             mc :: acc) col_cons default_mat in
           mk_case t pl in
   compile [a] rl
-
-let dummy_location =
-  let loc_start, loc_end = E.dummy_loc in
-  let loc_ghost = false in
-  Location.{ loc_start ; loc_end ; loc_ghost }
 
 (* type annotate all subpatterns in [pl] *)
 let annot a pl =
@@ -303,17 +289,18 @@ let annot a pl =
             mk_core_type @@ Parsetree.Ptyp_constr ({loc;txt}, [])
             ) sl in
           List.map (instanciate sl) tys in
-        let () = if false then
+        (* let () =
           let open Format in
           Format.printf "ty = %a | name_ty = %s | sl = %a | tys = @[%a@] | tys' @[%a@]@."
             Pp_ml_lang.pp_pty ty
             name_ty
             (pp_print_list ~pp_sep:pp_print_space pp_tov) sl
             (pp_print_list ~pp_sep:pp_print_space Pp_ml_lang.pp_pty) tys
-            (pp_print_list ~pp_sep:pp_print_space Pp_ml_lang.pp_pty) tys' in
-        let pl2 = try List.map2 f tys' pl2 with e ->
+            (pp_print_list ~pp_sep:pp_print_space Pp_ml_lang.pp_pty) tys' in *)
+        let pl2 = List.map2 f tys' pl2 in
+        (* let pl2 = try List.map2 f tys' pl2 with e ->
           Format.printf "ICI %s %d %d@." c.id_name (List.length tys') (List.length pl2);
-          raise e in
+          raise e in *)
         let pc = E.mk_pattern (PCons (c, pl2)) in
         let ppat_desc = PCast (pc, ty) in
         { p with ppat_desc } in
@@ -416,8 +403,8 @@ let add_type tname (c: Parsetree.type_kind) =
   | Ptype_variant cl ->
       let cs = List.map (fun Parsetree.{pcd_name={txt;_}; pcd_args; _} ->
         let n = match pcd_args with
-                | Pcstr_tuple l -> l
-                | _ -> failwith "not implemented 3" in
+          | Pcstr_tuple l -> l
+          | _ -> failwith "not implemented 3" in
         txt, n) cl in
       Hashtbl.add htypes tname cs
 
@@ -427,8 +414,8 @@ let compile_pattern (d: declaration) =
       let decl_desc = DFun (r,id,bl,pre,olds,kl, expr e) in
       { d with decl_desc }
   | DType (_, dl) ->
-      let () = List.iter (fun Gospel.Uast.{ tname; tkind; _ } ->
-        add_type tname.txt tkind) dl in
+      List.iter (fun Gospel.Uast.{ tname; tkind; _ } ->
+        add_type tname.txt tkind) dl;
       d
   | DFunction _
   | DProp _ -> d

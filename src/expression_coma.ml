@@ -140,8 +140,8 @@ let constant s = match s with
   | Pconst_integer _ -> ACst (constant_int s)
   | _ -> assert false
 
-(* TO BE REMOVED? debugging only *)
 let rec identify e =
+  (* debugging only *)
   let open Format in
   let pploc fmt l =
     let ({pos_lnum;pos_cnum;_},_) = location l in
@@ -872,7 +872,6 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       expr e (KExpr k) hm *)
 
   | Sexp_match (e, cases) when is_atomic e ->
-      Format.eprintf "In an atomic match@.";
       let a = atom_of_sexpr e in
       let map k = List.map
         (fun Uast.{spc_lhs; spc_rhs; spc_spec; _} ->
@@ -908,14 +907,10 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       end
 
   | Sexp_match (e, cases) ->
-      Format.eprintf "In a match@.";
       let map k = List.map
         (fun Uast.{spc_lhs; spc_rhs; spc_spec; _} ->
           let ploc = location spc_lhs.ppat_loc in
           let pat = mk_pattern ~loc:ploc (pattern spc_lhs) in
-          let () = match spc_spec with
-            | None -> Format.eprintf "Spec is none@."
-            | Some _ -> Format.eprintf "Spec is some@." in
           let e = match spc_spec with
             | None -> expr_opt spc_rhs k hm
             | Some spec ->
