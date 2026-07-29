@@ -58,3 +58,7 @@ let f (a: int) (b: int) (c: int) : int =
   let (q: int) = y + z in
   x + q
 
+let g (x: int): int =
+  let (k:int->int) = fun (j:int) -> j + 1 in
+  k x
+

@@ -10,8 +10,8 @@ type re =
   | Epsilon
   | Char   of int
   | Alt    of re * re
-   (*| Concat of re * re
-  | Star   of re *)
+  | Concat of re * re
+  | Star   of re
 
 (*
 let nth (s: list int) (x: int)  (k (result: int)  )
@@ -35,12 +35,13 @@ let rec a (s: int list) (r: re) (i: int) (k: int -> unit): unit =
       a s r1 i k;
       a s r2 i k
 
- (*  | Concat ((r1: re), (r2: re)) ->
-      let (k: int -> unit): int -> unit  = fun (j:int) -> a s r2 j k in
+  | Concat (r1, r2) ->
+      let (k: int -> unit) = fun (j:int) -> a s r2 j k in
       a s r1 i k
-  | Star (r12: re) ->
-      let (k2: int -> unit): int -> unit = fun (j:int) -> if i < j then a s r j k in
-      k i; a s r12 i k2 *)
+
+  | Star r ->
+      let (k2: int -> unit) = fun (j:int) -> if i < j then a s r j k in
+      k i; a s r i k2
 
 (* let accept (r: re) (s: string): bool =
   let (n: int) = String.length s in

@@ -170,7 +170,7 @@ let lbalance (l : tree) (k : key) (v : value) (r : tree) : tree =
                memt result k' v' <->
                if k' = k then v' = v else (memt l k' v' \/ memt r k' v') *)
 
-let rbalance (l: tree) (k: key) (v: value) (r: tree) : tree =
+let rbalance (l : tree) (k : key) (v : value) (r : tree) : tree =
   match (r: tree) with
   | Node (Red, Node (Red, b, ky, vy, c), kz, vz, d) ->
       let (b1: tree) = Node (Black, l, k, v, b) in
