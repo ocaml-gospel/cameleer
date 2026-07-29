@@ -4,6 +4,128 @@ open Ml_lang
 
 module E = Expression
 
+let rec string_of_longident = function
+  | Longident.Lident s -> s
+  | Ldot (t, s) -> string_of_longident t ^ s
+  | Lapply (t1, t2) -> string_of_longident t1 ^ string_of_longident t2
+
+module VARS = struct
+  let names: (string, unit) Hashtbl.t = Hashtbl.create 16
+
+  let id id =
+    Hashtbl.replace names id.id_name ()
+
+  let register s =
+    Hashtbl.replace names s ()
+
+  let binder (id1, _) =
+    id id1
+
+  let binders bl =
+    List.iter binder bl
+
+  let mem id =
+    match Hashtbl.find names id with
+    | _ -> true
+    | exception Not_found -> false
+
+  let rec kont { kont_id; kont_arg ; kont_kont ; _ } =
+    id kont_id;
+    binders kont_arg;
+    konts kont_kont
+
+  and konts ks = List.iter kont ks
+
+  let rec ppattern (p: Parsetree.pattern) =
+    match p.ppat_desc with
+    | Ppat_any -> ()
+    | Ppat_var {txt;_} -> register txt
+    | Ppat_alias (p, {txt;_}) -> register txt; ppattern p
+    | Ppat_array pl
+    | Ppat_tuple pl -> List.iter ppattern pl
+    | Ppat_construct (_, o) -> Option.iter (fun (_, p) -> ppattern p) o
+    | Ppat_variant (_, o) ->  Option.iter ppattern o
+    | Ppat_record (l, _) -> List.iter (fun (_, p) -> ppattern p) l
+    | Ppat_or (p1, p2) -> ppattern p1; ppattern p2
+    | Ppat_lazy p
+    | Ppat_exception p
+    | Ppat_open (_, p)
+    | Ppat_constraint (p, _) -> ppattern p
+    | Ppat_constant _
+    | Ppat_interval _
+    | Ppat_type _
+    | Ppat_unpack _ -> ()
+    | Ppat_extension _ -> ()
+
+  let rec s_case = function Uast.{ spc_lhs=p; spc_guard=o; spc_rhs=e; _ } ->
+    ppattern p;
+    Option.iter s_expr o;
+    s_expr e
+
+  and s_expr e =
+    match e.Uast.spexp_desc with
+    | Sexp_fun (_, o, p, e, _) ->
+        Option.iter s_expr o; ppattern p; s_expr e
+    | Sexp_ident {txt;_} -> register (string_of_longident txt)
+    | Sexp_constant _ -> ()
+    | Sexp_let (_, bl, e) ->
+        List.iter (fun Uast.{ spvb_pat; spvb_expr; _ } ->
+          ppattern spvb_pat; s_expr spvb_expr) bl;
+        s_expr e
+    | Sexp_function c -> List.iter s_case c
+    | Sexp_apply (e, el) ->
+        s_expr e;
+        List.iter (fun (_,e) -> s_expr e) el
+    | Sexp_try (e, cl)
+    | Sexp_match (e, cl) ->
+        s_expr e; List.iter s_case cl
+    | Sexp_array el
+    | Sexp_tuple el ->
+        List.iter s_expr el
+    | Sexp_construct (_, o)
+    | Sexp_variant   (_, o) ->
+        Option.iter s_expr o
+    | Sexp_record (l, o) ->
+        Option.iter s_expr o;
+        List.iter (fun (_, e) -> s_expr e) l
+    | Sexp_constraint (e, _)
+    | Sexp_coerce (e, _, _)
+    | Sexp_send (e, _)
+    | Sexp_setinstvar (_, e)
+    | Sexp_letmodule (_, _, e)
+    | Sexp_field (e, _)
+    | Sexp_letexception (_, e)
+    | Sexp_assert e
+    | Sexp_lazy e
+    | Sexp_poly (e, _)
+    | Sexp_newtype (_, e)
+    | Sexp_open (_, e) ->
+        s_expr e
+    | Sexp_sequence (e1, e2)
+    | Sexp_while (e1, e2, _)
+    | Sexp_setfield (e1, _, e2) ->
+        s_expr e1;
+        s_expr e2
+    | Sexp_ifthenelse (e1, e2, o) ->
+        s_expr e1;
+        s_expr e2;
+        Option.iter s_expr o;
+    | Sexp_for (p, e1, e2, _, e3, _) ->
+        ppattern p;
+        s_expr e1;
+        s_expr e2;
+        s_expr e3
+    | Sexp_override l ->
+        List.iter (fun (_,e) -> s_expr e) l
+    | Sexp_new _
+    | Sexp_object _
+    | Sexp_pack _
+    | Sexp_letop _
+    | Sexp_extension _
+    | Sexp_unreachable            -> ()
+
+end
+
 let (^~) a b = fun c -> a c b
 
 let rec split_at i l =
@@ -58,19 +180,28 @@ let mk_raise_name eid = "raise_" ^ eid
 let mk_id ?(loc=dummy_loc) id =
   { id_name = id; id_loc = loc}
 
-let gen_id ?(prefix = "_x") ?(loc=dummy_loc) () =
-  mk_id ~loc (gen_symbol ~prefix ())
+let gen_symbol =
+  let cnt = ref 0 in
+  fun prefix ->
+    cnt := !cnt + 1;
+    Printf.sprintf "%s%i" prefix !cnt
 
-let gen_kid ?(prefix = "_k") ?(loc=dummy_loc) () =
-  mk_id ~loc (gen_symbol ~prefix ())
+let rec gen_id ?(prefix = "x") ?(loc=dummy_loc) () =
+  let id = gen_symbol prefix in
+  if VARS.mem id then
+    gen_id ~prefix ~loc ()
+  else
+    mk_id ~loc id
+
+let gen_kid ?(prefix = "k") ?(loc=dummy_loc) () =
+  let id = gen_symbol prefix in
+  if VARS.mem id then
+    gen_id ~prefix ~loc ()
+  else
+    mk_id ~loc id
 
 let mk_callable ?(loc=dummy_loc) callable_desc =
   { callable_loc=loc ; callable_desc }
-
-let rec string_of_longident = function
-  | Longident.Lident s -> s
-  | Ldot (t, s) -> string_of_longident t ^ s
-  | Lapply (t1, t2) -> string_of_longident t1 ^ string_of_longident t2
 
 let mk_expr ?(loc=dummy_loc) expr_desc =
   { expr_loc=loc ; expr_desc }
@@ -688,26 +819,31 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
   | Sexp_let ((Nonrecursive | Recursive), [svb], e2) ->
       let id, (pty : core_type option) = get_pattern_id svb.spvb_pat in
       begin match pty with
-      | Some ({ ptyp_desc = Ptyp_arrow _; _ } as tarr) ->
-          let rec collect b e acc = match b, e.Uast.spexp_desc with
-            | { ptyp_desc = Ptyp_arrow (_,a,b); _ }, Sexp_fun (_, _, pat, e, _)
-              -> let x = get_pattern_id pat in
-                 collect b e ((a, x) :: acc)
-            | _ -> List.rev acc, e in
-          let r = collect tarr svb.spvb_expr [] in
-          let[@warning "-8"] [(ty_retk, x)], ek = r in
+      | Some ({ ptyp_desc = Ptyp_arrow _; _ } as ty) ->
+          let rec loop ty e acc ty_out =
+            match ty.ptyp_desc, e.Uast.spexp_desc with
+            | Ptyp_arrow (_, ty, tys), Sexp_fun (_, _, pat, e, _) ->
+                let p = ty, get_pattern_id pat in
+                loop tys e (p :: acc) (Some tys)
+            | _ -> List.rev acc, e, ty_out in
+          let _ty, x, ek, ty_k =
+            match loop ty svb.spvb_expr [] None with
+            | [(ty_x, x)], ek, Some ty_o -> ty_x, x, ek, ty_o
+            | _, e, _ ->
+                Why3.Loc.errorm ~loc:(Uterm.location e.Uast.spexp_loc)
+                  "assumption broken: only 1 argument per closure is allowed" in
           let loc1 = location ek.spexp_loc in
           let loc2 = location e2.spexp_loc in
           let retkid = gen_kid () in
           let bodyk = mk_expr ~loc:loc1 @@ expr ek (KName retkid) hm in
-          ELetK (id, [x], Some (retkid, ty_retk), bodyk,
+          ELetK (id, [x], Some (retkid, ty_k), bodyk,
                  mk_expr ~loc:loc2 @@ expr ~etype e2 k hm)
       | _ ->
           let e1 = svb.spvb_expr in
           let loc1 = location e1.spexp_loc in
           let loc2 = location e2.spexp_loc in
           let body = mk_expr ~loc:loc2 @@ expr ~etype e2 k hm in
-          let kid = gen_kid ~prefix:"_letk" () in
+          let kid = gen_kid () in
           ELetK (kid, [(id, pty)], None, body,
                  mk_expr ~loc:loc1 @@ expr ~etype:pty e1 (KName kid) hm)
       end
@@ -743,7 +879,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
             | _ -> assert false in
           [(id, Some pty)]
         | PWild ->
-          let id = gen_id ~prefix:"_unused" () in
+          let id = gen_id ~prefix:"u" () in
           let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in
           [(id, xpty)]
         | PCons (_, [p]) -> get_mlpattern_binders p exn_name
@@ -835,9 +971,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
             let id = mk_id ~loc (string_of_longident txt) in
             CId id, id
         | _ -> assert false (* impossible (type error) *) in
-
       let args = List.map (fun (_, e) -> atom_of_sexpr e) args in
-
       let pargs, kargs =
         try
           let (lp, _), _ = Hashtbl.find toplevel_fun_types id.id_name in
@@ -977,7 +1111,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
 
   | Sexp_while (e1, e2, _spec) ->
       let loc1 = location e1.spexp_loc in
-      let id_loop = gen_kid ~prefix:"_loop" () in
+      let id_loop = gen_kid ~prefix:"loop" () in
       (* TODO factorize [cloop] with
          a local handler definition mutually recursive with [id_loop].
          ```coma
@@ -992,7 +1126,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
          ```
         *)
       let cloop = mk_expr ~loc:loc1 (expr ~etype:tybool e1 (KName id_loop) hm) in
-      let u = (gen_id ~prefix:"_unused" ()), tyunit in
+      let u = (gen_id ~prefix:"u" ()), tyunit in
       let kcloop = KExpr (mk_callable (CFun ([u], [], cloop))) in
       let z = gen_id () in
       (* TODO types instead of None *)
@@ -1056,6 +1190,7 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
     | None | Some U.{sp_header = None; _} -> mk_id "result"
     | Some U.{sp_header = Some header; _} -> ret header.sp_hd_ret in
   let id, pty = get_pattern_id svb.spvb_pat in
+  VARS.id id;
   (* FIXME? Honestly, I do not know what this pty is. *)
   (* Mário [12-03-2026, 15h35]: OK, I figured it out. This is the
      type of a function if, for instance, we write something like:
@@ -1069,6 +1204,12 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
      Let us ignore it, for now. *)
   ignore pty; (* TODO *)
   let params, kparams, pexp = collect_params svb.spvb_expr in
+  let () =
+    VARS.binders params;
+    VARS.konts kparams;
+    VARS.s_expr pexp
+  in
+
   let lp, lk = List.length params, List.length kparams in
   let () = Hashtbl.add toplevel_fun_types id.id_name ((lp, params), (lk, kparams)) in
   let _params_id_of_spec = function
@@ -1108,7 +1249,7 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
         let xpty = map_pty xpty in
         mk_id ~loc:(location preid.pid_loc) preid.pid_str, xpty
       | Uast.Pwild ->
-        let id = gen_id ~prefix:"_unused" () in
+        let id = gen_id ~prefix:"u" () in
         let xpty = Hashtbl.find_opt exn_type_hmap exn_name |> Option.join in
         let xpty = map_pty xpty in
         id, xpty

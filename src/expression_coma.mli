@@ -11,7 +11,7 @@ val mk_id : ?loc:Ml_lang.location -> label -> id
 
 val preid : Identifier.Preid.t -> id
 val gen_id : ?prefix:label -> ?loc:Ml_lang.location -> unit -> id
-
+val gen_symbol : label -> label
 
 val cst_true  : constant
 val cst_false : constant
@@ -33,7 +33,6 @@ val mk_tpattern   : ?loc:location -> pattern_desc -> core_type -> pattern
 val mk_wild_typed : ?loc:location -> core_type -> pattern
 val mk_decl :
   rec_flag * id * binder list * Uast.term list * (binder * atom) list * kont list * expr -> declaration
-
 
 val exn_type_hmap : (string, core_type option) Hashtbl.t
 

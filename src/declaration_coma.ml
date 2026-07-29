@@ -25,7 +25,7 @@ let s_structure (* ml *), s_signature (* mli *) =
     let loc = E.location sstr_loc in
     match sstr_desc with
     | Str_value (b, svb_list) ->
-        let k = ML.{ id_name = gen_symbol ~prefix:"return" (); id_loc = E.dummy_loc } in
+        let k = ML.{ id_name = E.gen_symbol "return"; id_loc = E.dummy_loc } in
         List.map (E.s_value_binding b ^~ k) svb_list
     | Str_type (rec_flag, type_decl_list) ->
         let decl_desc = ML.DType (rec_flag, type_decl_list) in
