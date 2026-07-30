@@ -316,11 +316,11 @@ let rec identify e =
   | Sexp_extension _ -> eprintf "extension@."
   | Sexp_unreachable -> eprintf "unreachable@."
 
-let identify_fail e =
+let identify_fail ?(msg="ANF assumption broken") e =
   identify e;
   Why3.Loc.errorm
     ~loc:(Uterm.location e.Uast.spexp_loc)
-    "ANF assumption broken"
+    "%s" msg
 
 let collect_params e =
   let rec loop (accd, acck) e =
@@ -560,8 +560,7 @@ let rec atom_of_construct ?(loc=dummy_loc) c = match c with
 
 and atom_of_sexpr e =
   let loc = location e.spexp_loc in
-  if not (is_atomic e) then
-    ((* Format.printf "ANF assumption broken@.";  *)identify_fail e) else
+  if not (is_atomic e) then identify_fail e else
   match e.Uast.spexp_desc with
   | Sexp_constant  c      -> mk_atom ~loc (constant c)
   | Sexp_construct (l, e) -> atom_of_construct (l,e)
@@ -687,7 +686,7 @@ let mayraise e =
     | Sexp_pack _
     | Sexp_open (_, _)
     | Sexp_letop _
-    | Sexp_extension _ -> identify_fail e in
+    | Sexp_extension _ -> identify_fail ~msg:"unsupported language construct" e in
   loop S.empty e
 
 type kont_type = KName of id | KExpr of callable
@@ -1005,7 +1004,6 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
               | _ -> assert false) kargs in
           pargs, kargs
         with Not_found -> args, [] in
-      Format.printf "-------------- id %s:: %d / %d@." id.id_name (List.length pargs) (List.length kargs);
       let k = match k with
         | KName k -> mk_callable @@ CId k
         | KExpr k -> k in
@@ -1016,9 +1014,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
         gs [] in
       EApp (mk_callable ~loc c, pargs, kargs @ (k::sl))
 
-  (* TODO: is this unreachable? *)
-  | Sexp_apply (_e, _args) -> assert false
-      (* let loc = location e.spexp_loc in
+  | Sexp_apply (e, args) ->
+      let loc = location e.spexp_loc in
       let z = gen_id ~loc () in
       let args = List.map (fun (_, e) -> atom_of_sexpr e) args in
       let k = match k with
@@ -1027,7 +1024,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let k = mk_callable ~loc @@
         CFun ([z, etype],[], mk_expr @@
               EApp (mk_callable @@ CId z, args, [k])) in
-      expr e (KExpr k) hm *)
+      expr e (KExpr k) hm
 
   | Sexp_match (e, cases) when is_atomic e ->
       let a = atom_of_sexpr e in

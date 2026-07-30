@@ -1,5 +1,3 @@
-exception Exit of int
-
 type re =
   | Empty
   | Epsilon
@@ -13,14 +11,12 @@ let nth (s: list int) (x: int)  (k (result: int)  )
 = k {x}
 *)
 
-type char = int
-
 (*@ predicate mem (w: int sequence) (r: re) *)
 
 (*@ axiom mem_eps:
       mem Sequence.empty Empty *)
 (*@ axiom mem_char:
-      forall c: char. mem (Sequence.singleton c) (Char c) *)
+      forall c: int. mem (Sequence.singleton c) (Char c) *)
 (*@ axiom mem_altl:
       forall w: int sequence, r1 r2: re. mem w r1 -> mem w (Alt r1 r2) *)
 (*@ axiom mem_altr:
@@ -68,8 +64,8 @@ type char = int
     [@inline:trivial]
     exists j. i <= j <= Sequence.length w /\ mem w[i..j] r /\ ck j *)
 
-let nth (s: int list) (idx: int): int = assert false
-let len (s: int list): int = assert false
+let nth (s: int list) (idx: int): int = List.nth s idx
+let len (s: int list): int = List.length s
 
 let rec a (s: int list) (r: re) (i: int) (k: int -> bool): bool =
   match (r: re) with
@@ -77,25 +73,18 @@ let rec a (s: int list) (r: re) (i: int) (k: int -> bool): bool =
   | Epsilon -> k i
   | Char c ->
       let (n: int) = len s in
-      if i < n then
-        let (si: int) = nth s i in
-        if si = c then k (i + 1)
-        else false
-      else false
+      i < n && let (si: int) = nth s i in
+               si = c && k (i + 1)
   | Alt (r1, r2) ->
       let (test: bool) = a s r1 i k in
-      if test then true
-      else a s r2 i k
+      test || a s r2 i k
   | Concat (r1, r2) ->
       let (k: int -> bool) = fun (j:int) -> a s r2 j k in
       a s r1 i k
-  | Star r ->
-      let (k2: int -> bool) = fun (j:int) ->
-        if i < j then a s r j k
-        else false in
+  | Star r1 ->
+      let (k2: int -> bool) = fun (j:int) -> i < j && a s r j k in
       let (ki: bool) = k i in
-      if ki then a s r i k2
-      else false
+      ki || a s r1 i k2
 (*@ requires 0 <= i <= Sequence.length s
     ensures  true
  *)
@@ -107,3 +96,24 @@ let accept (r: re) (s: int list): bool =
   a s r 0 k
 (*@ requires true
     ensures  result <-> mem r s *)
+
+(*
+let w1 = []
+let w2 = [1;1;1;1;1]
+let w3 = [1;2;1]
+let w4 = [2;2;2;1]
+
+let r1 = Star (Char 1)
+let r2 = Star (Alt (Alt (Char 1, Char 2), Char 3))
+let r3 = Alt (Empty, Empty)
+
+let () =
+  assert (accept r1 w1);
+  assert (accept r1 w2);
+  assert (accept r2 w1);
+  assert (accept r2 w2);
+  assert (accept r2 w3);
+  assert (not @@ accept r3 w1);
+  assert (not @@ accept r3 w2);
+  assert (not @@ accept r1 w3);
+  assert (not @@ accept r1 w4) *)
