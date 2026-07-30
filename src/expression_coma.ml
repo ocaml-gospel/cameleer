@@ -502,7 +502,8 @@ let is_binop, get_binop =
       ("<", Some OPLt);
       (">", Some OPGt);
       ("&&", Some OPAnd);
-      ("<>", None);
+      ("||", Some OPOr);
+      ("<>", Some OPNe);
       ("=", Some OPEq);
       ("infix ::", None);
       ("::", None);
@@ -510,6 +511,9 @@ let is_binop, get_binop =
       ("@", None) ];
   (fun s -> Hashtbl.mem driver s),
   (fun s -> Option.get @@ Hashtbl.find driver s)
+
+let is_and s = s = "&&"
+let is_or s = s = "||"
 
 (* let is_deref = function
   | Uast.Sexp_apply ({ spexp_desc = Sexp_ident {txt = Lident "!"; _}; _ }, [_]) -> true
@@ -928,12 +932,32 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
         mk_expr ~loc @@ ELetK (eid, binders, None, d, acc)) e cases in
       ctx letks.expr_desc
 
-  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([_;_] as args))
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([(_,a1);(_,a2)]))
+    when is_or (string_of_longident txt) ->
+      let a1 = atom_of_sexpr a1 in
+      let loc = a1.atom_loc in
+      let loc2 = location a2.spexp_loc in
+      let _true = mk_atom ~loc @@ ACst (CBool true) in
+      let _then = mk_expr ~loc @@ callk [_true] in
+      let _else = mk_expr ~loc:loc2 @@ expr ~etype a2 k hm in
+      EIf (a1, _then, _else)
+
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([(_,a1);(_,a2)]))
+    when is_and (string_of_longident txt) ->
+      let a1 = atom_of_sexpr a1 in
+      let loc = a1.atom_loc in
+      let loc2 = location a2.spexp_loc in
+      let _false = mk_atom ~loc @@ ACst (CBool false) in
+      let _else = mk_expr ~loc @@ callk [_false] in
+      let _then = mk_expr ~loc:loc2 @@ expr ~etype a2 k hm in
+      EIf (a1, _then, _else)
+
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([(_,a1);(_,a2)]))
     when is_binop (string_of_longident txt) ->
       let st = string_of_longident txt in
       let op = get_binop st in
-      let[@warning "-8"] [a1;a2] =
-        List.map (fun (_, e) -> identify e; atom_of_sexpr e) args in
+      let a1 = atom_of_sexpr a1 in
+      let a2 = atom_of_sexpr a2 in
       let a  = mk_atom ~loc:a1.atom_loc @@ ABinop (a1, op, a2) in
       callk [a]
 

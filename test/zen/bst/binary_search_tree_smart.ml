@@ -42,9 +42,8 @@ let rec mem (x: elt) (t: elt tree) : bool =
   | Node (l, v, r)
     [@gospel "requires bst t
               ensures  result <-> mem x t"] ->
-      if x = v then true
-      else if x < v then mem x l
-      else mem x r
+      x = v || if x < v then mem x l
+               else mem x r
 
 (*@ function size (t: 'a tree) : integer = match t with
       | Empty -> 0

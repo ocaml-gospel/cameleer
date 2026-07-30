@@ -21,7 +21,7 @@ type cbinder = id * Ptree.pty option
 type constant = CNum of int | CBool of bool | CUnit
 
 type op = OPAdd | OPMinus | OPMult | OPDiv | OPMod
-        | OPEq | OPLe | OPLt | OPGe | OPGt
+        | OPEq | OPLe | OPLt | OPGe | OPGt | OPNe
         | OPAnd | OPOr | OPNot
 
 type pattern = {

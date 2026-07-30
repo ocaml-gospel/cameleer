@@ -24,11 +24,10 @@ let rec eq_enum (e1 : enum) (e2 : enum) : bool =
   | (Next (x1, r1, e11), Next (x2, r2, e22))
     [@gospel "requires true
               ensures result <-> Sequence.(==) (enum_elements e1) (enum_elements e2)"] ->
-      if x1 = x2 then
+      x1 = x2 &&
         let (e13: enum) = mk_zipper r1 e11 in
         let (e23: enum) = mk_zipper r2 e22 in
         eq_enum e13 e23
-      else false
   | _, _ -> false
 
 let same_fringe (t1 : elt tree) (t2 : elt tree) : bool =

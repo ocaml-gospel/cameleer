@@ -35,6 +35,7 @@ let pp_op fmt (op: op) =
   | OPAnd -> fprintf fmt "&&"
   | OPOr -> fprintf fmt "||"
   | OPNot -> fprintf fmt "not"
+  | OPNe -> fprintf fmt "<>"
 
 let pp_id fmt id =
   fprintf fmt "%s" id.id_name

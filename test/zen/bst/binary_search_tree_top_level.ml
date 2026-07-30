@@ -46,9 +46,8 @@ let rec mem (x: elt) (t: elt tree) : bool =
   match (t: elt tree) with
   | Empty -> false
   | Node (l, v, r) ->
-      if x = v then true
-      else if x < v then mem x l
-      else mem x r
+      x = v || if x < v then mem x l
+               else mem x r
 (*@ requires bst t
     ensures  result <-> mem x t *)
 
