@@ -331,9 +331,11 @@ let collect_params e =
         | Some ({ ptyp_desc = Ptyp_arrow (_,a,b); _ } as _tarr) ->
             let kont = {
               kont_id   = name;
+              kont_writes = [];
               kont_arg  = [mk_id "result", map_pty (Some a)];
               kont_kont = [
                 { kont_id   = { name with id_name = "_" ^ name.id_name };
+                  kont_writes = [];
                   kont_arg  = [mk_id "result2", map_pty (Some b)];
                   kont_kont = [];
                   kont_pre  = [];
@@ -435,8 +437,20 @@ and extract_old_list tl =
   let tl', nss = List.split (List.map extract_old tl) in
   tl', List.concat nss
 
+(** Extracts the variable names appearing in a [modifies] clause
+    ([sp_writes]). Only plain identifiers are supported. *)
+let writes_of_spec = function
+  | None -> []
+  | Some U.{ sp_writes; _ } ->
+      List.filter_map (fun (t: Uast.term) ->
+        match t.Uast.term_desc with
+        | Uast.Tpreid (Uast.Qpreid preid) -> Some (mk_id preid.Uast.Preid.pid_str)
+        | _ -> None
+      ) sp_writes
+
 let mk_kont kont_id kont_arg spec =
-  let mk_kont kont_pre = { kont_id; kont_arg; kont_kont=[]; kont_pre } in
+  let mk_kont kont_pre =
+    { kont_id; kont_writes = writes_of_spec spec; kont_arg; kont_kont=[]; kont_pre } in
   let pre = match spec with
     | None -> []
     | Some U.{sp_post; _} -> sp_post in
@@ -1302,6 +1316,7 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
         | Some (id, pty, terms) ->
             (if has_args then [(id, pty)] else []), terms in
       { kont_id   = mk_id s;
+        kont_writes = [];
         kont_arg;
         kont_kont = [];
         kont_pre  = pre }

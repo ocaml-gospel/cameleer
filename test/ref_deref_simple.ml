@@ -23,6 +23,7 @@ let incr_twice (r: int ref) : int =
   r := !r + 1;
   !r
 (*@ requires true
+    modifies r
     ensures !r = !(old r) + 2 *)
 
 let incr_twice2 (r: int ref) (t: int ref) : int  =
@@ -31,6 +32,8 @@ let incr_twice2 (r: int ref) (t: int ref) : int  =
   t := !t + 2;
   !r
 (*@ requires true
+    modifies r
+    modifies t
     ensures !r = !(old r) + 2 && !t = !(old t) + 2 *)
 
 (* let postIncrPro (r: int ref) : int =

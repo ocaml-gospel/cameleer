@@ -85,6 +85,7 @@ type precondition = U.term list
 
 type kont = {
   kont_id: id;
+  kont_writes: id list; (* [modifies] clause: variables this kont may mutate *)
   kont_arg: cbinder list;
   kont_kont: kont list;
   kont_pre: precondition;
@@ -122,6 +123,7 @@ type info_p = cbinder list
 
 type ckont = {
   ckont_id: id;
+  ckont_writes: id list; (* [modifies] clause: variables this kont may mutate *)
   ckont_arg: cbinder list;
   ckont_kont: ckont list;
   ckont_pre: cprecondition;

@@ -76,7 +76,7 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_cbinder ~paren:false) x
         (fun fmt e -> pp_atom fmt e) a
   | CELetRef (x, a, e2) ->
-      fprintf fmt "@[%a@]@\n[%a =@ @[<hov 2>%a@]]"
+      fprintf fmt "@[%a@]@\n[&%a =@ @[<hov 2>%a@]]"
         (fun fmt e -> pp_expr fmt e) e2
         (pp_cbinder ~paren:false) x
         (fun fmt e -> pp_atom fmt e) a
@@ -182,9 +182,14 @@ let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"
   | Nonrecursive -> ()
 
-let rec pp_kont fmt {ckont_id; ckont_pre; ckont_kont; ckont_arg} =
-  fprintf fmt (protect_on true "@[%a@ @[%a@]@ @[%a@]@ @[%a@]@]")
+let pp_writes fmt = function
+  | [] -> ()
+  | writes -> fprintf fmt "@[[%a]@]@ " (pp_print_list ~pp_sep:pp_space pp_id) writes
+
+let rec pp_kont fmt {ckont_id; ckont_writes; ckont_pre; ckont_kont; ckont_arg} =
+  fprintf fmt (protect_on true "@[%a@ %a@[%a@]@ @[%a@]@ @[%a@]@]")
     pp_id ckont_id
+    pp_writes ckont_writes
     (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) ckont_arg
     pp_cpre ckont_pre
     (pp_print_list ~pp_sep:pp_space pp_kont) ckont_kont

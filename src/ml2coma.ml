@@ -446,11 +446,12 @@ let type_decl Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
 
 let declaration { decl_desc; decl_loc } =
   let mk_cdecl cdecl_desc = { cdecl_loc = decl_loc; cdecl_desc } in
-  let rec mk_ckont { kont_id; kont_arg; kont_kont; kont_pre } =
+  let rec mk_ckont { kont_id; kont_writes; kont_arg; kont_kont; kont_pre } =
     let ckont_kont = List.map mk_ckont kont_kont in
     (* let ckont_arg = List.map (fun (i,t) -> i, Option.map E.core_type t) kont_arg in *)
     let ckont_arg = kont_arg in
     { ckont_id  = kont_id;
+      ckont_writes = kont_writes;
       ckont_arg;
       ckont_kont;
       ckont_pre = List.map (Uterm.term false) kont_pre } in
