@@ -132,10 +132,10 @@ and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
         (pp_cbinder ~paren:true) binder
         (fun fmt e -> pp_expr fmt e) e
   | CAId x -> fprintf fmt (protect_on paren @@ curly_braces curly "%s") x.id_name
-  | CATuple al -> (* TODO: wip on tuples *)
+  | CATuple al ->
       let pp_sep = if comma_tuple then pp_comma else pp_space in
-      fprintf fmt (protect_on paren "@[%a@]")
-        (pp_print_list ~pp_sep (pp_atom ~curly(*:true*))) al (* TODO *)
+      fprintf fmt (protect_on paren (curly_braces curly "@[%a@]"))
+        (pp_print_list ~pp_sep (pp_atom ~curly:false)) al
   (* case of list *)
   | CACons ({id_name="[]";_}, []) -> fprintf fmt (curly_braces curly "Nil")
   | CACons ({id_name="::";_}, [h;t]) ->
@@ -154,7 +154,7 @@ and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
         (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:false)) al (* TODO *)
   | CACast (a, t) ->
       fprintf fmt (protect_on paren @@ curly_braces curly "@[%a: %a@]")
-        (pp_atom ~comma_tuple ~paren ~curly:false) a
+        (pp_atom ~comma_tuple ~paren:true ~curly:false) a
         pp_pty t
 
 and pp_callable ?(_fn_name="") fmt c =

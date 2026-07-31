@@ -750,7 +750,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       callk [mk_atom ~loc (AId id)]
 
   | Sexp_tuple el ->
-      callk @@ List.map atom_of_sexpr el
+      let a = mk_atom ~loc (ATuple (List.map atom_of_sexpr el)) in
+      callk [bind_cast etype a]
 
   | Sexp_ifthenelse (e1, e2, e3) when is_atomic e1 ->
       let exp e k = match e.Uast.spexp_spec with
