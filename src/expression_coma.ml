@@ -200,6 +200,12 @@ let gen_kid ?(prefix = "k") ?(loc=dummy_loc) () =
   else
     mk_id ~loc id
 
+let mk_prefix t =
+  match t with
+  | Some { ptyp_desc = Ptyp_constr ({txt;_}, _); _ } ->
+      String.make 1 (string_of_longident txt).[0]
+  | _ -> "x"
+
 let mk_callable ?(loc=dummy_loc) callable_desc =
   { callable_loc=loc ; callable_desc }
 
@@ -793,7 +799,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       begin match k with
       | KName k -> EIf (a, exp e2 k , e3 k)
       | KExpr k ->
-          let z   = gen_id () in
+          let z   = gen_id ~prefix:"b" () in
           let kid = gen_kid () in
           let e2  = exp e2 kid in
           ELetK (kid, [(z,tybool)], None,
@@ -817,7 +823,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
                        mk_expr ~loc @@ EApp  (ckid, [aresult], []))),
                      mk_expr ~loc @@ EAssert (spec.fun_req,
                      mk_expr ~loc @@ EHide e)) in
-      let z = gen_id ~loc:(location e1.spexp_loc) () in
+      let z = gen_id ~prefix:"b" ~loc:(location e1.spexp_loc) () in
       let f, kid = match k with
       | KName k ->
           let f e2 e3 = mk_callable @@
@@ -825,7 +831,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
           f, k
       | KExpr k ->
           let kid = gen_kid () in
-          let z2  = gen_id () in
+          let prefix = mk_prefix etype in
+          let z2  = gen_id ~prefix () in
           let az2 = mk_atom (AId z2) in
           let f e2 e3 = mk_callable @@ CFun ([z, tybool], [],
             mk_expr @@ ELetK (kid, [(z2, etype)], None,
@@ -926,7 +933,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
         | KName k -> Fun.id, k
         | KExpr c ->
             let kid = gen_kid () in
-            let x = gen_id () in
+            let prefix = mk_prefix etype in
+            let x = gen_id ~prefix () in
             let a = mk_atom ~loc (AId x) in
             let f e = ELetK (kid, [(x,etype)], None,
                                    mk_expr @@ EApp (c, [a], []),
@@ -1085,7 +1093,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       begin match k with (* TODO inline this somehow *)
       | KName k -> EMatch (a, map k) (* TODO *)
       | KExpr k ->
-          let aid = gen_id  () in
+          let prefix = mk_prefix etype in
+          let aid = gen_id ~prefix () in
           let kid = gen_kid () in
           let cases = map kid in
           ELetK (kid, [(aid, etype)], None,
@@ -1118,7 +1127,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
         cases in
       begin match k with (* TODO inline this somehow *)
       | KName k ->
-          let z = gen_id ~loc () in
+          let prefix = mk_prefix etype in
+          let z = gen_id ~prefix ~loc () in
           let cases = map k in
           let kk = mk_callable @@
               CFun ([z, etype],[],
@@ -1127,7 +1137,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       | KExpr k ->
           let kid = gen_kid () in
           let z   = gen_id  () in
-          let z2  = gen_id  () in
+          let prefix = mk_prefix etype in
+          let z2  = gen_id ~prefix () in
           let az2 = mk_atom (AId z2) in
           let cases = map kid in
           let kk = mk_callable @@
@@ -1158,13 +1169,13 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
 
   | Sexp_sequence (e1, e2) ->
       let k = mk_expr ~loc:(location e2.spexp_loc) @@ expr ~etype e2 k hm in
-      let u = (gen_id ~prefix:"_unit" ()), tyunit in
+      let u = (gen_id ~prefix:"u" ()), tyunit in
       let k = KExpr (mk_callable (CFun ([u],[], k))) in
       expr ~etype:tyunit e1 k hm
 
   | Sexp_while (e1, e2, _spec) ->
       let loc1 = location e1.spexp_loc in
-      let id_loop = gen_kid ~prefix:"loop" () in
+      let id_loop = gen_kid ~prefix:"i" () in
       (* TODO factorize [cloop] with
          a local handler definition mutually recursive with [id_loop].
          ```coma
@@ -1181,8 +1192,9 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let cloop = mk_expr ~loc:loc1 (expr ~etype:tybool e1 (KName id_loop) hm) in
       let u = (gen_id ~prefix:"u" ()), tyunit in
       let kcloop = KExpr (mk_callable (CFun ([u], [], cloop))) in
-      let z = gen_id () in
-      ELetK (id_loop, [(z, tybool)], None, mk_expr @@
+      let z = gen_id ~prefix:"b" () in
+      (* TODO types instead of None *)
+      ELetK (id_loop, [(z,tybool)], None, mk_expr @@
              EIf (mk_atom @@ AId z,
                   mk_expr (expr ~etype:tyunit e2 kcloop hm),
                   mk_expr (callk [atom_unit])),

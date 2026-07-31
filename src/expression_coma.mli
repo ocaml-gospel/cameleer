@@ -12,6 +12,7 @@ val mk_id : ?loc:Ml_lang.location -> label -> id
 val preid : Identifier.Preid.t -> id
 val gen_id : ?prefix:label -> ?loc:Ml_lang.location -> unit -> id
 val gen_symbol : label -> label
+val mk_prefix : core_type option -> label
 
 val cst_true  : constant
 val cst_false : constant

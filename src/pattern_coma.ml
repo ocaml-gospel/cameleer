@@ -247,8 +247,9 @@ let compile
               with ListCons -> List.map pattern_type pargs
             in
             let (t_args, p_args) = List.fold_right2 (fun arg tsi (acct, accp) ->
-              let i = E.gen_id () in
               let ty = try pattern_type arg with Invalid_argument _ -> tsi in
+              let prefix = Expression_coma.mk_prefix (Some ty) in
+              let i = E.gen_id ~prefix () in
               let a = E.mk_atom (ACast (E.mk_atom (AId i), ty)) in
               let p = E.mk_pattern (PVar i) in
               let p = E.mk_pattern (PCast (p, ty)) in
