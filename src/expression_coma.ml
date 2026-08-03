@@ -719,6 +719,23 @@ let mk_typ s =
 
 let tyunit = Some (mk_typ "unit")
 let tybool = Some (mk_typ "bool")
+let tyint = Some (mk_typ "int")
+
+let mk_preid_term ?(loc=Location.none) name =
+  Uast.{ term_desc = Tpreid (Qpreid (Identifier.Preid.create ~loc name));
+         term_loc = loc }
+
+let rec term_of_atomic_sexpr (e: Uast.s_expression) : Uast.term =
+  let loc = e.spexp_loc in
+  match e.spexp_desc with
+  | Sexp_constant c -> Uast.{ term_desc = Tconst c; term_loc = loc }
+  | Sexp_ident {txt; _} -> mk_preid_term ~loc (string_of_longident txt)
+  | Sexp_constraint (e, _) -> term_of_atomic_sexpr e
+  | _ -> identify_fail ~msg:"for-loop bounds must be atomic (variable or constant)" e
+
+let mk_le_term ?(loc=Location.none) t1 t2 =
+  let op = Identifier.Preid.create ~loc "infix <=" in
+  Uast.{ term_desc = Tinfix (t1, op, t2); term_loc = loc }
 
 let bind_cast ty a =
   match ty with
@@ -1165,15 +1182,51 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let u = (gen_id ~prefix:"u" ()), tyunit in
       let kcloop = KExpr (mk_callable (CFun ([u], [], cloop))) in
       let z = gen_id () in
-      (* TODO types instead of None *)
-      ELetK (id_loop, [(z,None)], None, mk_expr @@
+      ELetK (id_loop, [(z, tybool)], None, mk_expr @@
              EIf (mk_atom @@ AId z,
                   mk_expr (expr ~etype:tyunit e2 kcloop hm),
                   mk_expr (callk [atom_unit])),
              cloop)
 
-  (* TODO
-     currently, this is *false* *)
+  | Sexp_for (pat, expr_lower, expr_higher, flag, expr_body, _spec) ->
+      let loc1 = location expr_lower.spexp_loc in
+      (* let loc2 = location expr_higher.spexp_loc in *)
+      let id_loop = gen_kid ~prefix:"loop" () in
+      let r, _ = get_pattern_id pat in
+      let hi = gen_id ~prefix:"hi" () in
+      let lo_a = atom_of_sexpr expr_lower in
+      let hi_a = atom_of_sexpr expr_higher in
+      let lo_t = term_of_atomic_sexpr expr_lower in
+      let hi_t = term_of_atomic_sexpr expr_higher in
+      let r_t  = mk_preid_term ~loc:pat.ppat_loc r.id_name in
+      let cmp_op, step_op = match flag with
+        | Upto   -> OPLe, OPAdd
+        | Downto -> OPGe, OPMinus in
+      let invariant = match flag with
+        | Upto   ->
+            [ mk_le_term ~loc:expr_lower.spexp_loc lo_t r_t;
+              mk_le_term ~loc:expr_higher.spexp_loc r_t hi_t ]
+        | Downto ->
+            [ mk_le_term ~loc:expr_higher.spexp_loc hi_t r_t;
+              mk_le_term ~loc:expr_lower.spexp_loc r_t lo_t ] in
+      let cond = (* Decides if there's more iterations or not *)
+        mk_atom ~loc (ABinop (mk_atom ~loc (AId r), cmp_op, mk_atom ~loc (AId hi))) in
+      let next_r = (* Computes the next value of the loop variable *)
+        mk_atom ~loc (ABinop (mk_atom ~loc (AId r), step_op, mk_atom ~loc (atom_num 1))) in
+      let u = gen_id ~prefix:"u" () in
+      let recurse = (* The recursive call to the loop, loop {r+1} {hi} *)
+       mk_expr ~loc:loc1 @@
+        EApp (mk_callable ~loc (CId id_loop), [next_r; mk_atom ~loc (AId hi)], []) in
+      let next_k = KExpr (mk_callable ~loc (CFun ([(u, tyunit)], [], recurse))) in 
+      let cont_body =
+        mk_expr ~loc:(location expr_body.spexp_loc) @@
+        expr ~etype:tyunit expr_body next_k hm in
+      let loop_body =
+        mk_expr ~loc @@ EAssert (invariant,
+          mk_expr ~loc @@ EIf (cond, cont_body, mk_expr ~loc @@ callk [atom_unit])) in
+      ELetK (id_loop, [(r, tyint); (hi, tyint)], None, loop_body,
+             mk_expr ~loc @@ EApp (mk_callable ~loc (CId id_loop), [lo_a; hi_a], []))
+
   | Sexp_fun (_, _, pat, e, _) ->
       let x, tx = match get_pattern_id pat with
         | (_,Some tx) as x -> x, tx
@@ -1198,7 +1251,6 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
   | Sexp_field (_, _)
   | Sexp_setfield (_, _, _)
   | Sexp_array _
-  | Sexp_for (_, _, _, _, _, _)
   | Sexp_coerce (_, _, _)
   | Sexp_send (_, _)
   | Sexp_new _

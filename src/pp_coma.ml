@@ -50,7 +50,7 @@ let pp_cbinder ?(paren=true) fmt (id, pty) =
   match pty with
   | None -> fprintf fmt "%a" pp_id id
   | Some (Ptree.PTtyapp (Qident {id_str="ref";_}, [pty])) ->
-      fprintf fmt (protect_on paren "@[&%a: %a@]") pp_id id
+      fprintf fmt (protect_on paren "@[%a: %a@]") pp_id id
         pp_pty pty
   | Some pty ->
       fprintf fmt (protect_on paren "@[%a: %a@]") pp_id id
