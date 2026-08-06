@@ -8,12 +8,14 @@ let fname = ref None
 let debug = ref false
 let coma = ref false
 let compile_patterns = ref false
+let std = ref []
 
 let spec =
   [
     ("--debug", Arg.Unit (fun () -> debug := true), "print debug information");
     ("--coma", Arg.Unit (fun () -> coma := true), "compile to Coma");
     ("--pat", Arg.Unit (fun () -> compile_patterns := true), "compile pattern matchings");
+    ("--stdlib", Arg.String (fun s -> std := String.split_on_char ',' s), "")
   ]
 
 let usage_msg = Format.sprintf "%s <file>.ml\nCompile <file> to Coma\n" Sys.argv.(0)
@@ -61,8 +63,7 @@ let main file c =
       let cout = open_out f_coma in
       Format.formatter_of_out_channel cout in
     let fc = List.map Ml2coma.declaration f in
-    let stdlist = [] in
-    Format.fprintf fout "%a@." (PPComa.pp_program stdlist) fc
+    Format.fprintf fout "%a@." (PPComa.pp_program !std) fc
   end
 
 let () = main fname (open_in fname)
