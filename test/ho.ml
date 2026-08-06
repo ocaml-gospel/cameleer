@@ -1,6 +1,25 @@
+(* Run with:
+
+    dune exec bin/cli_coma.exe -- --coma --pat --stdlib "seq.Seq,seq.FreeMonoid" test/ho.ml
+
+   and replace
+    `(k (result: int)  (_k (result2: bool)  ))`
+   by
+    `(k (j: int) { mem s[i..j] r } { i <= j <= length s }  (out (b: bool) { b <-> exec_ck ck s j } ))`
+   in the definition of `a`
+ *)
+
 type char
 
 type word [@@coma "seq char"]
+
+let nth (s: word) (idx: int): char = assert false
+(*@ requires 0 <= idx < length s
+    ensures  result = s[idx] *)
+
+let len (s: word): int = assert false
+(*@ requires true
+    ensures  result = length s *)
 
 type re =
   | Empty
@@ -76,14 +95,6 @@ type re =
     w[z..n] = w *)
 
 
-let nth (s: word) (idx: int): char = assert false
-(*@ requires 0 <= idx < length s
-    ensures  result = s[idx] *)
-
-let len (s: word): int = assert false
-(*@ requires true
-    ensures  result = length s *)
-
 type ckt =
   | CInit of int
   | CCat  of re * ckt
@@ -102,12 +113,12 @@ type ckt =
 
 let rec a (s: word) (r: re) (i: int)
           (ck: ckt)
-          (k: int -> bool): bool =
-           (* [@gospel "b = k j
-                     requires mem[i..j] r
-                     requires i <= j <= len s
-                     ensures  b <-> ck j"]) = *)
-    (* (k (result: int) { mem s[i..result] r } { i <= result <= length s }  (_k (result2: bool) { result2 <-> exec_ck ck w result } )) *)
+          ((k: int -> bool)
+            [@coma "b = k j
+                    requires mem s[i..j] r
+                    requires i <= j <= length s
+                    ensures  b <-> exec_ck ck w j"])
+: bool =
   match (r: re) with
   | Empty -> false
   | Epsilon -> k i
