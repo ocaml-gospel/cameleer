@@ -197,6 +197,8 @@ let pp_decl fmt (d: declaration) =
   | DType (rec_flag, td) ->
       fprintf fmt "@[%a@]"
         UPrint.s_type_declaration_rec_flag (rec_flag, td)
+  | DType2 (name, model) ->
+      fprintf fmt "type %s (* modeled: %s *)" name model
   | DFunction fd ->
       fprintf fmt "@[%a@]" UPrint.function_ fd
   | DProp _ ->

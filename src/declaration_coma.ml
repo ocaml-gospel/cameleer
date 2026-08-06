@@ -21,12 +21,33 @@ let s_structure (* ml *), s_signature (* mli *) =
         [ ML.{ decl_loc = loc; decl_desc = DFunction f } ]
     | _ -> assert false (* TODO *) in
 
+  let condition (t : ML.U.s_type_declaration) =
+    t.tmanifest = None &&
+    (match t.tattributes with [_] -> true | _ -> false) in
+
+  let open_payload payload =
+    match payload with
+    | PStr [ { pstr_desc = Pstr_eval ({ pexp_desc = Pexp_constant (Pconst_string (s, _, _)); _ }, _); _; } ] ->
+        Some s
+    | _ -> None in
+
   let s_structure_item Gospel.Uast.{ sstr_desc; sstr_loc } =
     let loc = E.location sstr_loc in
     match sstr_desc with
     | Str_value (b, svb_list) ->
-        let k = ML.{ id_name = E.gen_symbol "return"; id_loc = E.dummy_loc } in
+        let k = E.gen_id ~prefix:"o" () in
         List.map (E.s_value_binding b ^~ k) svb_list
+    | Str_type (_, [t]) when condition t -> (* TODO: fix this hack *)
+        begin match t.tattributes with
+        | [{attr_name={txt="coma";_}; attr_payload=p; _}] ->
+            begin match open_payload p with
+            | None -> assert false
+            | Some s ->
+                let decl_desc = ML.DType2 (t.tname.txt, s)  in
+                [ ML.{ decl_loc = loc; decl_desc } ]
+            end
+        | _ -> assert false
+        end
     | Str_type (rec_flag, type_decl_list) ->
         let decl_desc = ML.DType (rec_flag, type_decl_list) in
         [ ML.{ decl_loc = loc; decl_desc } ]

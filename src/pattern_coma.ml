@@ -361,6 +361,8 @@ let rec expr e = match e.expr_desc with
       let mk_case a pl = E.mk_expr @@ EMatch (a, pl) in
       let mk_let x bt e1 e2 =
         let b = x, Some bt in
+        (* removes unnecessary cast *)
+        let e1 = match e1.atom_desc with | ACast (e1, _) -> e1 | _ -> e1 in
         E.mk_expr (ELet (b, e1, e2)) in
       let pl = annot a pl in
       let pl = List.map (fun (p,e) -> [p], expr e) pl in
@@ -419,4 +421,5 @@ let compile_pattern (d: declaration) =
         add_type tname.txt tkind) dl;
       d
   | DFunction _
+  | DType2 _
   | DProp _ -> d

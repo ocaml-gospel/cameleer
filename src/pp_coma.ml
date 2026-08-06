@@ -56,6 +56,11 @@ let pp_cbinder ?(paren=true) fmt (id, pty) =
       fprintf fmt (protect_on paren "@[%a: %a@]") pp_id id
         pp_pty pty
 
+let simple_callable c =
+  match c.ccallable_desc with
+  | CCId { id_name; _ } -> String.length id_name < 4
+  | _ -> false
+
 let _pp_pre fmt = function
   | [] -> ()
   | l ->
@@ -94,6 +99,11 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (pp_callable ~_fn_name) c
         (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
         (pp_callable ~_fn_name) cl1
+  | CEApp (c, al, cl) when List.for_all simple_callable cl ->
+      fprintf fmt "@[%a @[%a %a@]@]"
+        (pp_callable ~_fn_name) c
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:false ~curly:true)) al
+        (pp_print_list ~pp_sep:pp_space (pp_callable ~_fn_name)) cl
   | CEApp (c, al, cl) ->
       fprintf fmt "@[%a @[%a@]@\n  @[%a@]@]"
         (pp_callable ~_fn_name) c
@@ -152,6 +162,9 @@ and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
       fprintf fmt (protect_on paren @@ curly_braces curly "%s @[%a@]")
         c.id_name
         (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:false)) al (* TODO *)
+  | CACast ({ catom_desc=CAId x; _ }, t) ->
+      fprintf fmt (protect_on paren @@ curly_braces curly "@[%s: %a@]")
+        x.id_name pp_pty t
   | CACast (a, t) ->
       fprintf fmt (protect_on paren @@ curly_braces curly "@[%a: %a@]")
         (pp_atom ~comma_tuple ~paren:true ~curly:false) a
@@ -232,7 +245,7 @@ let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
   | CDFun (rec_flag, id, xs, (pre, b), olds, ks, e) ->
       print_destructs id.id_name fmt;
-      fprintf fmt "@[let%a %s@;<1 4>@[@[%a@]@ @[%a%s@]%a@ @[%a@]@]@]@\n= @[%a@]%a"
+      fprintf fmt "let%a %s@;<1 4>@[@[%a@]@ @[%a%s@]%a@ @[%a@]@]@\n= @[%a@]%a"
         pp_rec rec_flag
         id.id_name
         (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
@@ -243,7 +256,9 @@ let pp_decl fmt (d: cdeclaration) =
         (pp_expr ~_fn_name:id.id_name) e
         pp_newline_newline ()
 | CDLogic decl ->
-      fprintf fmt "@[%a@]" (pp_type_decl ~attr:false) decl
+      fprintf fmt "%a" (pp_type_decl ~attr:false) decl
+| CDType2 (name, model) ->
+      fprintf fmt "(* abstract in .ml *)@\ntype %s = %s" name model
 
 let preamble stdlist =
   let pp fmt = fprintf fmt "use %s" in
@@ -252,6 +267,7 @@ let preamble stdlist =
 "
 use ocamlstdlib.Stdlib
 %a
+
 let halt = any
 let fail { false } = any
 let if (b: bool) (then {b}) (else {not b}) = any

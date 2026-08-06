@@ -472,6 +472,7 @@ let declaration { decl_desc; decl_loc } =
         let type_decls = List.map type_decl td in
         let decl = Dtype (List.flatten type_decls) in
         CDLogic decl
+    | DType2 (name, model) -> CDType2 (name, model)
     | DFunction fd -> begin match Declaration.gospel_function fd with
         | Odecl.Odecl (_, fd) -> CDLogic fd
         | Odecl.Omodule (_, _, _) -> assert false end

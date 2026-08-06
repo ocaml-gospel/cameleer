@@ -104,6 +104,11 @@ and declaration_desc =
             * (binder * atom) list (* [old] snapshot bindings *)
             * kont list * expr
   | DType of rec_flag * U.s_type_declaration list
+  | DType2 of string * string
+    (* abstract type with coma model in an attribute:
+        `type word [@@coma "seq char"]`
+        is represented
+        `DType ("word", "seq char")` *)
   | DFunction of U.function_
   | DProp of U.prop
 
@@ -196,5 +201,6 @@ and cdeclaration_desc =
              * (cbinder * catom) list (* [old] snapshot bindings *)
              * ckont list * cexpr
   | CDLogic of Ptree.decl (* Purely logical WhyML declarations *)
+  | CDType2 of string * string (* TODO: merge this in `CDLogic` *)
 
 type cprogram = cdeclaration list
