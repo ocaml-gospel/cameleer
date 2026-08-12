@@ -2,11 +2,6 @@
 
     dune exec bin/cli_coma.exe -- --coma --pat --stdlib "seq.Seq,seq.FreeMonoid" test/ho.ml
 
-   and replace
-    `(k (result: int)  (_k (result2: bool)  ))`
-   by
-    `(k (j: int) { mem s[i..j] r } { i <= j <= length s }  (out (b: bool) { b <-> exec_ck ck s j } ))`
-   in the definition of `a`
  *)
 
 type char
@@ -102,7 +97,7 @@ type ckt =
 
 (*@ predicate exec_ck (ck: ckt) (w: char seq) (j: int) =
       match (ck: ckt) with
-      | CInit n         -> j = n
+      | CInit n      -> j = n
       | CCat  r ck   ->
           exists i. j <= i <= length w /\ mem w[j..i] r /\ exec_ck ck w i
       | CStar i r ck -> i < j &&
@@ -113,11 +108,11 @@ type ckt =
 
 let rec a (s: word) (r: re) (i: int)
           (ck: ckt)
-          ((k: int -> bool)
-            [@coma "b = k j
+          ((k : int -> bool)
+            [@gospel "b = k j
                     requires mem s[i..j] r
                     requires i <= j <= length s
-                    ensures  b <-> exec_ck ck w j"])
+                    ensures  b <-> exec_ck ck s j"])
 : bool =
   match (r: re) with
   | Empty -> false

@@ -331,23 +331,33 @@ let identify_fail ?(msg="ANF assumption broken") e =
 let collect_params e =
   let rec loop (accd, acck) e =
     match e.Uast.spexp_desc with
-    | Sexp_fun (_, None, pat, e, _) ->
+    | Sexp_fun (_, None, pat, e, s) ->
         let name, pty = get_pattern_id pat in
         begin match pty with
         | Some ({ ptyp_desc = Ptyp_arrow (_,a,b); _ } as _tarr) ->
+            let p, r = mk_id "result", mk_id "result2" in
+            let p, r, pre, post =
+              match s with
+              | Some { fun_req; fun_ens; fun_header=None; _} ->
+                  p, r, fun_req, fun_ens
+              | Some { fun_req; fun_ens; fun_header=Some hd; _} ->
+                  let p, r =
+                    match hd.sp_hd_args, hd.sp_hd_ret with
+                    | [a], [r] -> labelled_arg a, labelled_arg r
+                    | _ -> assert false in
+                  p, r, fun_req, fun_ens
+              | None ->  p, r, [], [] in
             let kont = {
               kont_id   = name;
               kont_writes = [];
-              kont_arg  = [mk_id "result", map_pty (Some a)];
-              kont_kont = [
-                { kont_id   = { name with id_name = "_" ^ name.id_name };
-                  kont_writes = [];
-                  kont_arg  = [mk_id "result2", map_pty (Some b)];
-                  kont_kont = [];
-                  kont_pre  = [];
-                } ];
-              kont_pre  = [];
-            } in
+              kont_arg  = [ p, map_pty (Some a) ];
+              kont_pre  = pre;
+              kont_kont = [ {
+                kont_id   = { name with id_name = "k" ^ name.id_name };
+                kont_writes = [];
+                kont_arg  = [ r, map_pty (Some b) ];
+                kont_kont = [];
+                kont_pre  = post; } ]; } in
             loop (accd, kont :: acck) e
         | _ ->
             let b = name, pty in
@@ -1229,7 +1239,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k hm : expr_
       let recurse = (* The recursive call to the loop, loop {r+1} {hi} *)
        mk_expr ~loc:loc1 @@
         EApp (mk_callable ~loc (CId id_loop), [next_r; mk_atom ~loc (AId hi)], []) in
-      let next_k = KExpr (mk_callable ~loc (CFun ([(u, tyunit)], [], recurse))) in 
+      let next_k = KExpr (mk_callable ~loc (CFun ([(u, tyunit)], [], recurse))) in
       let cont_body =
         mk_expr ~loc:(location expr_body.spexp_loc) @@
         expr ~etype:tyunit expr_body next_k hm in
@@ -1305,11 +1315,9 @@ and s_value_binding rec_flag (svb: Uast.s_value_binding) k =
   ignore pty; (* TODO *)
   let params, kparams, pexp = collect_params svb.spvb_expr in
   let () =
-    VARS.binders params;
-    VARS.konts kparams;
-    VARS.s_expr pexp
-  in
-
+    VARS.binders params  ;
+    VARS.konts   kparams ;
+    VARS.s_expr  pexp    in
   let lp, lk = List.length params, List.length kparams in
   let () = Hashtbl.add toplevel_fun_types id.id_name ((lp, params), (lk, kparams)) in
   let _params_id_of_spec = function
