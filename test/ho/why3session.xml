@@ -35,35 +35,35 @@
  <goal name="vc_a" proved="true">
  <transf name="split_vc" proved="true" >
   <goal name="vc_a.0" proved="true">
-  <proof prover="1"><result status="valid" time="0.048397" steps="537"/></proof>
+  <proof prover="1" timelimit="5"><result status="valid" time="0.042682" steps="510"/></proof>
   </goal>
   <goal name="vc_a.1" proved="true">
   <proof prover="3"><result status="valid" time="0.056168" steps="43089"/></proof>
   </goal>
   <goal name="vc_a.2" proved="true">
-  <proof prover="1"><result status="valid" time="0.086670" steps="671"/></proof>
+  <proof prover="1"><result status="valid" time="0.078590" steps="740"/></proof>
   </goal>
   <goal name="vc_a.3" proved="true">
   <proof prover="3"><result status="valid" time="0.084710" steps="40352"/></proof>
   </goal>
   <goal name="vc_a.4" proved="true">
-  <proof prover="3"><result status="valid" time="0.046979" steps="65484"/></proof>
+  <proof prover="3"><result status="valid" time="0.153285" steps="65484"/></proof>
   </goal>
   <goal name="vc_a.5" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="vc_a.5.0" proved="true">
-   <proof prover="1" timelimit="30"><result status="valid" time="1.449769" steps="1465"/></proof>
+   <proof prover="1" timelimit="5"><result status="valid" time="1.357785" steps="1472"/></proof>
    </goal>
    <goal name="vc_a.5.1" proved="true">
-   <proof prover="3"><result status="valid" time="0.573604" steps="157990"/></proof>
+   <proof prover="3"><result status="valid" time="0.915182" steps="157828"/></proof>
    </goal>
   </transf>
   </goal>
   <goal name="vc_a.6" proved="true">
-  <proof prover="3" timelimit="30"><result status="valid" time="0.672188" steps="164021"/></proof>
+  <proof prover="3"><result status="valid" time="1.123516" steps="163809"/></proof>
   </goal>
   <goal name="vc_a.7" proved="true">
-  <proof prover="3"><result status="valid" time="0.349924" steps="113990"/></proof>
+  <proof prover="1"><result status="valid" time="0.081646" steps="773"/></proof>
   </goal>
   <goal name="vc_a.8" proved="true">
   <proof prover="3"><result status="valid" time="0.080917" steps="40356"/></proof>
@@ -75,19 +75,19 @@
   <proof prover="3"><result status="valid" time="0.050756" steps="41184"/></proof>
   </goal>
   <goal name="vc_a.11" proved="true">
-  <proof prover="3"><result status="valid" time="0.085220" steps="48551"/></proof>
+  <proof prover="1"><result status="valid" time="0.086670" steps="154"/></proof>
   </goal>
   <goal name="vc_a.12" proved="true">
-  <proof prover="3"><result status="valid" time="0.060066" steps="41458"/></proof>
+  <proof prover="3"><result status="valid" time="0.060066" steps="41242"/></proof>
   </goal>
   <goal name="vc_a.13" proved="true">
-  <proof prover="3"><result status="valid" time="0.101895" steps="42080"/></proof>
+  <proof prover="3"><result status="valid" time="0.101895" steps="41874"/></proof>
   </goal>
   <goal name="vc_a.14" proved="true">
-  <proof prover="3"><result status="valid" time="0.084398" steps="41437"/></proof>
+  <proof prover="3"><result status="valid" time="0.084398" steps="41232"/></proof>
   </goal>
   <goal name="vc_a.15" proved="true">
-  <proof prover="1"><result status="valid" time="0.081646" steps="698"/></proof>
+  <proof prover="1"><result status="valid" time="0.087226" steps="776"/></proof>
   </goal>
   <goal name="vc_a.16" proved="true">
   <proof prover="3"><result status="valid" time="0.040936" steps="40395"/></proof>
@@ -102,16 +102,16 @@
   <proof prover="3"><result status="valid" time="0.083346" steps="41304"/></proof>
   </goal>
   <goal name="vc_a.20" proved="true">
-  <proof prover="3"><result status="valid" time="0.133868" steps="44639"/></proof>
+  <proof prover="3"><result status="valid" time="0.133868" steps="41230"/></proof>
   </goal>
   <goal name="vc_a.21" proved="true">
-  <proof prover="1" timelimit="5"><result status="valid" time="1.937364" steps="3103"/></proof>
+  <proof prover="1"><result status="valid" time="1.096733" steps="1795"/></proof>
   </goal>
   <goal name="vc_a.22" proved="true">
   <proof prover="3"><result status="valid" time="0.055391" steps="43220"/></proof>
   </goal>
   <goal name="vc_a.23" proved="true">
-  <proof prover="3"><result status="valid" time="0.140521" steps="68446"/></proof>
+  <proof prover="3"><result status="valid" time="0.150706" steps="68279"/></proof>
   </goal>
   <goal name="vc_a.24" proved="true">
   <proof prover="3"><result status="valid" time="0.052674" steps="41309"/></proof>
@@ -120,13 +120,13 @@
   <proof prover="3"><result status="valid" time="0.075793" steps="41982"/></proof>
   </goal>
   <goal name="vc_a.26" proved="true">
-  <proof prover="3"><result status="valid" time="0.053875" steps="58334"/></proof>
+  <proof prover="3"><result status="valid" time="0.168664" steps="58334"/></proof>
   </goal>
   <goal name="vc_a.27" proved="true">
   <proof prover="3"><result status="valid" time="0.066079" steps="41400"/></proof>
   </goal>
   <goal name="vc_a.28" proved="true">
-  <proof prover="3"><result status="valid" time="0.090918" steps="44872"/></proof>
+  <proof prover="3"><result status="valid" time="0.090918" steps="44681"/></proof>
   </goal>
   <goal name="vc_a.29" proved="true">
   <proof prover="3"><result status="valid" time="0.092287" steps="44503"/></proof>
@@ -134,17 +134,17 @@
   <goal name="vc_a.30" proved="true">
   <transf name="split_vc" proved="true" >
    <goal name="vc_a.30.0" proved="true">
-   <proof prover="3" timelimit="30"><result status="valid" time="1.014533" steps="232444"/></proof>
+   <proof prover="3" timelimit="5"><result status="valid" time="1.694745" steps="232305"/></proof>
    </goal>
    <goal name="vc_a.30.1" proved="true">
-   <proof prover="1" timelimit="30"><result status="valid" time="2.005794" steps="9879"/></proof>
+   <proof prover="1" timelimit="5"><result status="valid" time="3.220277" steps="10712"/></proof>
    </goal>
   </transf>
   </goal>
  </transf>
  </goal>
  <goal name="vc_accept" proved="true">
- <proof prover="3"><result status="valid" time="0.227589" steps="75009"/></proof>
+ <proof prover="3"><result status="valid" time="0.227589" steps="74866"/></proof>
  </goal>
 </theory>
 </file>

@@ -93,18 +93,15 @@ type re =
 type ckt =
   | CInit of int
   | CCat  of re * ckt
-  | CStar of int * re * ckt
+  | CStep of int * re * ckt
 
 (*@ predicate exec_ck (ck: ckt) (w: char seq) (j: int) =
       match (ck: ckt) with
       | CInit n      -> j = n
       | CCat  r ck   ->
           exists i. j <= i <= length w /\ mem w[j..i] r /\ exec_ck ck w i
-      | CStar i r ck -> i < j &&
+      | CStep i r ck -> i < j &&
           exists i. j <= i <= length w /\ mem w[j..i] r /\ exec_ck ck w i *)
-
-(*@ predicate cons (w: char seq) (r: re) (ck: ckt) (i: int) =
-      exists j. i <= j <= length w /\ mem w[i..j] r /\ exec_ck ck w j *)
 
 let rec a (s: word) (r: re) (i: int)
           (ck: ckt)
@@ -129,12 +126,12 @@ let rec a (s: word) (r: re) (i: int)
       let (k2: int -> bool) = fun (j:int) -> a s r2 j ck k in
       a s r1 i ck2 k2
   | Star r1 ->
-      let (ck2 : ckt) = CStar (i, r, ck) in
+      let (ck2 : ckt) = CStep (i, r, ck) in
       let (k2: int -> bool) = fun (j:int) -> i < j && a s r j ck k in
       let (ki: bool) = k i in
       ki || a s r1 i ck2 k2
 (*@ requires 0 <= i <= length s
-    ensures  result <-> cons s r ck i *)
+    ensures  result <-> exec_ck (CCat r ck) s i *)
 
 let accept (r: re) (s: word): bool =
   let (n: int) = len s in
