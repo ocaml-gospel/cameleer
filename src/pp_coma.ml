@@ -161,7 +161,7 @@ and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
   | CACons (c, al) ->
       fprintf fmt (protect_on paren @@ curly_braces curly "%s @[%a@]")
         c.id_name
-        (pp_print_list ~pp_sep:pp_space (pp_atom ~curly:false)) al (* TODO *)
+        (pp_print_list ~pp_sep:pp_space (pp_atom ~paren:true ~curly:false)) al (* TODO *)
   | CACast ({ catom_desc=CAId x; _ }, t) ->
       fprintf fmt (protect_on paren @@ curly_braces curly "@[%s: %a@]")
         x.id_name pp_pty t
