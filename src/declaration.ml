@@ -334,6 +334,10 @@ let mk_ind loc ind =
   let in_def = List.map mk_case ind.in_def in
   O.mk_ind loc in_ident in_params in_def
 
+let gospel_ind p =
+  let loc = p.Uast.in_loc in
+  mk_ind (T.location loc) p
+
 let mk_prop loc p =
   let prop_name, prop_term, prop_kind = prop p in
   O.mk_dprop loc prop_kind prop_name prop_term

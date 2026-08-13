@@ -122,12 +122,10 @@ let rec pp_expr fmt (e: expr) =
         (pp_atom ~paren:false) a
         (pp_print_list ~pp_sep:pp_newline pp_ppat_expr) pel
   | ELetK (k, xs, o, e1, e2) ->
-      let ppo fmt (o,_t) =
-        fprintf fmt "(%s (_: ...)) " o.id_name in
       fprintf fmt "let %s %a %a=@;<1 2>@[%a@]@ in@ @[%a@]"
         k.id_name
-        (pp_print_list ~pp_sep:(fun fmt () -> fprintf fmt " ") pp_binder) xs
-        (pp_print_option ppo) o
+        (pp_print_list ~pp_sep:pp_space pp_binder) xs
+        (pp_print_list ~pp_sep:pp_newline pp_kont) o
         pp_expr e1 pp_expr e2
 
 and pp_atom ?(paren=false) fmt (a: atom) =
@@ -171,18 +169,19 @@ and pp_callable fmt c =
         (pp_print_list pp_id) ks
         pp_expr e
 
+and pp_kont fmt {kont_id; kont_arg; kont_kont; _} =
+  let ppp fmt (a,_) = fprintf fmt "%a" pp_id a in
+  fprintf fmt (protect_on true "%a@;<1 4>@[%a@]@;<1 4>@[%a@]") pp_id kont_id
+    (pp_print_list ppp) kont_arg
+    (pp_print_list ~pp_sep:pp_newline pp_kont) kont_kont
+
+
 let pp_rec fmt = function
   | Asttypes.Recursive -> fprintf fmt " rec"
   | Nonrecursive -> ()
 
 let pp_id fmt {id_name; _} =
   fprintf fmt "%s" id_name
-
-let rec pp_kont fmt {kont_id; kont_arg; kont_kont; _} =
-  let ppp fmt (a,_) = fprintf fmt "%a" pp_id a in
-  fprintf fmt (protect_on true "%a@;<1 4>@[%a@]@;<1 4>@[%a@]") pp_id kont_id
-    (pp_print_list ppp) kont_arg
-    (pp_print_list ~pp_sep:pp_newline pp_kont) kont_kont
 
 let pp_decl fmt (d: declaration) =
   match d.decl_desc with
@@ -203,6 +202,8 @@ let pp_decl fmt (d: declaration) =
       fprintf fmt "@[%a@]" UPrint.function_ fd
   | DProp _ ->
       fprintf fmt "@[lemma ...@]"
+  | DInductive _ ->
+      fprintf fmt "@[inductive ...@]"
 (* FIXME: no suitable printer for axiom/lemma in [UPrint] *)
 
 let pp_program fmt =

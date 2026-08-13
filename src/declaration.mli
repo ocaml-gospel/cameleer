@@ -9,3 +9,6 @@ val gospel_function : Uast.function_ -> Odecl.odecl
 
 val gospel_prop : Uast.prop -> Odecl.odecl
 (** This is required by the Coma backend *)
+
+val gospel_ind : Uast.ind_decl -> Odecl.odecl
+(** This is required by the Coma backend *)

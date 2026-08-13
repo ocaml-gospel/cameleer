@@ -422,4 +422,5 @@ let compile_pattern (d: declaration) =
       d
   | DFunction _
   | DType2 _
+  | DInductive _
   | DProp _ -> d

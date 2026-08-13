@@ -54,6 +54,8 @@ let s_structure (* ml *), s_signature (* mli *) =
         [ ML.{ decl_loc = loc; decl_desc = DFunction f } ]
     | Str_prop p ->
         [ ML.{ decl_loc = loc; decl_desc = DProp p } ]
+    | Str_inductive p ->
+        [ ML.{ decl_loc = loc; decl_desc = DInductive p } ]
     | _ -> [] (* TODO *) in
 
   let s_structure = List.concat_map s_structure_item in

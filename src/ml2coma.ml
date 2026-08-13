@@ -71,23 +71,32 @@ let mk_ccalable ?(loc=dummy_loc) ccallable_desc =
   { ccallable_loc = loc; ccallable_desc }
 
 module TMP = struct
-open Format
-open Ml_lang
-open Gospel
-module UPrint = Upretty_printer
+  open Format
+  open Ml_lang
+  open Gospel
+  module UPrint = Upretty_printer
 
-open Why3
-module WPrint = Mlw_printer
+  open Why3
+  module WPrint = Mlw_printer
 
-let pp_cpre = (WPrint.pp_term ~attr:false).closed
-let pp_pty = (WPrint.pp_pty ~attr:false).closed
-let pp_type_decl = WPrint.pp_decl
+  let pp_cpre = (WPrint.pp_term ~attr:false).closed
+  let pp_pty = (WPrint.pp_pty ~attr:false).closed
+  let pp_type_decl = WPrint.pp_decl
 
-let pp_cbinder fmt (id, pty) =
-  match pty with
-  | None -> fprintf fmt "%s" id.id_name
-  | Some pty -> fprintf fmt "@[%s: %a@]" id.id_name pp_pty pty
+  let pp_cbinder fmt (id, pty) =
+    match pty with
+    | None -> fprintf fmt "%s" id.id_name
+    | Some pty -> fprintf fmt "@[%s: %a@]" id.id_name pp_pty pty
 end
+
+let rec mk_ckont { kont_id; kont_writes; kont_arg; kont_kont; kont_pre } =
+  let ckont_kont = List.map mk_ckont kont_kont in
+  let ckont_arg = kont_arg in
+  { ckont_id  = kont_id;
+    ckont_writes = kont_writes;
+    ckont_arg;
+    ckont_kont;
+    ckont_pre = List.map (Uterm.term false) kont_pre } 
 
 let mk_precondition (arg: id) (case_id: id) (vars: Ml_lang.binder list list) =
   Format.printf "D: arg=%-5s case_id=%-7s vars=[%s]@."
@@ -278,16 +287,11 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
           | _ -> List.rev acc, e in
         let group, rest = collect [(id, atom fn_name a mty)] e2 in
         CEAssignRef (group, expr fn_name rest mty) *)
-    | ELetK (k, xs, None, e1, e2) ->
-        let xs = List.map binder xs in
-        let types = List.fold_left (fun acc ({id_name;_}, t) ->
-          Ms.add id_name t acc) mty xs in
-        CELetK (k, xs, None, expr fn_name e1 types, expr fn_name e2 types)
     | ELetK (k, xs, o, e1, e2) ->
         let xs = List.map binder xs in
         let types = List.fold_left (fun acc ({id_name;_}, t) ->
           Ms.add id_name t acc) mty xs in
-        let o = Option.map (fun (x,t) -> x, E.core_type t) o in
+        let o = List.map mk_ckont o in
         CELetK (k, xs, o, expr fn_name e1 types, expr fn_name e2 types)
     | EApp (c, al, cl) ->
         let c = callable fn_name c mty in
@@ -446,15 +450,6 @@ let type_decl Uast.({ tname; tspec; tmanifest; tkind; _ } as td) =
 
 let declaration { decl_desc; decl_loc } =
   let mk_cdecl cdecl_desc = { cdecl_loc = decl_loc; cdecl_desc } in
-  let rec mk_ckont { kont_id; kont_writes; kont_arg; kont_kont; kont_pre } =
-    let ckont_kont = List.map mk_ckont kont_kont in
-    (* let ckont_arg = List.map (fun (i,t) -> i, Option.map E.core_type t) kont_arg in *)
-    let ckont_arg = kont_arg in
-    { ckont_id  = kont_id;
-      ckont_writes = kont_writes;
-      ckont_arg;
-      ckont_kont;
-      ckont_pre = List.map (Uterm.term false) kont_pre } in
   let cdecl = match decl_desc with
     | DFun (rec_flag, id, xs, pre, olds, ks, e) ->
         let xs = List.map binder xs in
@@ -477,6 +472,9 @@ let declaration { decl_desc; decl_loc } =
         | Odecl.Odecl (_, fd) -> CDLogic fd
         | Odecl.Omodule (_, _, _) -> assert false end
     | DProp pd -> begin match Declaration.gospel_prop pd with
+        | Odecl.Odecl (_, pd) -> CDLogic pd
+        | Odecl.Omodule (_, _, _) -> assert false end
+    | DInductive i -> begin match Declaration.gospel_ind i with
         | Odecl.Odecl (_, pd) -> CDLogic pd
         | Odecl.Omodule (_, _, _) -> assert false end
   in

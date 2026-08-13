@@ -17,6 +17,8 @@ type id = { id_name: string; id_loc: location }
 
 type binder = id * P.core_type option
 type cbinder = id * Ptree.pty option
+type rec_flag = Asttypes.rec_flag
+type precondition = U.term list
 
 type constant = CNum of int | CBool of bool | CUnit
 
@@ -47,7 +49,7 @@ and expr_desc =
   | ELet  of binder * atom * expr                 (* let p = e in e          *)
   | ELetRef of binder * atom * expr               (* let r = ref e in e      *)
   | EAssignRef of id * atom * expr                (* r := e; e               *)
-  | ELetK of id * binder list * (id * P.core_type) option * expr * expr
+  | ELetK of id * binder list * kont list * expr * expr
                                         (* let_cont h x (o (_: ty) = e in e  *)
   | EApp  of callable * atom list * callable list (* k a…a k…k               *)
   | EIf of atom * expr * expr
@@ -79,11 +81,7 @@ and callable_desc =
   | CId  of id                           (* handler name                   *)
   | CFun of binder list * id list * expr (* data params, kont params, body *)
 
-type rec_flag = Asttypes.rec_flag
-
-type precondition = U.term list
-
-type kont = {
+and kont = {
   kont_id: id;
   kont_writes: id list; (* [modifies] clause: variables this kont may mutate *)
   kont_arg: cbinder list;
@@ -111,6 +109,7 @@ and declaration_desc =
         `DType ("word", "seq char")` *)
   | DFunction of U.function_
   | DProp of U.prop
+  | DInductive of U.ind_decl
 
 type program = declaration list
 
@@ -158,7 +157,7 @@ and cexpr_desc =
   | CELet of cbinder * catom * cexpr
   | CELetRef of cbinder * catom * cexpr        (* e [ &r: t = e ] *)
   | CEAssignRef of id * catom * cexpr          (* [ &r <- e ] e   *)
-  | CELetK of id * cbinder list * (id * Ptree.pty) option * cexpr * cexpr
+  | CELetK of id * cbinder list * ckont list * cexpr * cexpr
                                                        (* let_cont h x = e in e *)
   | CEApp of ccallable * catom list * ccallable list   (* k a…a k…k *)
   | CEIf of catom * cexpr * cexpr

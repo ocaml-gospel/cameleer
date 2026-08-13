@@ -115,13 +115,11 @@ let rec pp_expr ?(_fn_name="") fmt (e: cexpr) =
         (fun fmt e -> pp_expr fmt e) e1
         (fun fmt e -> pp_expr fmt e) e2 (* TODO *)
   | CELetK(k, xs, o, e1, e2) ->
-      let ppo fmt (id, ty) =
-        fprintf fmt "(%a (_r:%a))" pp_id id pp_pty ty in
       fprintf fmt "@[%a@]@ @[[ %s %a %a@;<1 2>= @[%a@]]@]"
         (fun fmt e -> pp_expr fmt e) e2
         k.id_name
-        (pp_print_list ~pp_sep:(fun fmt () -> fprintf fmt " ") (pp_cbinder ~paren:true)) xs
-        (pp_print_option ppo) o
+        (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) xs
+        (pp_print_list ~pp_sep:pp_newline pp_kont) o
         (fun fmt e -> pp_expr fmt e) e1
 
 and pp_atom ?(comma_tuple=true) ?(paren=false) ?(curly=false) fmt (a: catom) =
@@ -191,21 +189,21 @@ and pp_ppat_cexpr fmt (p, e) =
     (if p = [] then "" else " ")
     (fun fmt e -> pp_expr fmt e) e
 
-let pp_rec fmt = function
-  | Asttypes.Recursive -> fprintf fmt " rec"
-  | Nonrecursive -> ()
-
-let pp_writes fmt = function
-  | [] -> ()
-  | writes -> fprintf fmt "@[[%a]@]@ " (pp_print_list ~pp_sep:pp_space pp_id) writes
-
-let rec pp_kont fmt {ckont_id; ckont_writes; ckont_pre; ckont_kont; ckont_arg} =
-  fprintf fmt (protect_on true "@[%a@ %a@[%a@]@ @[%a@]@ @[%a@]@]")
+and pp_kont fmt {ckont_id; ckont_writes; ckont_pre; ckont_kont; ckont_arg} =
+  fprintf fmt (protect_on true "@[%a%s@,%a%s@,@[%a@]%s@,@[%a@]%s@,@[%a@]@]")
     pp_id ckont_id
+    (if ckont_writes = [] then "" else " ")
     pp_writes ckont_writes
+    (if ckont_arg = [] then "" else " ")
     (pp_print_list ~pp_sep:pp_space (pp_cbinder ~paren:true)) ckont_arg
+    (if ckont_pre = [] then "" else " ")
     pp_cpre ckont_pre
+    (if ckont_kont = [] then "" else " ")
     (pp_print_list ~pp_sep:pp_space pp_kont) ckont_kont
+
+and pp_writes fmt ws =
+  if ws <> [] then
+    fprintf fmt "[%a]" (pp_print_list ~pp_sep:pp_space pp_id) ws
 
 let pp_handler_case fmt (case_id, vars, pre) =
   match vars with
@@ -245,16 +243,16 @@ let pp_decl fmt (d: cdeclaration) =
   match d.cdecl_desc with
   | CDFun (rec_flag, id, xs, (pre, b), olds, ks, e) ->
       print_destructs id.id_name fmt;
-      fprintf fmt "let%a %s@;<1 4>@[@[%a@]@ @[%a%s@]%a@ @[%a@]@]@\n= @[%a@]%a"
-        pp_rec rec_flag
+      fprintf fmt "let%a %s@;<1 4>@[@[%a@]@,%s@[%a%s@]%a@ @[%a@]@]@\n= @[%a@]"
+        Pp_ml_lang.pp_rec rec_flag
         id.id_name
         (pp_print_list ~pp_sep:pp_space pp_cbinder) xs
+        (if pre = [] then "" else " ")
         pp_cpre pre
         (if b then " {..}" else "")
         pp_olds olds
         (pp_print_list ~pp_sep:pp_newline pp_kont) ks
         (pp_expr ~_fn_name:id.id_name) e
-        pp_newline_newline ()
 | CDLogic decl ->
       fprintf fmt "%a" (pp_type_decl ~attr:false) decl
 | CDType2 (name, model) ->
@@ -264,16 +262,13 @@ let preamble stdlist =
   let pp fmt = fprintf fmt "use %s" in
   let pp_sep = pp_newline in
   asprintf
-"
-use ocamlstdlib.Stdlib
-%a
-
+"%a@\n
 let halt = any
 let fail { false } = any
-let if (b: bool) (then {b}) (else {not b}) = any
+let if (b: bool) (then {b}) (else {not b}) = any@\n
 "
   (pp_print_list ~pp_sep pp) stdlist
 
 let pp_program stdlist fmt =
-  fprintf fmt "%s" (preamble stdlist);
+  fprintf fmt "%s" (preamble ("ocamlstdlib.Stdlib" :: stdlist));
   pp_print_list ~pp_sep:pp_newline_newline pp_decl fmt
