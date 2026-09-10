@@ -717,7 +717,12 @@ let mayraise e =
     | Sexp_extension _ -> identify_fail ~msg:"unsupported language construct" e in
   loop S.empty e
 
-type kont_type = KName of id | KExpr of callable
+type kont_type = KName of id | KExpr of callable | KExpr0 of expr
+(* KExpr0 e --> a unit-typed continuation substituted directly by [e] *)
+
+let normalize_kont = function
+  | KExpr0 e -> KExpr (mk_callable (CFun ([], [], e)))
+  | k -> k
 
 
 let caml_dummy_loc =
@@ -745,7 +750,12 @@ let rec term_of_atomic_sexpr (e: Uast.s_expression) : Uast.term =
   | Sexp_constant c -> Uast.{ term_desc = Tconst c; term_loc = loc }
   | Sexp_ident {txt; _} -> mk_preid_term ~loc (string_of_longident txt)
   | Sexp_constraint (e, _) -> term_of_atomic_sexpr e
-  | _ -> identify_fail ~msg:"for-loop bounds must be atomic (variable or constant)" e
+  | Sexp_apply ({ spexp_desc = Sexp_ident {txt;_}; _ }, ([(_, e1);(_, e2)]))
+    when is_binop (string_of_longident txt) ->
+      let op = Identifier.Preid.create ~loc (string_of_longident txt) in
+      Uast.{ term_desc = Tinfix (term_of_atomic_sexpr e1, op, term_of_atomic_sexpr e2);
+             term_loc = loc }
+  | _ -> identify_fail ~msg:"for-loop bounds must be atomic" e
 
 let mk_le_term ?(loc=Location.none) t1 t2 =
   let op = Identifier.Preid.create ~loc "infix <=" in
@@ -768,7 +778,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
     mk_expr ~loc e in
   let callk a = match k with
     | KName k -> EApp (mk_callable ~loc:k.id_loc (CId k), a, [])
-    | KExpr k -> EApp (k, a, []) in
+    | KExpr k -> EApp (k, a, [])
+    | KExpr0 e -> e.expr_desc in
   let loc = location e.spexp_loc in
   match e.spexp_desc with
   | Sexp_constant c ->
@@ -803,7 +814,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
       let e3 kid = match e3 with
         | Some e3 -> exp e3 kid
         | None -> mk_expr @@ EApp (mk_callable (CId kid), [atom_unit], []) in
-      begin match k with
+      begin match normalize_kont k with
       | KName k -> EIf (a, exp e2 k , e3 k)
       | KExpr k ->
           let z   = gen_id ~prefix:"b" () in
@@ -812,6 +823,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
           ELetK (kid, [(z,tybool)], [],
                        mk_expr @@ EApp (k, [mk_atom @@ AId z], []),
                        mk_expr @@ EIf (a, e2, e3 kid))
+      | KExpr0 _ -> assert false
       end
   | Sexp_ifthenelse (e1, e2, e3) ->
       let exp e k =
@@ -831,7 +843,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
                      mk_expr ~loc @@ EAssert (spec.fun_req,
                      mk_expr ~loc @@ EHide e)) in
       let z = gen_id ~prefix:"b" ~loc:(location e1.spexp_loc) () in
-      let f, kid = match k with
+      let f, kid = match normalize_kont k with
       | KName k ->
           let f e2 e3 = mk_callable @@
             CFun ([z, tybool], [], mk_expr @@ EIf (mk_atom (AId z),e2,e3)) in
@@ -845,7 +857,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
             mk_expr @@ ELetK (kid, [(z2, etype)], [],
             mk_expr @@ EApp (k, [az2], []),
             mk_expr @@ EIf (mk_atom (AId z), e2, e3))) in
-          f, kid in
+          f, kid
+      | KExpr0 _ -> assert false in
       let e2 = exp e2 kid in
       let e3 = match e3 with
        | Some e3 -> exp e3 kid
@@ -928,7 +941,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
         | PCst _ -> assert false
         | PCons (_, _) -> assert false
         | PTuple _ -> assert false in
-      let ctx, kid = match k with
+      let ctx, kid = match normalize_kont k with
         | KName k -> Fun.id, k
         | KExpr c ->
             let kid = gen_kid () in
@@ -938,7 +951,8 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
             let f e = ELetK (kid, [(x,etype)], [],
                                    mk_expr @@ EApp (c, [a], []),
                                    mk_expr ~loc e) in
-            f, gen_kid () in
+            f, gen_kid ()
+        | KExpr0 _ -> assert false in
       let f = (fun Uast.{spc_lhs; spc_rhs; spc_spec; _} ->
         let ploc = location spc_lhs.ppat_loc in
         let p = pattern spc_lhs in
@@ -1043,9 +1057,10 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
               | _ -> assert false) kargs in
           pargs, kargs
         with Not_found -> args, [] in
-      let k = match k with
+      let k = match normalize_kont k with
         | KName k -> mk_callable @@ CId k
-        | KExpr k -> k in
+        | KExpr k -> k
+        | KExpr0 _ -> assert false in
       let gs = try Hashtbl.find raisable_hmap id.id_name
                with Not_found -> S.empty in
       let sl = S.fold
@@ -1057,9 +1072,10 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
       let loc = location e.spexp_loc in
       let z = gen_id ~loc () in
       let args = List.map (fun (_, a) -> atom_of_sexpr a) args in
-      let k = match k with
+      let k = match normalize_kont k with
         | KName k -> mk_callable ~loc:k.id_loc @@ CId k
-        | KExpr k -> k in
+        | KExpr k -> k
+        | KExpr0 _ -> assert false in
       let k = mk_callable ~loc @@
         CFun ([z, etype],[], mk_expr @@
               EApp (mk_callable @@ CId z, args, [k])) in
@@ -1089,7 +1105,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
                          mk_expr ~loc @@ EHide e)) in
           pat, e)
         cases in
-      begin match k with (* TODO inline this somehow *)
+      begin match normalize_kont k with
       | KName k -> EMatch (a, map k) (* TODO *)
       | KExpr k ->
           let prefix = mk_prefix etype in
@@ -1099,6 +1115,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
           ELetK (kid, [(aid, etype)], [],
                  mk_expr @@ EApp (k, [mk_atom @@ AId aid], []),
                  mk_expr @@ EMatch (a, cases))
+      | KExpr0 _ -> assert false
       end
 
   | Sexp_match (e, cases) ->
@@ -1124,7 +1141,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
                          mk_expr ~loc @@ EHide e)) in
           pat, e)
         cases in
-      begin match k with (* TODO inline this somehow *)
+      begin match normalize_kont k with
       | KName k ->
           let prefix = mk_prefix etype in
           let z = gen_id ~prefix ~loc () in
@@ -1147,6 +1164,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
                     mk_expr @@ EApp (k, [az2], []),
                   mk_expr @@ EMatch (mk_atom (AId z), cases))) in
           expr e (KExpr kk)
+      | KExpr0 _ -> assert false 
       end
 
   | Sexp_assert e when is_false e.spexp_desc -> EFail
@@ -1168,8 +1186,7 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
 
   | Sexp_sequence (e1, e2) ->
       let k = mk_expr ~loc:(location e2.spexp_loc) @@ expr ~etype e2 k in
-      let u = (gen_id ~prefix:"u" ()), tyunit in
-      let k = KExpr (mk_callable (CFun ([u],[], k))) in
+      let k = KExpr0 k in
       expr ~etype:tyunit e1 k
 
   | Sexp_while (e1, e2, _spec) ->
@@ -1189,13 +1206,12 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
          ```
         *)
       let cloop = mk_expr ~loc:loc1 (expr ~etype:tybool e1 (KName id_loop) ) in
-      let u = (gen_id ~prefix:"u" ()), tyunit in
-      let kcloop = KExpr (mk_callable (CFun ([u], [], cloop))) in
+      let kcloop = KExpr0 cloop in
       let z = gen_id ~prefix:"b" () in
       (* TODO types instead of None *)
       ELetK (id_loop, [(z,tybool)], [], mk_expr @@
              EIf (mk_atom @@ AId z,
-                  mk_expr (expr ~etype:tyunit e2 kcloop ),
+                  mk_expr @@ EHide (mk_expr (expr ~etype:tyunit e2 kcloop )),
                   mk_expr (callk [atom_unit])),
              cloop)
 
@@ -1213,25 +1229,22 @@ let rec expr ?(etype: core_type option=None) (e: Uast.s_expression) k : expr_des
       let cmp_op, step_op = match flag with
         | Upto   -> OPLe, OPAdd
         | Downto -> OPGe, OPMinus in
-      let invariant = match flag with
-        | Upto   ->
-            [ mk_le_term ~loc:expr_lower.spexp_loc lo_t r_t;
-              mk_le_term ~loc:expr_higher.spexp_loc r_t hi_t ]
-        | Downto ->
-            [ mk_le_term ~loc:expr_higher.spexp_loc hi_t r_t;
-              mk_le_term ~loc:expr_lower.spexp_loc r_t lo_t ] in
+      let invariant =
+        match flag with
+        | Upto   -> [ mk_le_term ~loc:expr_lower.spexp_loc lo_t r_t ]
+        | Downto -> [ mk_le_term ~loc:expr_higher.spexp_loc hi_t r_t ] in
       let cond = (* Decides if there's more iterations or not *)
         mk_atom ~loc (ABinop (mk_atom ~loc (AId r), cmp_op, mk_atom ~loc (AId hi))) in
       let next_r = (* Computes the next value of the loop variable *)
         mk_atom ~loc (ABinop (mk_atom ~loc (AId r), step_op, mk_atom ~loc (atom_num 1))) in
-      let u = gen_id ~prefix:"u" () in
       let recurse = (* The recursive call to the loop, loop {r+1} {hi} *)
        mk_expr ~loc:loc1 @@
         EApp (mk_callable ~loc (CId id_loop), [next_r; mk_atom ~loc (AId hi)], []) in
-      let next_k = KExpr (mk_callable ~loc (CFun ([(u, tyunit)], [], recurse))) in
-      let cont_body =
-        mk_expr ~loc:(location expr_body.spexp_loc) @@
-        expr ~etype:tyunit expr_body next_k in
+      let next_k = KExpr0 recurse in
+      let cont_body = (* barrier hiding the loop body and its recursive call *)
+        mk_expr ~loc @@ EHide (
+          mk_expr ~loc:(location expr_body.spexp_loc) @@
+          expr ~etype:tyunit expr_body next_k) in
       let loop_body =
         mk_expr ~loc @@ EAssert (invariant,
           mk_expr ~loc @@ EIf (cond, cont_body, mk_expr ~loc @@ callk [atom_unit])) in
