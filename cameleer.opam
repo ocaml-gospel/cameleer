@@ -24,6 +24,7 @@ depends: [
   "fmt"
   "ocaml" {>= "4.07"}
   "ppxlib" {>= "0.26.0"}
+  "cmdliner" {= "1.3.0"}
   "sexplib"
   "ppx_deriving"
   "ppx_sexp_conv"
@@ -35,5 +36,5 @@ conflicts: [
 ]
 
 pin-depends: [
-  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#c20125aeb2154b3853e0e5411c4548f568541096"
+  "gospel.dev" "git+https://github.com/ocaml-gospel/gospel.git#982879a463f7ce58d3e27128b1eae83a36d89571"
 ]

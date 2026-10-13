@@ -1,0 +1,6 @@
+(ocamllex
+ (modules count_lines))
+
+(executable
+ (name count_lines)
+ (modules count_lines))

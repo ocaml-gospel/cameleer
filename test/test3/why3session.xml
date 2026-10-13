@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"https://www.why3.org/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC5" version="1.3.2" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="1" name="Alt-Ergo" version="2.3.3" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="2" name="Z3" version="4.15.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<prover id="3" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="coma">
+<path name=".."/><path name="test3.coma"/>
+<theory name="Coma">
+ <goal name="vc_halt" proved="true">
+ <proof prover="3"><result status="valid" time="0.012592" steps="1873"/></proof>
+ </goal>
+ <goal name="vc_fail" proved="true">
+ <proof prover="3"><result status="valid" time="0.013671" steps="1873"/></proof>
+ </goal>
+ <goal name="vc_if" proved="true">
+ <proof prover="3"><result status="valid" time="0.013168" steps="1873"/></proof>
+ </goal>
+ <goal name="vc_destruct_f2" proved="true">
+ <proof prover="3"><result status="valid" time="0.014049" steps="1880"/></proof>
+ </goal>
+ <goal name="vc_destruct_f1" proved="true">
+ <proof prover="3"><result status="valid" time="0.009156" steps="1880"/></proof>
+ </goal>
+ <goal name="vc_f">
+ <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+ <proof prover="1"><result status="timeout" time="1.000000" steps="7894"/></proof>
+ <proof prover="2"><result status="timeout" time="1.000000" steps="2764424"/></proof>
+ <proof prover="3"><result status="unknown" time="0.008852" steps="3011"/></proof>
+ <transf name="split_vc" >
+  <goal name="vc_f.0">
+  <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="6371"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="2664360"/></proof>
+  <proof prover="3"><result status="unknown" time="0.012497" steps="2527"/></proof>
+  </goal>
+  <goal name="vc_f.1">
+  <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="7050"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="2340775"/></proof>
+  <proof prover="3"><result status="unknown" time="0.017821" steps="2535"/></proof>
+  </goal>
+  <goal name="vc_f.2">
+  <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="6373"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="2367230"/></proof>
+  <proof prover="3"><result status="unknown" time="0.012498" steps="2535"/></proof>
+  </goal>
+  <goal name="vc_f.3">
+  <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="7864"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="2563437"/></proof>
+  <proof prover="3"><result status="unknown" time="0.010960" steps="2481"/></proof>
+  </goal>
+  <goal name="vc_f.4">
+  <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="2243"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="2769636"/></proof>
+  <proof prover="3"><result status="unknown" time="0.010747" steps="2552"/></proof>
+  </goal>
+  <goal name="vc_f.5">
+  <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="2245"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="2390536"/></proof>
+  <proof prover="3"><result status="unknown" time="0.011170" steps="2560"/></proof>
+  </goal>
+  <goal name="vc_f.6">
+  <proof prover="0"><result status="timeout" time="1.000000"/></proof>
+  <proof prover="1"><result status="timeout" time="1.000000" steps="2245"/></proof>
+  <proof prover="2"><result status="timeout" time="1.000000" steps="2346613"/></proof>
+  <proof prover="3"><result status="unknown" time="0.012290" steps="2560"/></proof>
+  </goal>
+  <goal name="vc_f.7" proved="true">
+  <proof prover="2"><result status="valid" time="0.002132" steps="8399"/></proof>
+  <transf name="assert" proved="true" arg1="false">
+   <goal name="vc_f.7.0" expl="asserted formula" proved="true">
+   <proof prover="2" timelimit="5"><result status="valid" time="0.003977" steps="8374"/></proof>
+   </goal>
+   <goal name="vc_f.7.1" proved="true">
+   <proof prover="2" timelimit="5"><result status="valid" time="0.003202" steps="380"/></proof>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>

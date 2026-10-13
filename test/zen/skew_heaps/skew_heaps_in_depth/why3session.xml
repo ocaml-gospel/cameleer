@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"https://www.why3.org/why3session.dtd">
+<why3session shape_version="6">
+<prover id="0" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="coma" proved="true">
+<path name=".."/><path name="skew_heaps_in_depth.coma"/>
+<theory name="Coma" proved="true">
+ <goal name="vc_halt" proved="true">
+ <proof prover="0"><result status="valid" time="0.034942" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_fail" proved="true">
+ <proof prover="0"><result status="valid" time="0.037346" steps="29605"/></proof>
+ </goal>
+ <goal name="vc_if" proved="true">
+ <proof prover="0"><result status="valid" time="0.036644" steps="29605"/></proof>
+ </goal>
+ <goal name="size_nonneg" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="size_nonneg.0" proved="true">
+  <proof prover="0"><result status="valid" time="0.054153" steps="33483"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="size_empty" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="size_empty.0" proved="true">
+  <proof prover="0"><result status="valid" time="0.065740" steps="35232"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="occ_nonneg" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="occ_nonneg.0" proved="true">
+  <proof prover="0"><result status="valid" time="0.059053" steps="34632"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="is_min" proved="true">
+ <transf name="induction_ty_lex" proved="true" >
+  <goal name="is_min.0" proved="true">
+  <transf name="split_vc" proved="true" >
+   <goal name="is_min.0.0" proved="true">
+   <proof prover="0"><result status="valid" time="0.050203" steps="33114"/></proof>
+   </goal>
+   <goal name="is_min.0.1" proved="true">
+   <transf name="case" proved="true" arg1="(x2 = Empty)">
+    <goal name="is_min.0.1.0" expl="true case" proved="true">
+    <transf name="case" proved="true" arg1="(x = Empty)">
+     <goal name="is_min.0.1.0.0" expl="true case" proved="true">
+     <proof prover="0"><result status="valid" time="0.101908" steps="55611"/></proof>
+     </goal>
+     <goal name="is_min.0.1.0.1" expl="false case (true case)" proved="true">
+     <proof prover="0"><result status="valid" time="0.255995" steps="111969"/></proof>
+     </goal>
+    </transf>
+    </goal>
+    <goal name="is_min.0.1.1" expl="false case" proved="true">
+    <transf name="case" proved="true" arg1="(x = Empty)">
+     <goal name="is_min.0.1.1.0" expl="false case (true case)" proved="true">
+     <proof prover="0"><result status="valid" time="0.268469" steps="111919"/></proof>
+     </goal>
+     <goal name="is_min.0.1.1.1" expl="false case" proved="true">
+     <proof prover="0"><result status="valid" time="0.353040" steps="132217"/></proof>
+     </goal>
+    </transf>
+    </goal>
+   </transf>
+   </goal>
+  </transf>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="vc_empty" proved="true">
+ <proof prover="0"><result status="valid" time="0.040777" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_destruct_merge4" proved="true">
+ <proof prover="0"><result status="valid" time="0.066175" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_destruct_merge3" proved="true">
+ <proof prover="0"><result status="valid" time="0.043861" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_destruct_merge2" proved="true">
+ <proof prover="0"><result status="valid" time="0.041377" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_destruct_merge1" proved="true">
+ <proof prover="0"><result status="valid" time="0.069150" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_merge" proved="true">
+ <transf name="split_vc" proved="true" >
+  <goal name="vc_merge.0" proved="true">
+  <proof prover="0"><result status="valid" time="0.056088" steps="33375"/></proof>
+  </goal>
+  <goal name="vc_merge.1" proved="true">
+  <proof prover="0"><result status="valid" time="0.352847" steps="117924"/></proof>
+  </goal>
+  <goal name="vc_merge.2" proved="true">
+  <proof prover="0"><result status="valid" time="0.055867" steps="33968"/></proof>
+  </goal>
+  <goal name="vc_merge.3" proved="true">
+  <proof prover="0"><result status="valid" time="0.058077" steps="33959"/></proof>
+  </goal>
+  <goal name="vc_merge.4" proved="true">
+  <proof prover="0"><result status="valid" time="0.090695" steps="41861"/></proof>
+  </goal>
+  <goal name="vc_merge.5" proved="true">
+  <proof prover="0"><result status="valid" time="0.088120" steps="35785"/></proof>
+  </goal>
+  <goal name="vc_merge.6" proved="true">
+  <proof prover="0"><result status="valid" time="0.061849" steps="33368"/></proof>
+  </goal>
+  <goal name="vc_merge.7" proved="true">
+  <proof prover="0"><result status="valid" time="0.329950" steps="104619"/></proof>
+  </goal>
+  <goal name="vc_merge.8" proved="true">
+  <proof prover="0"><result status="valid" time="0.085571" steps="33961"/></proof>
+  </goal>
+  <goal name="vc_merge.9" proved="true">
+  <proof prover="0"><result status="valid" time="0.075439" steps="33952"/></proof>
+  </goal>
+  <goal name="vc_merge.10" proved="true">
+  <proof prover="0"><result status="valid" time="0.092216" steps="42281"/></proof>
+  </goal>
+  <goal name="vc_merge.11" proved="true">
+  <proof prover="0"><result status="valid" time="0.071143" steps="35709"/></proof>
+  </goal>
+ </transf>
+ </goal>
+ <goal name="vc_add" proved="true">
+ <proof prover="0"><result status="valid" time="0.046556" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_destruct_remove_min1" proved="true">
+ <proof prover="0"><result status="valid" time="0.066643" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_remove_min" proved="true">
+ <proof prover="0"><result status="valid" time="0.051623" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_destruct_get_min1" proved="true">
+ <proof prover="0"><result status="valid" time="0.041603" steps="31911"/></proof>
+ </goal>
+ <goal name="vc_get_min" proved="true">
+ <proof prover="0"><result status="valid" time="0.047260" steps="31911"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>
