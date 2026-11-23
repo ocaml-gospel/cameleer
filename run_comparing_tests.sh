@@ -27,7 +27,7 @@ for file in ${files}; do
     if echo "${file}" | grep -q "_indepth\.ml$"; then
         name="${base}.coma"
 
-        dune exec bin/cli_coma.exe -- --coma --pat "${file}" >/dev/null 2>&1
+        dune exec bin/cli_coma.exe -- --coma "${file}" >/dev/null 2>&1
 
         if [ $? -eq 0 ]; then
             if [ -e "${name}" ]; then

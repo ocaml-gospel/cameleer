@@ -7,15 +7,17 @@ module PPComa = Pp_coma
 let fname = ref None
 let debug = ref false
 let coma = ref false
-let compile_patterns = ref false
+let dump_pm = ref false
 let std = ref []
 
 let spec =
   [
     ("--debug", Arg.Unit (fun () -> debug := true), "print debug information");
     ("--coma", Arg.Unit (fun () -> coma := true), "compile to Coma");
-    ("--pat", Arg.Unit (fun () -> compile_patterns := true), "compile pattern matchings");
-    ("--stdlib", Arg.String (fun s -> std := String.split_on_char ',' s), "")
+    ("--dump-pm", Arg.Unit (fun () -> dump_pm := true),
+     "print the intermediate program before and after pattern-matching compilation");
+    ("--stdlib", Arg.String (fun s -> std := String.split_on_char ',' s),
+     "M1,M2 add `use M1 use M2` to the generated Coma file")
   ]
 
 let usage_msg = Format.sprintf "%s <file>.ml\nCompile <file> to Coma\n" Sys.argv.(0)
@@ -46,15 +48,11 @@ let main file c =
     String.capitalize_ascii (Filename.chop_extension f) in
   let f = read_file file mod_name c in
   let f = Declaration_coma.s_structure f in
-  PPML.print_program f;
-  let f = if not !compile_patterns then f else
-    begin
-      if !debug then Format.printf "== BEGIN PM@\n";
-      let f = List.map Pattern_coma.compile_pattern f in
-      if !debug then Format.printf "== END PM @\n";
-      PPML.print_program f;
-      f
-    end in
+  if !dump_pm then PPML.print_program f;
+  if !debug then Format.printf "== BEGIN PM@\n";
+  let f = List.map Pattern_coma.compile_pattern f in
+  if !debug then Format.printf "== END PM @\n";
+  if !dump_pm then PPML.print_program f;
 
   if !coma then begin
     let dir, file = Filename.(dirname file, basename file) in
