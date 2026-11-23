@@ -184,7 +184,17 @@ let rec case_of_branch ?(ty=None) args (p : Ml_lang.pattern) =
       let neg_pres = List.concat_map (fun (_,_,_,neg) -> neg) sub_cases in
       (Ec.mk_id ~loc:p.ppat_loc name, vars, pos_pres, neg_pres)
 
+let rec pat_catch_all (p : Ml_lang.pattern) =
+  match p.ppat_desc with
+  | PVar _ | PWild -> true
+  | PCast (p, _) -> pat_catch_all p
+  | PTuple ps -> List.for_all pat_catch_all ps
+  | PCons _ | PCst _ -> false
+
+let is_catch_all pats = List.exists pat_catch_all pats
+
 let register_handler fn_name a cases m =
+  let cases_pats = List.map fst cases in
   let key = handler_name_of_id fn_name in
   let args =
     let rec loop a =
@@ -200,14 +210,21 @@ let register_handler fn_name a cases m =
 
     let rec process_cases cases acc_pre =
       match cases with
-      | [] -> []
+      | [] -> [], acc_pre
       | (p, _) :: rest ->
           let case_id, vars, pos_pre, neg_pre = case_of_branch (List.map fst args) p in
           let case = (case_id, vars, pos_pre @ acc_pre) in
           let new_pre = acc_pre @ neg_pre in
-          case :: process_cases rest new_pre in
+          let cases, rest_pre = process_cases rest new_pre in
+          case :: cases, rest_pre in
 
-  let cases = process_cases cases [] in
+  let cases, unmatched_pre = process_cases cases [] in
+  (* for non-exhaustive patmat we add a last continuation: fail *)
+  let needs_unmatched = not (is_catch_all cases_pats) in
+  let cases =
+    if needs_unmatched then
+      cases @ [ (Ec.mk_id "unmatched", [], unmatched_pre) ]
+    else cases in
   let new_handler = {
     args;
     cases;
@@ -218,7 +235,7 @@ let register_handler fn_name a cases m =
   let len = len + 1 in
   let full_name = Printf.sprintf "%s%d" key len in
   Hashtbl.replace destructs key (len, new_handler :: current);
-  full_name
+  full_name, needs_unmatched
 
 (* ! DEALING WITH ATOMS, EXPRESSIONS AND DECLARATIONS *)
 
@@ -303,13 +320,17 @@ and expr fn_name { expr_loc; expr_desc = e_desc } (mty : pty option Ms.t) =
               expr fn_name e1 mty,
               expr fn_name e2 mty) (* TODO *)
     | EMatch (a, pel) ->
-        let name  = register_handler fn_name a pel mty in
+        let name, needs_unmatched = register_handler fn_name a pel mty in
         let id    = mk_id name expr_loc in
         let cid   = mk_ccalable ~loc:expr_loc @@ CCId id in
         let catom = atom fn_name a mty in
         let cases = List.map (fun pe ->
           let i,e = mk_ppat_expr pe |> mk_binder_cexpr in
           mk_ccalable ~loc:e.cexpr_loc @@ CCFun (i,[],e)) pel in
+        let cases =
+          if not needs_unmatched then cases else
+            let fail = { cexpr_loc = expr_loc; cexpr_desc = CEFail } in
+            cases @ [ mk_ccalable ~loc:expr_loc @@ CCFun ([], [], fail) ] in
         CEApp (cid, [catom], cases) in
   mk_cexpr (expr_desc e_desc)
 
