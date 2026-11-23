@@ -631,6 +631,9 @@ let raisable_hmap: (string, S.t) Hashtbl.t = Hashtbl.create 32
 let toplevel_fun_types:
   (string, (int * binder list) * (int * kont list)) Hashtbl.t = Hashtbl.create 32
 
+(* Maps variant type names -> their constructor names *)
+let variant_constructors : (string, string list) Hashtbl.t = Hashtbl.create 16
+
 (* Maps exception names -> their argument types *)
 let exn_type_hmap : (string, Ppxlib.core_type option) Hashtbl.t = Hashtbl.create 16
 

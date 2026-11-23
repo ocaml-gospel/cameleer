@@ -193,6 +193,33 @@ let rec pat_catch_all (p : Ml_lang.pattern) =
 
 let is_catch_all pats = List.exists pat_catch_all pats
 
+let rec constructors_of_pty (ty : Ptree.pty) =
+  match ty with
+  | PTparen ty -> constructors_of_pty ty
+  | PTtyapp ((Qident id | Qdot (_, id)), _) ->
+      begin match id.id_str with
+      | "list" -> Some [ "[]"; "::" ]
+      | s -> Hashtbl.find_opt Ec.variant_constructors s
+      end
+  | _ -> None
+
+let rec pat_constructor (p : Ml_lang.pattern) =
+  match p.ppat_desc with
+  | PCast (p, _) -> pat_constructor p
+  | PCons (cid, _) -> Some cid.id_name
+  | _ -> None
+
+let covers_all_constructors args pats =
+  match args with
+  | [ (_, Some ty) ] ->
+      begin match constructors_of_pty ty with
+      | None -> false
+      | Some cs ->
+          let seen = List.filter_map pat_constructor pats in
+          List.for_all (fun c -> List.mem c seen) cs
+      end
+  | _ -> false
+
 let register_handler fn_name a cases m =
   let cases_pats = List.map fst cases in
   let key = handler_name_of_id fn_name in
@@ -220,7 +247,8 @@ let register_handler fn_name a cases m =
 
   let cases, unmatched_pre = process_cases cases [] in
   (* for non-exhaustive patmat we add a last continuation: fail *)
-  let needs_unmatched = not (is_catch_all cases_pats) in
+  let needs_unmatched =
+    not (is_catch_all cases_pats || covers_all_constructors args cases_pats) in
   let cases =
     if needs_unmatched then
       cases @ [ (Ec.mk_id "unmatched", [], unmatched_pre) ]

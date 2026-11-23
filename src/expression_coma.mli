@@ -36,5 +36,6 @@ val mk_decl :
   rec_flag * id * binder list * Uast.term list * (binder * atom) list * kont list * expr -> declaration
 
 val exn_type_hmap : (string, core_type option) Hashtbl.t
+val variant_constructors : (string, string list) Hashtbl.t
 
 val s_value_binding : rec_flag -> Uast.s_value_binding -> id -> declaration

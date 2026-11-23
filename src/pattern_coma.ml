@@ -239,7 +239,12 @@ let compile
               match collect_lets_opt ty a p with
               | None -> acc
               | Some a -> (pl, a) :: acc) rl_tail fc [] in
-            if rl_tail = [] then []
+            let complete = (* avoid dead code production *)
+              let present c = List.exists (fun (_, cc) -> cc.id_name = c) col_cons in
+              match Hashtbl.find_opt htypes name_ty with
+              | Some cs -> List.for_all (fun (c, _) -> present c) cs
+              | None -> present "[]" && present "::" in
+            if rl_tail = [] || complete then []
             else [E.mk_tpattern PWild ty, compile tl rl_tail] in
           let pl = List.fold_right (fun (p,cons) acc ->
             let pargs = get_pargs p in let ts =
@@ -409,7 +414,8 @@ let add_type tname (c: Parsetree.type_kind) =
           | Pcstr_tuple l -> l
           | _ -> failwith "not implemented 3" in
         txt, n) cl in
-      Hashtbl.add htypes tname cs
+      Hashtbl.add htypes tname cs;
+      Hashtbl.replace E.variant_constructors tname (List.map fst cs)
 
 let compile_pattern (d: declaration) =
   match d.decl_desc with
