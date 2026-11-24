@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"https://www.why3.org/why3session.dtd">
+<why3session shape_version="6">
+<prover id="3" name="CVC4" version="1.8" timelimit="1" steplimit="0" memlimit="1000"/>
+<file format="coma" proved="true">
+<path name=".."/><path name="article.coma"/>
+<theory name="Coma" proved="true">
+ <goal name="vc_halt" proved="true">
+ <proof prover="3"><result status="valid" time="0.105312" steps="27640"/></proof>
+ </goal>
+ <goal name="vc_fail" proved="true">
+ <proof prover="3"><result status="valid" time="0.108659" steps="27640"/></proof>
+ </goal>
+ <goal name="vc_if" proved="true">
+ <proof prover="3"><result status="valid" time="0.088975" steps="27640"/></proof>
+ </goal>
+ <goal name="vc_div" proved="true">
+ <proof prover="3"><result status="valid" time="0.082281" steps="27640"/></proof>
+ </goal>
+ <goal name="vc_mdiv" proved="true">
+ <proof prover="3" timelimit="5"><result status="valid" time="0.111902" steps="27640"/></proof>
+ </goal>
+ <goal name="vc_rem" proved="true">
+ <proof prover="3" timelimit="5"><result status="valid" time="0.054190" steps="31935"/></proof>
+ </goal>
+</theory>
+</file>
+</why3session>

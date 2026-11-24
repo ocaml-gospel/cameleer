@@ -6,12 +6,15 @@ module Stdlib
   use export int.Abs
   use export mach.int.Int
   use export list.List
+  use export list.SortedInt
+  use import list.Mem as LM
   use export ocaml.Exceptions
   use export option.Option
   use export ref.Ref
   use export ref.Refint
 
   use import seq.Seq as Seq
+  use seq.FreeMonoid
 
   type sequence 'a = seq 'a
 
